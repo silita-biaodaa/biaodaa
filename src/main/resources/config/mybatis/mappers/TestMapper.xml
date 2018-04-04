@@ -6,4 +6,6 @@
         select * from zhaobiao_analyze_detail where id=#{id}
     </select>
 
+
+
 </mapper>

@@ -1,7 +1,10 @@
 package com.silita.biaodaa.controller;
 
 import com.google.common.collect.ImmutableMap;
+import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TUser;
+import com.silita.biaodaa.model.TbCompany;
+import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.service.TestService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -29,6 +33,9 @@ public class TestController {
 
     @Autowired
     RedisTemplate redisTemplate;
+
+    @Autowired
+    TbCompanyService tbCompanyService;
 
 
     private Lock lock = new ReentrantLock();//基于底层IO阻塞考虑

@@ -21,7 +21,7 @@ import java.util.Properties;
 public class PropertiesUtils {
     private static Logger logger = Logger.getLogger(PropertiesUtils.class);
 
-    public static final String[] PROPERTIES = new String[] {"config/diaodaa.properties"};
+    public static final String[] PROPERTIES = new String[] {"config/biaodaa.properties"};
 
     private static Properties properties = new Properties();
 
