@@ -35,7 +35,7 @@ public class CompanyController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/query", method = RequestMethod.POST)
+    @RequestMapping(value = "/query", method = RequestMethod.POST,produces = "application/json")
     public Map<String, Object> queryCompany(@RequestBody Map<String, Object> params) {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 1);
