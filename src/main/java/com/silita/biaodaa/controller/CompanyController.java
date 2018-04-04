@@ -55,7 +55,7 @@ public class CompanyController {
             page.setPageSize(pageSize);
             page.setCurrentPage(pageNo);
             PageInfo pageInfo  = tbCompanyService.queryCompanyList(page,keyWord);
-            result.put("list",pageInfo.getList());
+            result.put("data",pageInfo.getList());
             result.put("pageNum",pageInfo.getPageNum());
             result.put("pageSize", pageInfo.getPageSize());
             result.put("total",pageInfo.getTotal());
