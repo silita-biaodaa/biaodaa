@@ -11,10 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by zhangxiahui on 18/4/4.
@@ -76,6 +73,19 @@ public class TbCompanyService {
 
         }
         return qualMap;
+    }
+
+    public List<Map<String,Object>> queryQualList(Integer comId){
+        List<Map<String,Object>> list = new ArrayList<>();
+        Map<String,List<TbCompanyQualification>> qualMap = queryCompanyQualification(comId);
+        Set<String> set = qualMap.keySet();
+        for(String key : set){
+            Map<String,Object> map = new HashMap<>();
+            map.put("qualType",key);
+            map.put("list",qualMap.get(key));
+            list.add(map);
+        }
+        return list;
     }
 
 

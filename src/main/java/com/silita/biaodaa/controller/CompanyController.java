@@ -104,8 +104,8 @@ public class CompanyController {
         result.put("msg", "企业资质失败!");
 
         try {
-            Map<String,List<TbCompanyQualification>> dataMap = tbCompanyService.queryCompanyQualification(comId);
-            result.put("data",dataMap);
+            List<Map<String,Object>> queryQualList = tbCompanyService.queryQualList(comId);
+            result.put("data",queryQualList);
             result.put("code", 1);
             result.put("msg", "查询成功!");
         } catch (IllegalArgumentException e) {
