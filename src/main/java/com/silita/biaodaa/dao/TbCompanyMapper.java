@@ -8,4 +8,6 @@ import java.util.List;
 public interface TbCompanyMapper extends MyMapper<TbCompany> {
 
     List<TbCompany> queryCompanyList(String keyWord);
+
+    TbCompany getCompany(Integer comId);
 }

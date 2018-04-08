@@ -68,4 +68,21 @@ public class TbCompany {
      * 更新时间
      */
     private Date updated;
+
+    private String logo;
+
+
+    private String certNo; //安需证
+
+    private String certDate;//安需证
+
+    private String validDate;//安需证
+
+
+
+    @Transient
+    private String subsist;//工商数据
+
+    @Transient
+    private String comRange;//工商数据
 }

@@ -34,6 +34,10 @@ public class TbCompanyService {
         return pageInfo;
     }
 
+    public TbCompany getCompany(Integer comId){
+        return tbCompanyMapper.getCompany(comId);
+    }
+
 
 
 }

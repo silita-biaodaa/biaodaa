@@ -4,7 +4,15 @@
 
   <!-- 查询企业列表 -->
   <select id="queryCompanyList" resultType="com.silita.biaodaa.model.TbCompany" parameterType="String">
-    select * from tb_company where com_name like CONCAT('%',#{keyWord},'%')
+    select c.*,s.cert_no,s.cert_date,s.valid_date from tb_company c left join tb_safety_certificate s
+    on c.com_name = s.com_name where 1=1
+    and c.com_name like CONCAT('%',#{keyWord},'%')
+  </select>
+
+  <select id="getCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Integer">
+    select c.*,s.cert_no,s.cert_date,s.valid_date from tb_company c left join tb_safety_certificate s
+    on c.com_name = s.com_name where 1=1
+    and c.com_id = #{comId}
   </select>
 
 </mapper>

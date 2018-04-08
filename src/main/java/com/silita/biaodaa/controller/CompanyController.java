@@ -1,7 +1,6 @@
 package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.google.common.collect.ImmutableMap;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.TbCompanyService;
@@ -9,14 +8,9 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.QueryParam;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -54,6 +48,9 @@ public class CompanyController {
             Page page = new Page();
             page.setPageSize(pageSize);
             page.setCurrentPage(pageNo);
+            if(keyWord==null){
+                keyWord = "";
+            }
             PageInfo pageInfo  = tbCompanyService.queryCompanyList(page,keyWord);
             result.put("data",pageInfo.getList());
             result.put("pageNum",pageInfo.getPageNum());
@@ -66,6 +63,31 @@ public class CompanyController {
             result.put("msg",e.getMessage());
         } catch (Exception e) {
             logger.error("获取人企业列表异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/{comId}", method = RequestMethod.GET,produces = "application/json")
+    public Map<String, Object> getCompany(@PathVariable Integer comId) {
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "企业查询失败!");
+
+        try {
+            TbCompany tbCompany = tbCompanyService.getCompany(comId);
+            result.put("data",tbCompany);
+            result.put("code", 1);
+            result.put("msg", "查询成功!");
+        } catch (IllegalArgumentException e) {
+            logger.error("获取企业信息异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        } catch (Exception e) {
+            logger.error("获取企业信息异常" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }
