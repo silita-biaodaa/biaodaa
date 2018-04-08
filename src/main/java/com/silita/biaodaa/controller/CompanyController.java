@@ -3,6 +3,7 @@ package com.silita.biaodaa.controller;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbCompany;
+import com.silita.biaodaa.model.TbCompanyQualification;
 import com.silita.biaodaa.service.TbCompanyService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -71,7 +73,7 @@ public class CompanyController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/{comId}", method = RequestMethod.GET,produces = "application/json")
+    @RequestMapping(value = "/{comId}", method = RequestMethod.POST,produces = "application/json")
     public Map<String, Object> getCompany(@PathVariable Integer comId) {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
@@ -88,6 +90,30 @@ public class CompanyController {
             result.put("msg",e.getMessage());
         } catch (Exception e) {
             logger.error("获取企业信息异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/qual/{comId}", method = RequestMethod.POST,produces = "application/json")
+    public Map<String, Object> queryCompanyQualification(@PathVariable Integer comId) {
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "企业资质失败!");
+
+        try {
+            Map<String,List<TbCompanyQualification>> dataMap = tbCompanyService.queryCompanyQualification(comId);
+            result.put("data",dataMap);
+            result.put("code", 1);
+            result.put("msg", "查询成功!");
+        } catch (IllegalArgumentException e) {
+            logger.error("获取企业资质异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        } catch (Exception e) {
+            logger.error("获取企业资质异常" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }
