@@ -3,7 +3,6 @@ package com.silita.biaodaa.controller;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbCompany;
-import com.silita.biaodaa.model.TbCompanyQualification;
 import com.silita.biaodaa.service.TbCompanyService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
