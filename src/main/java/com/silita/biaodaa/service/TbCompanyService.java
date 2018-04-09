@@ -5,8 +5,10 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.dao.TbCompanyQualificationMapper;
+import com.silita.biaodaa.dao.TbPersonQualificationMapper;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.TbCompanyQualification;
+import com.silita.biaodaa.model.TbPersonQualification;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,9 @@ public class TbCompanyService {
 
     @Autowired
     TbCompanyQualificationMapper tbCompanyQualificationMapper;
+
+    @Autowired
+    TbPersonQualificationMapper tbPersonQualificationMapper;
 
 
     public PageInfo queryCompanyList(Page page,String keyWord){
@@ -87,6 +92,20 @@ public class TbCompanyService {
         }
         return list;
     }
+
+    public List<Map<String,Object>> getCompanyPersonCate(Integer comId){
+        return tbPersonQualificationMapper.getCompanyPersonCate(comId);
+    }
+
+    public PageInfo queryCompanyPerson(Page page,Map<String,Object> param){
+        List<TbPersonQualification> list = new ArrayList<>();
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        list = tbPersonQualificationMapper.queryCompanyPerson(param);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
+
+
 
 
 

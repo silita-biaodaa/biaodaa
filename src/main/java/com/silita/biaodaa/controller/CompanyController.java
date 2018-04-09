@@ -118,4 +118,76 @@ public class CompanyController {
         }
         return result;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/personCategory/{comId}", method = RequestMethod.POST,produces = "application/json")
+    public Map<String, Object> getPersonCategory(@PathVariable Integer comId) {
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "获取企业注册人员类别失败!");
+
+        try {
+            List<Map<String,Object>> list = tbCompanyService.getCompanyPersonCate(comId);
+            result.put("data",list);
+            result.put("code", 1);
+            result.put("msg", "查询成功!");
+        } catch (IllegalArgumentException e) {
+            logger.error("获取企业注册人员类别异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        } catch (Exception e) {
+            logger.error("获取企业注册人员类别异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/person", method = RequestMethod.POST,produces = "application/json")
+    public Map<String, Object> queryPerson(@RequestBody Map<String, Object> params) {
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 1);
+        result.put("msg", "成功!");
+        result.put("pageNum",1);
+        result.put("pageSize", 0);
+        result.put("total",0);
+        result.put("pages",1);
+
+
+        try {
+            checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
+            String comId = MapUtils.getString(params, "comId");
+            String category = MapUtils.getString(params, "category");
+            String keyWord = MapUtils.getString(params, "keyWord");
+            Map<String,Object> param = new HashMap<>();
+            param.put("comId",comId);
+            param.put("category",category);
+            param.put("keyWord",keyWord);
+
+
+
+            Integer pageNo = MapUtils.getInteger(params, "pageNo");
+            Integer pageSize = MapUtils.getInteger(params, "pageSize");
+            Page page = new Page();
+            page.setPageSize(pageSize);
+            page.setCurrentPage(pageNo);
+
+            PageInfo pageInfo  = tbCompanyService.queryCompanyPerson(page,param);
+            result.put("data",pageInfo.getList());
+            result.put("pageNum",pageInfo.getPageNum());
+            result.put("pageSize", pageInfo.getPageSize());
+            result.put("total",pageInfo.getTotal());
+            result.put("pages",pageInfo.getPages());
+        } catch (IllegalArgumentException e) {
+            logger.error("获取企业注册人员列表异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        } catch (Exception e) {
+            logger.error("获取人企业注册人员列表异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
 }

@@ -27,7 +27,7 @@
         <javaClientGenerator targetPackage="com.silita.biaodaa.dao" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="tb_company_qualification">
+        <table tableName="tb_person_qualification">
             <!--mysql 配置-->
             <generatedKey column="pkid" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->
