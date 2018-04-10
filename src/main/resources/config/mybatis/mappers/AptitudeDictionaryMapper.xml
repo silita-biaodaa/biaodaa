@@ -4,4 +4,7 @@
   <select id="queryAptitude" resultType="com.silita.biaodaa.model.AptitudeDictionary">
     select * from aptitude_dictionary
   </select>
+  <select id="getIndustry" resultType="Map">
+    select `name`,`code` from twf_dict where is_valid=1 and type=1
+  </select>
 </mapper>

@@ -1,8 +1,10 @@
 package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbCompany;
+import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.TbCompanyService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
@@ -27,6 +29,9 @@ public class CompanyController {
 
     @Autowired
     TbCompanyService tbCompanyService;
+
+    @Autowired
+    CommonService commonService;
 
 
     @ResponseBody
@@ -190,4 +195,36 @@ public class CompanyController {
         }
         return result;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/filter", method = RequestMethod.GET,produces = "application/json")
+    public Map<String, Object> queryCompanyQualification() {
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "筛选条件查询失败!");
+
+        try {
+            List<CompanyQual> companyQual = tbCompanyService.getCompanyQual();
+            List<Map<String,String>> indestry =tbCompanyService.getIndustry();
+            List<Map<String, Object>> pbMode = commonService.queryPbMode();
+            Map<String,Object> map = new HashMap<>();
+            map.put("companyQual",companyQual);
+            map.put("indestry",indestry);
+            map.put("pbMode",pbMode);
+            result.put("data",map);
+            result.put("code", 1);
+            result.put("msg", "筛选条件查询成功!");
+        } catch (IllegalArgumentException e) {
+            logger.error("获取企业资质异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        } catch (Exception e) {
+            logger.error("获取企业资质异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+
 }
