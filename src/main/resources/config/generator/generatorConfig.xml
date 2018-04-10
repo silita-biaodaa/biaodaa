@@ -27,9 +27,9 @@
         <javaClientGenerator targetPackage="com.silita.biaodaa.dao" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="tb_person_qualification">
+        <table tableName="aptitude_dictionary">
             <!--mysql 配置-->
-            <generatedKey column="pkid" sqlStatement="Mysql" identity="true"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->
             <!--<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>-->
         </table>
