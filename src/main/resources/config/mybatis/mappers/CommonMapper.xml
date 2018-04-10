@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.biaodaa.dao.CommonMapper">
+    <select id="queryPbMode"  resultType="Map">
+       SELECT DISTINCT standardName FROM mishu_snatch.analyze_range_pbmode
+    </select>
+
+    <select id="queryCertZzByCompanyName" resultType="Map">
+       SELECT cz.zhuuid,cz.zzname
+        FROM mishu.cert_zz cz
+        join mishu.cert_src cs  on cz.srcUuid=cs.uuid
+        where cs.companyName=#{companyName} and zhuuid is not null
+    </select>
+
+    <select id="queryClickByUserId" parameterType="Map" resultType="int">
+        SELECT count(1)
+        FROM mishu_write.click_record
+        WHERE `type` = #{type}
+          AND `date` = #{date} AND `userId`=#{userId}
+          AND ip =#{ip}
+    </select>
+
+    <update id="updateUserClick" parameterType="Map">
+        UPDATE mishu_write.click_record
+        SET visitTimes = visitTimes+1,`lastVisitTime` = NOW()
+        WHERE `type`=#{type}
+          AND `date` = #{date} AND `userId`=#{userId}
+          AND ip =#{ip}
+    </update>
+
+    <insert id="insertUserClick" parameterType="Map">
+        INSERT INTO mishu_write.click_record(`type`,`userId`
+              ,`visitTimes`,`lastVisitTime`,`date`,`ip`)
+        VALUES(#{type},#{userId},1,NOW(),#{date},#{ip})
+    </insert>
+
+</mapper>
