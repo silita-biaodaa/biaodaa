@@ -80,9 +80,7 @@ public class TbCompany {
 
 
 
-    @Transient
     private String subsist;//工商数据
 
-    @Transient
     private String comRange;//工商数据
 }

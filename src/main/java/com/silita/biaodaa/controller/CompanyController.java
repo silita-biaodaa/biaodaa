@@ -226,5 +226,56 @@ public class CompanyController {
         return result;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/query/filter", method = RequestMethod.POST,produces = "application/json")
+    public Map<String, Object> filterCompany(@RequestBody Map<String, Object> params) {
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 1);
+        result.put("msg", "成功!");
+        result.put("pageNum",1);
+        result.put("pageSize", 0);
+        result.put("total",0);
+        result.put("pages",1);
+
+
+        try {
+            checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
+            String regisAddress = MapUtils.getString(params, "regisAddress");
+            String indestry = MapUtils.getString(params, "indestry");
+            Integer minCapital = MapUtils.getInteger(params, "minCapital");
+            Integer maxCapital = MapUtils.getInteger(params, "maxCapital");
+            String qualCode = MapUtils.getString(params, "qualCode");
+
+            Map<String,Object> param = new HashMap<>();
+            param.put("regisAddress",regisAddress);
+            param.put("indestry",indestry);
+            param.put("minCapital",minCapital);
+            param.put("maxCapital",maxCapital);
+            param.put("qualCode",qualCode);
+
+            Integer pageNo = MapUtils.getInteger(params, "pageNo");
+            Integer pageSize = MapUtils.getInteger(params, "pageSize");
+            Page page = new Page();
+            page.setPageSize(pageSize);
+            page.setCurrentPage(pageNo);
+
+            PageInfo pageInfo  = tbCompanyService.filterCompany(page,param);
+            result.put("data",pageInfo.getList());
+            result.put("pageNum",pageInfo.getPageNum());
+            result.put("pageSize", pageInfo.getPageSize());
+            result.put("total",pageInfo.getTotal());
+            result.put("pages",pageInfo.getPages());
+        } catch (IllegalArgumentException e) {
+            logger.error("筛选企业列表异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        } catch (Exception e) {
+            logger.error("筛选企业列表异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
 
 }
