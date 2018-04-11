@@ -256,7 +256,7 @@ public class CompanyController {
             param.put("indestry",indestry);
             param.put("minCapital",minCapital);
             param.put("maxCapital",maxCapital);
-            param.put("qualCode",qualCode);
+            param.put("qualCode",code);
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
