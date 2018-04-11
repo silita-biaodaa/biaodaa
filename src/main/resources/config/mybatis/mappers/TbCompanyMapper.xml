@@ -8,6 +8,7 @@
     left join tb_safety_certificate s on c.com_name = s.com_name
     left join mishu_next.cert_basic b on b.registerNo = c.org_code
     where 1=1
+    and b.companyName = c.com_name
     and c.com_name like CONCAT('%',#{keyWord},'%')
   </select>
 
@@ -16,7 +17,9 @@
     left join tb_safety_certificate s on c.com_name = s.com_name
     left join mishu_next.cert_basic b on b.registerNo = c.org_code
     where 1=1
+    and b.companyName = c.com_name
     and c.com_id = #{comId}
+    limit 1
   </select>
 
   <select id="filterCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
@@ -25,6 +28,7 @@
     left join tb_safety_certificate s on c.com_name = s.com_name
     left join mishu_next.cert_basic b on b.registerNo = c.org_code
     where 1=1
+    and b.companyName = c.com_name
     <if test="regisAddress!=null and regisAddress!=''">
       and c.regis_address = #{regisAddress}
     </if>
