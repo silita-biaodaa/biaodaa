@@ -6,6 +6,7 @@ import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.TbCompanyService;
+import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -245,13 +246,17 @@ public class CompanyController {
             Integer minCapital = MapUtils.getInteger(params, "minCapital");
             Integer maxCapital = MapUtils.getInteger(params, "maxCapital");
             String qualCode = MapUtils.getString(params, "qualCode");
-
+            String code = "";
+            String [] qualCodes = MyStringUtils.splitParam(qualCode);
+            if(qualCodes!=null&&qualCodes.length>0){
+                code = qualCodes[qualCodes.length-1];
+            }
             Map<String,Object> param = new HashMap<>();
             param.put("regisAddress",regisAddress);
             param.put("indestry",indestry);
             param.put("minCapital",minCapital);
             param.put("maxCapital",maxCapital);
-            param.put("qualCode",qualCode);
+            param.put("qualCode",code);
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
