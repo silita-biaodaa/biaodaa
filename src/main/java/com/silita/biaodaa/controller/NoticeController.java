@@ -36,7 +36,7 @@ public class NoticeController extends BaseController{
 
 //    @RequestParam json对象参数
     @ResponseBody
-    @RequestMapping(value = "/queryList",method = RequestMethod.POST,produces = "application/json")
+    @RequestMapping(value = "/queryList",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map<String,Object> queryList(@RequestBody Map params){
         Map resultMap = new HashMap();
         try {
