@@ -95,4 +95,16 @@ public class MyStringUtils {
 		return content;
 	}
 
+	/**
+	 * 根据||分割参数
+	 * @param str
+	 * @return
+	 */
+	public static String[] splitParam(String str){
+		if(isNotNull(str)){
+			return  str.split("\\|\\|");
+		}
+		return null;
+	}
+
 }
