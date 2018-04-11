@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class NoticeController extends BaseController{
 
 //    @RequestParam json对象参数
     @ResponseBody
-    @RequestMapping(value = "/queryList")
+    @RequestMapping(value = "/queryList",method = RequestMethod.POST,produces = "application/json")
     public Map<String,Object> queryList(@RequestBody Map params){
         Map resultMap = new HashMap();
         try {
