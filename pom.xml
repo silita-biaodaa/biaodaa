@@ -31,8 +31,9 @@
   <properties>
     <spring.version>4.1.6.RELEASE</spring.version>
 
-    <junit.version>4.10</junit.version>
-    <mockito.version>1.9.0</mockito.version>
+    <junit.version>4.11</junit.version>
+    <mockito.version>1.10.19</mockito.version>
+    <hamcrest.core.version>1.3</hamcrest.core.version>
     <bonecp.version>0.7.1.RELEASE</bonecp.version>
     <ant.version>1.8.2</ant.version>
     <aspectjweaver.version>1.6.8</aspectjweaver.version>
@@ -49,7 +50,7 @@
 
     <fastjson.version>1.1.17</fastjson.version>
 
-    <servlet-api.version>2.5</servlet-api.version>
+    <servlet-api.version>3.0.1</servlet-api.version>
     <jsp-api.version>2.0</jsp-api.version>
     <jta.version>1.1</jta.version>
 
@@ -65,6 +66,11 @@
       <id>public</id>  <!--这个ID需要与你新建的组group ID一致-->
       <name>Public Repository</name>
       <url>http://120.78.253.169/nexus/content/groups/public/</url>
+    </repository>
+    <repository>
+      <id>aliyun</id>
+      <name>aliyun Repository</name>
+      <url>http://maven.aliyun.com/nexus/content/groups/public</url>
     </repository>
   </repositories>
 
@@ -122,6 +128,12 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <version>${hamcrest.core.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -310,7 +322,7 @@
     <!-- Servlet以及相关 -->
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
+      <artifactId>javax.servlet-api</artifactId>
       <version>${servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>

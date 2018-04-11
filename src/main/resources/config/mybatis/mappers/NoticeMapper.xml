@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.biaodaa.dao.NoticeMapper">
+    <select id="queryNoticesByCompanyName" resultType="java.lang.Integer" parameterType="String">
+        SELECT a.contId
+        FROM mishu.snatch_url_cert a
+        WHERE a.certificateUuid in (
+        SELECT cz.zhuuid
+        FROM mishu.cert_zz cz
+        join mishu.cert_src cs  on cz.srcUuid=cs.uuid
+        where cs.companyName=#{companyName} and zhuuid is not null
+        )
+    </select>
+
+    <select id="queryNoticeList" resultType="Map" parameterType="Map">
+        SELECT s.id,s.title,s.opendate
+        ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.${detailTable} WHERE snatchUrlId =s.id ) pbMode
+        ,(SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
+        <if test="type == '2'">
+        ,(SELECT GROUP_CONCAT(zb.oneName SEPARATOR ',') oneName FROM mishu.zhongbiao_detail zb WHERE zb.snatchUrlId =s.id) oneName
+        </if>
+        FROM mishu.snatchurl s
+        <!--资质判断 -->
+        <if test="(zzTypeOne !=null and zzTypeOne !='') or (zzTypeTwo !=null and zzTypeTwo !='') or (zzTypeThree !=null and zzTypeThree !='')">
+            join mishu.snatch_url_cert suc on suc.contId=s.id
+            <choose>
+                <when test="zzTypeThree !=null and zzTypeThree !=''">
+                  and suc.certificateuuid like '%${zzTypeThree}%'
+                </when>
+                <when test="zzTypeTwo !=null and zzTypeTwo !=''">
+                    and suc.certificateuuid like '%${zzTypeTwo}%'
+                </when>
+                <when test="zzTypeOne !=null and zzTypeOne !=''">
+                    join (select distinct concat('%',majoruuid,'%') as majorUuid
+                    from mishu.aptitude_dictionary
+                    where aptitudeCode=#{zzTypeOne}) zzdic on suc.certificateUuid like zzdic.majorUuid
+                </when>
+            </choose>
+        </if>
+        <if test="(regtions !=null and regtions !='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='' and projSumEnd !=null and projSumEnd !='') or (kbStart !=null and kbEnd !=null)">
+            join mishu.${detailTable} detail on s.id=detail.snatchurlid
+            <if test="regtions !=null">
+                and(
+                <foreach item = "dq" index="index" collection = "regtions" separator=" or ">
+                    detail.projDq like '%${dq}%'
+                </foreach>
+                )
+            </if>
+            <if test="modeStr != null">
+                and detail.pbMode in(${modeStr})
+            </if>
+            <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='')">
+                <if test="(projSumStart !=null and projSumStart!='')" >
+                    and detail.projSum &gt;= #{projSumStart}
+                </if>
+                <if test="(projSumEnd !=null and projSumEnd!='')" >
+                    and detail.projSum &lt;= #{projSumEnd}
+                </if>
+            </if>
+            <if test="(kbDateStart !=null and kbDateStart !='')">
+                and detail.tbEndDate &gt;= #{kbDateStart}
+            </if>
+            <if test="( kbDateEnd !=null and kbDateEnd !='')">
+                and detail.tbEndDate &lt;= #{kbDateEnd}
+            </if>
+        </if>
+        WHERE s.type = #{type} AND TO_DAYS(NOW())-30 &lt; TO_DAYS(openDate) and s.isShow = 0
+        order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
+    </select>
+
+</mapper>
