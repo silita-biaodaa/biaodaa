@@ -56,6 +56,7 @@ public class TbCompanyService {
     public Map<String,List<TbCompanyQualification>> queryCompanyQualification(Integer comId){
         Map<String,List<TbCompanyQualification>> qualMap = new HashMap<>();
         if(comId!=null){
+            // TODO: 18/4/10 需要关联标准资质表
             List<TbCompanyQualification> list = tbCompanyQualificationMapper.queryCompanyQualification(comId);
             for(TbCompanyQualification qual : list){
                 if(qual.getQualType()!=null&&qual.getRange()!=null){
@@ -68,7 +69,7 @@ public class TbCompanyService {
 
                     }
                     String [] range = qual.getRange().split("；");
-                    if(range.length>2){
+                    if(range.length>=2){
                         for(int i = 0;i<range.length;i++){
                             TbCompanyQualification qualT = qual.clon();
                             qualT.setQualName(range[i]);
@@ -202,6 +203,18 @@ public class TbCompanyService {
         return list;
     }
 
+    
+    public List<Map<String,String>> getIndustry(){
+        return aptitudeDictionaryMapper.getIndustry();
+    }
+
+    public PageInfo filterCompany(Page page,Map<String,Object> param){
+        List<TbCompany> list = new ArrayList<>();
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        list = tbCompanyMapper.filterCompany(param);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
 
 
 
