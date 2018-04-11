@@ -354,11 +354,11 @@ public class NoticeService {
 
     public PageInfo searchNoticeList(Page page,Map params){
         String type =  MapUtils.getString(params,"type");
-        String dqsStr =  MapUtils.getString(params,"regtions");
+        String dqsStr =  MapUtils.getString(params,"regions");
         String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
         if(dqsStrList!=null && dqsStrList.length>0){
             List dqs =Arrays.asList(dqsStrList);
-            params.put("regtions",dqs);
+            params.put("regions",dqs);
         }
         String pbModes = MapUtils.getString(params,"pbModes");
         String[] pbModesList =MyStringUtils.splitParam(pbModes);

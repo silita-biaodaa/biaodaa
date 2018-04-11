@@ -38,11 +38,11 @@
                 </when>
             </choose>
         </if>
-        <if test="(regtions !=null and regtions !='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='' and projSumEnd !=null and projSumEnd !='') or (kbStart !=null and kbEnd !=null)">
+        <if test="(regions !=null and regions !='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='' and projSumEnd !=null and projSumEnd !='') or (kbStart !=null and kbEnd !=null)">
             join mishu.${detailTable} detail on s.id=detail.snatchurlid
-            <if test="regtions !=null">
+            <if test="regions !=null">
                 and(
-                <foreach item = "dq" index="index" collection = "regtions" separator=" or ">
+                <foreach item = "dq" index="index" collection = "regions" separator=" or ">
                     detail.projDq like '%${dq}%'
                 </foreach>
                 )
