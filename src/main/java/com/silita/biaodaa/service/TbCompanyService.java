@@ -216,6 +216,10 @@ public class TbCompanyService {
         return pageInfo;
     }
 
+    public String getAreaCode(String name){
+        return tbCompanyMapper.getAreaCode(name);
+    }
+
 
 
 

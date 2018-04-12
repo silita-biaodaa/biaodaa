@@ -242,6 +242,12 @@ public class CompanyController {
         try {
             checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
             String regisAddress = MapUtils.getString(params, "regisAddress");
+            String areaName = "";
+            String [] areaNames = MyStringUtils.splitParam(regisAddress);
+            if(areaNames!=null&&areaNames.length>0){
+                areaName = areaNames[areaNames.length-1];
+            }
+            String areaCode = tbCompanyService.getAreaCode(areaName);
             String indestry = MapUtils.getString(params, "indestry");
             Integer minCapital = MapUtils.getInteger(params, "minCapital");
             Integer maxCapital = MapUtils.getInteger(params, "maxCapital");
@@ -252,7 +258,7 @@ public class CompanyController {
                 code = qualCodes[qualCodes.length-1];
             }
             Map<String,Object> param = new HashMap<>();
-            param.put("regisAddress",regisAddress);
+            param.put("areaCode",areaCode);
             param.put("indestry",indestry);
             param.put("minCapital",minCapital);
             param.put("maxCapital",maxCapital);
