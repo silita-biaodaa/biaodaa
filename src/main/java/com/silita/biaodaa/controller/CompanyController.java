@@ -248,7 +248,7 @@ public class CompanyController {
                 areaName = areaNames[areaNames.length-1];
             }
             String areaCode = tbCompanyService.getAreaCode(areaName);
-            if(regisAddress!=null&&areaCode==null){
+            if(regisAddress!=null&&!"".equals(regisAddress)&&areaCode==null){
                 areaCode = "99999";//查询结果为空
             }
             String indestry = MapUtils.getString(params, "indestry");
