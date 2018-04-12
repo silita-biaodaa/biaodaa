@@ -90,14 +90,17 @@
                 and detail.tbEndDate &lt;= #{kbDateEnd}
             </if>
         </if>
-        WHERE TO_DAYS(NOW())-30 &lt; TO_DAYS(openDate)
+        WHERE s.isShow = 0
+        <if test="projectType !=null and projectType!=''">
+            and s.biddingType =#{projectType}
+        </if>
         <if test="province !=null and province !=''" >
         and s.province =(select name_abbr from mishu.area ar where ar.name = #{province}  and grade=0)
         </if>
         <if test="city !=null and city !=''" >
         and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
         </if>
-        and s.type = #{type} AND TO_DAYS(NOW())-30 &lt; TO_DAYS(openDate) and s.isShow = 0
+        and s.type = #{type}
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </select>
 
