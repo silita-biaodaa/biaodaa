@@ -6,18 +6,16 @@
   <select id="queryCompanyList" resultType="com.silita.biaodaa.model.TbCompany" parameterType="String">
     select c.*,s.cert_no,s.cert_date,s.valid_date,b.runScope as comRange,b.registerStatus as subsist from tb_company c
     left join tb_safety_certificate s on c.com_name = s.com_name
-    left join mishu_next.cert_basic b on b.registerNo = c.org_code
+    left join mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
     where 1=1
-    and b.companyName = c.com_name
     and c.com_name like CONCAT('%',#{keyWord},'%')
   </select>
 
   <select id="getCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Integer">
     select c.*,s.cert_no,s.cert_date,s.valid_date,b.runScope as comRange,b.registerStatus as subsist from tb_company c
     left join tb_safety_certificate s on c.com_name = s.com_name
-    left join mishu_next.cert_basic b on b.registerNo = c.org_code
+    left join mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
     where 1=1
-    and b.companyName = c.com_name
     and c.com_id = #{comId}
     limit 1
   </select>
@@ -26,10 +24,9 @@
     select c.*,s.cert_no,s.cert_date,s.valid_date,b.runScope as comRange,b.registerStatus as subsist
     from tb_company c
     left join tb_safety_certificate s on c.com_name = s.com_name
-    left join mishu_next.cert_basic b on b.registerNo = c.org_code
+    left join mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
     left join area a on a.name = c.regis_address
     where 1=1
-    and b.companyName = c.com_name
     <if test="areaCode!=null and areaCode!=''">
       and a.code like CONCAT(#{areaCode},'%')
     </if>
