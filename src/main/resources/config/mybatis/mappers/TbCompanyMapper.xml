@@ -48,7 +48,7 @@
   </select>
 
   <select id="getAreaCode" parameterType="String" resultType="String">
-    select code from area where `name`=#{name} limit 1
+    select code from area where `name`=#{name} or display_name=#{name}
   </select>
 
 </mapper>
