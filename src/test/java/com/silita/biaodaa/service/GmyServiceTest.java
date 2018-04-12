@@ -1,0 +1,72 @@
+package com.silita.biaodaa.service;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+ * Created by 91567 on 2018/4/12.
+ */
+@WebAppConfiguration
+public class GmyServiceTest extends ConfigTest {
+
+    protected MockMvc mockMvc;
+    @Autowired
+    protected WebApplicationContext wac;
+
+    @Before()
+    public void setup()
+    {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();  //初始化MockMvc对象
+    }
+
+
+    @Test
+    public void testController()throws Exception{
+        String requestBody = "{\"type\":0,\"showType\":0}";
+        String responseString = mockMvc.perform(get("/foundation/listBannerImage").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController2()throws Exception{
+        String requestBody = "{\"userId\":\"dba718748d3e4a2096c1c948b77a77bd\",\"isSystem\":1,\"pageNo\":1,\"pageSize\":20}";
+        String responseString = mockMvc.perform(post("/userCenter/listMessageByUserId").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController3()throws Exception{
+        String requestBody = "{\"type\":1}";
+        String responseString = mockMvc.perform(post("/foundation/listHotHotWords").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+}
