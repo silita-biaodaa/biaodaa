@@ -4,7 +4,12 @@ package com.silita.biaodaa.controller;
  * Created by dh on 2018/4/11.
  */
 public abstract class BaseController {
+    public String CODE_FLAG="code";
+
+    public String MSG_FLAG="msg";
+
     public String SUCCESS_CODE="0";
+
     public String SUCCESS_MSG="操作成功";
 
     public String INVALIDATE_PARAM_CODE="9999";
@@ -14,6 +19,8 @@ public abstract class BaseController {
     public int maxPageNum=30;
 
     public int maxPageSize=20;
+
+    public String minDate="2018-01-01";
 
 
 

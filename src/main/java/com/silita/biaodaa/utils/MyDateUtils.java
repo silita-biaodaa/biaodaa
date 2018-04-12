@@ -5,6 +5,9 @@ package com.silita.biaodaa.utils;
  * Description:Class说明：日期格式化类
  *
  */
+
+import org.apache.commons.lang3.time.DateUtils;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -16,9 +19,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class DateUtils {
+public class MyDateUtils {
 
-	public DateUtils() {
+	public MyDateUtils() {
 	}
 
 	public final static Calendar myc = Calendar.getInstance();
@@ -53,7 +56,7 @@ public class DateUtils {
 		if (parrten == null || parrten.equals("")) {
 			parrten = "yyyy-MM-dd";
 		}
-		return DateUtils.getTime(parrten);
+		return MyDateUtils.getTime(parrten);
 	}
 
 	/**
@@ -82,7 +85,7 @@ public class DateUtils {
 		if (parrten == null || parrten.equals("")) {
 			parrten = "yyyy/MM/dd";
 		}
-		return DateUtils.getTime(date,parrten);
+		return MyDateUtils.getTime(date,parrten);
 	}
 
 	/**
@@ -94,7 +97,7 @@ public class DateUtils {
 		if (parrten == null || parrten.equals("")) {
 			parrten = "yyyy-M-d";
 		}
-		return DateUtils.getTime(date,parrten);
+		return MyDateUtils.getTime(date,parrten);
 	}
 
 	/**
@@ -275,7 +278,7 @@ public class DateUtils {
 			pattern = "yyyy-MM-dd";
 		}
 		try{
-			Calendar cc = DateUtils.parseCalendarFormat(time, pattern);
+			Calendar cc = MyDateUtils.parseCalendarFormat(time, pattern);
 			cc.roll(Calendar.DAY_OF_YEAR, 1);
 			SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 			timestr = sdf.format(cc.getTime());
@@ -298,7 +301,7 @@ public class DateUtils {
 			pattern = "yyyy-MM-dd";
 		}
 		try{
-			Calendar cc = DateUtils.parseCalendarFormat(time, pattern);
+			Calendar cc = MyDateUtils.parseCalendarFormat(time, pattern);
 			cc.roll(Calendar.DAY_OF_YEAR, -1);
 			SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 			timestr = sdf.format(cc.getTime());
@@ -697,12 +700,55 @@ public class DateUtils {
 		lastday = format.format(cale.getTime());
 		System.out.println("本月第一天和最后一天分别是 ： " + firstday + " and " + lastday);*/
 
-		int days = DateUtils.getDaysByYearMonth(Integer.parseInt("201803".substring(0,4))
+		int days = MyDateUtils.getDaysByYearMonth(Integer.parseInt("201803".substring(0,4))
 				,Integer.parseInt("201805".substring(4,6)));
 		System.out.println(days);
 
-		System.out.println(DateUtils.getYearMonth("201802"));
+		System.out.println(MyDateUtils.getYearMonth("201802"));
 
+	}
+
+	/**
+	 * 获取两个日期之间的天数
+	 *
+	 * @param before
+	 * @param after
+	 * @return
+	 */
+	public static double getDistanceOfTwoDate(Date before, Date after) {
+		long beforeTime = before.getTime();
+		long afterTime = after.getTime();
+		return (afterTime - beforeTime) / (1000 * 60 * 60 * 24);
+	}
+
+	public static double getDistanceOfTwoDate(String before, String after) {
+		Date beforeDate = parseDate(before);
+		Date afterDate = parseDate(after);
+		long beforeTime = beforeDate.getTime();
+		long afterTime = afterDate.getTime();
+		return (afterTime - beforeTime) / (1000 * 60 * 60 * 24);
+	}
+
+	private static String[] parsePatterns = {
+			"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM",
+			"yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM",
+			"yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM"};
+
+	/**
+	 * 日期型字符串转化为日期 格式
+	 * { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm",
+	 *   "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm",
+	 *   "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm" }
+	 */
+	public static Date parseDate(Object str) {
+		if (str == null){
+			return null;
+		}
+		try {
+			return DateUtils.parseDate(str.toString(), parsePatterns);
+		} catch (ParseException e) {
+			return null;
+		}
 	}
 
 }

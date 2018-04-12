@@ -5,6 +5,8 @@ import com.silita.biaodaa.common.SnatchContent;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
+import com.silita.biaodaa.utils.MyDateUtils;
+import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.apache.commons.collections.MapUtils.getString;
 
 /**
  * Created by dh on 2018/4/9.
@@ -45,9 +49,19 @@ public class NoticeController extends BaseController{
 //        encodingConvert(search);
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
-            if(pageSize>maxPageSize || pageNo>maxPageNum){
-                resultMap.put("code", INVALIDATE_PARAM_CODE);
-                resultMap.put("msg", "超出访问范围！");
+            String kbDateStart= MapUtils.getString(params, "kbDateStart");
+            String kbDateEnd= MapUtils.getString(params, "kbDateEnd");
+            if(MyStringUtils.isNotNull(kbDateStart)
+                    && MyDateUtils.getDistanceOfTwoDate(kbDateStart,this.minDate)>0){
+                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
+                resultMap.put(this.MSG_FLAG, "开标开始时间超出访问范围！");
+            }else if(MyStringUtils.isNotNull(kbDateEnd)
+                    && MyDateUtils.getDistanceOfTwoDate(kbDateEnd,this.minDate)>0){
+                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
+                resultMap.put(this.MSG_FLAG, "开标结束时间超出访问范围！");
+            }else if(pageSize>maxPageSize || pageNo>maxPageNum){
+                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
+                resultMap.put(this.MSG_FLAG, "超出访问范围！");
             }else {
                 if (pageNo >= maxPageNum) {
                     resultMap.put("isLastPage", true);
@@ -63,21 +77,21 @@ public class NoticeController extends BaseController{
                 resultMap.put("pageSize", pageInfo.getPageSize());
                 resultMap.put("total", pageInfo.getTotal());
                 resultMap.put("pages", pageInfo.getPages());
-                resultMap.put("code", 1);
-                resultMap.put("msg", "成功!");
+                resultMap.put(this.CODE_FLAG, 1);
+                resultMap.put(this.MSG_FLAG, "成功!");
             }
             //        recordAccessCount(request,params); 记录访问数
         }catch (Exception e){
             logger.error(e,e);
-            resultMap.put("code",0);
-            resultMap.put("msg",e.getMessage());
+            resultMap.put(this.CODE_FLAG,0);
+            resultMap.put(this.MSG_FLAG,e.getMessage());
         }
 
         return resultMap;
     }
 
     private void recordAccessCount(HttpServletRequest request,Map params){
-        String type =  MapUtils.getString(params,"type");
+        String type =  getString(params,"type");
         Map<String, String> preMap = parseRequest(request);
         String userId = preMap.get("userId");
         String ipAddr = preMap.get("ipAddr");
