@@ -100,7 +100,7 @@
         <if test="city !=null and city !=''" >
         and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
         </if>
-        and s.type = #{type}
+        and s.type = #{type} and TO_DAYS(NOW())-90 &lt; TO_DAYS(openDate)
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </select>
 

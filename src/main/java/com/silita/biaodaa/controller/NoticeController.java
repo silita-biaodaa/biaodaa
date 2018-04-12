@@ -1,12 +1,15 @@
 package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.SnatchContent;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
+import com.silita.biaodaa.utils.ObjectUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +36,9 @@ public class NoticeController extends BaseController{
     private Log logger = LogFactory.getLog(NoticeController.class);
 
     @Autowired
+    private MyRedisTemplate myRedisTemplate;
+
+    @Autowired
     private NoticeService noticeService;
 
     @Autowired
@@ -43,7 +49,6 @@ public class NoticeController extends BaseController{
     @RequestMapping(value = "/queryList",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map<String,Object> queryList(@RequestBody Map params){
         Map resultMap = new HashMap();
-
         try {
 //        search.setTypeToInt(type);
 //        encodingConvert(search);
@@ -71,19 +76,28 @@ public class NoticeController extends BaseController{
                 Page page = new Page();
                 page.setPageSize(pageSize);
                 page.setCurrentPage(pageNo);
-                PageInfo pageInfo = noticeService.searchNoticeList(page, params);
+
+                int paramHash = ObjectUtils.buildMapParamHash(params);
+                String listKey = RedisConstantInterface.GG_LIST + paramHash;
+                PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
+                if (pageInfo == null) {
+                    pageInfo = noticeService.searchNoticeList(page, params);
+                    if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
+                        myRedisTemplate.setObject(listKey, pageInfo, RedisConstantInterface.LIST_OVER_TIME);
+                    }
+                }
                 resultMap.put("data", pageInfo.getList());
                 resultMap.put("pageNum", pageInfo.getPageNum());
                 resultMap.put("pageSize", pageInfo.getPageSize());
                 resultMap.put("total", pageInfo.getTotal());
                 resultMap.put("pages", pageInfo.getPages());
-                resultMap.put(this.CODE_FLAG, 1);
-                resultMap.put(this.MSG_FLAG, "成功!");
+                resultMap.put(this.CODE_FLAG, SUCCESS_CODE);
+                resultMap.put(this.MSG_FLAG, SUCCESS_MSG);
             }
             //        recordAccessCount(request,params); 记录访问数
         }catch (Exception e){
             logger.error(e,e);
-            resultMap.put(this.CODE_FLAG,0);
+            resultMap.put(this.CODE_FLAG,this.FAIL_CODE);
             resultMap.put(this.MSG_FLAG,e.getMessage());
         }
 

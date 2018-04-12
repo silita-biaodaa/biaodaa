@@ -8,9 +8,11 @@ public abstract class BaseController {
 
     public String MSG_FLAG="msg";
 
-    public String SUCCESS_CODE="0";
+    public String SUCCESS_CODE="1";
 
     public String SUCCESS_MSG="操作成功";
+
+    public String FAIL_CODE="0";
 
     public String INVALIDATE_PARAM_CODE="9999";
 

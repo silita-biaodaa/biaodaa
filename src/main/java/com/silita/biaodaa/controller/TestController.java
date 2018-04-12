@@ -1,21 +1,17 @@
 package com.silita.biaodaa.controller;
 
 import com.google.common.collect.ImmutableMap;
-import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TUser;
-import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.service.TestService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -30,9 +26,6 @@ public class TestController {
 
     @Autowired
     TestService testService;
-
-    @Autowired
-    RedisTemplate redisTemplate;
 
     @Autowired
     TbCompanyService tbCompanyService;
