@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.MessagePushMapper">
+
+    <select id="listMessageByUserIdAndType" parameterType="Map" resultType="com.silita.biaodaa.model.MessagePush">
+        SELECT * FROM mishu.message_push
+        <where>
+            is_send = 1
+            <if test="userId!=null and userId!=''">
+                AND userId = #{userId}
+            </if>
+            <if test="is_system!=null">
+                AND is_system = #{isSystem}
+            </if>
+        </where>
+    </select>
+</mapper>

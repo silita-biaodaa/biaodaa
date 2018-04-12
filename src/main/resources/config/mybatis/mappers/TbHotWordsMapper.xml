@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbHotWordsMapper">
+    <select id="listHotWordsByType" parameterType="Integer" resultType="com.silita.biaodaa.model.TbHotWords">
+      SELECT * FROM mishu_write.tb_hot_words
+      <where>
+          <if test="type!=null">
+              AND type = #{type}
+          </if>
+      </where>
+      GROUP BY word
+      ORDER BY COUNT(word) DESC
+      LIMIT 0, 20;
+  </select>
+</mapper>

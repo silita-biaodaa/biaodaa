@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.CarouselImageMapper">
+
+    <select id="listCarouselImageByTypeAndShowType" parameterType="Map" resultType="com.silita.biaodaa.model.CarouselImage">
+        SELECT * FROM mishu.carousel_image
+        <where>
+            <if test="showType!=null">
+                showType = #{showType}
+            </if>
+            <if test="type!=null">
+               AND type = #{type}
+            </if>
+        </where>
+        ORDER BY orderNum DESC
+    </select>
+
+</mapper>
