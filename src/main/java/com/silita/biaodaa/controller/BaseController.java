@@ -5,7 +5,15 @@ package com.silita.biaodaa.controller;
  */
 public abstract class BaseController {
     public String SUCCESS_CODE="0";
-    public String SUCCESS_MSG="success";
+    public String SUCCESS_MSG="操作成功";
+
+    public String INVALIDATE_PARAM_CODE="9999";
+
+    public String INVALIDATE_PARAM_MSG="前端参数有误";
+
+    public int maxPageNum=30;
+
+    public int maxPageSize=20;
 
 
 

@@ -39,21 +39,34 @@ public class NoticeController extends BaseController{
     @RequestMapping(value = "/queryList",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map<String,Object> queryList(@RequestBody Map params){
         Map resultMap = new HashMap();
+
         try {
 //        search.setTypeToInt(type);
 //        encodingConvert(search);
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
-            Page page = new Page();
-            page.setPageSize(pageSize);
-            page.setCurrentPage(pageNo);
-            PageInfo pageInfo = noticeService.searchNoticeList(page, params);
-            resultMap.put("data",pageInfo.getList());
-            resultMap.put("pageNum",pageInfo.getPageNum());
-            resultMap.put("pageSize", pageInfo.getPageSize());
-            resultMap.put("total",pageInfo.getTotal());
-            resultMap.put("pages",pageInfo.getPages());
-            //        recordAccessCount(request,params);
+            if(pageSize>maxPageSize || pageNo>maxPageNum){
+                resultMap.put("code", INVALIDATE_PARAM_CODE);
+                resultMap.put("msg", "超出访问范围！");
+            }else {
+                if (pageNo >= maxPageNum) {
+                    resultMap.put("isLastPage", true);
+                } else {
+                    resultMap.put("isLastPage", false);
+                }
+                Page page = new Page();
+                page.setPageSize(pageSize);
+                page.setCurrentPage(pageNo);
+                PageInfo pageInfo = noticeService.searchNoticeList(page, params);
+                resultMap.put("data", pageInfo.getList());
+                resultMap.put("pageNum", pageInfo.getPageNum());
+                resultMap.put("pageSize", pageInfo.getPageSize());
+                resultMap.put("total", pageInfo.getTotal());
+                resultMap.put("pages", pageInfo.getPages());
+                resultMap.put("code", 1);
+                resultMap.put("msg", "成功!");
+            }
+            //        recordAccessCount(request,params); 记录访问数
         }catch (Exception e){
             logger.error(e,e);
             resultMap.put("code",0);

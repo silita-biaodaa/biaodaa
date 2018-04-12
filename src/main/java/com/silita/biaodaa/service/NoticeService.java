@@ -9,7 +9,6 @@ import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -357,8 +356,14 @@ public class NoticeService {
         String dqsStr =  MapUtils.getString(params,"regions");
         String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
         if(dqsStrList!=null && dqsStrList.length>0){
-            List dqs =Arrays.asList(dqsStrList);
-            params.put("regions",dqs);
+            if(dqsStrList.length==1){
+                params.put("province",dqsStrList[0]);
+            }else if(dqsStrList.length==2){
+                params.put("province",dqsStrList[0]);
+                if(MyStringUtils.isNotNull(dqsStrList[1])) {
+                    params.put("city", dqsStrList[1].replace("市",""));
+                }
+            }
         }
         String pbModes = MapUtils.getString(params,"pbModes");
         String[] pbModesList =MyStringUtils.splitParam(pbModes);

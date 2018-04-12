@@ -15,6 +15,31 @@
 
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
         SELECT s.id,s.title,s.opendate
+        ,(case s.otherType
+            when '0' then '公告'
+            when '1' then '补充'
+            when '2' then '答疑'
+            when '3' then '流标'
+            when '4' then '澄清'
+            when '5' then '延期'
+            when '6' then '更正公告'
+            when '7' then '废标'
+            when '8' then '终止'
+            when '9' then '修改'
+            when '10' then '控制价'
+            when '11' then '资审结果'
+            when '12' then '资格预审'
+            when '13' then '入围'
+            when '14' then '暂停'
+            else '其他' end) as noticeType
+        ,( case biddingType
+            when '0' then '施工'
+            when '2' then '监理'
+            when '3' then '采购'
+            when '1' then '设计'
+            when '4' then '勘察'
+            when '5' then '其他'
+            else '其他' end) as projectType
         ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.${detailTable} WHERE snatchUrlId =s.id ) pbMode
         ,(SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
         <if test="type == '2'">
@@ -38,25 +63,25 @@
                 </when>
             </choose>
         </if>
-        <if test="(regions !=null and regions !='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='' and projSumEnd !=null and projSumEnd !='') or (kbStart !=null and kbEnd !=null)">
+        <if test=" (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')">
             join mishu.${detailTable} detail on s.id=detail.snatchurlid
-            <if test="regions !=null">
-                and(
-                <foreach item = "dq" index="index" collection = "regions" separator=" or ">
-                    detail.projDq like '%${dq}%'
-                </foreach>
-                )
-            </if>
+            <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
+                <!--and(-->
+                <!--<foreach item = "dq" index="index" collection = "regions" separator=" or ">-->
+                    <!--<if test="dq!=null and dq!=''">-->
+                    <!--detail.projDq like '%${dq}%'-->
+                    <!--</if>-->
+                <!--</foreach>-->
+                <!--)-->
+            <!--</if>-->
             <if test="modeStr != null">
                 and detail.pbMode in(${modeStr})
             </if>
-            <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='')">
-                <if test="(projSumStart !=null and projSumStart!='')" >
-                    and detail.projSum &gt;= #{projSumStart}
-                </if>
-                <if test="(projSumEnd !=null and projSumEnd!='')" >
-                    and detail.projSum &lt;= #{projSumEnd}
-                </if>
+            <if test="(projSumStart !=null and projSumStart!='')" >
+                and detail.projSum &gt;= #{projSumStart}
+            </if>
+            <if test="(projSumEnd !=null and projSumEnd!='')" >
+                and detail.projSum &lt;= #{projSumEnd}
             </if>
             <if test="(kbDateStart !=null and kbDateStart !='')">
                 and detail.tbEndDate &gt;= #{kbDateStart}
@@ -65,7 +90,14 @@
                 and detail.tbEndDate &lt;= #{kbDateEnd}
             </if>
         </if>
-        WHERE s.type = #{type} AND TO_DAYS(NOW())-30 &lt; TO_DAYS(openDate) and s.isShow = 0
+        WHERE TO_DAYS(NOW())-30 &lt; TO_DAYS(openDate)
+        <if test="province !=null and province !=''" >
+        and s.province =(select name_abbr from mishu.area ar where ar.name = #{province}  and grade=0)
+        </if>
+        <if test="city !=null and city !=''" >
+        and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
+        </if>
+        and s.type = #{type} AND TO_DAYS(NOW())-30 &lt; TO_DAYS(openDate) and s.isShow = 0
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </select>
 
