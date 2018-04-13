@@ -26,6 +26,17 @@
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <filter>
+        <filter-name>IsLogin</filter-name>
+        <filter-class>com.silita.biaodaa.common.CheckLoginFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>IsLogin</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <context-param>
         <param-name>log4jRefreshInterval</param-name>
         <param-value>60000</param-value>
