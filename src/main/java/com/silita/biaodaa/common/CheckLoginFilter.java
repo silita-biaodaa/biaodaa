@@ -10,6 +10,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Base64;
 import java.util.Map;
 
@@ -32,8 +33,8 @@ public class CheckLoginFilter implements Filter {
 
         String sign = null;
         String name = null;
-        String pwd = null;
-        String showName = null;
+        String password = null;
+        String phone = null;
         String userId = null;
         Map<String, String> parameters = new HashedMap();
         if(xToken!=null){
@@ -43,16 +44,16 @@ public class CheckLoginFilter implements Filter {
                 String json = new String(Base64.getDecoder().decode(token[1]),"utf-8");
                 JSONObject jsonObject = (JSONObject) JSONObject.parse(json);
                 name = jsonObject.getString("name");
-                pwd = jsonObject.getString("pwd");
-                showName = jsonObject.getString("showName");
+                password = jsonObject.getString("password");
+                phone = jsonObject.getString("phone");
                 userId = jsonObject.getString("userId");
                 parameters.put("name", name);
-                parameters.put("pwd", pwd);
-                parameters.put("showName", showName);
+                parameters.put("password", password);
+                parameters.put("phone", phone);
                 parameters.put("userId",userId);
             }
         }
-        VisitInfoHolder.setUserId(showName);
+        VisitInfoHolder.setUserId(phone);
         VisitInfoHolder.setUid(userId);
 
         //FILTER_URL
@@ -79,8 +80,10 @@ public class CheckLoginFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
         }else{
             //LOGGER.info("进入登录系统Filter,["+requestUri+"]["+xToken+"]无权限");
-            request.setAttribute("msg", "您登录未授权");
-            request.getRequestDispatcher("/fail.jsp").forward(request, response);
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("application/json; charset=utf-8");
+            PrintWriter out = response.getWriter();
+            out.print("{\"code\":0,\"msg\":\"没权限\"}");
         }
 
     }
