@@ -23,4 +23,7 @@ public class InvitationBdd {
     private String invitationState;
 
     private Date createdate;
+
+    //用于区分注册、找回密码等短信类型
+    private Integer type;
 }

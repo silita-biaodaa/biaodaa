@@ -52,4 +52,7 @@ public class UserTempBdd {
     private String invitationCode;
     //版本号
     private String version;
+
+    //用于权限控制
+    private String xtoken;
 }

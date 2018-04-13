@@ -76,35 +76,13 @@ public class AuthorizeController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/getRegisterVerificationCode",produces = "application/json;charset=utf-8")
-    public Map<String,Object> getRegisterVerificationCode(@RequestBody InvitationBdd invitation){
+    @RequestMapping(value = "/getVerificationCode",produces = "application/json;charset=utf-8")
+    public Map<String,Object> getVerificationCode(@RequestBody InvitationBdd invitation){
         Map result = new HashMap();
         result.put("code", 1);
 
         try{
             String msg = authorizeService.sendRegisterVerificationCode(invitation);
-            if("".equals(msg)) {
-                result.put("msg", "获取验证码信息成功！");
-            } else {
-                result.put("code", 0);
-                result.put("msg", msg);
-            }
-        } catch (Exception e) {
-            logger.error("获取验证码信息异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
-        }
-        return result;
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/getUpdatePassWdVerificationCode",produces = "application/json;charset=utf-8")
-    public Map<String,Object> getUpdatePassWdVerificationCode(@RequestBody InvitationBdd invitation){
-        Map result = new HashMap();
-        result.put("code", 1);
-
-        try{
-            String msg = authorizeService.sendUpdatePassWdVerificationCode(invitation);
             if("".equals(msg)) {
                 result.put("msg", "获取验证码信息成功！");
             } else {

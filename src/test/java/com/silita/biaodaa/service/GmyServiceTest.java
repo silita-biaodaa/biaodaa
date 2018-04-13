@@ -73,21 +73,8 @@ public class GmyServiceTest extends ConfigTest {
 
     @Test
     public void testController4()throws Exception{
-        String requestBody = "{\"invitationIp\":\"127.0.0.1\", \"invitationPhone\":\"18774987061\"}";
-        String responseString = mockMvc.perform(post("/authorize/getRegisterVerificationCode").characterEncoding("UTF-8")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody.getBytes())
-        )
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn().getResponse().getContentAsString();
-        System.out.println("-----返回的json = " + responseString);
-    }
-
-    @Test
-    public void testController5()throws Exception{
-        String requestBody = "{\"invitationIp\":\"127.0.0.1\", \"invitationPhone\":\"18774987061\"}";
-        String responseString = mockMvc.perform(post("/authorize/getUpdatePassWdVerificationCode").characterEncoding("UTF-8")
+        String requestBody = "{\"invitationIp\":\"127.0.0.1\",\"invitationPhone\":\"18774987061\",\"type\":1}";
+        String responseString = mockMvc.perform(post("/authorize/getVerificationCode").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody.getBytes())
         )

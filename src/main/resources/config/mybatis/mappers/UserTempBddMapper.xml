@@ -7,8 +7,10 @@
     </select>
 
     <insert id="InsertUserTemp" parameterType="com.silita.biaodaa.model.UserTempBdd">
-        INSERT INTO mishu_write.user_temp_bdd(userId, userName, userPass, userPhone, loginChannel, registrationTime)
-        VALUES(#{userid}, #{username}, #{userpass}, #{userphone}, #{loginchannel}, now())
+        INSERT INTO mishu_write.user_temp_bdd(userId, userName, userPass, userPhone, loginChannel,
+        registrationTime)
+        VALUES(#{userid}, #{username}, #{userpass}, #{userphone}, #{loginchannel},
+        now())
     </insert>
 
     <select id="getUserByUserNameOrPhoneAndPassWd" parameterType="com.silita.biaodaa.model.UserTempBdd" resultType="com.silita.biaodaa.model.UserTempBdd">

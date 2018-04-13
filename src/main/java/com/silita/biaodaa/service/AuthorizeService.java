@@ -1,5 +1,6 @@
 package com.silita.biaodaa.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.common.SendMessage;
 import com.silita.biaodaa.dao.InvitationBddMapper;
 import com.silita.biaodaa.dao.UserRoleBddMapper;
@@ -7,11 +8,17 @@ import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.model.InvitationBdd;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.utils.CommonUtil;
+import com.silita.biaodaa.utils.PropertiesUtils;
+import com.silita.biaodaa.utils.SignConvertUtil;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,11 +82,32 @@ public class AuthorizeService {
         } else {
             userTempBdd.setUserpass(DigestUtils.shaHex(userTempBdd.getUserpass()));
         }
-        return userTempBddMapper.getUserByUserNameOrPhoneAndPassWd(userTempBdd);
+        UserTempBdd vo = userTempBddMapper.getUserByUserNameOrPhoneAndPassWd(userTempBdd);
+        //权限token
+        if(vo != null && !StringUtils.isEmpty(vo.getUserid())) {
+            Map<String, String> parameters = new HashedMap();
+            parameters.put("name", vo.getUsername());
+            parameters.put("password", vo.getUserpass());
+            parameters.put("phone", vo.getUserphone());
+            parameters.put("userId", vo.getUserid());
+            try {
+                String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
+                String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
+                String parameterJson = JSONObject.toJSONString(parameters);
+                String asB64 = Base64.getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
+                String xtoken = sign + "." + asB64;
+                vo.setXtoken(xtoken);
+            } catch(NoSuchAlgorithmException e) {
+                //logger.error(e.getMessage(), e);
+            } catch(UnsupportedEncodingException e) {
+                //logger.error(e.getMessage(), e);
+            }
+        }
+        return vo;
     }
 
     /**
-     * 注册验证码
+     * 验证码
      *
      * @param invitationBdd
      */
@@ -91,8 +119,14 @@ public class AuthorizeService {
         //随机生成验证码
         String code = CommonUtil.verificationCode();
         invitationBdd.setInvitationCode(code);
-        //发送信息
-        String flag = SendMessage.registerCode(code, invitationBdd.getInvitationPhone());
+        String flag = "";
+        if(invitationBdd.getType() == 1) {
+            //发送信息 注册验证码
+            flag = SendMessage.registerCode(code, invitationBdd.getInvitationPhone());
+        } else if(invitationBdd.getType() == 2) {
+            //发送信息 找回密码验证码
+            flag = SendMessage.updatePasswdCode(code, invitationBdd.getInvitationPhone());
+        }
         //发生成功
         if ("0".equals(flag)) {
             invitationBddMapper.insertInvitationBdd(invitationBdd);
@@ -101,26 +135,6 @@ public class AuthorizeService {
             return flag;
         }
 //        }
-    }
-
-    /**
-     * 找回密码验证码
-     *
-     * @param invitationBdd
-     */
-    public String sendUpdatePassWdVerificationCode(InvitationBdd invitationBdd) {
-        //随机生成验证码
-        String code = CommonUtil.verificationCode();
-        invitationBdd.setInvitationCode(code);
-        //发送信息
-        String flag = SendMessage.updatePasswdCode(code, invitationBdd.getInvitationPhone());
-        //发生成功
-        if ("0".equals(flag)) {
-            invitationBddMapper.insertInvitationBdd(invitationBdd);
-            return "";
-        } else {
-            return flag;
-        }
     }
 
     /**

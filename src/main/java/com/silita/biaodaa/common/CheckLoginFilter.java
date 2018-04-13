@@ -72,7 +72,7 @@ public class CheckLoginFilter implements Filter {
         }
         if(boo){
             filterChain.doFilter(servletRequest, servletResponse);
-        }else if("contentDev".equals(xToken)){
+        }else if("biaodaaTestToken".equals(xToken)){
             LOGGER.debug("进入登录系统Filter,开发者进入系统");
             filterChain.doFilter(servletRequest, servletResponse);
         }else if(SecurityCheck.checkSigner(parameters,sign)){//如果有签名先校验签名
