@@ -143,6 +143,27 @@ public class AuthorizeService {
      * @return
      */
     public UserTempBdd queryUserTempByUserPhone(UserTempBdd userTempBdd) {
-        return userTempBddMapper.getUserByUserPhone(userTempBdd.getUserphone());
+        UserTempBdd vo = userTempBddMapper.getUserByUserPhone(userTempBdd.getUserphone());
+        //权限token
+        if(vo != null && !StringUtils.isEmpty(vo.getUserid())) {
+            Map<String, String> parameters = new HashedMap();
+            parameters.put("name", vo.getUsername());
+            parameters.put("password", vo.getUserpass());
+            parameters.put("phone", vo.getUserphone());
+            parameters.put("userId", vo.getUserid());
+            try {
+                String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
+                String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
+                String parameterJson = JSONObject.toJSONString(parameters);
+                String asB64 = Base64.getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
+                String xtoken = sign + "." + asB64;
+                vo.setXtoken(xtoken);
+            } catch(NoSuchAlgorithmException e) {
+                //logger.error(e.getMessage(), e);
+            } catch(UnsupportedEncodingException e) {
+                //logger.error(e.getMessage(), e);
+            }
+        }
+        return vo;
     }
 }
