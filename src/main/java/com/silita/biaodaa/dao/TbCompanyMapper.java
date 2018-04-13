@@ -15,4 +15,8 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     List<TbCompany> filterCompany(Map<String,Object> param);
 
     String getAreaCode(String name);
+
+    List<Map<String,String>> queryProvinceList();
+
+    List<String> queryCityList(String parentId);
 }

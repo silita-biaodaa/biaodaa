@@ -221,6 +221,39 @@ public class TbCompanyService {
     }
 
 
+    public List<Map<String,Object>> getArea(){
+        List<Map<String,Object>> areaList = new ArrayList<>();
+        List<Map<String,String>> list = tbCompanyMapper.queryProvinceList();
+        for(Map<String,String> map : list){
+            Map<String,Object> area = new HashMap<>();
+            List<String> cityListT = tbCompanyMapper.queryCityList(map.get("id"));
+            List<String> cityList = new ArrayList<>();
+            for(String city : cityListT){
+                cityList.add(city.replace(map.get("display_name"),""));
+            }
+            if("北京市".equals(map.get("display_name"))){
+                cityList = new ArrayList<>();
+                for(String city : cityListT){
+                    cityList.add(city.replace("北京",""));
+                }
+            }
+            if("天津市".equals(map.get("display_name"))){
+                cityList = new ArrayList<>();
+                for(String city : cityListT){
+                    cityList.add(city.replace("天津",""));
+                }
+            }
+
+            area.put("name",map.get("display_name"));
+            area.put("list",cityList);
+            areaList.add(area);
+        }
+        return areaList;
+    }
+
+
+
+
 
 
 }

@@ -208,10 +208,12 @@ public class CompanyController {
             List<CompanyQual> companyQual = tbCompanyService.getCompanyQual();
             List<Map<String,String>> indestry =tbCompanyService.getIndustry();
             List<Map<String, Object>> pbMode = commonService.queryPbMode();
+            List<Map<String,Object>> area = tbCompanyService.getArea();
             Map<String,Object> map = new HashMap<>();
             map.put("companyQual",companyQual);
             map.put("indestry",indestry);
             map.put("pbMode",pbMode);
+            map.put("area",area);
             result.put("data",map);
             result.put("code", 1);
             result.put("msg", "筛选条件查询成功!");
