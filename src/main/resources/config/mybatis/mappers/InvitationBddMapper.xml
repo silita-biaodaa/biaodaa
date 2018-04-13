@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.InvitationBddMapper" >
+
+    <insert id="insertInvitationBdd" parameterType="com.silita.biaodaa.model.InvitationBdd">
+        INSERT INTO mishu_write.invitation_bdd(`invitation_ip`, `invitation_phone`, `Invitation_code`, `Invitation_state`, `createDate`)
+        VALUES(#{invitationIp}, #{invitationPhone}, #{invitationCode}, '0', NOW())
+    </insert>
+
+    <select id="getInvitationBddByPhoneAndCode" parameterType="Map"
+            resultType="com.silita.biaodaa.model.InvitationBdd">
+        SELECT * FROM mishu_write.invitation_bdd WHERE invitation_phone = #{invitationPhone} AND Invitation_code = #{invitationCode}
+    </select>
+
+    <select id="getTotalByPhoneAndCreateDate" parameterType="com.silita.biaodaa.model.InvitationBdd" resultType="Integer">
+        SELECT COUNT(*) FROM mishu_write.invitation_bdd WHERE invitation_phone = #{invitationPhone} AND createDate = CURDATE()
+    </select>
+
+    <update id="updateInvitationBddByCode" parameterType="String">
+        UPDATE mishu_write.invitation_bdd SET `Invitation_state` = '1' WHERE Invitation_code = #{invitationCode}
+    </update>
+</mapper>

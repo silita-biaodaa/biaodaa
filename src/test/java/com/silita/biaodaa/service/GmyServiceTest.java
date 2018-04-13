@@ -1,5 +1,6 @@
 package com.silita.biaodaa.service;
 
+import com.alibaba.fastjson.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,70 @@ public class GmyServiceTest extends ConfigTest {
     public void testController3()throws Exception{
         String requestBody = "{\"type\":1}";
         String responseString = mockMvc.perform(post("/foundation/listHotHotWords").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController4()throws Exception{
+        String requestBody = "{\"invitationIp\":\"127.0.0.1\", \"invitationPhone\":\"18774987061\"}";
+        String responseString = mockMvc.perform(post("/authorize/getRegisterVerificationCode").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController5()throws Exception{
+        String requestBody = "{\"invitationIp\":\"127.0.0.1\", \"invitationPhone\":\"18774987061\"}";
+        String responseString = mockMvc.perform(post("/authorize/getUpdatePassWdVerificationCode").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController6()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("username", "gmytest");
+        jsonObject.put("userpass", "gmytest");
+        jsonObject.put("userphone", "18774987061");
+        jsonObject.put("invitationCode", "158584");
+        jsonObject.put("version", "10100");
+        jsonObject.put("loginchannel", "1002");
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/authorize/userRegister").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController7()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("username", "gmytest");
+        jsonObject.put("userpass", "gmytest");
+        jsonObject.put("version", "10100");
+        jsonObject.put("loginchannel", "1002");
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/authorize/userLogin").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody.getBytes())
         )
