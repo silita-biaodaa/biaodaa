@@ -33,4 +33,31 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
      * @param userTempBdd
      */
     void updateUserTempByQQBind(UserTempBdd userTempBdd);
+
+    /**
+     *
+     * @param wxUnionid
+     * @return
+     */
+    UserTempBdd getUserTempByWXUnionId(String wxUnionid);
+
+    /**
+     *
+     * @param wxopenid
+     * @return
+     */
+    UserTempBdd getUserTempByWXOpenId(String wxopenid);
+
+    /**
+     *
+     * @param userTempBdd
+     */
+    void updateWXUnionIdByWXOpenId(UserTempBdd userTempBdd);
+
+    /**
+     *
+     * @param qqopenid
+     * @return
+     */
+    UserTempBdd getUserTempByQQOpenId(String qqopenid);
 }

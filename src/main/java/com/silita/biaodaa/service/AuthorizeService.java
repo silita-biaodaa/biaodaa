@@ -75,11 +75,11 @@ public class AuthorizeService {
 
     /**
      * 第三方绑定 微信\qq
-     * 1微信 2qq
+     * 1微信 2QQ
      * @param userTempBdd
      * @return
      */
-    public String updateUserTemp(UserTempBdd userTempBdd) {
+    public String updateOrInsetUserTemp(UserTempBdd userTempBdd) {
         //判断验证码是否有效
         Map<String, Object> params = new HashMap<>(1);
         params.put("invitationPhone", userTempBdd.getUserphone());
@@ -96,11 +96,12 @@ public class AuthorizeService {
         } else {
             userTempBdd.setUserpass(DigestUtils.shaHex(userTempBdd.getUserpass()));
         }
-        userTempBdd.setUserid(CommonUtil.getUUID());
         UserTempBdd vo = userTempBddMapper.getUserByUserPhone(userTempBdd.getUserphone());
-        if (vo == null || StringUtils.isEmpty(vo.getUserid())) {
+        if (vo == null) {
+            userTempBdd.setUserid(CommonUtil.getUUID());
             //没注册直接绑定
             userTempBddMapper.InsertUserTemp(userTempBdd);
+            userRoleBddMapper.insertUserRole(userTempBdd.getUserid());
         } else {
             //绑定更新
             if(userTempBdd.getType() == 1) {
@@ -109,12 +110,13 @@ public class AuthorizeService {
                 userTempBddMapper.updateUserTempByQQBind(userTempBdd);
             }
         }
+        //更新验证码状态
+        invitationBddMapper.updateInvitationBddByCode(userTempBdd.getInvitationCode());
         return "";
     }
 
     /**
      * 用户登录
-     *
      * @param userTempBdd
      * @return
      */
@@ -128,6 +130,50 @@ public class AuthorizeService {
         UserTempBdd vo = userTempBddMapper.getUserByUserNameOrPhoneAndPassWd(userTempBdd);
         //权限token
         if (vo != null && !StringUtils.isEmpty(vo.getUserid())) {
+            Map<String, String> parameters = new HashedMap();
+            parameters.put("name", vo.getUsername());
+            parameters.put("password", vo.getUserpass());
+            parameters.put("phone", vo.getUserphone());
+            parameters.put("userId", vo.getUserid());
+            try {
+                String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
+                String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
+                String parameterJson = JSONObject.toJSONString(parameters);
+                String asB64 = Base64.getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
+                String xtoken = sign + "." + asB64;
+                vo.setXtoken(xtoken);
+            } catch (NoSuchAlgorithmException e) {
+            } catch (UnsupportedEncodingException e) {
+            }
+        }
+        return vo;
+    }
+
+    /**
+     * 第三方登录
+     * 1微信 2QQ
+     * @param userTempBdd
+     * @return
+     */
+    public UserTempBdd queryUserTempByWXUnionIdOrQQOpenId(UserTempBdd userTempBdd){
+        UserTempBdd vo = null;
+        if(userTempBdd.getType() == 1) {
+            //新版登录传wxUnionId，wxopenid
+            if(!StringUtils.isEmpty(userTempBdd.getWxUnionid())) {
+                vo = userTempBddMapper.getUserTempByWXUnionId(userTempBdd.getWxUnionid());
+                //补以前的坑
+                if(vo != null) {
+                    userTempBddMapper.updateWXUnionIdByWXOpenId(vo);
+                }
+            } else {
+                //老版登录wxopenid
+                vo  = userTempBddMapper.getUserTempByWXOpenId(userTempBdd.getOpenid());
+            }
+        } else if(userTempBdd.getType() == 2) {
+            vo  = userTempBddMapper.getUserTempByQQOpenId(userTempBdd.getQqopenid());
+        }
+        //权限token
+        if (vo != null) {
             Map<String, String> parameters = new HashedMap();
             parameters.put("name", vo.getUsername());
             parameters.put("password", vo.getUserpass());
@@ -185,7 +231,7 @@ public class AuthorizeService {
     public UserTempBdd queryUserTempByUserPhone(UserTempBdd userTempBdd) {
         UserTempBdd vo = userTempBddMapper.getUserByUserPhone(userTempBdd.getUserphone());
         //权限token
-        if (vo != null && !StringUtils.isEmpty(vo.getUserid())) {
+        if (vo != null) {
             Map<String, String> parameters = new HashedMap();
             parameters.put("name", vo.getUsername());
             parameters.put("password", vo.getUserpass());

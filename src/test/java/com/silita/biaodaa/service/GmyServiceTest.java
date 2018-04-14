@@ -47,7 +47,7 @@ public class GmyServiceTest extends ConfigTest {
 
     @Test
     public void testController2()throws Exception{
-        String requestBody = "{\"userId\":\"dba718748d3e4a2096c1c948b77a77bd\",\"isSystem\":1,\"pageNo\":1,\"pageSize\":20}";
+        String requestBody = "{\"userId\":\"dba718748d3e4a2096c1c948b77a77bd\",\"isSystem\":0,\"pageNo\":1,\"pageSize\":20}";
         String responseString = mockMvc.perform(post("/userCenter/listMessageByUserId").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody.getBytes())
@@ -113,6 +113,50 @@ public class GmyServiceTest extends ConfigTest {
         jsonObject.put("loginchannel", "1002");
         String requestBody = jsonObject.toJSONString();
         String responseString = mockMvc.perform(post("/authorize/userLogin").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController8()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("username", "18774987061");
+        jsonObject.put("userpass", "gmytest");
+        jsonObject.put("userphone", "18774987061");
+        jsonObject.put("invitationCode", "900007");
+//        jsonObject.put("wxopenid", "ixixiixix");
+//        jsonObject.put("wxUnionid", "xixixixix");
+        jsonObject.put("version", "10100");
+        jsonObject.put("loginchannel", "1002");
+        jsonObject.put("qqopenid", "ixixiixix");
+        jsonObject.put("type", "2");
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/authorize/thirdPartyBindingOrRegister").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController9()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("wxopenid", "ixixiixix");
+        jsonObject.put("wxUnionid", "xixixixix");
+        jsonObject.put("version", "10100");
+        jsonObject.put("loginchannel", "1002");
+        jsonObject.put("qqopenid", "ixixiixix");
+        jsonObject.put("type", "2");
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/authorize/thirdPartyLogin").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody.getBytes())
         )

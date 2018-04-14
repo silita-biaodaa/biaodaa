@@ -6,11 +6,11 @@ import com.silita.biaodaa.service.AuthorizeService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +60,7 @@ public class AuthorizeController {
 
         try{
             UserTempBdd vo = authorizeService.queryUserTempByUserNameOrPhoneAndPassWd(userTempBdd);
-            if(vo != null && !StringUtils.isEmpty(vo.getUserid())) {
+            if(vo != null) {
                 result.put("msg", "用户登录成功！");
                 result.put("data", vo);
             } else {
@@ -68,7 +68,7 @@ public class AuthorizeController {
                 result.put("msg", "用户名或密码错误!");
             }
         } catch (Exception e) {
-            logger.error("用户注册异常！" + e.getMessage(), e);
+            logger.error("用户登录异常！" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }
@@ -76,23 +76,51 @@ public class AuthorizeController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/thirdPartyBinding",produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/thirdPartyBindingOrRegister",produces = "application/json;charset=utf-8")
     public Map<String,Object> thirdPartyBinding(@RequestBody UserTempBdd userTempBdd){
         Map result = new HashMap();
         result.put("code", 1);
         result.put("data", null);
 
         try{
-            String msg = authorizeService.updateUserTemp(userTempBdd);
+            String msg = authorizeService.updateOrInsetUserTemp(userTempBdd);
             if("".equals(msg)) {
-                result.put("msg", "用户注册成功！");
+                if(userTempBdd.getType() == 1) {
+                    result.put("msg", "绑定微信成功！");
+                } else if(userTempBdd.getType() == 2) {
+                    result.put("msg", "绑定QQ成功！");
+                }
                 result.put("data", authorizeService.queryUserTempByUserPhone(userTempBdd));
             } else {
                 result.put("code", 0);
                 result.put("msg", msg);
             }
         } catch (Exception e) {
-            logger.error("用户注册异常！" + e.getMessage(), e);
+            logger.error("用户绑定第三方账号异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/thirdPartyLogin",produces = "application/json;charset=utf-8")
+    public Map<String,Object> thirdPartyLogin(@RequestBody UserTempBdd userTempBdd){
+        Map result = new HashMap();
+        result.put("code", 1);
+        result.put("data", null);
+
+        try{
+            UserTempBdd vo = authorizeService.queryUserTempByWXUnionIdOrQQOpenId(userTempBdd);
+            if(vo != null) {
+                result.put("msg", "第三方登录成功！");
+                result.put("data", vo);
+            } else {
+                result.put("code", 0);
+                result.put("msg", "第三方账号未绑定!");
+            }
+        } catch (Exception e) {
+            logger.error("第三方登录异常！" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }
@@ -101,11 +129,13 @@ public class AuthorizeController {
 
     @ResponseBody
     @RequestMapping(value = "/getVerificationCode",produces = "application/json;charset=utf-8")
-    public Map<String,Object> getVerificationCode(@RequestBody InvitationBdd invitation){
+    public Map<String,Object> getVerificationCode(@RequestBody InvitationBdd invitation, HttpServletRequest request){
+        String adder = request.getHeader("X-real-ip");
         Map result = new HashMap();
         result.put("code", 1);
 
         try{
+            invitation.setInvitationIp(adder);
             String msg = authorizeService.sendRegisterVerificationCode(invitation);
             if("".equals(msg)) {
                 result.put("msg", "获取验证码信息成功！");

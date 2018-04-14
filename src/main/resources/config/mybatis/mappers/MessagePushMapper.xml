@@ -9,7 +9,7 @@
             <if test="userId!=null and userId!=''">
                 AND userId = #{userId}
             </if>
-            <if test="is_system!=null">
+            <if test="isSystem!=null">
                 AND is_system = #{isSystem}
             </if>
         </where>
