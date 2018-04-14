@@ -90,7 +90,7 @@ public class GmyServiceTest extends ConfigTest {
         jsonObject.put("username", "gmytest");
         jsonObject.put("userpass", "gmytest");
         jsonObject.put("userphone", "18774987061");
-        jsonObject.put("invitationCode", "158584");
+        jsonObject.put("invitationCode", "900007");
         jsonObject.put("version", "10100");
         jsonObject.put("loginchannel", "1002");
         String requestBody = jsonObject.toJSONString();
@@ -107,7 +107,7 @@ public class GmyServiceTest extends ConfigTest {
     @Test
     public void testController7()throws Exception{
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("username", "gmytest");
+        jsonObject.put("userphone", "18774987061");
         jsonObject.put("userpass", "gmytest");
         jsonObject.put("version", "10100");
         jsonObject.put("loginchannel", "1002");

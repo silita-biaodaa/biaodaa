@@ -22,4 +22,15 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
      * @return
      */
     UserTempBdd getUserByUserNameOrPhoneAndPassWd(UserTempBdd userTempBdd);
+
+    /**
+     *
+     */
+    void updateUserTempByWxBind(UserTempBdd userTempBdd);
+
+    /**
+     *
+     * @param userTempBdd
+     */
+    void updateUserTempByQQBind(UserTempBdd userTempBdd);
 }

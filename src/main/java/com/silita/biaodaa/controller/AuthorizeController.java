@@ -76,6 +76,30 @@ public class AuthorizeController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/thirdPartyBinding",produces = "application/json;charset=utf-8")
+    public Map<String,Object> thirdPartyBinding(@RequestBody UserTempBdd userTempBdd){
+        Map result = new HashMap();
+        result.put("code", 1);
+        result.put("data", null);
+
+        try{
+            String msg = authorizeService.updateUserTemp(userTempBdd);
+            if("".equals(msg)) {
+                result.put("msg", "用户注册成功！");
+                result.put("data", authorizeService.queryUserTempByUserPhone(userTempBdd));
+            } else {
+                result.put("code", 0);
+                result.put("msg", msg);
+            }
+        } catch (Exception e) {
+            logger.error("用户注册异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/getVerificationCode",produces = "application/json;charset=utf-8")
     public Map<String,Object> getVerificationCode(@RequestBody InvitationBdd invitation){
         Map result = new HashMap();

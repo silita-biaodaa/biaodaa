@@ -7,15 +7,30 @@
     </select>
 
     <insert id="InsertUserTemp" parameterType="com.silita.biaodaa.model.UserTempBdd">
-        INSERT INTO mishu_write.user_temp_bdd(userId, userName, userPass, userPhone, loginChannel,
-        registrationTime)
-        VALUES(#{userid}, #{username}, #{userpass}, #{userphone}, #{loginchannel},
-        now())
+
+        INSERT INTO mishu_write.user_temp_bdd(userId, userName, userPass, userPhone, nickName,
+        gender, imgUrl, wxopenId, wx_unionId, qqopenId,
+        loginChannel, registrationTime)
+        VALUES(#{userid}, #{username}, #{userpass}, #{userphone}, #{nickname},
+        #{gender}, #{imgurl}, #{wxopenid}, #{wxUnionid}, #{qqopenid},
+        #{loginchannel}, now())
     </insert>
 
     <select id="getUserByUserNameOrPhoneAndPassWd" parameterType="com.silita.biaodaa.model.UserTempBdd" resultType="com.silita.biaodaa.model.UserTempBdd">
         SELECT * FROM mishu_write.user_temp_bdd WHERE userName = #{username} AND userPass = #{userpass}
         UNION SELECT * FROM mishu_write.user_temp_bdd WHERE userPhone = #{userphone} AND userPass = #{userpass}
     </select>
+
+    <update id="updateUserTempByWxBind" parameterType="com.silita.biaodaa.model.UserTempBdd">
+        UPDATE mishu_write.user_temp_bdd
+        SET wxopenId = #{wxopenid}, wx_unionId = #{wxUnionid}, userPass = #{userpass}
+        WHERE userPhone = #{userphone}
+    </update>
+
+    <update id="updateUserTempByQQBind" parameterType="com.silita.biaodaa.model.UserTempBdd">
+        UPDATE mishu_write.user_temp_bdd
+        SET qqopenId = #{qqopenId} ,userPass = #{userpass}
+        WHERE userPhone = #{userphone}
+    </update>
 
 </mapper>

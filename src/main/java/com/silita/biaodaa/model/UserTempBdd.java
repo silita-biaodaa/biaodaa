@@ -50,9 +50,14 @@ public class UserTempBdd {
      * 验证码
      */
     private String invitationCode;
+
     //版本号
     private String version;
 
     //用于权限控制
     private String xtoken;
+
+    //用于微信，qq第三方绑定
+    private Integer type;
+
 }
