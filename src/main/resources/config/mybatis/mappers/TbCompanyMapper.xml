@@ -48,4 +48,12 @@
     select code from area where `name`=#{name} or display_name=#{name}
   </select>
 
+  <select id="queryProvinceList" resultType="Map">
+    select id,display_name from area where grade=0 order by name_abbr
+  </select>
+
+  <select id="queryCityList" resultType="String" parameterType="String">
+    select display_name from area where parent_id=#{parentId}  order by name_abbr
+  </select>
+
 </mapper>

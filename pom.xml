@@ -26,7 +26,7 @@
   <name>biaodaa</name>
   <groupId>com.biaodaa</groupId>
   <artifactId>biaodaa</artifactId>
-  <version>1.0.13</version>
+  <version>1.0.17</version>
 
   <properties>
     <spring.version>4.1.6.RELEASE</spring.version>
@@ -344,6 +344,19 @@
       <artifactId>poi</artifactId>
       <version>3.10.1</version>
     </dependency>
+    <!-- 阿里云 -->
+    <dependency>
+      <groupId>com.aliyun</groupId>
+      <artifactId>aliyun-java-sdk-core</artifactId>
+      <version>2.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.aliyun</groupId>
+      <artifactId>aliyun-java-sdk-sms</artifactId>
+      <version>3.0.0</version>
+      <classifier>rc1</classifier>
+    </dependency>
+
   </dependencies>
 
   <build>
