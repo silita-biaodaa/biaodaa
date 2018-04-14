@@ -15,13 +15,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.collections.MapUtils.getString;
@@ -91,16 +89,89 @@ public class NoticeController extends BaseController{
                 resultMap.put("pageSize", pageInfo.getPageSize());
                 resultMap.put("total", pageInfo.getTotal());
                 resultMap.put("pages", pageInfo.getPages());
-                resultMap.put(this.CODE_FLAG, SUCCESS_CODE);
-                resultMap.put(this.MSG_FLAG, SUCCESS_MSG);
+                successMsg(resultMap);
             }
             //        recordAccessCount(request,params); 记录访问数
         }catch (Exception e){
             logger.error(e,e);
-            resultMap.put(this.CODE_FLAG,this.FAIL_CODE);
-            resultMap.put(this.MSG_FLAG,e.getMessage());
+            errorMsg(resultMap,e.getMessage());
         }
+        return resultMap;
+    }
 
+    @ResponseBody
+    @RequestMapping(value = "/detail/{id}",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
+    public Map<String,Object> queryDetail(@PathVariable Long id,@RequestBody Map params){
+        Map resultMap = new HashMap();
+        try {
+            params.put("id",id);
+            List<Map> detailList = noticeService.queryNoticeDetail(params);
+            List<Map> companyList = noticeService.queryComListById(id);
+            int relCompanySize =0;
+            if(companyList !=null && companyList.size()>0){
+                relCompanySize = companyList.size();
+            }
+            List<Map> fileList = noticeService.queryNoticeFile(id);
+            int fileSize =0;
+            if(fileList !=null && fileList.size()>0){
+                fileSize = fileList.size();
+            }
+            Long relNoticeCount =  noticeService.queryRelCount(id);
+            resultMap.put("detailList",detailList);
+            resultMap.put("relCompanySize",relCompanySize);//资质相关企业
+            resultMap.put("fileCount",fileSize);//文件列表
+            resultMap.put("relNoticeCount",relNoticeCount);//相关公告数量
+            successMsg(resultMap);
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(resultMap,e.getMessage());
+        }
+        return  resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryRelNotice/{id}",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
+    public Map<String,Object> queryRelNotice(@PathVariable Long id){
+        Map resultMap = new HashMap();
+        try{
+            List<Map> relationNotices =  noticeService.queryRelations(id);
+            resultMap.put("relationNotices",relationNotices);
+            successMsg(resultMap);
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(resultMap,e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/queryNoticeFile/{id}",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
+    public Map<String,Object> queryNoticeFile(@PathVariable Long id){
+        Map resultMap = new HashMap();
+        try{
+            List<Map> fileList =  noticeService.queryNoticeFile(id);
+            resultMap.put("fileList",fileList);
+            successMsg(resultMap);
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(resultMap,e.getMessage());
+        }
+        return resultMap;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryCompanyList/{id}",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
+    public Map<String,Object> queryCompanyList(@PathVariable Long id){
+        Map resultMap = new HashMap();
+        try{
+            List<Map> companyList =  noticeService.queryComListById(id);
+            resultMap.put("companyList",companyList);
+            successMsg(resultMap);
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(resultMap,e.getMessage());
+        }
         return resultMap;
     }
 
@@ -130,41 +201,6 @@ public class NoticeController extends BaseController{
         map.put("ipAddr",ipAddr);
         return map;
     }
-//
-//    private void encodingConvert(SnatchUrl search)throws UnsupportedEncodingException{
-//        if (search.getTitle()
-//                .equals(new String(search.getTitle().getBytes("iso8859-1"),
-//                        "iso8859-1"))) {
-//            search.setTitle(new String(search.getTitle().getBytes("ISO8859_1"),
-//                    "utf-8"));// 解码:用什么字符集编码就用什么字符集解码
-//        }
-//        //招标的评标办法
-//        if (search.getZhaobiaodetail() != null) {
-//            if (search
-//                    .getZhaobiaodetail()
-//                    .getPbMode()
-//                    .equals(new String(search.getZhaobiaodetail().getPbMode()
-//                            .getBytes("iso8859-1"), "iso8859-1"))) {
-//                search.getZhaobiaodetail().setPbMode(
-//                        new String(search.getZhaobiaodetail().getPbMode()
-//                                .getBytes("ISO8859_1"), "utf-8"));// 解码:用什么字符集编码就用什么字符集解码
-//                search.setZhaobiaodetail(search.getZhaobiaodetail());
-//            }
-//        }
-//
-//        //中标的第一候选人
-//        if (search.getZhongbiaodetail() != null) {
-//            if (search
-//                    .getZhongbiaodetail()
-//                    .getOneName()
-//                    .equals(new String(search.getZhongbiaodetail().getOneName()
-//                            .getBytes("iso8859-1"), "iso8859-1"))) {
-//                search.getZhongbiaodetail().setOneName(
-//                        new String(search.getZhongbiaodetail().getOneName()
-//                                .getBytes("ISO8859_1"), "utf-8"));// 解码:用什么字符集编码就用什么字符集解码
-//                search.setZhongbiaodetail(search.getZhongbiaodetail());
-//            }
-//        }
-//    }
+
 
 }

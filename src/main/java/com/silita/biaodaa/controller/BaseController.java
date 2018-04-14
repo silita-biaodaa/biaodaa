@@ -1,5 +1,7 @@
 package com.silita.biaodaa.controller;
 
+import java.util.Map;
+
 /**
  * Created by dh on 2018/4/11.
  */
@@ -24,6 +26,14 @@ public abstract class BaseController {
 
     public String minDate="2018-01-01";
 
+    protected void successMsg(Map resultMap){
+        resultMap.put(this.CODE_FLAG, SUCCESS_CODE);
+        resultMap.put(this.MSG_FLAG, SUCCESS_MSG);
+    }
 
+    protected void errorMsg(Map resultMap,String errMsg){
+        resultMap.put(this.CODE_FLAG,this.FAIL_CODE);
+        resultMap.put(this.MSG_FLAG,errMsg);
+    }
 
 }

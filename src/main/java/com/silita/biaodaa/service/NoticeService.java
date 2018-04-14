@@ -9,8 +9,7 @@ import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dh on 2018/4/9.
@@ -396,6 +395,60 @@ public class NoticeService {
         List<Map> list = noticeMapper.queryNoticeList(params);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
+    }
+
+    /**
+     * 根据公告ID查询资质，根据资质查询企业列表
+     * @param id
+     * @return
+     */
+    public List<Map> queryComListById(Long id){
+        String zzRes = noticeMapper.queryNoticeZZById(id);
+        if(zzRes !=null && zzRes.trim().length()>1){
+            String[] zzStr = zzRes.split(",");
+            if(zzStr!=null && zzStr.length>0) {
+                Set<String> zzSet = new HashSet<String>();
+                zzSet.addAll(Arrays.asList(zzStr));
+                if (zzSet.size() > 0) {
+                    List zzList = new ArrayList(zzSet.size());
+                    zzList.addAll(zzSet);
+                    return noticeMapper.queryComByZZ(zzList);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 公告详情（多标段）
+     * @param params
+     * @return
+     */
+    public List queryNoticeDetail(Map params){
+        String type= MapUtils.getString(params, "type");
+        if(type.equals("0")){
+            params.put("detailTable","zhaobiao_detail");
+        }else if(type.equals("2")){
+            params.put("detailTable","zhongbiao_detail");
+        }
+        return noticeMapper.queryNoticeDetail(params);
+    }
+
+    /**
+     * 查询相关公告数量
+     * @param id
+     * @return
+     */
+    public Long queryRelCount(Long id){
+        return noticeMapper.queryRelCount(id);
+    }
+
+    public List<Map> queryNoticeFile(Long id){
+        return noticeMapper.queryNoticeFile(id);
+    }
+
+    public List<Map> queryRelations(Long id){
+        return noticeMapper.queryRelations(id);
     }
 
 }

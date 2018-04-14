@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.biaodaa.dao.NoticeMapper">
-    <select id="queryNoticesByCompanyName" resultType="java.lang.Integer" parameterType="String">
+    <select id="queryNoticesByCompanyName" resultType="Long" parameterType="String">
         SELECT a.contId
         FROM mishu.snatch_url_cert a
         WHERE a.certificateUuid in (
@@ -103,5 +103,64 @@
         and s.type = #{type} and TO_DAYS(NOW())-90 &lt; TO_DAYS(openDate)
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </select>
+
+    <select id="queryNoticeDetail" resultType="Map" parameterType="Map">
+        select s.id,s.title,s.url,s.opendate,dl.projDq,dl.bmSite,
+                dl.kbSite,dl.kbStaffAsk,dl.projSum,dl.pbMode,
+                dl.zzRank,dl.tbAssureEndDate,dl.tbAssureEndTime,dl.tbAssureSum,
+                dl.bmEndDate,dl.bmEndTime,dl.bmSite,
+                dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,
+                dl.kbStaffAsk,sc.content
+         from mishu.snatchurl s
+         left join mishu.snatchurlcontent sc on sc.snatchurlid=s.id
+         left join mishu.${detailTable} dl on dl.snatchurlid=s.id
+         where s.edit=1 and s.isshow=0 and s.id=#{id}
+    </select>
+
+    <select id="queryRelCount" resultType="Long" parameterType="Long">
+         select (select count(re.nextid) as reCount
+         from mishu.snatchrelation re
+         where re.mainid=#{id})
+          +
+         (select count(mainid) as reCount
+         from mishu.snatchrelation re
+         where re.nextid=#{id}) relTotal
+    </select>
+
+    <select id="queryRelations" resultType="Map" parameterType="Long">
+        select s.id, s.title,s.openDate
+         from mishu.snatchurl s
+         join ((select re.nextid as reid
+                 from mishu.snatchrelation re
+                 where re.mainid=#{id})
+                  union all
+                 (select mainid as reid
+                 from mishu.snatchrelation re
+                 where re.nextid=#{id})) rd on rd.reid=s.id
+         order by s.id desc
+    </select>
+
+    <select id="queryNoticeZZById" resultType="String" parameterType="Long">
+        SELECT group_concat(zz.certificateuuid separator ',') as zzlist
+        FROM mishu.snatch_url_cert zz
+        where zz.contid=#{id}
+    </select>
+
+    <select id="queryComByZZ" resultType="Map" parameterType="java.util.List">
+        select com_id,com_name
+        from mishu.tb_company
+        where
+        <foreach collection="list" item="zz" separator=" or " >
+          `range` like '%${zz}%'
+        </foreach>
+        order by length(`range`) desc
+    </select>
+    
+    <select id="queryNoticeFile" resultType="Map" parameterType="Map">
+        select *
+        FROM mishu.notice_file
+        where snatchurlid=#{id}
+    </select>
+
 
 </mapper>
