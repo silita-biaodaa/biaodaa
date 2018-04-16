@@ -8,15 +8,20 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.UserCenterService;
+import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -29,7 +34,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Controller
 public class UserCenterController {
     private static final Logger logger = Logger.getLogger(CompanyController.class);
-
     @Autowired
     private UserCenterService userCenterService;
 
@@ -54,6 +58,50 @@ public class UserCenterController {
         }
         return result;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/updatePassWord",produces = "application/json;charset=utf-8")
+    public Map<String,Object> updatePassWord(@RequestBody UserTempBdd userTempBdd){
+        Map result = new HashMap();
+        result.put("code", 1);
+
+        try{
+            String msg = userCenterService.updatePassWord(userTempBdd);
+            if("".equals(msg)) {
+                result.put("msg", "更改密码成功！");
+            } else {
+                result.put("code", 0);
+                result.put("msg", msg);
+            }
+        } catch (Exception e) {
+            logger.error("更改密码异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateHeadPortrait",produces = "application/json;charset=utf-8")
+    public Map<String,Object> updateHeadPortrait(@RequestParam(value = "files", required = false) List<MultipartFile> files){
+        Map result = new HashMap();
+        result.put("code", 1);
+        result.put("msg", "文件上传成功！");
+        try{
+            MultipartFile headPortraitImg = files.get(0);
+            File uploadFile = new File(PropertiesUtils.getProperty("HEAD_PORTRAIT_PATH") + headPortraitImg.getOriginalFilename());
+            headPortraitImg.transferTo(uploadFile);
+            result.put("imaPath",uploadFile.getAbsolutePath());
+        } catch (Exception e) {
+            logger.error("更改密码异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+            result.put("imgPath", "");
+        }
+        return result;
+    }
+
+
 
     @ResponseBody
     @RequestMapping(value = "/listMessageByUserId", produces = "application/json;charset=utf-8")

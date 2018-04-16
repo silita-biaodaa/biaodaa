@@ -29,7 +29,7 @@ public interface InvitationBddMapper extends MyMapper<InvitationBdd> {
 
     /**
      * 更新验证码状态
-     * @param invitationCode
+     * @param params
      */
-    void updateInvitationBddByCode(String invitationCode);
+    void updateInvitationBddByCodeAndPhone(Map<String, Object> params);
 }

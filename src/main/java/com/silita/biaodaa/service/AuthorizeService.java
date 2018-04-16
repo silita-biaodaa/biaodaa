@@ -69,7 +69,7 @@ public class AuthorizeService {
         userTempBddMapper.InsertUserTemp(userTempBdd);
         userRoleBddMapper.insertUserRole(userTempBdd.getUserid());
         //更新验证码状态
-        invitationBddMapper.updateInvitationBddByCode(userTempBdd.getInvitationCode());
+        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
         return "";
     }
 
@@ -111,7 +111,7 @@ public class AuthorizeService {
             }
         }
         //更新验证码状态
-        invitationBddMapper.updateInvitationBddByCode(userTempBdd.getInvitationCode());
+        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
         return "";
     }
 
@@ -192,6 +192,30 @@ public class AuthorizeService {
         }
         return vo;
     }
+
+    public String UpdatePassWdByForgotPassword(UserTempBdd userTempBdd) {
+        //判断验证码是否有效
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("invitationPhone", userTempBdd.getUserphone());
+        params.put("invitationCode", userTempBdd.getInvitationCode());
+        InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
+        if (null == invitationVo) {
+            return "验证码错误或无效！";
+        } else if("1".equals(invitationVo.getInvitationState())){
+            return "验证码失效！";
+        }
+        //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
+        if (userTempBdd.getLoginchannel().equals("1002") && Integer.parseInt(userTempBdd.getVersion()) > 10100) {
+        } else if (userTempBdd.getLoginchannel().equals("1001") && Integer.parseInt(userTempBdd.getVersion()) > 10600) {
+        } else {
+            userTempBdd.setUserpass(DigestUtils.shaHex(userTempBdd.getUserpass()));
+        }
+        userTempBddMapper.updatePassWdByUserIdAndPhone(userTempBdd);
+        //更新验证码状态
+        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
+        return "";
+    }
+
 
     /**
      * 验证码

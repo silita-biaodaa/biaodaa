@@ -5,11 +5,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -129,12 +131,13 @@ public class GmyServiceTest extends ConfigTest {
         jsonObject.put("userpass", "gmytest");
         jsonObject.put("userphone", "18774987061");
         jsonObject.put("invitationCode", "900007");
-//        jsonObject.put("wxopenid", "ixixiixix");
-//        jsonObject.put("wxUnionid", "xixixixix");
+        jsonObject.put("wxopenid", "ixixiixix");
+        jsonObject.put("wxUnionid", "xixixixix");
         jsonObject.put("version", "10100");
         jsonObject.put("loginchannel", "1002");
-        jsonObject.put("qqopenid", "ixixiixix");
-        jsonObject.put("type", "2");
+//        jsonObject.put("qqopenid", "ixixiixix");
+        jsonObject.put("type", "1");
+        jsonObject.put("nikename", "test");
         String requestBody = jsonObject.toJSONString();
         String responseString = mockMvc.perform(post("/authorize/thirdPartyBindingOrRegister").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -166,5 +169,57 @@ public class GmyServiceTest extends ConfigTest {
         System.out.println("-----返回的json = " + responseString);
     }
 
+    @Test
+    public void testController10()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userpass", "123321");
+        jsonObject.put("userid", "67edf8831ddf49008cf3161e1b92b743");
+        jsonObject.put("userphone", "18774987061");
+        jsonObject.put("invitationCode", "900007");
+        jsonObject.put("version", "10100");
+        jsonObject.put("loginchannel", "1002");
 
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/userCenter/updatePassWord").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController11()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userpass", "123321");
+        jsonObject.put("userid", "67edf8831ddf49008cf3161e1b92b743");
+        jsonObject.put("userphone", "18774987061");
+        jsonObject.put("invitationCode", "900007");
+        jsonObject.put("version", "10100");
+        jsonObject.put("loginchannel", "1002");
+
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/userCenter/updatePassWord").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController12()throws Exception{
+        MockMultipartFile firstFile = new MockMultipartFile("files", "filename.txt", "text/plain", "some xml".getBytes());
+
+        String responseString = mockMvc.perform(fileUpload("/userCenter/updateHeadPortrait").file(firstFile)
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
 }

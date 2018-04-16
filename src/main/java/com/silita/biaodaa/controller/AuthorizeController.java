@@ -128,6 +128,29 @@ public class AuthorizeController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/forgotPassword",produces = "application/json;charset=utf-8")
+    public Map<String,Object> forgotPassword(@RequestBody UserTempBdd userTempBdd){
+        Map result = new HashMap();
+        result.put("code", 1);
+
+        try{
+            String msg = authorizeService.UpdatePassWdByForgotPassword(userTempBdd);
+            if("".equals(msg)) {
+                result.put("msg", "找回密码成功！");
+            } else {
+                result.put("code", 0);
+                result.put("msg", msg);
+            }
+        } catch (Exception e) {
+            logger.error("找回密码异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+
+    @ResponseBody
     @RequestMapping(value = "/getVerificationCode",produces = "application/json;charset=utf-8")
     public Map<String,Object> getVerificationCode(@RequestBody InvitationBdd invitation, HttpServletRequest request){
         String adder = request.getHeader("X-real-ip");

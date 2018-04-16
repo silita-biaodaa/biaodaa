@@ -60,4 +60,10 @@
         SET imgUrl = #{imgurl}, nickName = #{nickname}, gender = #{gender}, mailBox = #{mailbox}, companyName = #{companyname} WHERE userId = #{userid}
     </update>
 
+    <update id="updatePassWdByUserIdAndPhone" parameterType="com.silita.biaodaa.model.UserTempBdd">
+        UPDATE mishu_write.user_temp_bdd
+        SET userPass = #{userpass}
+        WHERE userPhone = #{userphone}
+    </update>
+
 </mapper>
