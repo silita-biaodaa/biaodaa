@@ -16,7 +16,8 @@
         SELECT COUNT(*) FROM mishu_write.invitation_bdd WHERE invitation_phone = #{invitationPhone} AND createDate = CURDATE()
     </select>
 
-    <update id="updateInvitationBddByCode" parameterType="String">
-        UPDATE mishu_write.invitation_bdd SET `Invitation_state` = '1' WHERE Invitation_code = #{invitationCode}
+    <update id="updateInvitationBddByCodeAndPhone" parameterType="Map">
+        UPDATE mishu_write.invitation_bdd SET `Invitation_state` = '1'
+        WHERE Invitation_code = #{invitationCode} AND invitation_phone = #{invitationPhone}
     </update>
 </mapper>
