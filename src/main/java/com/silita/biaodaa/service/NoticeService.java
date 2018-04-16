@@ -389,6 +389,12 @@ public class NoticeService {
                 params.put("zzTypeThree",zztypeList[2]);
             }
         }
+        if(MyStringUtils.isNotNull(params.get("projSumStart"))){
+            params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));
+        }
+        if(MyStringUtils.isNotNull(params.get("projSumEnd"))){
+            params.put("projSumEnd",Integer.parseInt(params.get("projSumEnd").toString()));
+        }
         buildNoticeDetilTable(params);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<Map> list = noticeMapper.queryNoticeList(params);

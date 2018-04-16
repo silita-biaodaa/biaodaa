@@ -5,9 +5,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
@@ -66,8 +68,8 @@ public class NoticeServiceTest extends ConfigTest {
      * @throws Exception
      */
     @Test
-    public void testqueryList()throws Exception{//,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
-        String requestBody = "{\"pageNo\":1,\"pageSize\":20,\"type\":0,\"projectType\":\"2\",\"regions\":\"||长沙市\"}";
+    public void testqueryList()throws Exception{//,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ" ,"projSumStart":"500","projSumEnd":"1000" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
+        String requestBody = "{\"pageNo\":1,\"pageSize\":20,\"type\":0,\"projectType\":\"2\"}";
         String responseString = mockMvc.perform(post("/notice/queryList").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -136,6 +138,20 @@ public class NoticeServiceTest extends ConfigTest {
         Map param=new HashMap();
         param.put("type","0");
         noticeService.searchNoticeList(page,param);
+    }
+
+    @Test
+    public void testFile() throws Exception {
+        //@RequestParam(value = "data", required = false) List<MultipartFile> files
+        MockMultipartFile firstFile = new MockMultipartFile("data", "filename.txt", "text/plain", "some xml".getBytes());
+        MockMultipartFile secondFile = new MockMultipartFile("data", "other-file-name.data", "text/plain", "some other type".getBytes());
+        MockMultipartFile jsonFile = new MockMultipartFile("json", "", "application/json", "{\"json\": \"someValue\"}".getBytes());
+        mockMvc.perform(MockMvcRequestBuilders.fileUpload("/upload")
+                .file(firstFile)
+                .file(secondFile).file(jsonFile)
+                .param("some-random", "4"))
+                .andExpect(status().is(200));
+//                .andExpect(content().string("success"));
     }
 
 }

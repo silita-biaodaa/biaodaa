@@ -111,7 +111,11 @@
         <if test="city !=null and city !=''" >
         and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
         </if>
-        and s.type = #{type} and TO_DAYS(NOW())-90 &lt; TO_DAYS(openDate)
+        and s.type = #{type}
+        and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
+        <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
+        and  !(detail.projSum REGEXP '[^0-9.]')
+        </if>
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </select>
 
