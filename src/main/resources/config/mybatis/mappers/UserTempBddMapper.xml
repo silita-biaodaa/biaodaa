@@ -7,7 +7,6 @@
     </select>
 
     <insert id="InsertUserTemp" parameterType="com.silita.biaodaa.model.UserTempBdd">
-
         INSERT INTO mishu_write.user_temp_bdd(userId, userName, userPass, userPhone, nickName,
         gender, imgUrl, wx_unionId, qqopenId, loginChannel,
         registrationTime)
@@ -24,13 +23,13 @@
 
     <update id="updateUserTempByWxBind" parameterType="com.silita.biaodaa.model.UserTempBdd">
         UPDATE mishu_write.user_temp_bdd
-        SET wxopenId = #{wxopenid}, wx_unionId = #{wxUnionid}, userPass = #{userpass}
+        SET nickName = #{nickname}, imgUrl = #{imgurl}, gender = #{gender}, wxopenId = #{wxopenid}, wx_unionId = #{wxUnionid}, userPass = #{userpass}
         WHERE userPhone = #{userphone}
     </update>
 
     <update id="updateUserTempByQQBind" parameterType="com.silita.biaodaa.model.UserTempBdd">
         UPDATE mishu_write.user_temp_bdd
-        SET qqopenId = #{qqopenid} ,userPass = #{userpass}
+        SET nickName = #{nickname}, imgUrl = #{imgurl}, gender = #{gender}, qqopenId = #{qqopenid} ,userPass = #{userpass}
         WHERE userPhone = #{userphone}
     </update>
 
@@ -51,5 +50,14 @@
     <select id="getUserTempByQQOpenId" parameterType="String" resultType="com.silita.biaodaa.model.UserTempBdd">
         SELECT * FROM mishu_write.user_temp_bdd WHERE qqopenId = #{qqopenid}
     </select>
+
+    <select id="getUserTempByUserId" parameterType="String" resultType="com.silita.biaodaa.model.UserTempBdd">
+        SELECT * FROM mishu_write.user_temp_bdd WHERE userId = #{userid}
+    </select>
+
+    <update id="updateUserTemp" parameterType="com.silita.biaodaa.model.UserTempBdd">
+        UPDATE mishu_write.user_temp_bdd
+        SET imgUrl = #{imgurl}, nickName = #{nickname}, gender = #{gender}, mailBox = #{mailbox}, companyName = #{companyname} WHERE userId = #{userid}
+    </update>
 
 </mapper>

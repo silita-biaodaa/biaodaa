@@ -116,7 +116,7 @@ public class AuthorizeController {
                 result.put("msg", "第三方登录成功！");
                 result.put("data", vo);
             } else {
-                result.put("code", 0);
+                result.put("code", 2);
                 result.put("msg", "第三方账号未绑定!");
             }
         } catch (Exception e) {

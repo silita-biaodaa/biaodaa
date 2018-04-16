@@ -19,4 +19,15 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     List<Map<String,String>> queryProvinceList();
 
     List<String> queryCityList(String parentId);
+
+    TbCompany getCompanyOrgCode(Integer comId);
+
+    List<String> getCertSrcUuid(String companyCode);
+
+    Map<String,String> getCertAqrz(Map<String,Object> param);
+
+    List<Map<String,Object>> getCertQyhj(Map<String,Object> param);
+
+    List<Map<String,Object>> getUndesirable(Map<String,Object> param);
+
 }

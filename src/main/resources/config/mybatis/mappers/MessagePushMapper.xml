@@ -13,6 +13,6 @@
                 AND is_system = #{isSystem}
             </if>
         </where>
-        ORDER BY id DESC;
+        ORDER BY id DESC
     </select>
 </mapper>

@@ -60,4 +60,17 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
      * @return
      */
     UserTempBdd getUserTempByQQOpenId(String qqopenid);
+
+    /**
+     *
+     * @param userid
+     * @return
+     */
+    UserTempBdd getUserTempByUserId(String userid);
+
+    /**
+     *
+     * @param userTempBdd
+     */
+    void updateUserTemp(UserTempBdd userTempBdd);
 }

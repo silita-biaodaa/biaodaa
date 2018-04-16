@@ -293,5 +293,53 @@ public class CompanyController {
         return result;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/reputation/{comId}", method = RequestMethod.POST,produces = "application/json")
+    public Map<String, Object> getCompanyReputation(@PathVariable Integer comId) {
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "企业信誉查询失败!");
+
+        try {
+            Map<String,Object> map = tbCompanyService.getCompanyReputation(comId);
+            result.put("data",map);
+            result.put("code", 1);
+            result.put("msg", "查询成功!");
+        } catch (IllegalArgumentException e) {
+            logger.error("获取企业信誉信息异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        } catch (Exception e) {
+            logger.error("获取企业信誉信息异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/undesirable/{comId}", method = RequestMethod.POST,produces = "application/json")
+    public Map<String, Object> getUndesirable(@PathVariable Integer comId) {
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "企业不良记录查询失败!");
+
+        try {
+            Map<String,Object> map = tbCompanyService.getUndesirable(comId);
+            result.put("data",map);
+            result.put("code", 1);
+            result.put("msg", "查询企业不良记录成功!");
+        } catch (IllegalArgumentException e) {
+            logger.error("获取企业不良记录信息异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        } catch (Exception e) {
+            logger.error("获取企业不良记录信息异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
 
 }

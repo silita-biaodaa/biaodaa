@@ -47,7 +47,7 @@ public class GmyServiceTest extends ConfigTest {
 
     @Test
     public void testController2()throws Exception{
-        String requestBody = "{\"userId\":\"dba718748d3e4a2096c1c948b77a77bd\",\"isSystem\":0,\"pageNo\":1,\"pageSize\":20}";
+        String requestBody = "{\"userId\":\"dba718748d3e4a2096c1c948b7d\",\"isSystem\":0,\"pageNo\":1,\"pageSize\":20}";
         String responseString = mockMvc.perform(post("/userCenter/listMessageByUserId").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody.getBytes())
@@ -149,14 +149,14 @@ public class GmyServiceTest extends ConfigTest {
     @Test
     public void testController9()throws Exception{
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("wxopenid", "ixixiixix");
-        jsonObject.put("wxUnionid", "xixixixix");
-        jsonObject.put("version", "10100");
-        jsonObject.put("loginchannel", "1002");
-        jsonObject.put("qqopenid", "ixixiixix");
-        jsonObject.put("type", "2");
+        jsonObject.put("userid", "67edf8831ddf49008cf3161e1b92b743");
+        jsonObject.put("imgurl", "test.img");
+        jsonObject.put("nickname", "update");
+        jsonObject.put("gender", "1");
+        jsonObject.put("mailbox", "999999@qq.com");
+        jsonObject.put("companyname", "测试");
         String requestBody = jsonObject.toJSONString();
-        String responseString = mockMvc.perform(post("/authorize/thirdPartyLogin").characterEncoding("UTF-8")
+        String responseString = mockMvc.perform(post("/userCenter/updateUserTemp").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody.getBytes())
         )
@@ -165,4 +165,6 @@ public class GmyServiceTest extends ConfigTest {
                 .andReturn().getResponse().getContentAsString();
         System.out.println("-----返回的json = " + responseString);
     }
+
+
 }

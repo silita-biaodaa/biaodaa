@@ -56,4 +56,42 @@
     select display_name from area where parent_id=#{parentId}  order by name_abbr
   </select>
 
+  <select id="getCompanyOrgCode" parameterType="Integer" resultType="com.silita.biaodaa.model.TbCompany">
+    select * from tb_company where com_id=#{comId} limit 1
+  </select>
+
+  <select id="getCertSrcUuid" parameterType="String" resultType="String">
+    select uuid from cert_src where uuid is not null and companyCode=#{companyCode}
+  </select>
+
+  <select id="getCertAqrz" parameterType="Map" resultType="Map">
+    select zh.mateName,zh.score from cert_aqrz a 
+    left join prize_zh zh on a.zhUuid=zh.uuid 
+    where a.zhUuid is not null and srcUuid in
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    order by yxqTime desc limit 1;
+  </select>
+  
+  <select id="getCertQyhj" parameterType="Map" resultType="Map">
+    select q.projName,q.projType,q.years,zh.type,zh.code,zh.mateName,zh.score
+    from cert_qyhj q
+    left join prize_zh zh on q.zhUuid=zh.uuid
+    where q.zhUuid is not null
+    and srcUuid in
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="getUndesirable" parameterType="Map" resultType="Map">
+    select nature,publishDate,projectName,actionCode,validityDate,publishSite,badBehaviorContent
+    from cert_undesirable
+    where  srcUUid in
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
 </mapper>
