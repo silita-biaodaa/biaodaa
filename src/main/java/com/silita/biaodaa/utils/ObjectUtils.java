@@ -5,8 +5,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dh on 2018/4/12.
@@ -21,10 +20,19 @@ public class ObjectUtils {
      */
     public static int buildMapParamHash(Map paramMap){
         int result =-1;
-        String paramAttrs= JsonUtils.obj2JsonString(paramMap);
-        if(paramAttrs.length()>0){
-            paramAttrs = sortString(paramAttrs);
-            result =paramAttrs.hashCode();
+        Set paramKeys = paramMap.keySet();
+        Iterator sIterator = paramKeys.iterator();
+        String[] s =new String[paramKeys.size()];
+        int i=0;
+        while(sIterator.hasNext()){
+            String key = (String)sIterator.next();
+            Object value = paramMap.get(key);
+            s[i]=key+value;
+            i++;
+        }
+        if(s !=null && s.length>0){
+            Arrays.sort(s);
+            return JsonUtils.obj2JsonString(s).hashCode();
         }
         return result;
     }

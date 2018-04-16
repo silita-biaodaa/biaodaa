@@ -53,8 +53,9 @@
         ,<include refid="noticeTypeConvert"/>
         ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.${detailTable} WHERE snatchUrlId =s.id ) pbMode
         ,(SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
-        <if test="type == '2'">
+        <if test="type == 2">
         ,(SELECT GROUP_CONCAT(zb.oneName SEPARATOR ',') oneName FROM mishu.zhongbiao_detail zb WHERE zb.snatchUrlId =s.id) oneName
+        ,detail.oneOffer
         </if>
         FROM mishu.snatchurl s
         <!--资质判断 -->
@@ -74,7 +75,7 @@
                 </when>
             </choose>
         </if>
-        <if test=" (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')">
+        <if test="(type == 2) or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')">
             join mishu.${detailTable} detail on s.id=detail.snatchurlid
             <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
                 <!--and(-->
@@ -88,11 +89,21 @@
             <if test="modeStr != null">
                 and detail.pbMode in(${modeStr})
             </if>
-            <if test="(projSumStart !=null and projSumStart!='')" >
-                and detail.projSum &gt;= #{projSumStart}
+            <if test="type == 0">
+                <if test="(projSumStart !=null and projSumStart!='')" >
+                    and detail.projSum &gt;= #{projSumStart}
+                </if>
+                <if test="(projSumEnd !=null and projSumEnd!='')" >
+                    and detail.projSum &lt;= #{projSumEnd}
+                </if>
             </if>
-            <if test="(projSumEnd !=null and projSumEnd!='')" >
-                and detail.projSum &lt;= #{projSumEnd}
+            <if test="type == 2">
+                <if test="(projSumStart !=null and projSumStart!='')" >
+                    and detail.oneOffer &gt;= #{projSumStart}
+                </if>
+                <if test="(projSumEnd !=null and projSumEnd!='')" >
+                    and detail.oneOffer &lt;= #{projSumEnd}
+                </if>
             </if>
             <if test="(kbDateStart !=null and kbDateStart !='')">
                 and detail.tbEndDate &gt;= #{kbDateStart}
@@ -114,8 +125,14 @@
         and s.type = #{type}
         and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
         <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
-        and  !(detail.projSum REGEXP '[^0-9.]')
+            <if test="type == 0">
+                and  !(detail.projSum REGEXP '[^0-9.]')
+            </if>
+            <if test="type == 2">
+                and (length(detail.oneOffer) - length(REPLACE (detail.oneOffer, '.', ''))) &lt;=1  and !(detail.oneOffer REGEXP '[^0-9.]')
+            </if>
         </if>
+
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </select>
 
