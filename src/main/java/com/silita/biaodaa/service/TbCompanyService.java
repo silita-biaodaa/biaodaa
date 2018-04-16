@@ -251,6 +251,139 @@ public class TbCompanyService {
         return areaList;
     }
 
+    public Map<String,Object> getCompanyReputation(Integer comId){
+        Map<String,Object> resultMap = new HashMap<>();
+        Double score = 0d;
+
+        TbCompany company = tbCompanyMapper.getCompanyOrgCode(comId);
+        if(company!=null&&company.getOrgCode()!=null){
+            List<String> srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
+            if(srcUuids!=null){
+                Map<String,Object> param = new HashMap<>();
+                param.put("list",srcUuids);
+                Map<String,String> anrz = tbCompanyMapper.getCertAqrz(param);
+                if(anrz!=null){
+                    resultMap.put("securityCert",anrz.get("mateName"));
+                    resultMap.put("securityScore",anrz.get("score"));
+                }
+                List<Map<String,Object>> qyhjList = tbCompanyMapper.getCertQyhj(param);
+                if(qyhjList!=null){
+                    resultMap.put("allNum",qyhjList.size());
+                    //分组-----------
+                    Map<String,Map<String,List<Map<String,Object>>>> map = new HashMap<>();
+                    for(Map<String,Object> qyhj : qyhjList){
+                        if(qyhj.get("type")!=null&&qyhj.get("code")!=null){
+                            String type = qyhj.get("type").toString();
+                            String code = qyhj.get("code").toString();
+                            Map<String,List<Map<String,Object>>> subMap;
+                            List<Map<String,Object>> list;
+                            if(map.get(type)!=null){
+                                subMap = map.get(type);
+                                if(subMap.get(code)!=null){
+                                    list = subMap.get(code);
+                                }else{
+                                    list = new ArrayList<>();
+                                }
+                            }else{
+                                subMap = new HashMap<>();
+                                list = new ArrayList<>();
+                            }
+                            list.add(qyhj);
+                            subMap.put(code,list);
+                            map.put(type,subMap);
+                        }
+
+                    }
+                    //---------------------end
+
+                    List<Map<String,Object>> resultList = new ArrayList<>();
+                    Set<String> set = map.keySet();
+                    for(String type : set){
+                        int pNum = 0;
+                        String name = "其他奖项";
+                        if("gjjhj".equals(type)){
+                            name = "国家级奖项";
+                        }else if("sjhj".equals(type)){
+                            name = "省级奖项";
+                        }
+                        Map<String,Object> parentMap = new HashMap<>();
+                        parentMap.put("name",name);
+                        parentMap.put("code",type);
+                        Map<String,List<Map<String,Object>>> subMap = map.get(type);
+                        List<Map<String,Object>> subList = new ArrayList<>();
+                        Set<String> subSet = subMap.keySet();
+                        for(String code : subSet){
+                            Map<String,Object> subRe = new HashMap<>();
+                            List<Map<String,Object>> list = subMap.get(code);
+                            if(list!=null&&list.size()>0){
+                                for(Map<String,Object> qyhj : list){
+                                    String scoreStr = qyhj.get("score").toString();
+                                    if(scoreStr!=null&&!"".equals(scoreStr)){
+                                        score = score + Double.valueOf(scoreStr);
+                                    }
+                                }
+                                subRe.put("name",list.get(0).get("mateName"));
+                                subRe.put("code",code);
+                                subRe.put("num",list.size());
+                                subRe.put("list",list);
+                                pNum = pNum + list.size();
+                                subList.add(subRe);
+                            }
+                        }
+                        parentMap.put("num",pNum);
+                        parentMap.put("list",subList);
+                        resultList.add(parentMap);
+                    }
+                    resultMap.put("reputation",resultList);
+                    resultMap.put("score",score);
+                }
+            }
+        }
+        return resultMap;
+    }
+
+    public Map<String,Object> getUndesirable(Integer comId) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        TbCompany company = tbCompanyMapper.getCompanyOrgCode(comId);
+        if (company != null && company.getOrgCode() != null) {
+            List<String> srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
+            if(srcUuids!=null) {
+                Map<String, Object> param = new HashMap<>();
+                param.put("list", srcUuids);
+                List<Map<String,Object>> list = tbCompanyMapper.getUndesirable(param);
+                resultMap.put("allNum",list.size());
+                Map<String,List<Map<String,Object>>> unMap = new HashMap<>();
+                for(Map<String,Object> map : list){
+                    if(map.get("nature")!=null&&!"".equals(map.get("nature"))){
+                        String key = map.get("nature").toString();
+                        List<Map<String,Object>> unList;
+                        if(unMap.get(key)!=null){
+                            unList = unMap.get(key);
+                        }else{
+                            unList = new ArrayList<>();
+                        }
+                        unList.add(map);
+                        unMap.put(key,unList);
+                    }
+                }
+
+                List<Map<String,Object>> resultList = new ArrayList<>();
+                Set<String> set = unMap.keySet();
+                for(String key : set){
+                    List<Map<String,Object>> mapList = unMap.get(key);
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("name","性质"+key);
+                    map.put("num",mapList.size());
+                    map.put("list",mapList);
+                    resultList.add(map);
+                }
+                resultMap.put("undesirable",resultList);
+            }
+        }
+        return resultMap;
+    }
+
 
 
 
