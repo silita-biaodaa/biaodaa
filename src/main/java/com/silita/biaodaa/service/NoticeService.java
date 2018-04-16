@@ -22,6 +22,10 @@ public class NoticeService {
 
     @Autowired
     private NoticeMapper noticeMapper;
+
+    public String SNATCHURL_ZHAOBIAO="0";
+
+    public String SNATCHURL_ZHONGBIAO="2";
 //
 //    @Cacheable(value = "fenleiData", key="'fenleiData'+#search.cert+#search.title" +
 //                    "+#search.type+#search.rangeDate+#search.range+#search.isShow" +
@@ -351,7 +355,6 @@ public class NoticeService {
     }
 
     public PageInfo searchNoticeList(Page page,Map params){
-        String type =  MapUtils.getString(params,"type");
         String dqsStr =  MapUtils.getString(params,"regions");
         String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
         if(dqsStrList!=null && dqsStrList.length>0){
@@ -386,11 +389,7 @@ public class NoticeService {
                 params.put("zzTypeThree",zztypeList[2]);
             }
         }
-        if(type.equals("0")){
-            params.put("detailTable","zhaobiao_detail");
-        }else if(type.equals("2")){
-            params.put("detailTable","zhongbiao_detail");
-        }
+        buildNoticeDetilTable(params);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<Map> list = noticeMapper.queryNoticeList(params);
         PageInfo pageInfo = new PageInfo(list);
@@ -398,11 +397,11 @@ public class NoticeService {
     }
 
     /**
-     * 根据公告ID查询资质，根据资质查询企业列表
+     * 根据公告ID查询资质，然后根据资质查询企业列表
      * @param id
      * @return
      */
-    public List<Map> queryComListById(Long id){
+    public PageInfo queryCompanyListById(Page page,Long id){
         String zzRes = noticeMapper.queryNoticeZZById(id);
         if(zzRes !=null && zzRes.trim().length()>1){
             String[] zzStr = zzRes.split(",");
@@ -412,9 +411,47 @@ public class NoticeService {
                 if (zzSet.size() > 0) {
                     List zzList = new ArrayList(zzSet.size());
                     zzList.addAll(zzSet);
-                    return noticeMapper.queryComByZZ(zzList);
+                    PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+                    List list = noticeMapper.queryComInfoByZZ(zzList);
+                    PageInfo pageInfo = new PageInfo(list);
+                    return pageInfo;
                 }
             }
+        }
+        return null;
+    }
+
+    /**
+     * 根据ID查询资质ID列表（去重）
+     * @param id
+     * @return
+     */
+    public List queryNoticeZZById(Long id){
+        String zzRes = noticeMapper.queryNoticeZZById(id);
+        if(zzRes !=null && zzRes.trim().length()>1) {
+            String[] zzStr = zzRes.split(",");
+            if (zzStr != null && zzStr.length > 0) {
+                Set<String> zzSet = new HashSet<String>();
+                zzSet.addAll(Arrays.asList(zzStr));
+                if (zzSet.size() > 0) {
+                    List zzList = new ArrayList(zzSet.size());
+                    zzList.addAll(zzSet);
+                    return zzList;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据公告id获取关联的企业列表数量
+     * @param id
+     * @return
+     */
+    public Integer queryCompanyCountById(Long id){
+        List zzList = queryNoticeZZById(id);
+        if(zzList!=null && zzList.size()>0) {
+            return noticeMapper.queryCompanyCountByZZ(zzList);
         }
         return null;
     }
@@ -425,13 +462,17 @@ public class NoticeService {
      * @return
      */
     public List queryNoticeDetail(Map params){
+        buildNoticeDetilTable(params);
+        return noticeMapper.queryNoticeDetail(params);
+    }
+
+    private void buildNoticeDetilTable(Map params){
         String type= MapUtils.getString(params, "type");
-        if(type.equals("0")){
+        if(type.equals(SNATCHURL_ZHAOBIAO)){
             params.put("detailTable","zhaobiao_detail");
-        }else if(type.equals("2")){
+        }else if(type.equals(SNATCHURL_ZHONGBIAO)){
             params.put("detailTable","zhongbiao_detail");
         }
-        return noticeMapper.queryNoticeDetail(params);
     }
 
     /**
@@ -443,12 +484,36 @@ public class NoticeService {
         return noticeMapper.queryRelCount(id);
     }
 
+    /**
+     * 查询招标文件列表
+     * @param id
+     * @return
+     */
     public List<Map> queryNoticeFile(Long id){
         return noticeMapper.queryNoticeFile(id);
     }
 
     public List<Map> queryRelations(Long id){
-        return noticeMapper.queryRelations(id);
+        List<Map> relList =noticeMapper.queryRelations(id);
+        if(relList!=null && relList.size()>0) {
+            //招标，中标结果划分
+            for (Map result:relList){
+                String type = result.get("type").toString();
+                if(type.equals(SNATCHURL_ZHAOBIAO)){
+                    if(result.get("zhaobiao_pbMode")!=null) {
+                        result.put("pbMode", result.get("zhaobiao_pbMode"));
+                        result.remove("zhaobiao_pbMode");
+                    }
+                }else if(type.equals(SNATCHURL_ZHONGBIAO)){
+                    if(result.get("zhongbiao_pbMode") !=null) {
+                        result.put("pbMode", result.get("zhongbiao_pbMode"));
+                        result.remove("zhongbiao_pbMode");
+                    }
+
+                }
+            }
+        }
+        return relList;
     }
 
 }

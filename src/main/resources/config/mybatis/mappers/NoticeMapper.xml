@@ -2,6 +2,41 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.biaodaa.dao.NoticeMapper">
+    <sql id="selectCompanyInfo">
+        select DISTINCT c.*,s.cert_no,s.cert_date,s.valid_date,b.runScope as comRange,b.registerStatus as subsist
+        from mishu.tb_company c
+        left join mishu.tb_safety_certificate s on c.com_name = s.com_name
+        left join mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
+    </sql>
+
+    <sql id="noticeTypeConvert">
+        (case s.otherType
+        when '0' then '公告'
+        when '1' then '补充'
+        when '2' then '答疑'
+        when '3' then '流标'
+        when '4' then '澄清'
+        when '5' then '延期'
+        when '6' then '更正公告'
+        when '7' then '废标'
+        when '8' then '终止'
+        when '9' then '修改'
+        when '10' then '控制价'
+        when '11' then '资审结果'
+        when '12' then '资格预审'
+        when '13' then '入围'
+        when '14' then '暂停'
+        else '其他' end) as noticeType
+        ,( case biddingType
+        when '0' then '施工'
+        when '2' then '监理'
+        when '3' then '采购'
+        when '1' then '设计'
+        when '4' then '勘察'
+        when '5' then '其他'
+        else '其他' end) as projectType
+    </sql>
+
     <select id="queryNoticesByCompanyName" resultType="Long" parameterType="String">
         SELECT a.contId
         FROM mishu.snatch_url_cert a
@@ -15,31 +50,7 @@
 
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
         SELECT s.id,s.title,s.opendate
-        ,(case s.otherType
-            when '0' then '公告'
-            when '1' then '补充'
-            when '2' then '答疑'
-            when '3' then '流标'
-            when '4' then '澄清'
-            when '5' then '延期'
-            when '6' then '更正公告'
-            when '7' then '废标'
-            when '8' then '终止'
-            when '9' then '修改'
-            when '10' then '控制价'
-            when '11' then '资审结果'
-            when '12' then '资格预审'
-            when '13' then '入围'
-            when '14' then '暂停'
-            else '其他' end) as noticeType
-        ,( case biddingType
-            when '0' then '施工'
-            when '2' then '监理'
-            when '3' then '采购'
-            when '1' then '设计'
-            when '4' then '勘察'
-            when '5' then '其他'
-            else '其他' end) as projectType
+        ,<include refid="noticeTypeConvert"/>
         ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.${detailTable} WHERE snatchUrlId =s.id ) pbMode
         ,(SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
         <if test="type == '2'">
@@ -128,7 +139,12 @@
     </select>
 
     <select id="queryRelations" resultType="Map" parameterType="Long">
-        select s.id, s.title,s.openDate
+        SELECT s.id,s.title,s.opendate,s.type
+        ,<include refid="noticeTypeConvert"/>
+        ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail WHERE snatchUrlId =s.id ) as zhaobiao_pbMode
+        ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail WHERE snatchUrlId =s.id ) as zhongbiao_pbMode
+        ,(SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
+        ,(SELECT GROUP_CONCAT(zb.oneName SEPARATOR ',') oneName FROM mishu.zhongbiao_detail zb WHERE zb.snatchUrlId =s.id) oneName
          from mishu.snatchurl s
          join ((select re.nextid as reid
                  from mishu.snatchrelation re
@@ -146,14 +162,23 @@
         where zz.contid=#{id}
     </select>
 
-    <select id="queryComByZZ" resultType="Map" parameterType="java.util.List">
-        select com_id,com_name
-        from mishu.tb_company
+    <select id="queryComInfoByZZ" resultType="Map" parameterType="java.util.List">
+       <include refid="selectCompanyInfo"></include>
         where
         <foreach collection="list" item="zz" separator=" or " >
-          `range` like '%${zz}%'
+          c.`range` like '%${zz}%'
         </foreach>
-        order by length(`range`) desc
+        order by length(c.`range`) desc
+    </select>
+
+    <select id="queryCompanyCountByZZ" resultType="Integer" parameterType="java.util.List">
+        SELECT count(c.com_id)
+        from mishu.tb_company c
+        where
+        <foreach collection="list" item="zz" separator=" or " >
+            c.`range` like '%${zz}%'
+        </foreach>
+        order by length(c.`range`) desc
     </select>
     
     <select id="queryNoticeFile" resultType="Map" parameterType="Map">

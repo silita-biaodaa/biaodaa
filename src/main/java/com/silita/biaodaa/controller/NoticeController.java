@@ -50,8 +50,9 @@ public class NoticeController extends BaseController{
         try {
 //        search.setTypeToInt(type);
 //        encodingConvert(search);
-            Integer pageNo = MapUtils.getInteger(params, "pageNo");
-            Integer pageSize = MapUtils.getInteger(params, "pageSize");
+            Page page = buildPage(params);
+            Integer pageNo = page.getCurrentPage();
+            Integer pageSize = page.getPageSize();
             String kbDateStart= MapUtils.getString(params, "kbDateStart");
             String kbDateEnd= MapUtils.getString(params, "kbDateEnd");
             if(MyStringUtils.isNotNull(kbDateStart)
@@ -71,9 +72,6 @@ public class NoticeController extends BaseController{
                 } else {
                     resultMap.put("isLastPage", false);
                 }
-                Page page = new Page();
-                page.setPageSize(pageSize);
-                page.setCurrentPage(pageNo);
 
                 int paramHash = ObjectUtils.buildMapParamHash(params);
                 String listKey = RedisConstantInterface.GG_LIST + paramHash;
@@ -84,11 +82,7 @@ public class NoticeController extends BaseController{
                         myRedisTemplate.setObject(listKey, pageInfo, RedisConstantInterface.LIST_OVER_TIME);
                     }
                 }
-                resultMap.put("data", pageInfo.getList());
-                resultMap.put("pageNum", pageInfo.getPageNum());
-                resultMap.put("pageSize", pageInfo.getPageSize());
-                resultMap.put("total", pageInfo.getTotal());
-                resultMap.put("pages", pageInfo.getPages());
+                buildReturnMap(resultMap,pageInfo);
                 successMsg(resultMap);
             }
             //        recordAccessCount(request,params); 记录访问数
@@ -106,11 +100,7 @@ public class NoticeController extends BaseController{
         try {
             params.put("id",id);
             List<Map> detailList = noticeService.queryNoticeDetail(params);
-            List<Map> companyList = noticeService.queryComListById(id);
-            int relCompanySize =0;
-            if(companyList !=null && companyList.size()>0){
-                relCompanySize = companyList.size();
-            }
+            Integer relCompanySize = noticeService.queryCompanyCountById(id);
             List<Map> fileList = noticeService.queryNoticeFile(id);
             int fileSize =0;
             if(fileList !=null && fileList.size()>0){
@@ -135,7 +125,7 @@ public class NoticeController extends BaseController{
         Map resultMap = new HashMap();
         try{
             List<Map> relationNotices =  noticeService.queryRelations(id);
-            resultMap.put("relationNotices",relationNotices);
+            resultMap.put("data",relationNotices);
             successMsg(resultMap);
         }catch (Exception e){
             logger.error(e,e);
@@ -150,7 +140,7 @@ public class NoticeController extends BaseController{
         Map resultMap = new HashMap();
         try{
             List<Map> fileList =  noticeService.queryNoticeFile(id);
-            resultMap.put("fileList",fileList);
+            resultMap.put("data",fileList);
             successMsg(resultMap);
         }catch (Exception e){
             logger.error(e,e);
@@ -162,11 +152,12 @@ public class NoticeController extends BaseController{
 
     @ResponseBody
     @RequestMapping(value = "/queryCompanyList/{id}",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
-    public Map<String,Object> queryCompanyList(@PathVariable Long id){
+    public Map<String,Object> queryCompanyList(@PathVariable Long id,@RequestBody Map params){
         Map resultMap = new HashMap();
         try{
-            List<Map> companyList =  noticeService.queryComListById(id);
-            resultMap.put("companyList",companyList);
+            Page page =buildPage(params);
+            PageInfo pageInfo = noticeService.queryCompanyListById(page,id);
+            buildReturnMap(resultMap,pageInfo);
             successMsg(resultMap);
         }catch (Exception e){
             logger.error(e,e);

@@ -1,5 +1,9 @@
 package com.silita.biaodaa.controller;
 
+import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.controller.vo.Page;
+import org.apache.commons.collections.MapUtils;
+
 import java.util.Map;
 
 /**
@@ -34,6 +38,23 @@ public abstract class BaseController {
     protected void errorMsg(Map resultMap,String errMsg){
         resultMap.put(this.CODE_FLAG,this.FAIL_CODE);
         resultMap.put(this.MSG_FLAG,errMsg);
+    }
+
+    protected Page buildPage(Map params){
+        Integer pageNo = MapUtils.getInteger(params, "pageNo");
+        Integer pageSize = MapUtils.getInteger(params, "pageSize");
+        Page page = new Page();
+        page.setPageSize(pageSize);
+        page.setCurrentPage(pageNo);
+        return page;
+    }
+
+    protected void buildReturnMap(Map resultMap,PageInfo pageInfo){
+        resultMap.put("data", pageInfo.getList());
+        resultMap.put("pageNo", pageInfo.getPageNum());
+        resultMap.put("pageSize", pageInfo.getPageSize());
+        resultMap.put("total", pageInfo.getTotal());
+        resultMap.put("pages", pageInfo.getPages());
     }
 
 }
