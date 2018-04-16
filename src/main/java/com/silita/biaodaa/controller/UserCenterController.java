@@ -6,6 +6,7 @@ package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.UserCenterService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
@@ -31,6 +32,28 @@ public class UserCenterController {
 
     @Autowired
     private UserCenterService userCenterService;
+
+
+    @ResponseBody
+    @RequestMapping(value = "/updateUserTemp",produces = "application/json;charset=utf-8")
+    public Map<String,Object> updateUserTemp(@RequestBody UserTempBdd userTempBdd){
+        Map result = new HashMap();
+        result.put("code", 1);
+        result.put("data", null);
+
+        try{
+            UserTempBdd vo = userCenterService.updateUserTemp(userTempBdd);
+            if(vo != null) {
+                result.put("msg", "更新账号基本信息成功！");
+                result.put("data", vo);
+            }
+        } catch (Exception e) {
+            logger.error("更新账号基本信息异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
 
     @ResponseBody
     @RequestMapping(value = "/listMessageByUserId", produces = "application/json;charset=utf-8")
