@@ -99,13 +99,23 @@ public class NoticeController extends BaseController{
         Map resultMap = new HashMap();
         try {
             params.put("id",id);
-            List<Map> detailList = noticeService.queryNoticeDetail(params);
+            int paramHash = ObjectUtils.buildMapParamHash(params);
+            String listKey = RedisConstantInterface.GG_DETAIL + paramHash;
+            List<Map> detailList = (List<Map>) myRedisTemplate.getObject(listKey);
+            if(detailList ==null) {
+                detailList = noticeService.queryNoticeDetail(params);
+                if(detailList!=null && detailList.size()>0){
+                    myRedisTemplate.setObject(listKey,detailList,RedisConstantInterface.DETAIL_OVER_TIME);
+                }
+            }
+
             Integer relCompanySize = noticeService.queryCompanyCountById(id);
             List<Map> fileList = noticeService.queryNoticeFile(id);
             int fileSize =0;
             if(fileList !=null && fileList.size()>0){
                 fileSize = fileList.size();
             }
+
             Long relNoticeCount =  noticeService.queryRelCount(id);
             resultMap.put("detailList",detailList);
             resultMap.put("relCompanySize",relCompanySize);//资质相关企业

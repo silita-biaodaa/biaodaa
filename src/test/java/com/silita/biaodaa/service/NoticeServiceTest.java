@@ -66,8 +66,8 @@ public class NoticeServiceTest extends ConfigTest {
      * @throws Exception
      */
     @Test
-    public void testqueryList()throws Exception{//,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
-        String requestBody = "{\"pageNo\":29,\"pageSize\":20,\"type\":0,\"projectType\":\"0\",\"kbDateStart\":\"2018-01-30\",\"kbDateEnd\":\"2018-03-13\",\"regions\":\"||长沙市\"}";
+    public void testqueryList()throws Exception{//,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
+        String requestBody = "{\"pageNo\":1,\"pageSize\":20,\"type\":0,\"projectType\":\"2\",\"regions\":\"||长沙市\"}";
         String responseString = mockMvc.perform(post("/notice/queryList").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)

@@ -162,7 +162,7 @@
         where zz.contid=#{id}
     </select>
 
-    <select id="queryComInfoByZZ" resultType="Map" parameterType="java.util.List">
+    <select id="queryComInfoByZZ" resultType="com.silita.biaodaa.model.TbCompany" parameterType="java.util.List">
        <include refid="selectCompanyInfo"></include>
         where
         <foreach collection="list" item="zz" separator=" or " >
