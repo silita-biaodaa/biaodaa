@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
 import static org.apache.commons.collections.MapUtils.getString;
 
 /**
@@ -108,19 +109,22 @@ public class NoticeController extends BaseController{
                     myRedisTemplate.setObject(listKey,detailList,RedisConstantInterface.DETAIL_OVER_TIME);
                 }
             }
-
-            Integer relCompanySize = noticeService.queryCompanyCountById(id);
-            List<Map> fileList = noticeService.queryNoticeFile(id);
-            int fileSize =0;
-            if(fileList !=null && fileList.size()>0){
-                fileSize = fileList.size();
-            }
-
             Long relNoticeCount =  noticeService.queryRelCount(id);
             resultMap.put("detailList",detailList);
-            resultMap.put("relCompanySize",relCompanySize);//资质相关企业
-            resultMap.put("fileCount",fileSize);//文件列表
             resultMap.put("relNoticeCount",relNoticeCount);//相关公告数量
+
+            //招标详情
+            String type= MapUtils.getString(params, "type");
+            if(type.equals(SNATCHURL_ZHAOBIAO)){
+                Integer relCompanySize = noticeService.queryCompanyCountById(id);
+                List<Map> fileList = noticeService.queryNoticeFile(id);
+                int fileSize =0;
+                if(fileList !=null && fileList.size()>0){
+                    fileSize = fileList.size();
+                }
+                resultMap.put("relCompanySize",relCompanySize);//资质相关企业
+                resultMap.put("fileCount",fileSize);//文件列表
+            }
             successMsg(resultMap);
         }catch (Exception e){
             logger.error(e,e);

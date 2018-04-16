@@ -132,21 +132,24 @@
                 and (length(detail.oneOffer) - length(REPLACE (detail.oneOffer, '.', ''))) &lt;=1  and !(detail.oneOffer REGEXP '[^0-9.]')
             </if>
         </if>
-
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </select>
 
     <select id="queryNoticeDetail" resultType="Map" parameterType="Map">
-        select s.id,s.title,s.url,s.opendate,dl.projDq,dl.bmSite,
-                dl.kbSite,dl.kbStaffAsk,dl.projSum,dl.pbMode,
-                dl.zzRank,dl.tbAssureEndDate,dl.tbAssureEndTime,dl.tbAssureSum,
-                dl.bmEndDate,dl.bmEndTime,dl.bmSite,
-                dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,
-                dl.kbStaffAsk,sc.content
+        select s.id,s.title,s.url,s.opendate,dl.projDq,dl.pbMode,
+                <if test="type == 0">
+                dl.bmSite,dl.kbSite,dl.kbStaffAsk,dl.projSum,dl.zzRank,dl.tbAssureEndDate,
+                dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
+                dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
+                </if>
+                <if test="type == 2">
+                dl.oneName,dl.oneOffer,dl.twoName,dl.twoOffer,dl.threeName,dl.threeOffer,
+                </if>
+                sc.content
          from mishu.snatchurl s
          left join mishu.snatchurlcontent sc on sc.snatchurlid=s.id
          left join mishu.${detailTable} dl on dl.snatchurlid=s.id
-         where s.edit=1 and s.isshow=0 and s.id=#{id}
+         where s.type = #{type} and s.isshow=0 and s.id=#{id}
     </select>
 
     <select id="queryRelCount" resultType="Long" parameterType="Long">

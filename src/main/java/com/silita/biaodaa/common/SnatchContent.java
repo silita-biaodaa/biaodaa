@@ -4,6 +4,10 @@ import java.util.Set;
 
 public class SnatchContent {
 
+    public static String SNATCHURL_ZHAOBIAO="0";
+
+    public static String SNATCHURL_ZHONGBIAO="2";
+
     public static Set<String> APTITUDE_SET = null;
 
     public static final String ZF_CG="zf";//政府采购网站标识

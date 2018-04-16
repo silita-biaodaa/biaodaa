@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
+import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHONGBIAO;
+
 /**
  * Created by dh on 2018/4/9.
  */
@@ -22,10 +25,6 @@ public class NoticeService {
 
     @Autowired
     private NoticeMapper noticeMapper;
-
-    public String SNATCHURL_ZHAOBIAO="0";
-
-    public String SNATCHURL_ZHONGBIAO="2";
 //
 //    @Cacheable(value = "fenleiData", key="'fenleiData'+#search.cert+#search.title" +
 //                    "+#search.type+#search.rangeDate+#search.range+#search.isShow" +
