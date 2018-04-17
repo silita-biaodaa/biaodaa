@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.CollecNoticeMapper">
+
+    <select id="getCollecNoticeByUserIdAndNoticeId" parameterType="com.silita.biaodaa.model.CollecNotice"
+            resultType="com.silita.biaodaa.model.CollecNotice">
+      SELECT * FROM mishu_write.collec_notice WHERE userId = #{userid} AND noticeId = #{noticeid}
+    </select>
+
+    <insert id="insertCollecNotice" parameterType="com.silita.biaodaa.model.CollecNotice">
+      INSERT INTO mishu_write.collec_notice(userId, `type`, noticeId, noticeRelationNum, collecTime, readOrReaded)
+      VALUES(#{userid}, #{type}, #{noticeid}, 0, NOW(), 0)
+    </insert>
+
+    <delete id="deleteCollecNoticeByUserIdAndNoticeId" parameterType="com.silita.biaodaa.model.CollecNotice">
+        DELETE FROM mishu_write.collec_notice WHERE `userId` = #{userid} AND `noticeId` = #{noticeid}
+    </delete>
+
+    <select id="listCollecNoticeByUserIdAndType" parameterType="com.silita.biaodaa.model.CollecNotice" resultType="com.silita.biaodaa.model.CollecNotice">
+        SELECT * FROM mishu_write.collec_notice
+        <where>
+            1 = 1
+            <if test="userid!=null and userid!=''">
+                AND userId = #{userid}
+            </if>
+            <if test="type!=null and type!=''">
+                AND `type` = #{type}
+            </if>
+        </where>
+    </select>
+</mapper>
