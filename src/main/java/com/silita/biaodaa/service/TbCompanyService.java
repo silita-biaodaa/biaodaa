@@ -324,6 +324,7 @@ public class TbCompanyService {
                                 }
                                 subRe.put("name",list.get(0).get("mateName"));
                                 subRe.put("shortName",list.get(0).get("shortName"));
+                                subRe.put("shortRemark",list.get(0).get("shortRemark"));
                                 subRe.put("code",code);
                                 subRe.put("num",list.size());
                                 subRe.put("list",list);

@@ -75,7 +75,7 @@
   </select>
   
   <select id="getCertQyhj" parameterType="Map" resultType="Map">
-    select q.projName,q.projType,q.years,zh.type,zh.code,zh.mateName,zh.score,zh.shortName
+    select q.projName,q.projType,q.years,zh.type,zh.code,zh.mateName,zh.score,zh.shortName,zh.shortRemark
     from cert_qyhj q
     left join prize_zh zh on q.zhUuid=zh.uuid
     where q.zhUuid is not null
