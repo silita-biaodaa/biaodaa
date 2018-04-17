@@ -136,9 +136,11 @@
     </select>
 
     <select id="queryNoticeDetail" resultType="Map" parameterType="Map">
-        select s.id,s.title,s.url,s.opendate,s.type,dl.projDq,dl.pbMode,
+        select s.id,s.title,s.url,s.opendate,s.type,dl.projDq,dl.pbMode,dl.projSum,
                 <if test="type == 0">
-                dl.bmSite,dl.kbSite,dl.kbStaffAsk,dl.projSum,dl.zzRank,dl.tbAssureEndDate,
+                dl.bmSite,dl.kbSite,dl.kbStaffAsk,
+                (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} ) zzRank,
+                dl.tbAssureEndDate,
                 dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
                 dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
                 </if>
