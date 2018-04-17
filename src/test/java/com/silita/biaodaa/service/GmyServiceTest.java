@@ -152,12 +152,12 @@ public class GmyServiceTest extends ConfigTest {
     @Test
     public void testController9()throws Exception{
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userid", "67edf8831ddf49008cf3161e1b92b743");
-        jsonObject.put("imgurl", "test.img");
-        jsonObject.put("nickname", "update");
+        jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
+//        jsonObject.put("imgurl", "test.img");
+//        jsonObject.put("nickname", "update");
         jsonObject.put("gender", "1");
         jsonObject.put("mailbox", "999999@qq.com");
-        jsonObject.put("companyname", "测试");
+//        jsonObject.put("companyname", "测试");
         String requestBody = jsonObject.toJSONString();
         String responseString = mockMvc.perform(post("/userCenter/updateUserTemp").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -192,16 +192,25 @@ public class GmyServiceTest extends ConfigTest {
 
     @Test
     public void testController11()throws Exception{
+        MockMultipartFile firstFile = new MockMultipartFile("files", "filename.txt", "text/plain", "some xml".getBytes());
+
+        String responseString = mockMvc.perform(fileUpload("/userCenter/updateHeadPortrait").file(firstFile)
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController12()throws Exception{
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userpass", "123321");
-        jsonObject.put("userid", "67edf8831ddf49008cf3161e1b92b743");
-        jsonObject.put("userphone", "18774987061");
-        jsonObject.put("invitationCode", "900007");
-        jsonObject.put("version", "10100");
-        jsonObject.put("loginchannel", "1002");
+        jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
+        jsonObject.put("type", "2");
+        jsonObject.put("noticeid", "666666");
 
         String requestBody = jsonObject.toJSONString();
-        String responseString = mockMvc.perform(post("/userCenter/updatePassWord").characterEncoding("UTF-8")
+        String responseString = mockMvc.perform(post("/userCenter/collectionNotice").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody.getBytes())
         )
@@ -212,10 +221,32 @@ public class GmyServiceTest extends ConfigTest {
     }
 
     @Test
-    public void testController12()throws Exception{
-        MockMultipartFile firstFile = new MockMultipartFile("files", "filename.txt", "text/plain", "some xml".getBytes());
+    public void testController13()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
+        jsonObject.put("noticeid", "123456");
 
-        String responseString = mockMvc.perform(fileUpload("/userCenter/updateHeadPortrait").file(firstFile)
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/userCenter/cancelCollectionNotice").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController14()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
+        jsonObject.put("type", "1");
+
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/userCenter/listCollectionNotice").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
         )
                 .andExpect(status().isOk())
                 .andDo(print())

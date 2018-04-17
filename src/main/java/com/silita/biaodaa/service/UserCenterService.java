@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.dao.CollecNoticeMapper;
 import com.silita.biaodaa.dao.InvitationBddMapper;
 import com.silita.biaodaa.dao.MessagePushMapper;
 import com.silita.biaodaa.dao.UserTempBddMapper;
+import com.silita.biaodaa.model.CollecNotice;
 import com.silita.biaodaa.model.InvitationBdd;
 import com.silita.biaodaa.model.MessagePush;
 import com.silita.biaodaa.model.UserTempBdd;
@@ -33,6 +35,8 @@ public class UserCenterService {
     private MessagePushMapper messagePushMapper;
     @Autowired
     private UserTempBddMapper userTempBddMapper;
+    @Autowired
+    private CollecNoticeMapper collecNoticeMapper;
 
     public UserTempBdd updateUserTemp(UserTempBdd userTempBdd) {
         userTempBddMapper.updateUserTemp(userTempBdd);
@@ -81,7 +85,31 @@ public class UserCenterService {
         return "";
     }
 
-    public PageInfo queryMessageList(Page page, Map params){
+    public String insertCollecNotice(CollecNotice collecNotice) {
+        CollecNotice vo = collecNoticeMapper.getCollecNoticeByUserIdAndNoticeId(collecNotice);
+        //已收藏
+        if(vo != null) {
+            return "您已收藏该公告！";
+        }
+        collecNoticeMapper.insertCollecNotice(collecNotice);
+        return "";
+    }
+
+    public void deleteCollecNotice(CollecNotice collecNotice) {
+        collecNoticeMapper.deleteCollecNoticeByUserIdAndNoticeId(collecNotice);
+    }
+
+    public PageInfo queryCollectionNotice(Page page, Map<String, Object> params){
+        List<CollecNotice> collecNotices = new ArrayList<>();
+
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        collecNotices = collecNoticeMapper.listCollecNoticeByUserIdAndType(params);
+        PageInfo pageInfo = new PageInfo(collecNotices);
+        return pageInfo;
+    }
+
+
+    public PageInfo queryMessageList(Page page, Map<String, Object> params){
         List<MessagePush> messagePushes = new ArrayList<>();
 
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());

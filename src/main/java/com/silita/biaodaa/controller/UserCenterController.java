@@ -6,6 +6,7 @@ package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.model.CollecNotice;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.UserCenterService;
 import com.silita.biaodaa.utils.PropertiesUtils;
@@ -93,13 +94,84 @@ public class UserCenterController {
             headPortraitImg.transferTo(uploadFile);
             result.put("imaPath",uploadFile.getAbsolutePath());
         } catch (Exception e) {
-            logger.error("更改密码异常！" + e.getMessage(), e);
+            logger.error("文件上传异常！" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
             result.put("imgPath", "");
         }
         return result;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/collectionNotice",produces = "application/json;charset=utf-8")
+    public Map<String,Object> collectionNotice(@RequestBody CollecNotice collecNotice){
+        Map result = new HashMap();
+        result.put("code", 1);
+
+        try{
+            String msg = userCenterService.insertCollecNotice(collecNotice);
+            if("".equals(msg)) {
+                result.put("msg", "收藏公告成功！");
+            } else {
+                result.put("msg",  msg);
+                result.put("code", 2);
+            }
+        } catch (Exception e) {
+            logger.error("收藏公告异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/cancelCollectionNotice",produces = "application/json;charset=utf-8")
+    public Map<String,Object> cancelCollectionNotice(@RequestBody CollecNotice collecNotice) {
+        Map result = new HashMap();
+        result.put("code", 1);
+
+        try{
+            userCenterService.deleteCollecNotice(collecNotice);
+            result.put("msg", "取消收藏成功！");
+        } catch (Exception e) {
+            logger.error("取消收藏异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/listCollectionNotice",produces = "application/json;charset=utf-8")
+    public Map<String,Object> listCollectionNotice(@RequestBody Map<String, Object> params){
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 1);
+        result.put("msg", "获取消息列表成功!");
+        result.put("pageNum",1);
+        result.put("pageSize", 0);
+        result.put("total",0);
+        result.put("pages",1);
+
+        try{
+            Page page = new Page();
+            page.setPageSize(MapUtils.getInteger(params, "pageSize"));
+            page.setCurrentPage(MapUtils.getInteger(params, "pageNo"));
+
+            PageInfo pageInfo  = userCenterService.queryCollectionNotice(page, params);
+            result.put("data",pageInfo.getList());
+            result.put("pageNum",pageInfo.getPageNum());
+            result.put("pageSize", pageInfo.getPageSize());
+            result.put("total",pageInfo.getTotal());
+            result.put("pages",pageInfo.getPages());
+        } catch (Exception e) {
+            logger.error("获消息列表异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+
 
 
 
