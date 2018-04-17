@@ -49,7 +49,7 @@
     </select>
 
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
-        SELECT s.id,s.title,s.opendate
+        SELECT s.id,s.title,s.opendate,s.type
         ,<include refid="noticeTypeConvert"/>
         ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.${detailTable} WHERE snatchUrlId =s.id ) pbMode
         ,(SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
@@ -136,7 +136,7 @@
     </select>
 
     <select id="queryNoticeDetail" resultType="Map" parameterType="Map">
-        select s.id,s.title,s.url,s.opendate,dl.projDq,dl.pbMode,
+        select s.id,s.title,s.url,s.opendate,s.type,dl.projDq,dl.pbMode,
                 <if test="type == 0">
                 dl.bmSite,dl.kbSite,dl.kbStaffAsk,dl.projSum,dl.zzRank,dl.tbAssureEndDate,
                 dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
