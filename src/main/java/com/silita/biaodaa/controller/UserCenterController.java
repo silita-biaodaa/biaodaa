@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -86,13 +85,13 @@ public class UserCenterController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/updateHeadPortrait",produces = "application/json;charset=utf-8")
-    public Map<String,Object> updateHeadPortrait(@RequestParam(value = "files", required = false) List<MultipartFile> files){
+//    @RequestMapping(value = "/updateHeadPortrait", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String,Object> updateHeadPortrait(@RequestParam("files") MultipartFile[] files){
         Map result = new HashMap();
         result.put("code", 1);
         result.put("msg", "文件上传成功！");
         try{
-            MultipartFile headPortraitImg = files.get(0);
+            MultipartFile headPortraitImg = files[0];
             File uploadFile = new File(PropertiesUtils.getProperty("HEAD_PORTRAIT_PATH") + headPortraitImg.getOriginalFilename());
             headPortraitImg.transferTo(uploadFile);
             result.put("imaPath",uploadFile.getAbsolutePath());
@@ -107,7 +106,7 @@ public class UserCenterController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/updateHeadPortrait2", method = RequestMethod.POST)
+//    @RequestMapping(value = "/updateHeadPortrait2", method = RequestMethod.POST)
     public Map<String,Object> fileUpload(HttpServletRequest request, HttpServletResponse response) {
         Map result = new HashMap();
         result.put("code", 1);
