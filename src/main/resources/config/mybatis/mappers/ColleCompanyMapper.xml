@@ -1,14 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.biaodaa.dao.ColleCompanyMapper" >
-  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.ColleCompany" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="companyId" property="companyid" jdbcType="INTEGER" />
-    <result column="companyName" property="companyname" jdbcType="VARCHAR" />
-    <result column="userId" property="userid" jdbcType="VARCHAR" />
-    <result column="tableName" property="tablename" jdbcType="VARCHAR" />
-  </resultMap>
+<mapper namespace="com.silita.biaodaa.dao.ColleCompanyMapper">
+
+  <select id="getCollectionCompanyByUserIdAndCompanyId" parameterType="com.silita.biaodaa.model.ColleCompany"
+          resultType="com.silita.biaodaa.model.ColleCompany">
+    SELECT * FROM mishu_write.colle_company WHERE userId = #{userid} AND companyId = #{companyid} AND tableName = #{tablename}
+  </select>
+
+  <insert id="insertCollectionCompany" parameterType="com.silita.biaodaa.model.ColleCompany">
+      INSERT INTO mishu_write.colle_company(companyId, `companyName`, userId, tableName)
+      VALUES(#{companyid}, #{companyname}, #{userid}, #{tablename})
+  </insert>
+
+  <delete id="deleteCollectionCompany" parameterType="com.silita.biaodaa.model.ColleCompany">
+      DELETE FROM mishu_write.colle_company WHERE `userId` = #{userid} AND `companyId` = #{companyid} AND tableName = #{tablename}
+  </delete>
+
+  <select id="listHuNanCollectionCompany" parameterType="com.silita.biaodaa.model.ColleCompany" resultType="Map">
+      SELECT c2.userId, c.com_id AS id, c.com_name AS `name`, c.org_code AS `code`, c.regis_address,
+      c.legal_person, c.economic_type, c.regis_capital
+      FROM mishu_write.colle_company c2
+      LEFT JOIN mishu.tb_company c ON c.com_id = c2.companyId
+      WHERE c2.`userId` = #{userid} AND c2.tableName = #{tablename}
+  </select>
+
+  <select id="listNationWideCollectionCompany" parameterType="com.silita.biaodaa.model.ColleCompany" resultType="Map">
+      SELECT c2.userId, c.ID AS id, c.CompanyName AS `name`, c.OrganizationCode AS `code`, c.RegisterLocation AS regis_address,
+      c.LegalRepresentative AS legal_person, c.CompanyType AS economic_type
+      FROM mishu_write.colle_company c2
+      LEFT JOIN construction4.CompanyInfo c ON c.ID = c2.companyId
+      WHERE c2.`userId` = #{userid} AND c2.tableName = #{tablename}
+  </select>
+
 </mapper>

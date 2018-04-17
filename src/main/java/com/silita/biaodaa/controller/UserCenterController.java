@@ -6,6 +6,7 @@ package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.model.ColleCompany;
 import com.silita.biaodaa.model.CollecNotice;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.UserCenterService;
@@ -14,13 +15,15 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +105,35 @@ public class UserCenterController {
         return result;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/updateHeadPortrait2", method = RequestMethod.POST)
+    public Map<String,Object> fileUpload(HttpServletRequest request, HttpServletResponse response) {
+        Map result = new HashMap();
+        result.put("code", 1);
+        result.put("msg", "文件上传成功！");
+
+        response.addHeader("key","value");
+
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession()
+                .getServletContext());
+        if(commonsMultipartResolver.isMultipart(request)) {
+            MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+            MultipartFile headPortraitImg = multipartHttpServletRequest.getMultiFileMap().get("file").get(0);
+
+            File uploadFile = new File(PropertiesUtils.getProperty("HEAD_PORTRAIT_PATH") + headPortraitImg.getOriginalFilename());
+            try {
+                headPortraitImg.transferTo(uploadFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            result.put("imaPath",uploadFile.getAbsolutePath());
+
+        }
+        return result;
+    }
+
+
     @ResponseBody
     @RequestMapping(value = "/collectionNotice",produces = "application/json;charset=utf-8")
     public Map<String,Object> collectionNotice(@RequestBody CollecNotice collecNotice){
@@ -109,7 +141,7 @@ public class UserCenterController {
         result.put("code", 1);
 
         try{
-            String msg = userCenterService.insertCollecNotice(collecNotice);
+            String msg = userCenterService.insertCollectionNotice(collecNotice);
             if("".equals(msg)) {
                 result.put("msg", "收藏公告成功！");
             } else {
@@ -131,7 +163,7 @@ public class UserCenterController {
         result.put("code", 1);
 
         try{
-            userCenterService.deleteCollecNotice(collecNotice);
+            userCenterService.deleteCollectionNotice(collecNotice);
             result.put("msg", "取消收藏成功！");
         } catch (Exception e) {
             logger.error("取消收藏异常！" + e.getMessage(), e);
@@ -146,6 +178,77 @@ public class UserCenterController {
     public Map<String,Object> listCollectionNotice(@RequestBody Map<String, Object> params){
         Map<String,Object> result = new HashMap<>();
         result.put("code", 1);
+        result.put("msg", "获取公告收藏列表成功!");
+        result.put("pageNum",1);
+        result.put("pageSize", 0);
+        result.put("total",0);
+        result.put("pages",1);
+
+        try{
+            checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
+            Page page = new Page();
+            page.setPageSize(MapUtils.getInteger(params, "pageSize"));
+            page.setCurrentPage(MapUtils.getInteger(params, "pageNo"));
+
+            PageInfo pageInfo  = userCenterService.queryCollectionNotice(page, params);
+            result.put("data",pageInfo.getList());
+            result.put("pageNum",pageInfo.getPageNum());
+            result.put("pageSize", pageInfo.getPageSize());
+            result.put("total",pageInfo.getTotal());
+            result.put("pages",pageInfo.getPages());
+        } catch (Exception e) {
+            logger.error("获取公告收藏列表异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/collectionCompany",produces = "application/json;charset=utf-8")
+    public Map<String,Object> collectionCompany(@RequestBody ColleCompany colleCompany){
+        Map result = new HashMap();
+        result.put("code", 1);
+
+        try{
+            String msg = userCenterService.insertCollectionCompany(colleCompany);
+            if("".equals(msg)) {
+                result.put("msg", "收藏企业成功！");
+            } else {
+                result.put("msg",  msg);
+                result.put("code", 2);
+            }
+        } catch (Exception e) {
+            logger.error("收藏企业异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/cancelCollectionCompany",produces = "application/json;charset=utf-8")
+    public Map<String,Object> cancelcollectionCompany(@RequestBody ColleCompany colleCompany) {
+        Map result = new HashMap();
+        result.put("code", 1);
+
+        try{
+            userCenterService.deleteCollectionCompany(colleCompany);
+            result.put("msg", "取消收藏成功！");
+        } catch (Exception e) {
+            logger.error("取消收藏异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/listCollectionCompany",produces = "application/json;charset=utf-8")
+    public Map<String,Object> listCollectionCompany(@RequestBody Map<String, Object> params){
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 1);
         result.put("msg", "获取消息列表成功!");
         result.put("pageNum",1);
         result.put("pageSize", 0);
@@ -153,11 +256,12 @@ public class UserCenterController {
         result.put("pages",1);
 
         try{
+            checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
             Page page = new Page();
             page.setPageSize(MapUtils.getInteger(params, "pageSize"));
             page.setCurrentPage(MapUtils.getInteger(params, "pageNo"));
 
-            PageInfo pageInfo  = userCenterService.queryCollectionNotice(page, params);
+            PageInfo pageInfo  = userCenterService.querCollectionCompany(page, params);
             result.put("data",pageInfo.getList());
             result.put("pageNum",pageInfo.getPageNum());
             result.put("pageSize", pageInfo.getPageSize());
@@ -170,8 +274,6 @@ public class UserCenterController {
         }
         return result;
     }
-
-
 
 
 

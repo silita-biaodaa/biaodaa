@@ -1,5 +1,7 @@
 package com.silita.biaodaa.controller;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.silita.biaodaa.model.CarouselImage;
 import com.silita.biaodaa.model.TbHotWords;
 import com.silita.biaodaa.service.FoundationService;
@@ -63,4 +65,51 @@ public class FoundationController {
         return result;
     }
 
+    /**
+     * 版本查询
+     * @param loginChannel
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/getVersion", produces="application/json;charset=utf-8")
+    public Map<String, Object> getVersion(@RequestBody String loginChannel) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", 1);
+        result.put("msg", "获取版本信息成功!");
+        try {
+            String version = foundationService.getVersion(loginChannel);
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(version), "version信息不能为空！");
+            result.put("data", version);
+        } catch (Exception e) {
+            logger.error(String.format("版本查询失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 添加反馈意见
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/addFeedback", produces="application/json;charset=utf-8")
+    public Map<String, Object> addFeedback(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", 1);
+        result.put("msg", "反馈意见添加成功!");
+        try {
+            Preconditions.checkArgument(params.containsKey("pid") && !Strings.isNullOrEmpty((String)params.get("pid")), "pid不能为空！");
+            Preconditions.checkArgument(params.containsKey("path") && !Strings.isNullOrEmpty((String)params.get("path")), "path不能为空！");
+            Preconditions.checkArgument(params.containsKey("module") && !Strings.isNullOrEmpty((String)params.get("module")), "module不能为空！");
+            Preconditions.checkArgument(params.containsKey("problem") && !Strings.isNullOrEmpty((String)params.get("problem")), "problem不能为空！");
+            foundationService.addFeedback(params);
+        } catch (Exception e) {
+            logger.error(String.format("反馈意见添加失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
 }

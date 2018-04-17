@@ -241,10 +241,87 @@ public class GmyServiceTest extends ConfigTest {
     public void testController14()throws Exception{
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
-        jsonObject.put("type", "1");
+        jsonObject.put("type", "2");
+        jsonObject.put("pageNo", 2);
+        jsonObject.put("pageSize", 20);
 
         String requestBody = jsonObject.toJSONString();
         String responseString = mockMvc.perform(post("/userCenter/listCollectionNotice").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController15()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
+        jsonObject.put("companyid", 31);
+        jsonObject.put("tablename", "new_huNan");
+
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/userCenter/collectionCompany").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController16()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
+        jsonObject.put("companyid", 31);
+        jsonObject.put("tablename", "new_huNan");
+
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/userCenter/cancelCollectionCompany").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController17()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
+        jsonObject.put("companyid", 31);
+        jsonObject.put("tablename", "new_huNan");
+        jsonObject.put("pageNo", 1);
+        jsonObject.put("pageSize", 20);
+
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/userCenter/listCollectionCompany").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testController18()throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
+        jsonObject.put("tablename", "new_huNan");
+        jsonObject.put("pageNo", 2);
+        jsonObject.put("pageSize", 20);
+
+        String requestBody = jsonObject.toJSONString();
+        String responseString = mockMvc.perform(post("/userCenter/listCollectionCompany").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody.getBytes())
         )
