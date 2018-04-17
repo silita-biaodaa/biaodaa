@@ -4,14 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
-import com.silita.biaodaa.dao.CollecNoticeMapper;
-import com.silita.biaodaa.dao.InvitationBddMapper;
-import com.silita.biaodaa.dao.MessagePushMapper;
-import com.silita.biaodaa.dao.UserTempBddMapper;
-import com.silita.biaodaa.model.CollecNotice;
-import com.silita.biaodaa.model.InvitationBdd;
-import com.silita.biaodaa.model.MessagePush;
-import com.silita.biaodaa.model.UserTempBdd;
+import com.silita.biaodaa.dao.*;
+import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import com.silita.biaodaa.utils.SignConvertUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -37,6 +31,8 @@ public class UserCenterService {
     private UserTempBddMapper userTempBddMapper;
     @Autowired
     private CollecNoticeMapper collecNoticeMapper;
+    @Autowired
+    private ColleCompanyMapper colleCompanyMapper;
 
     public UserTempBdd updateUserTemp(UserTempBdd userTempBdd) {
         userTempBddMapper.updateUserTemp(userTempBdd);
@@ -85,7 +81,7 @@ public class UserCenterService {
         return "";
     }
 
-    public String insertCollecNotice(CollecNotice collecNotice) {
+    public String insertCollectionNotice(CollecNotice collecNotice) {
         CollecNotice vo = collecNoticeMapper.getCollecNoticeByUserIdAndNoticeId(collecNotice);
         //已收藏
         if(vo != null) {
@@ -95,19 +91,49 @@ public class UserCenterService {
         return "";
     }
 
-    public void deleteCollecNotice(CollecNotice collecNotice) {
+    public void deleteCollectionNotice(CollecNotice collecNotice) {
         collecNoticeMapper.deleteCollecNoticeByUserIdAndNoticeId(collecNotice);
     }
 
     public PageInfo queryCollectionNotice(Page page, Map<String, Object> params){
-        List<CollecNotice> collecNotices = new ArrayList<>();
+        List<Map<String, Object>> notices = new ArrayList<>();
 
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        collecNotices = collecNoticeMapper.listCollecNoticeByUserIdAndType(params);
-        PageInfo pageInfo = new PageInfo(collecNotices);
+        if("0".equals(params.get("type"))) {
+            notices = collecNoticeMapper.listZhaoBiaoCollecNoticeByUserId(params);
+        } else {
+            notices = collecNoticeMapper.listZhongBiaoCollecNoticeByUserId(params);
+        }
+        PageInfo pageInfo = new PageInfo(notices);
         return pageInfo;
     }
 
+    public String insertCollectionCompany(ColleCompany colleCompany) {
+        ColleCompany vo = colleCompanyMapper.getCollectionCompanyByUserIdAndCompanyId(colleCompany);
+        //已收藏
+        if(vo != null) {
+            return "您已收藏该公司！";
+        }
+        colleCompanyMapper.insertCollectionCompany(colleCompany);
+        return "";
+    }
+
+    public void deleteCollectionCompany(ColleCompany colleCompany) {
+        colleCompanyMapper.deleteCollectionCompany(colleCompany);
+    }
+
+    public PageInfo querCollectionCompany(Page page, Map<String, Object> params){
+        List<Map<String, Object>> companys = new ArrayList<>();
+
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        if("new_huNan".equals(params.get("tablename"))) {
+            companys = colleCompanyMapper.listHuNanCollectionCompany(params);
+        } else {
+//            colleCompanyMapper.listNationWideCollectionCompany(params);
+        }
+        PageInfo pageInfo = new PageInfo(companys);
+        return pageInfo;
+    }
 
     public PageInfo queryMessageList(Page page, Map<String, Object> params){
         List<MessagePush> messagePushes = new ArrayList<>();

@@ -30,5 +30,12 @@ public interface CollecNoticeMapper extends MyMapper<CollecNotice> {
      *
      * @return
      */
-    List<CollecNotice> listCollecNoticeByUserIdAndType(Map<String, Object> params);
+    List<Map<String, Object>> listZhaoBiaoCollecNoticeByUserId(Map<String, Object> params);
+
+    /**
+     *
+     * @param params
+     * @return
+     */
+    List<Map<String, Object>> listZhongBiaoCollecNoticeByUserId(Map<String, Object> params);
 }

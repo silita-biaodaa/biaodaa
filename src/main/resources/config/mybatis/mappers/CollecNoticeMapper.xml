@@ -16,16 +16,26 @@
         DELETE FROM mishu_write.collec_notice WHERE `userId` = #{userid} AND `noticeId` = #{noticeid}
     </delete>
 
-    <select id="listCollecNoticeByUserIdAndType" parameterType="com.silita.biaodaa.model.CollecNotice" resultType="com.silita.biaodaa.model.CollecNotice">
-        SELECT * FROM mishu_write.collec_notice
-        <where>
-            1 = 1
-            <if test="userid!=null and userid!=''">
-                AND userId = #{userid}
-            </if>
-            <if test="type!=null and type!=''">
-                AND `type` = #{type}
-            </if>
-        </where>
+    <select id="listZhaoBiaoCollecNoticeByUserId" parameterType="com.silita.biaodaa.model.CollecNotice"
+            resultType="Map">
+        SELECT n.userId, n.type, s.id, s.title, s.openDate, d.projDq, d.projXs, d.projType, d.pbMode, temp.certificate
+        FROM mishu_write.collec_notice n
+        LEFT JOIN mishu.snatchurl s ON s.id = n.noticeId
+        LEFT JOIN mishu.zhaobiao_detail d ON s.id = d.snatchUrlId
+        LEFT JOIN (SELECT GROUP_CONCAT(c.certificate) AS certificate, c.contId as contId
+          FROM mishu.snatch_url_cert c
+          LEFT JOIN mishu_write.collec_notice n1 ON n1.noticeId = c.contId
+          WHERE n1.userId = #{userid} n1.type = #{type}
+          GROUP BY n1.noticeId) temp ON temp.contId = d.snatchUrlId
+        WHERE n.userId = #{userid} AND n.type = #{type}
+    </select>
+
+    <select id="listZhongBiaoCollecNoticeByUserId" parameterType="com.silita.biaodaa.model.CollecNotice"
+            resultType="Map">
+        SELECT n.userId, s.id, s.title, s.openDate, d.projSum, d.projType, d.oneName, d.projType, d.pbMode, d.projDq, d.projXs
+        FROM  mishu_write.collec_notice n
+        LEFT JOIN mishu.zhongbiao_detail d ON n.noticeId = d.snatchUrlId
+        LEFT JOIN mishu.snatchurl s ON d.snatchUrlId = s.id
+        WHERE n.userId = #{userid} AND n.type = #{type}
     </select>
 </mapper>
