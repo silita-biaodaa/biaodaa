@@ -15,13 +15,15 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,6 +104,35 @@ public class UserCenterController {
         }
         return result;
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/updateHeadPortrait2", method = RequestMethod.POST)
+    public Map<String,Object> fileUpload(HttpServletRequest request, HttpServletResponse response) {
+        Map result = new HashMap();
+        result.put("code", 1);
+        result.put("msg", "文件上传成功！");
+
+        response.addHeader("key","value");
+
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession()
+                .getServletContext());
+        if(commonsMultipartResolver.isMultipart(request)) {
+            MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+            MultipartFile headPortraitImg = multipartHttpServletRequest.getMultiFileMap().get("file").get(0);
+
+            File uploadFile = new File(PropertiesUtils.getProperty("HEAD_PORTRAIT_PATH") + headPortraitImg.getOriginalFilename());
+            try {
+                headPortraitImg.transferTo(uploadFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            result.put("imaPath",uploadFile.getAbsolutePath());
+
+        }
+        return result;
+    }
+
 
     @ResponseBody
     @RequestMapping(value = "/collectionNotice",produces = "application/json;charset=utf-8")
