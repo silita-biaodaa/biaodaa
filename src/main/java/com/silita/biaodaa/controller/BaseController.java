@@ -30,6 +30,8 @@ public abstract class BaseController {
 
     public String minDate="2018-01-01";
 
+    public String DATA_FLAG="data";
+
     protected void successMsg(Map resultMap){
         resultMap.put(this.CODE_FLAG, SUCCESS_CODE);
         resultMap.put(this.MSG_FLAG, SUCCESS_MSG);

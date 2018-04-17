@@ -110,7 +110,7 @@ public class NoticeController extends BaseController{
                 }
             }
             Long relNoticeCount =  noticeService.queryRelCount(id);
-            resultMap.put("detailList",detailList);
+            resultMap.put(DATA_FLAG,detailList);
             resultMap.put("relNoticeCount",relNoticeCount);//相关公告数量
 
             //招标详情
@@ -139,7 +139,7 @@ public class NoticeController extends BaseController{
         Map resultMap = new HashMap();
         try{
             List<Map> relationNotices =  noticeService.queryRelations(id);
-            resultMap.put("data",relationNotices);
+            resultMap.put(DATA_FLAG,relationNotices);
             successMsg(resultMap);
         }catch (Exception e){
             logger.error(e,e);
@@ -154,7 +154,7 @@ public class NoticeController extends BaseController{
         Map resultMap = new HashMap();
         try{
             List<Map> fileList =  noticeService.queryNoticeFile(id);
-            resultMap.put("data",fileList);
+            resultMap.put(DATA_FLAG,fileList);
             successMsg(resultMap);
         }catch (Exception e){
             logger.error(e,e);
