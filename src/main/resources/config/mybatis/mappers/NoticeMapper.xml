@@ -49,13 +49,13 @@
     </select>
 
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
-        SELECT s.id,s.title,s.opendate,s.type
+        SELECT DISTINCT s.id,s.title,s.opendate,s.type
         ,<include refid="noticeTypeConvert"/>
         ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
         ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
         <if test="type == 2">
         ,(SELECT GROUP_CONCAT(distinct dd.oneName SEPARATOR ',')  FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) oneName
-        ,detail.projSum
+        ,(SELECT GROUP_CONCAT(distinct dd.projSum SEPARATOR ',')  FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) projSum
         </if>
         FROM mishu.snatchurl s
         <!--资质判断 -->
@@ -161,13 +161,16 @@
     </select>
 
     <select id="queryRelCount" resultType="Long" parameterType="Long">
-         select (select count(re.nextid) as reCount
-         from mishu.snatchrelation re
-         where re.mainid=#{id})
-          +
-         (select count(mainid) as reCount
-         from mishu.snatchrelation re
-         where re.nextid=#{id}) relTotal
+         select count(s.id)
+         from mishu.snatchurl s
+         join ((select re.nextid as reid
+                 from mishu.snatchrelation re
+                 where re.mainid=#{id})
+                  union all
+                 (select mainid as reid
+                 from mishu.snatchrelation re
+                 where re.nextid=#{id})) rd on rd.reid=s.id
+        WHERE s.isshow=0
     </select>
 
     <select id="queryRelations" resultType="Map" parameterType="Long">
@@ -185,6 +188,7 @@
                  (select mainid as reid
                  from mishu.snatchrelation re
                  where re.nextid=#{id})) rd on rd.reid=s.id
+        WHERE s.isshow=0
          order by s.id desc
     </select>
 
