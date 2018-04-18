@@ -27,7 +27,7 @@
         when '13' then '入围'
         when '14' then '暂停'
         else '其他' end) as noticeType
-        ,( case biddingType
+        ,( case s.biddingType
         when '0' then '施工'
         when '2' then '监理'
         when '3' then '采购'
@@ -120,6 +120,9 @@
         and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
         </if>
         and s.type = #{type}
+        <if test="title !=null and title !=''">
+            AND s.title LIKE '%${title}%'
+        </if>
         and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
         <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
             and  !(detail.projSum REGEXP '[^0-9.]')
