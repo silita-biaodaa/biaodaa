@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.biaodaa.dao.CollecNoticeMapper">
 
+
     <select id="getCollecNoticeByUserIdAndNoticeId" parameterType="com.silita.biaodaa.model.CollecNotice"
             resultType="com.silita.biaodaa.model.CollecNotice">
       SELECT * FROM mishu_write.collec_notice WHERE userId = #{userid} AND noticeId = #{noticeid}
@@ -18,7 +19,8 @@
 
     <select id="listZhaoBiaoCollecNoticeByUserId" parameterType="com.silita.biaodaa.model.CollecNotice"
             resultType="Map">
-        SELECT n.userId, n.type, s.id, s.title, s.openDate, d.projDq, d.projXs, d.projType, d.pbMode, temp.certificate
+        SELECT n.userId, n.type, s.id, s.title, s.openDate,
+        d.projDq, d.projXs, d.pbMode, <include refid="com.silita.biaodaa.dao.NoticeMapper.noticeTypeConvert"/>, temp.certificate
         FROM mishu_write.collec_notice n
         LEFT JOIN mishu.snatchurl s ON s.id = n.noticeId
         LEFT JOIN mishu.zhaobiao_detail d ON s.id = d.snatchUrlId
