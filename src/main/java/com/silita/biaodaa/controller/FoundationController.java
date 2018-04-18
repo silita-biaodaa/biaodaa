@@ -72,11 +72,13 @@ public class FoundationController {
      */
     @ResponseBody
     @RequestMapping(value="/getVersion", produces="application/json;charset=utf-8")
-    public Map<String, Object> getVersion(@RequestBody String loginChannel) {
+    public Map<String, Object> getVersion(@RequestBody Map<String, Object> params) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", 1);
         result.put("msg", "获取版本信息成功!");
         try {
+            Preconditions.checkArgument(params.containsKey("loginChannel") && !Strings.isNullOrEmpty((String) params.get("loginChannel")), "loginChannel不能为空！");
+            String loginChannel = (String) params.get("loginChannel");
             String version = foundationService.getVersion(loginChannel);
             Preconditions.checkArgument(!Strings.isNullOrEmpty(version), "version信息不能为空！");
             result.put("data", version);
