@@ -90,21 +90,11 @@
                 <if test="modeStr != null">
                     and detail.pbMode in(${modeStr})
                 </if>
-                <if test="type == 0">
-                    <if test="(projSumStart !=null and projSumStart!='')" >
-                        and detail.projSum &gt;= #{projSumStart}
-                    </if>
-                    <if test="(projSumEnd !=null and projSumEnd!='')" >
-                        and detail.projSum &lt;= #{projSumEnd}
-                    </if>
+                <if test="(projSumStart !=null and projSumStart!='')" >
+                    and detail.projSum &gt;= #{projSumStart}
                 </if>
-                <if test="type == 2">
-                    <if test="(projSumStart !=null and projSumStart!='')" >
-                        and detail.oneOffer &gt;= #{projSumStart}
-                    </if>
-                    <if test="(projSumEnd !=null and projSumEnd!='')" >
-                        and detail.oneOffer &lt;= #{projSumEnd}
-                    </if>
+                <if test="(projSumEnd !=null and projSumEnd!='')" >
+                    and detail.projSum &lt;= #{projSumEnd}
                 </if>
                 <if test="(kbDateStart !=null and kbDateStart !='')">
                     and detail.tbEndDate &gt;= #{kbDateStart}
@@ -132,9 +122,7 @@
         and s.type = #{type}
         and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
         <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
-            <if test="type == 0">
-                and  !(detail.projSum REGEXP '[^0-9.]')
-            </if>
+            and  !(detail.projSum REGEXP '[^0-9.]')
         </if>
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </select>
