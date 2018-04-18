@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -207,5 +208,36 @@ public class NoticeController extends BaseController{
         return map;
     }
 
-
+    /**
+     * 查询公告文章列表
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/queryArticleList", produces="application/json;charset=utf-8")
+    public Map<String, Object> queryArticleList(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 1);
+        result.put("msg", "公告文章列表查询成功!");
+        try {
+            Page page = buildPage(params);
+            Integer pageNo = page.getCurrentPage();
+            Integer pageSize = page.getPageSize();
+            if (null == pageNo || pageNo <= 0) {
+                pageNo = 1;
+            }
+            if (null == pageSize || pageSize <= 0) {
+                pageSize = Page.PAGE_SIZE_DEFAULT;
+            }
+            params.put("start", (pageNo - 1) * pageSize);
+            params.put("size", pageSize);
+            List<Map> list = noticeService.queryArticleList(params);
+            result.put("data", list);
+        } catch (Exception e) {
+            logger.error(String.format("公告文章列表查询失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
 }

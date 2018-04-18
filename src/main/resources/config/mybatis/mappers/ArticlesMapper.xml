@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.biaodaa.dao.ArticlesMapper">
+    <select id="queryArticleList" resultType="Map" parameterType="Map">
+        select title,content,url,time
+        from mishu.articles
+        where 1=1
+        <if test="time !=null and time != ''">
+            and time=#{time}
+        </if>
+        <if test="title !=null and title != ''">
+            and title like '%${title}%'
+        </if>
+        order by time desc limit #{start},#{size}
+    </select>
+</mapper>

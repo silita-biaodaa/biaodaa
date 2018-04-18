@@ -3,6 +3,7 @@ package com.silita.biaodaa.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.dao.ArticlesMapper;
 import com.silita.biaodaa.dao.NoticeMapper;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
@@ -25,6 +26,9 @@ public class NoticeService {
 
     @Autowired
     private NoticeMapper noticeMapper;
+
+    @Autowired
+    private ArticlesMapper articlesMapper;
 //
 //    @Cacheable(value = "fenleiData", key="'fenleiData'+#search.cert+#search.title" +
 //                    "+#search.type+#search.rangeDate+#search.range+#search.isShow" +
@@ -521,4 +525,12 @@ public class NoticeService {
         return relList;
     }
 
+    /**
+     * 查询公告文章列表
+     * @param params
+     * @return
+     */
+    public List<Map> queryArticleList(Map params) {
+        return articlesMapper.queryArticleList(params);
+    }
 }
