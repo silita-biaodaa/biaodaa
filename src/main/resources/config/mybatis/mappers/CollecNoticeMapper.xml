@@ -25,7 +25,7 @@
         LEFT JOIN (SELECT GROUP_CONCAT(c.certificate) AS certificate, c.contId as contId
           FROM mishu.snatch_url_cert c
           LEFT JOIN mishu_write.collec_notice n1 ON n1.noticeId = c.contId
-          WHERE n1.userId = #{userid} n1.type = #{type}
+          WHERE n1.userId = #{userid} AND n1.type = #{type}
           GROUP BY n1.noticeId) temp ON temp.contId = d.snatchUrlId
         WHERE n.userId = #{userid} AND n.type = #{type}
     </select>
