@@ -84,7 +84,7 @@ public class NoticeServiceTest extends ConfigTest {
     @Test   //1805443 1800849 1801046    1805238
     public void testNoticeDetail()throws Exception{
         String requestBody = "{\"type\":2}";
-        String responseString = mockMvc.perform(post("/notice/detail/1805238").characterEncoding("UTF-8")
+        String responseString = mockMvc.perform(post("/notice/detail/1789314").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
         ).andExpect(status().isOk())    //返回的状态是200
@@ -96,7 +96,7 @@ public class NoticeServiceTest extends ConfigTest {
     @Test  //4629 1801046 1803392
     public void testQueryRelNotice()throws Exception{
         String requestBody = "{\"type\":2}";
-        String responseString = mockMvc.perform(post("/notice/queryRelNotice/1801046").characterEncoding("UTF-8")
+        String responseString = mockMvc.perform(post("/notice/queryRelNotice/1789314").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
         ).andExpect(status().isOk())    //返回的状态是200

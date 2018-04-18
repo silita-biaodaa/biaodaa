@@ -161,17 +161,24 @@
     </select>
 
     <select id="queryRelCount" resultType="Long" parameterType="Long">
-         select count(s.id)
-         from mishu.snatchurl s
+        select count(a.id)
+        FROM (
+        <include refid="relationNotices"/>
+        ) a
+    </select>
+
+    <sql id="relationNotices">
+        select DISTINCT id
+         from mishu.snatchurl
          join ((select re.nextid as reid
                  from mishu.snatchrelation re
                  where re.mainid=#{id})
                   union all
                  (select mainid as reid
                  from mishu.snatchrelation re
-                 where re.nextid=#{id})) rd on rd.reid=s.id
-        WHERE s.isshow=0
-    </select>
+                 where re.nextid=#{id})) rd on rd.reid=id
+        WHERE isshow=0
+    </sql>
 
     <select id="queryRelations" resultType="Map" parameterType="Long">
         SELECT s.id,s.title,s.opendate,s.type
@@ -181,13 +188,9 @@
         ,(SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
         ,(SELECT GROUP_CONCAT(zb.oneName SEPARATOR ',') oneName FROM mishu.zhongbiao_detail zb WHERE zb.snatchUrlId =s.id) oneName
          from mishu.snatchurl s
-         join ((select re.nextid as reid
-                 from mishu.snatchrelation re
-                 where re.mainid=#{id})
-                  union all
-                 (select mainid as reid
-                 from mishu.snatchrelation re
-                 where re.nextid=#{id})) rd on rd.reid=s.id
+         join (
+        <include refid="relationNotices"/>
+        ) rd on rd.id=s.id
         WHERE s.isshow=0
          order by s.id desc
     </select>
