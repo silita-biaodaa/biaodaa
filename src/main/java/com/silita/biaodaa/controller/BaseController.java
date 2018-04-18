@@ -52,11 +52,13 @@ public abstract class BaseController {
     }
 
     protected void buildReturnMap(Map resultMap,PageInfo pageInfo){
-        resultMap.put("data", pageInfo.getList());
-        resultMap.put("pageNo", pageInfo.getPageNum());
-        resultMap.put("pageSize", pageInfo.getPageSize());
-        resultMap.put("total", pageInfo.getTotal());
-        resultMap.put("pages", pageInfo.getPages());
+        if(pageInfo !=null) {
+            resultMap.put("data", pageInfo.getList());
+            resultMap.put("pageNo", pageInfo.getPageNum());
+            resultMap.put("pageSize", pageInfo.getPageSize());
+            resultMap.put("total", pageInfo.getTotal());
+            resultMap.put("pages", pageInfo.getPages());
+        }
     }
 
 }

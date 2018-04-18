@@ -76,7 +76,7 @@
             </choose>
         </if>
         <choose>
-            <when test="(city !=null and city !='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')">
+            <when test=" (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')">
                 join mishu.${detailTable} detail on s.id=detail.snatchurlid
                 <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
                 <!--and(-->
@@ -104,7 +104,7 @@
                 </if>
             </when>
             <otherwise>
-                <if test="type == 2">
+                <if test="type == 2 ">
                     left join mishu.${detailTable} detail on s.id=detail.snatchurlid
                 </if>
             </otherwise>
@@ -117,7 +117,7 @@
         and s.province =(select name_abbr from mishu.area ar where ar.name = #{province}  and grade=0)
         </if>
         <if test="city !=null and city !=''" >
-        and (s.city in(select name_abbr from mishu.area where display_name like '%${city}%') or detail.projdq like '%${city}%')
+        and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
         </if>
         and s.type = #{type}
         and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
