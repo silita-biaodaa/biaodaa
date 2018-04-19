@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
@@ -96,15 +97,13 @@ public class FoundationController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/addFeedback", produces="application/json;charset=utf-8")
+    @RequestMapping(value="/addFeedback", method = RequestMethod.POST, produces="application/json;charset=utf-8")
     public Map<String, Object> addFeedback(@RequestBody Map<String, Object> params) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", 1);
         result.put("msg", "反馈意见添加成功!");
         try {
             Preconditions.checkArgument(params.containsKey("pid") && !Strings.isNullOrEmpty((String)params.get("pid")), "pid不能为空！");
-            Preconditions.checkArgument(params.containsKey("path") && !Strings.isNullOrEmpty((String)params.get("path")), "path不能为空！");
-            Preconditions.checkArgument(params.containsKey("module") && !Strings.isNullOrEmpty((String)params.get("module")), "module不能为空！");
             Preconditions.checkArgument(params.containsKey("problem") && !Strings.isNullOrEmpty((String)params.get("problem")), "problem不能为空！");
             foundationService.addFeedback(params);
         } catch (Exception e) {

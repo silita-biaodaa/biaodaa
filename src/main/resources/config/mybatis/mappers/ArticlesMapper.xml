@@ -12,6 +12,9 @@
         <if test="title !=null and title != ''">
             and title like '%${title}%'
         </if>
+        <if test="type !=null and type != ''">
+            and type=#{type}
+        </if>
         order by time desc limit #{start},#{size}
     </select>
 
