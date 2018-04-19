@@ -17,18 +17,25 @@
   </delete>
 
   <select id="listHuNanCollectionCompany" parameterType="com.silita.biaodaa.model.ColleCompany" resultType="Map">
-      SELECT c2.userId, c.com_id AS id, c.com_name AS `name`, c.org_code AS `code`, c.regis_address,
-      c.legal_person, c.economic_type, c.regis_capital
+      SELECT c2.userId, c.com_id AS comId, c.com_name AS comName, c.org_code AS orgCode, c.business_num AS businessNum,
+      c.regis_address AS regisAddress, c.com_address AS comAddress, c.legal_person AS legalPerson, c.economic_type AS economicType, c.regis_capital AS regisCapital,
+      c.skill_leader AS skillLeader, c.range AS comRange, c.logo AS logo, b.runScope AS comRange, b.registerStatus AS subsist
       FROM mishu_write.colle_company c2
       LEFT JOIN mishu.tb_company c ON c.com_id = c2.companyId
+      LEFT JOIN mishu.tb_safety_certificate s on c.com_name = s.com_name
+      LEFT JOIN mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
       WHERE c2.`userId` = #{userid} AND c2.tableName = #{tablename}
   </select>
 
+    <!-- 待测试没数据测试 -->
   <select id="listNationWideCollectionCompany" parameterType="com.silita.biaodaa.model.ColleCompany" resultType="Map">
-      SELECT c2.userId, c.ID AS id, c.CompanyName AS `name`, c.OrganizationCode AS `code`, c.RegisterLocation AS regis_address,
-      c.LegalRepresentative AS legal_person, c.CompanyType AS economic_type
+      SELECT c2.userId, c.ID AS comId, c.CompanyName AS comName, c.OrganizationCode AS orgCode, c.BussinessLicenseID AS businessNum,
+      c.RegisterLocation AS regisAddress, c.OperatingLocation com_address, c.LegalRepresentative AS legalPerson, c.CompanyType AS economicType
+      b.runScope AS comRange, b.registerStatus AS subsist
       FROM mishu_write.colle_company c2
       LEFT JOIN construction4.CompanyInfo c ON c.ID = c2.companyId
+      LEFT JOIN mishu.tb_safety_certificate s on c.com_name = s.com_name
+      LEFT JOIN mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
       WHERE c2.`userId` = #{userid} AND c2.tableName = #{tablename}
   </select>
 
