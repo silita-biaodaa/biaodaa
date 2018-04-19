@@ -34,8 +34,8 @@
 
     <select id="listZhongBiaoCollecNoticeByUserId" parameterType="com.silita.biaodaa.model.CollecNotice"
             resultType="Map">
-        SELECT n.userId, s.id, s.title, s.openDate, d.projSum,
-        d.projType, d.oneName, d.projType, d.pbMode, d.projDq,
+        SELECT n.userId, n.type, s.id, s.title, s.openDate,
+        d.projSum, d.oneName, d.projType, d.pbMode, d.projDq,
         d.projXs, <include refid="com.silita.biaodaa.dao.NoticeMapper.noticeTypeConvert"/>
         FROM  mishu_write.collec_notice n
         LEFT JOIN mishu.zhongbiao_detail d ON n.noticeId = d.snatchUrlId
