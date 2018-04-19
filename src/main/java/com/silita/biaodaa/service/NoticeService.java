@@ -571,4 +571,13 @@ public class NoticeService {
     public List<Map> queryArticleList(Map params) {
         return articlesMapper.queryArticleList(params);
     }
+
+    /**
+     * 根据id查询公告文章详细
+     * @param id
+     * @return
+     */
+    public Map queryArticleDetail(Integer id) {
+        return articlesMapper.queryArticleDetail(id);
+    }
 }
