@@ -12,6 +12,8 @@ public interface NoticeMapper {
 
     List queryNoticeList(Map argMap);
 
+    List searchNoticeList(Map argMap);
+
     String queryNoticeZZById(Long id);
 
     Integer queryCompanyCountByZZ(Collection zzList);

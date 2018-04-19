@@ -48,6 +48,49 @@
         )
     </select>
 
+    <select id="searchNoticeList" resultType="Map" parameterType="Map">
+        SELECT DISTINCT s.id,s.title,s.opendate,s.type
+        ,<include refid="noticeTypeConvert"/>
+        <choose>
+            <when test="type==99">
+                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
+                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
+            </when>
+            <otherwise>
+                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
+            </otherwise>
+        </choose>
+        ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
+        <if test="type == 2">
+            ,(SELECT GROUP_CONCAT(distinct dd.oneName SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) oneName
+            ,(SELECT GROUP_CONCAT(distinct dd.projSum SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) projSum
+        </if>
+        FROM mishu.snatchurl s
+        WHERE s.isShow = 0
+        <if test="projectType !=null and projectType!=''">
+            and s.biddingType =#{projectType}
+        </if>
+        <if test="province !=null and province !=''" >
+            and s.province =(select name_abbr from mishu.area ar where ar.name = #{province}  and grade=0)
+        </if>
+        <if test="city !=null and city !=''" >
+            and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
+        </if>
+        <if test="search !=null and search !=''">
+            AND s.title LIKE '%${search}%'
+        </if>
+        <choose>
+            <when test="type==99">
+                and (s.type =0 or s.type=2)
+            </when>
+            <otherwise>
+                and s.type = #{type}
+            </otherwise>
+        </choose>
+        and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
+        order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
+    </select>
+
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
         SELECT DISTINCT s.id,s.title,s.opendate,s.type
         ,<include refid="noticeTypeConvert"/>
@@ -114,19 +157,18 @@
             and s.biddingType =#{projectType}
         </if>
         <if test="province !=null and province !=''" >
-        and s.province =(select name_abbr from mishu.area ar where ar.name = #{province}  and grade=0)
+            and s.province =(select name_abbr from mishu.area ar where ar.name = #{province}  and grade=0)
         </if>
         <if test="city !=null and city !=''" >
-        and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
+            and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
         </if>
-        and s.type = #{type}
         <if test="title !=null and title !=''">
             AND s.title LIKE '%${title}%'
         </if>
-        and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
         <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
-            and  !(detail.projSum REGEXP '[^0-9.]')
+            and  !(detail.projSum REGEXP '[^0-9.]') and detail.projSum !=''
         </if>
+        and s.type = #{type} and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </select>
 

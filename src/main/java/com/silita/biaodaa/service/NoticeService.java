@@ -357,7 +357,9 @@ public class NoticeService {
         return str;
     }
 
-    public PageInfo searchNoticeList(Page page,Map params){
+
+
+    public PageInfo queryNoticeList(Page page, Map params){
         String dqsStr =  MapUtils.getString(params,"regions");
         String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
         if(dqsStrList!=null && dqsStrList.length>0){
@@ -502,8 +504,10 @@ public class NoticeService {
         return noticeMapper.queryNoticeFile(id);
     }
 
-    public List<Map> queryRelations(Long id){
-        List<Map> relList =noticeMapper.queryRelations(id);
+    /**
+     * 招标，中标结果分拣
+     */
+    private void sortingResult(List<Map> relList){
         if(relList!=null && relList.size()>0) {
             //招标，中标结果划分
             for (Map result:relList){
@@ -522,6 +526,40 @@ public class NoticeService {
                 }
             }
         }
+    }
+
+    public PageInfo searchNoticeList(Page page, Map params){
+        //地区筛选
+        String dqsStr =  MapUtils.getString(params,"regions");
+        String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
+        if(dqsStrList!=null && dqsStrList.length>0){
+            if(dqsStrList.length==1){
+                params.put("province",dqsStrList[0]);
+            }else if(dqsStrList.length==2){
+                params.put("province",dqsStrList[0]);
+                if(MyStringUtils.isNotNull(dqsStrList[1])) {
+                    params.put("city", dqsStrList[1].replace("市",""));
+                }
+            }
+        }
+        //项目金额筛选
+        if(MyStringUtils.isNotNull(params.get("projSumStart"))){
+            params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));
+        }
+        if(MyStringUtils.isNotNull(params.get("projSumEnd"))){
+            params.put("projSumEnd",Integer.parseInt(params.get("projSumEnd").toString()));
+        }
+        buildNoticeDetilTable(params);
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List<Map> list = noticeMapper.searchNoticeList(params);
+        sortingResult(list);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
+
+    public List<Map> queryRelations(Long id){
+        List<Map> relList =noticeMapper.queryRelations(id);
+        sortingResult(relList);
         return relList;
     }
 

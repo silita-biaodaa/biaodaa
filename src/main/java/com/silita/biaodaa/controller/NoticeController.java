@@ -18,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +42,56 @@ public class NoticeController extends BaseController{
 
     @Autowired
     private CommonService commonService;
+
+    @ResponseBody
+    @RequestMapping(value = "/searchList",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
+    public Map<String,Object> searchList(@RequestBody Map params){
+        Map resultMap = new HashMap();
+        try {
+//        search.setTypeToInt(type);
+//        encodingConvert(search);
+            Page page = buildPage(params);
+            Integer pageNo = page.getCurrentPage();
+            Integer pageSize = page.getPageSize();
+            String kbDateStart= MapUtils.getString(params, "kbDateStart");
+            String kbDateEnd= MapUtils.getString(params, "kbDateEnd");
+            if(MyStringUtils.isNotNull(kbDateStart)
+                    && MyDateUtils.getDistanceOfTwoDate(kbDateStart,this.minDate)>0){
+                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
+                resultMap.put(this.MSG_FLAG, "开标开始时间超出访问范围！");
+            }else if(MyStringUtils.isNotNull(kbDateEnd)
+                    && MyDateUtils.getDistanceOfTwoDate(kbDateEnd,this.minDate)>0){
+                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
+                resultMap.put(this.MSG_FLAG, "开标结束时间超出访问范围！");
+            }else if(pageSize>maxPageSize || pageNo>maxPageNum){
+                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
+                resultMap.put(this.MSG_FLAG, "超出访问范围！");
+            }else {
+                if (pageNo >= maxPageNum) {
+                    resultMap.put("isLastPage", true);
+                } else {
+                    resultMap.put("isLastPage", false);
+                }
+
+                int paramHash = ObjectUtils.buildMapParamHash(params);
+                String listKey = RedisConstantInterface.GG_SEARCH_LIST + paramHash;
+                PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
+                if (pageInfo == null) {
+                    pageInfo = noticeService.searchNoticeList(page, params);
+                    if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
+                        myRedisTemplate.setObject(listKey, pageInfo, RedisConstantInterface.LIST_OVER_TIME);
+                    }
+                }
+                buildReturnMap(resultMap,pageInfo);
+                successMsg(resultMap);
+            }
+            //        recordAccessCount(request,params); 记录访问数
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(resultMap,e.getMessage());
+        }
+        return resultMap;
+    }
 
 //    @RequestParam json对象参数
     @ResponseBody
@@ -79,7 +128,7 @@ public class NoticeController extends BaseController{
                 String listKey = RedisConstantInterface.GG_LIST + paramHash;
                 PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
                 if (pageInfo == null) {
-                    pageInfo = noticeService.searchNoticeList(page, params);
+                    pageInfo = noticeService.queryNoticeList(page, params);
                     if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
                         myRedisTemplate.setObject(listKey, pageInfo, RedisConstantInterface.LIST_OVER_TIME);
                     }
