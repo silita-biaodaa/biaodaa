@@ -1,6 +1,7 @@
 package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Preconditions;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.SnatchContent;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -263,7 +265,7 @@ public class NoticeController extends BaseController{
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/queryArticleList", produces="application/json;charset=utf-8")
+    @RequestMapping(value="/queryArticleList", method=RequestMethod.POST, produces="application/json;charset=utf-8")
     public Map<String, Object> queryArticleList(@RequestBody Map<String, Object> params) {
         Map<String, Object> result = new HashMap<>();
         result.put("code", 1);
@@ -281,9 +283,39 @@ public class NoticeController extends BaseController{
             params.put("start", (pageNo - 1) * pageSize);
             params.put("size", pageSize);
             List<Map> list = noticeService.queryArticleList(params);
+            if (null == list) {
+                list = new ArrayList<>();
+            }
             result.put("data", list);
         } catch (Exception e) {
             logger.error(String.format("公告文章列表查询失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 查询公告文章详细
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/queryArticleDetail", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> queryArticleDetail(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 1);
+        result.put("msg", "公告文章详情查询成功!");
+        try {
+            Integer id = (Integer) params.get("id");
+            Preconditions.checkArgument(null != id, "id不能为null");
+            Map<String, Object> detail = noticeService.queryArticleDetail(id);
+            if (null == detail) {
+                detail = new HashMap<>();
+            }
+            result.put("data", detail);
+        } catch (Exception e) {
+            logger.error(String.format("公告文章详情查询失败！%s", e.getMessage()));
             result.put("code", 0);
             result.put("msg", e.getMessage());
         }

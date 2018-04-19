@@ -14,4 +14,9 @@
         </if>
         order by time desc limit #{start},#{size}
     </select>
+
+    <select id="queryArticleDetail" resultType="Map" parameterType="Integer">
+        select * from mishu.articles
+        where id=#{id}
+    </select>
 </mapper>
