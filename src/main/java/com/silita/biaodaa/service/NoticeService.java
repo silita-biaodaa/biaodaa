@@ -566,11 +566,18 @@ public class NoticeService {
 
     /**
      * 查询公告文章列表
+     * @param page
      * @param params
      * @return
      */
-    public List<Map> queryArticleList(Map params) {
-        return articlesMapper.queryArticleList(params);
+    public PageInfo queryArticleList(Page page, Map params) {
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List list = articlesMapper.queryArticleList(params);
+        if (null == list) {
+            list = new ArrayList<>();
+        }
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
     }
 
     /**
