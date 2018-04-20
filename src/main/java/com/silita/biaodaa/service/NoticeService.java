@@ -409,11 +409,11 @@ public class NoticeService {
 
     /**
      * 根据公告ID查询资质，然后根据资质查询企业列表
-     * @param id
+     * @param argMap
      * @return
      */
-    public PageInfo queryCompanyListById(Page page,Long id){
-        String zzRes = noticeMapper.queryNoticeZZById(id);
+    public PageInfo queryCompanyListById(Page page,Map argMap){
+        String zzRes = noticeMapper.queryNoticeZZById(argMap);
         if(zzRes !=null && zzRes.trim().length()>1){
             String[] zzStr = zzRes.split(",");
             if(zzStr!=null && zzStr.length>0) {
@@ -422,8 +422,9 @@ public class NoticeService {
                 if (zzSet.size() > 0) {
                     List zzList = new ArrayList(zzSet.size());
                     zzList.addAll(zzSet);
+                    argMap.put("zzList",zzList);
                     PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-                    List list = noticeMapper.queryComInfoByZZ(zzList);
+                    List list = noticeMapper.queryComInfoByZZ(argMap);
                     PageInfo pageInfo = new PageInfo(list);
                     return pageInfo;
                 }
@@ -434,11 +435,11 @@ public class NoticeService {
 
     /**
      * 根据ID查询资质ID列表（去重）
-     * @param id
+     * @param argMap
      * @return
      */
-    public List queryNoticeZZById(Long id){
-        String zzRes = noticeMapper.queryNoticeZZById(id);
+    public List queryNoticeZZById(Map argMap){
+        String zzRes = noticeMapper.queryNoticeZZById(argMap);
         if(zzRes !=null && zzRes.trim().length()>1) {
             String[] zzStr = zzRes.split(",");
             if (zzStr != null && zzStr.length > 0) {
@@ -456,11 +457,11 @@ public class NoticeService {
 
     /**
      * 根据公告id获取关联的企业列表数量
-     * @param id
+     * @param argMap
      * @return
      */
-    public Integer queryCompanyCountById(Long id){
-        List zzList = queryNoticeZZById(id);
+    public Integer queryCompanyCountById(Map argMap){
+        List zzList = queryNoticeZZById(argMap);
         if(zzList!=null && zzList.size()>0) {
             return noticeMapper.queryCompanyCountByZZ(zzList);
         }
@@ -557,8 +558,8 @@ public class NoticeService {
         return pageInfo;
     }
 
-    public List<Map> queryRelations(Long id){
-        List<Map> relList =noticeMapper.queryRelations(id);
+    public List<Map> queryRelations(Map map){
+        List<Map> relList =noticeMapper.queryRelations(map);
         sortingResult(relList);
         return relList;
     }

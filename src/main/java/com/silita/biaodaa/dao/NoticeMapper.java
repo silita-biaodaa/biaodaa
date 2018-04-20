@@ -14,11 +14,11 @@ public interface NoticeMapper {
 
     List searchNoticeList(Map argMap);
 
-    String queryNoticeZZById(Long id);
+    String queryNoticeZZById(Map id);
 
     Integer queryCompanyCountByZZ(Collection zzList);
 
-    List<Map> queryComInfoByZZ(Collection zzList);
+    List<Map> queryComInfoByZZ(Map map);
 
     List<Map> queryNoticeDetail(Map map);
 
@@ -26,5 +26,5 @@ public interface NoticeMapper {
 
     List<Map> queryNoticeFile(Long id);
 
-    List<Map> queryRelations(Long id);
+    List<Map> queryRelations(Map map);
 }

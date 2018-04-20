@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.SnatchContent;
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
@@ -45,6 +46,13 @@ public class NoticeController extends BaseController{
     @Autowired
     private CommonService commonService;
 
+    private void settingUserId(Map params){
+        String userId = VisitInfoHolder.getUid();
+        if(MyStringUtils.isNotNull(userId)) {
+            params.put("userId", userId);
+        }
+    }
+
     @ResponseBody
     @RequestMapping(value = "/searchList",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map<String,Object> searchList(@RequestBody Map params){
@@ -52,6 +60,8 @@ public class NoticeController extends BaseController{
         try {
 //        search.setTypeToInt(type);
 //        encodingConvert(search);
+            settingUserId(params);
+
             Page page = buildPage(params);
             Integer pageNo = page.getCurrentPage();
             Integer pageSize = page.getPageSize();
@@ -101,6 +111,7 @@ public class NoticeController extends BaseController{
     public Map<String,Object> queryList(@RequestBody Map params){
         Map resultMap = new HashMap();
         try {
+            settingUserId(params);
 //        search.setTypeToInt(type);
 //        encodingConvert(search);
             Page page = buildPage(params);
@@ -151,6 +162,7 @@ public class NoticeController extends BaseController{
     public Map<String,Object> queryDetail(@PathVariable Long id,@RequestBody Map params){
         Map resultMap = new HashMap();
         try {
+            settingUserId(params);
             params.put("id",id);
             int paramHash = ObjectUtils.buildMapParamHash(params);
             String listKey = RedisConstantInterface.GG_DETAIL + paramHash;
@@ -168,7 +180,7 @@ public class NoticeController extends BaseController{
             //招标详情
             String type= MapUtils.getString(params, "type");
             if(type.equals(SNATCHURL_ZHAOBIAO)){
-                Integer relCompanySize = noticeService.queryCompanyCountById(id);
+                Integer relCompanySize = noticeService.queryCompanyCountById(params);
                 List<Map> fileList = noticeService.queryNoticeFile(id);
                 int fileSize =0;
                 if(fileList !=null && fileList.size()>0){
@@ -190,7 +202,10 @@ public class NoticeController extends BaseController{
     public Map<String,Object> queryRelNotice(@PathVariable Long id){
         Map resultMap = new HashMap();
         try{
-            List<Map> relationNotices =  noticeService.queryRelations(id);
+            Map argMap = new HashMap();
+            argMap.put("id",id);
+            settingUserId(argMap);
+            List<Map> relationNotices =  noticeService.queryRelations(argMap);
             resultMap.put(DATA_FLAG,relationNotices);
             successMsg(resultMap);
         }catch (Exception e){
@@ -221,8 +236,10 @@ public class NoticeController extends BaseController{
     public Map<String,Object> queryCompanyList(@PathVariable Long id,@RequestBody Map params){
         Map resultMap = new HashMap();
         try{
+            settingUserId(params);
+            params.put("id",id);
             Page page =buildPage(params);
-            PageInfo pageInfo = noticeService.queryCompanyListById(page,id);
+            PageInfo pageInfo = noticeService.queryCompanyListById(page,params);
             buildReturnMap(resultMap,pageInfo);
             successMsg(resultMap);
         }catch (Exception e){

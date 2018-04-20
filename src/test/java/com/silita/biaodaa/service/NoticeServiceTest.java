@@ -1,5 +1,6 @@
 package com.silita.biaodaa.service;
 
+import com.silita.biaodaa.common.CheckLoginFilter;
 import com.silita.biaodaa.controller.vo.Page;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,8 +56,11 @@ public class NoticeServiceTest extends ConfigTest {
     @Before()  //这个方法在每个方法执行之前都会执行一遍
     public void setup()
     {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();  //初始化MockMvc对象
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new CheckLoginFilter(),"/*").build();  //初始化MockMvc对象
     }
+
+    //53538939f6dc4fd38feb9b54a93075d3
+    String token="21200CBFE080EDBDBC2400A73D1B0196.eyJuYW1lIjoiMTg1MzkzNDM5MzYiLCJwYXNzd29yZCI6IjdjMjIyZmIyOTI3ZDgyOGFmMjJmNTkyMTM0ZTg5MzI0ODA2MzdjMGQiLCJwaG9uZSI6IjE4NTM5MzQzOTM2IiwidXNlcklkIjoiNTM1Mzg5MzlmNmRjNGZkMzhmZWI5YjU0YTkzMDc1ZDMifQ==";
 
     /**
      * perform：执行一个RequestBuilder请求，会自动执行SpringMVC的流程并映射到相应的控制器执行处理；
@@ -73,6 +77,7 @@ public class NoticeServiceTest extends ConfigTest {
         String responseString = mockMvc.perform(post("/notice/queryList").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                        .header("X-TOKEN",token)
                 )
                 .andExpect(status().isOk())    //返回的状态是200
                 .andDo(print())         //打印出请求和相应的内容
@@ -82,7 +87,7 @@ public class NoticeServiceTest extends ConfigTest {
 
     @Test  //,"zzType":"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||4c7f85db-2934-11e5-a311-63b86f04c8dd/2"
     public void testSearchList()throws Exception{//,"regions":"湖南省||长沙市","projectType":"0","projSumStart":"0","projSumEnd":"1000","regions":"湖南省||长沙市","pbModes":"合理定价评审抽取法||综合评估法Ⅰ" ,,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ","projSumStart":"500","projSumEnd":"1000" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
-        String requestBody = "{\"pageNo\":1,\"search\":\"湖南\",\"pageSize\":20,\"type\":99}";
+        String requestBody = "{\"pageNo\":2,\"search\":\"公路\",\"pageSize\":20,\"type\":99,\"userId\",\"a91f2c0ef897407f98086acfc5f538d2\"}";
         String responseString = mockMvc.perform(post("/notice/searchList").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -96,9 +101,10 @@ public class NoticeServiceTest extends ConfigTest {
     @Test   //1805443 1800849 1801046    1805238
     public void testNoticeDetail()throws Exception{
         String requestBody = "{\"type\":2}";
-        String responseString = mockMvc.perform(post("/notice/detail/1789314").characterEncoding("UTF-8")
+        String responseString = mockMvc.perform(post("/notice/detail/1805238").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
         ).andExpect(status().isOk())    //返回的状态是200
         .andDo(print())         //打印出请求和相应的内容
         .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
@@ -135,6 +141,7 @@ public class NoticeServiceTest extends ConfigTest {
         String responseString = mockMvc.perform(post("/notice/queryCompanyList/1800849").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
         ).andExpect(status().isOk())    //返回的状态是200
                 .andDo(print())         //打印出请求和相应的内容
                 .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
