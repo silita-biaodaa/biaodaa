@@ -104,6 +104,9 @@ public class TbCompanyService {
         List<Map<String,Object>> list = new ArrayList<>();
         Map<String,Object> param = new HashMap<>();
         if(comId!=null){
+            if(comId==0){
+                return tbPersonQualificationMapper.getCompanyPersonCate(param);
+            }
             TbCompany company = getCompany(comId);
             if(company!=null){
                 param.put("comId",comId);

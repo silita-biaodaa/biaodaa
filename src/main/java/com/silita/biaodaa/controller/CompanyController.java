@@ -157,6 +157,7 @@ public class CompanyController {
         return result;
     }
 
+
     @ResponseBody
     @RequestMapping(value = "/person", method = RequestMethod.POST,produces = "application/json")
     public Map<String, Object> queryPerson(@RequestBody Map<String, Object> params) {

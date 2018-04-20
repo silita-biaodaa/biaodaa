@@ -3,7 +3,14 @@
 <mapper namespace="com.silita.biaodaa.dao.TbPersonQualificationMapper" >
   <!-- 获取企业人员资质的注册类别-->
   <select id="getCompanyPersonCate" parameterType="Map" resultType="Map">
-    select category,count(*) as num from tb_person_qualification where com_id =#{comId} and com_name=#{comName}  GROUP BY category
+    select category,count(*) as num from tb_person_qualification where  1=1
+    <if test="comId!=null and comId!=''">
+      and com_id =#{comId}
+    </if>
+    <if test="comName!=null and comName!=''">
+      and com_name=#{comName}
+    </if>
+    GROUP BY category
   </select>
 
   <!-- 获取企业注册人员-->
