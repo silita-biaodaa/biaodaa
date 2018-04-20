@@ -167,11 +167,16 @@ public class CompanyController {
             String category = MapUtils.getString(params, "category");
             String keyWord = MapUtils.getString(params, "keyWord");
             Map<String,Object> param = new HashMap<>();
-            param.put("comId",comId);
+
             param.put("category",category);
             param.put("keyWord",keyWord);
-
-
+            if(comId!=null&&!"".equals(comId)){
+                TbCompany company = tbCompanyService.getCompany(Integer.parseInt(comId));
+                if(company!=null){
+                    param.put("comId",comId);
+                    param.put("comName",company.getComName());
+                }
+            }
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");

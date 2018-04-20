@@ -101,7 +101,17 @@ public class TbCompanyService {
     }
 
     public List<Map<String,Object>> getCompanyPersonCate(Integer comId){
-        return tbPersonQualificationMapper.getCompanyPersonCate(comId);
+        List<Map<String,Object>> list = new ArrayList<>();
+        Map<String,Object> param = new HashMap<>();
+        if(comId!=null){
+            TbCompany company = getCompany(comId);
+            if(company!=null){
+                param.put("comId",comId);
+                param.put("comName",company.getComName());
+                list = tbPersonQualificationMapper.getCompanyPersonCate(param);
+            }
+        }
+        return list;
     }
 
     public PageInfo queryCompanyPerson(Page page,Map<String,Object> param){
