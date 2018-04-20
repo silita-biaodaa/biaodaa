@@ -94,6 +94,7 @@ public class NoticeController extends BaseController{
                         myRedisTemplate.setObject(listKey, pageInfo, RedisConstantInterface.LIST_OVER_TIME);
                     }
                 }
+                settingNoticeCollFlag(pageInfo, params);
                 buildReturnMap(resultMap,pageInfo);
                 successMsg(resultMap);
             }
@@ -146,6 +147,7 @@ public class NoticeController extends BaseController{
                         myRedisTemplate.setObject(listKey, pageInfo, RedisConstantInterface.LIST_OVER_TIME);
                     }
                 }
+                settingNoticeCollFlag(pageInfo, params);
                 buildReturnMap(resultMap,pageInfo);
                 successMsg(resultMap);
             }
@@ -155,6 +157,39 @@ public class NoticeController extends BaseController{
             errorMsg(resultMap,e.getMessage());
         }
         return resultMap;
+    }
+
+    private void settingNoticeCollFlag(PageInfo pageInfo,Map params){
+        if(pageInfo!=null && pageInfo.getList()!=null) {
+            addNoticeCollStatus(pageInfo.getList(), params);
+        }
+    }
+
+    private void settingCompanyCollFlag(PageInfo pageInfo,Map params){
+        if(pageInfo!=null && pageInfo.getList()!=null) {
+            addCompanyCollStatus(pageInfo.getList(), params);
+        }
+    }
+
+    /**
+     * 补充公告信息的关注状态
+     * @param list
+     * @param params
+     */
+    private void addNoticeCollStatus(List<Map> list, Map params){
+        params.put("idKey","id");
+        params.put("collType","notice");
+        noticeService.addCollStatus(list, params);
+    }
+
+    /**
+     * 补充企业信息的关注状态
+     * @param list
+     * @param params
+     */
+    private void addCompanyCollStatus(List<Map> list, Map params){
+        params.put("collType","company");
+        noticeService.addCollStatus(list, params);
     }
 
     @ResponseBody
@@ -173,8 +208,9 @@ public class NoticeController extends BaseController{
                     myRedisTemplate.setObject(listKey,detailList,RedisConstantInterface.DETAIL_OVER_TIME);
                 }
             }
-            Long relNoticeCount =  noticeService.queryRelCount(id);
+            addNoticeCollStatus(detailList, params);
             resultMap.put(DATA_FLAG,detailList);
+            Long relNoticeCount =  noticeService.queryRelCount(id);
             resultMap.put("relNoticeCount",relNoticeCount);//相关公告数量
 
             //招标详情
@@ -206,6 +242,7 @@ public class NoticeController extends BaseController{
             argMap.put("id",id);
             settingUserId(argMap);
             List<Map> relationNotices =  noticeService.queryRelations(argMap);
+            addNoticeCollStatus(relationNotices, argMap);
             resultMap.put(DATA_FLAG,relationNotices);
             successMsg(resultMap);
         }catch (Exception e){
@@ -240,6 +277,7 @@ public class NoticeController extends BaseController{
             params.put("id",id);
             Page page =buildPage(params);
             PageInfo pageInfo = noticeService.queryCompanyListById(page,params);
+            settingCompanyCollFlag(pageInfo,params);
             buildReturnMap(resultMap,pageInfo);
             successMsg(resultMap);
         }catch (Exception e){

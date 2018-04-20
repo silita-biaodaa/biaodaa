@@ -73,7 +73,7 @@ public class NoticeServiceTest extends ConfigTest {
      */
     @Test  //,"zzType":"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||4c7f85db-2934-11e5-a311-63b86f04c8dd/2"
     public void testqueryList()throws Exception{//,"regions":"湖南省||长沙市","projectType":"0","projSumStart":"0","projSumEnd":"1000","regions":"湖南省||长沙市","pbModes":"合理定价评审抽取法||综合评估法Ⅰ" ,,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ","projSumStart":"500","projSumEnd":"1000" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
-        String requestBody = "{\"pageNo\":1,\"title\":\"常德\",\"pageSize\":20,\"type\":0,\"zzType\":\"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||4c7f85db-2934-11e5-a311-63b86f04c8dd/2\"}";
+        String requestBody = "{\"pageNo\":1,\"pageSize\":20,\"type\":2,\"zzType\":\"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||4c7f85db-2934-11e5-a311-63b86f04c8dd/2\"}";
         String responseString = mockMvc.perform(post("/notice/queryList").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -87,10 +87,11 @@ public class NoticeServiceTest extends ConfigTest {
 
     @Test  //,"zzType":"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||4c7f85db-2934-11e5-a311-63b86f04c8dd/2"
     public void testSearchList()throws Exception{//,"regions":"湖南省||长沙市","projectType":"0","projSumStart":"0","projSumEnd":"1000","regions":"湖南省||长沙市","pbModes":"合理定价评审抽取法||综合评估法Ⅰ" ,,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ","projSumStart":"500","projSumEnd":"1000" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
-        String requestBody = "{\"pageNo\":2,\"search\":\"公路\",\"pageSize\":20,\"type\":99,\"userId\",\"a91f2c0ef897407f98086acfc5f538d2\"}";
+        String requestBody = "{\"pageNo\":1,\"search\":\"胡士大夫\",\"pageSize\":20,\"type\":99}";
         String responseString = mockMvc.perform(post("/notice/searchList").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
         )
                 .andExpect(status().isOk())    //返回的状态是200
                 .andDo(print())         //打印出请求和相应的内容
@@ -117,6 +118,7 @@ public class NoticeServiceTest extends ConfigTest {
         String responseString = mockMvc.perform(post("/notice/queryRelNotice/1803392").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
         ).andExpect(status().isOk())    //返回的状态是200
                 .andDo(print())         //打印出请求和相应的内容
                 .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串

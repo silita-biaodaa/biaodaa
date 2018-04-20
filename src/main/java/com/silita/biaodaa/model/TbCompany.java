@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
-import javax.persistence.*;
 
 @Getter
 @Setter
@@ -83,4 +82,6 @@ public class TbCompany {
     private String subsist;//工商数据
 
     private String comRange;//工商数据
+
+    private boolean collected=false;//关注状态（默认值显示没关注）
 }

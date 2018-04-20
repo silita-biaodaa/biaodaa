@@ -27,4 +27,8 @@ public interface NoticeMapper {
     List<Map> queryNoticeFile(Long id);
 
     List<Map> queryRelations(Map map);
+
+    List<Long> queryCompanyCollStatus(Map map);
+
+    List<Long> queryNoticeCollStatus(Map map);
 }

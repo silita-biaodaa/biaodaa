@@ -5,9 +5,7 @@
     <sql id="selectCompanyInfo">
         select DISTINCT c.*
           ,s.cert_no,s.cert_date,s.valid_date,b.runScope as comRange,b.registerStatus as subsist
-          ,(case isnull(cc.id) when 1 then 'false' else 'true' end) as collected
         from mishu.tb_company c
-        left join mishu_write.colle_company cc on c.com_id=cc.companyId and cc.userId=#{userId}
         left join mishu.tb_safety_certificate s on c.com_name = s.com_name
         left join mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
     </sql>
@@ -42,23 +40,39 @@
 
     <sql id="noticeListHead">
         SELECT DISTINCT s.id,s.title,s.opendate,s.type
-        <if test="userId!=null and userId !=''">
-        ,(case isnull(co.id) when 1 then 'false' else 'true' end) as collected
-        </if>
         ,<include refid="noticeTypeConvert"/>
     </sql>
 
     <sql id="noticeListBaseFrom">
         FROM mishu.snatchurl s
-        <if test="userId!=null and userId !=''">
-        LEFT JOIN mishu_write.collec_notice co on s.id=co.noticeId and co.userId=#{userId}
-        </if>
     </sql>
 
     <sql id="noticeListTail">
         and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </sql>
+
+    <select id="queryNoticeCollStatus" parameterType="Map" resultType="Long">
+        SELECT co.noticeid
+        FROM mishu_write.collec_notice co
+        WHERE co.noticeid IN
+        <foreach collection="idSet" item="noticeId" open="(" close=")" separator=",">
+           #{noticeId}
+        </foreach>
+        AND  userid=#{userId}
+    </select>
+
+
+    <select id="queryCompanyCollStatus" parameterType="Map" resultType="Long">
+        SELECT  cc.companyId
+        FROM mishu_write.colle_company cc
+        WHERE cc.companyId IN
+        <foreach collection="idSet" item="id" open="(" close=")" separator=",">
+        #{id}
+        </foreach>
+        AND  userid=#{userId}
+    </select>
+
 
     <select id="queryNoticesByCompanyName" resultType="Long" parameterType="String">
         SELECT a.contId
@@ -188,6 +202,7 @@
         <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
             AND  !(detail.projSum REGEXP '[^0-9.]') AND detail.projSum !=''
         </if>
+        and s.type = #{type}
         <include refid="noticeListTail"/>
     </select>
 
