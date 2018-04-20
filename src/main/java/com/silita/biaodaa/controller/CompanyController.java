@@ -5,6 +5,7 @@ import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.CommonService;
+import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
@@ -34,6 +35,9 @@ public class CompanyController {
     @Autowired
     CommonService commonService;
 
+    @Autowired
+    NoticeService noticeService;
+
 
     @ResponseBody
     @RequestMapping(value = "/query", method = RequestMethod.POST,produces = "application/json")
@@ -59,6 +63,10 @@ public class CompanyController {
                 keyWord = "";
             }
             PageInfo pageInfo  = tbCompanyService.queryCompanyList(page,keyWord);
+
+            Map<String,String> typeMap = new HashMap<>();
+            typeMap.put("collType","company");
+            noticeService.addCollStatus(pageInfo.getList(), typeMap);
             result.put("data",pageInfo.getList());
             result.put("pageNum",pageInfo.getPageNum());
             result.put("pageSize", pageInfo.getPageSize());
@@ -281,6 +289,9 @@ public class CompanyController {
             page.setCurrentPage(pageNo);
 
             PageInfo pageInfo  = tbCompanyService.filterCompany(page,param);
+            Map<String,String> typeMap = new HashMap<>();
+            typeMap.put("collType","company");
+            noticeService.addCollStatus(pageInfo.getList(), typeMap);
             result.put("data",pageInfo.getList());
             result.put("pageNum",pageInfo.getPageNum());
             result.put("pageSize", pageInfo.getPageSize());
