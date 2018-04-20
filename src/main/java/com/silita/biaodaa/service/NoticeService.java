@@ -179,7 +179,7 @@ public class NoticeService {
      * @param list
      * @param params
      */
-    public void addCollStatus(List<Map> list, Map params){
+    public void addCollStatus(List list, Map params){
         String userId = (String)params.get("userId");
         if(MyStringUtils.isNull(userId)) {
             return;
@@ -191,7 +191,8 @@ public class NoticeService {
                     idSet.add(((TbCompany)obj).getComId());
                 }
             }else{
-                for (Map map :list){
+                for (Object obj :list){
+                    Map map = (Map)obj;
                     idSet.add(map.get(params.get("idKey")));
                 }
             }
@@ -219,7 +220,8 @@ public class NoticeService {
                 }
             }else {//公告信息
                 if (collIds != null && collIds.size() > 0) {
-                    for (Map map : list) {
+                    for (Object obj : list) {
+                        Map map = (Map)obj;
                         if (collIds.contains(Long.parseLong(map.get(params.get("idKey")).toString()))) {
                             map.put("collected", true);
                         } else {
@@ -227,7 +229,8 @@ public class NoticeService {
                         }
                     }
                 } else {
-                    for (Map map : list) {
+                    for (Object obj : list) {
+                        Map map = (Map)obj;
                         map.put("collected", false);
                     }
                 }

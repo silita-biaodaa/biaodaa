@@ -20,7 +20,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,7 +186,7 @@ public class NoticeController extends BaseController{
      * @param list
      * @param params
      */
-    private void addCompanyCollStatus(List<Map> list, Map params){
+    private void addCompanyCollStatus(List list, Map params){
         params.put("collType","company");
         noticeService.addCollStatus(list, params);
     }
