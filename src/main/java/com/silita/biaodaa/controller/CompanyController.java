@@ -270,6 +270,8 @@ public class CompanyController {
             Integer minCapital = MapUtils.getInteger(params, "minCapital");
             Integer maxCapital = MapUtils.getInteger(params, "maxCapital");
             String qualCode = MapUtils.getString(params, "qualCode");
+            String keyWord = MapUtils.getString(params, "keyWord");
+
             String code = "";
             String [] qualCodes = MyStringUtils.splitParam(qualCode);
             if(qualCodes!=null&&qualCodes.length>0){
@@ -281,6 +283,7 @@ public class CompanyController {
             param.put("minCapital",minCapital);
             param.put("maxCapital",maxCapital);
             param.put("qualCode",code);
+            param.put("keyWord",keyWord);
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");

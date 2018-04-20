@@ -27,6 +27,9 @@
     left join mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
     left join area a on a.name = c.regis_address
     where 1=1
+    <if test="keyWord!=null and keyWord!=''">
+      and c.com_name like CONCAT('%',#{keyWord},'%')
+    </if>
     <if test="areaCode!=null and areaCode!=''">
       and a.code like CONCAT(#{areaCode},'%')
     </if>
