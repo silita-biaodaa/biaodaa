@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface TbPersonQualificationMapper extends MyMapper<TbPersonQualification> {
 
-    List<Map<String,Object>> getCompanyPersonCate(Integer comId);
+    List<Map<String,Object>> getCompanyPersonCate(Map<String,Object> param);
 
     List<TbPersonQualification> queryCompanyPerson(Map<String,Object> param);
 }

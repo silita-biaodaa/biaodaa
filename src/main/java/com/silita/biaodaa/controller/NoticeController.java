@@ -337,11 +337,12 @@ public class NoticeController extends BaseController{
             }
             params.put("start", (pageNo - 1) * pageSize);
             params.put("size", pageSize);
-            List<Map> list = noticeService.queryArticleList(params);
-            if (null == list) {
-                list = new ArrayList<>();
-            }
-            result.put("data", list);
+            PageInfo pageInfo = noticeService.queryArticleList(page, params);
+            result.put("data", pageInfo.getList());
+            result.put("pageNum", pageInfo.getPageNum());
+            result.put("pageSize", pageInfo.getPageSize());
+            result.put("total", pageInfo.getTotal());
+            result.put("pages", pageInfo.getPages());
         } catch (Exception e) {
             logger.error(String.format("公告文章列表查询失败！%s", e.getMessage()));
             result.put("code", 0);

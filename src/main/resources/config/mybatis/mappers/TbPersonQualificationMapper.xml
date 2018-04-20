@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.biaodaa.dao.TbPersonQualificationMapper" >
   <!-- 获取企业人员资质的注册类别-->
-  <select id="getCompanyPersonCate" parameterType="Integer" resultType="Map">
-    select category,count(*) as num from tb_person_qualification where com_id =#{comId}  GROUP BY category
+  <select id="getCompanyPersonCate" parameterType="Map" resultType="Map">
+    select category,count(*) as num from tb_person_qualification where com_id =#{comId} and com_name=#{comName}  GROUP BY category
   </select>
 
   <!-- 获取企业注册人员-->
@@ -11,6 +11,9 @@
     select per.`name`,q.* from tb_person_qualification q left join tb_person per on q.per_id = per.pkid where 1=1
     <if test="comId!=null and comId!=''">
       and q.com_id = #{comId}
+    </if>
+    <if test="comName!=null and comName!=''">
+      and q.com_name = #{comName}
     </if>
     <if test="category!=null and category!=''">
       and q.category = #{category}

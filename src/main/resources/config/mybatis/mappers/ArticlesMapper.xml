@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.biaodaa.dao.ArticlesMapper">
     <select id="queryArticleList" resultType="Map" parameterType="Map">
-        select title,content,url,time
+        select id,title,content,contentDescribe,url,time,image
         from mishu.articles
         where 1=1
         <if test="time !=null and time != ''">
@@ -15,7 +15,7 @@
         <if test="type !=null and type != ''">
             and type=#{type}
         </if>
-        order by time desc limit #{start},#{size}
+        order by time desc
     </select>
 
     <select id="queryArticleDetail" resultType="Map" parameterType="Integer">
