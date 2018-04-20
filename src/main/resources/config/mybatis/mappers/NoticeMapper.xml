@@ -52,6 +52,15 @@
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </sql>
 
+    <sql id="zhongbidaoDetailField">
+        <!-- 中标列表多标段信息 --><!--
+        ,(SELECT GROUP_CONCAT(distinct dd.oneName SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) oneName
+        ,(SELECT GROUP_CONCAT(distinct dd.projSum SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) projSum-->
+        <!-- 中标列表多标段公告只显示第一标段信息 -->
+        ,(SELECT outdd.oneName from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(dd.id)  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id )) oneName
+        ,(SELECT outdd.projSum from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(dd.id)  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id )) projSum
+    </sql>
+
     <select id="queryNoticeCollStatus" parameterType="Map" resultType="Long">
         SELECT co.noticeid
         FROM mishu_write.collec_notice co
@@ -98,8 +107,7 @@
         </choose>
         ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
         <if test="type == 2 or type==99">
-            ,(SELECT GROUP_CONCAT(distinct dd.oneName SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) oneName
-            ,(SELECT GROUP_CONCAT(distinct dd.projSum SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) projSum
+            <include refid="zhongbidaoDetailField"/>
         </if>
         <include refid="noticeListBaseFrom"/>
         WHERE s.isShow = 0
@@ -131,8 +139,7 @@
         ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
         ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
         <if test="type == 2">
-        ,(SELECT GROUP_CONCAT(distinct dd.oneName SEPARATOR ',')  FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) oneName
-        ,(SELECT GROUP_CONCAT(distinct dd.projSum SEPARATOR ',')  FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) projSum
+            <include refid="zhongbidaoDetailField"/>
         </if>
         <include refid="noticeListBaseFrom"/>
         <!--资质判断 -->
@@ -252,7 +259,7 @@
         ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail WHERE snatchUrlId =s.id ) as zhaobiao_pbMode
         ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail WHERE snatchUrlId =s.id ) as zhongbiao_pbMode
         ,(SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
-        ,(SELECT GROUP_CONCAT(zb.oneName SEPARATOR ',') oneName FROM mishu.zhongbiao_detail zb WHERE zb.snatchUrlId =s.id) oneName
+        <include refid="zhongbidaoDetailField"/>
         <include refid="noticeListBaseFrom"/>
          join (
         <include refid="relationNotices"/>
