@@ -20,21 +20,33 @@ public class EmailUtils {
 
     public static final String FAILURE_MSG = "邮件发送失败！";
 
+    // 发件人默认邮箱
+    public static final String SENDER_DEFAULT_NAME = "biaodaa@biaodaa.com";
+    // 发件人默认密码
+    public static final String SENDER_DEFAULT_PASS = "Yb20141125";
+    // 收件人默认邮箱
+    public static final String RECEIVER_DEFAULT_NAME = "179956000@qq.com";
+
     /**
      * 发送邮件
      * @param subject   邮件主题
      * @param message   邮件内容
+     * @param receiver  收件人
      * @return
      */
-    public static String sendEmail(String subject, String message){
+    public static String sendEmail(String subject, String message, String receiver){
         try {
             String senderName = PropertiesUtils.getProperty("sender.name");
             String senderPass = PropertiesUtils.getProperty("sender.pass");
-            String receiverName = PropertiesUtils.getProperty("receiver.name");
-            Preconditions.checkArgument(StringUtils.isNotBlank(senderName), "sender.name不能为空！");
-            Preconditions.checkArgument(StringUtils.isNotBlank(senderPass), "sender.pass不能为空！");
-            Preconditions.checkArgument(StringUtils.isNotBlank(receiverName), "receiver.name不能为空！");
-
+            if (StringUtils.isBlank(senderName)) {
+                senderName = SENDER_DEFAULT_NAME;
+            }
+            if (StringUtils.isBlank(senderPass)) {
+                senderName = SENDER_DEFAULT_PASS;
+            }
+            if (StringUtils.isBlank(receiver)) {
+                receiver = RECEIVER_DEFAULT_NAME;
+            }
             Email email = new SimpleEmail();
             email.setHostName("smtp.mxhichina.com");
             email.setSmtpPort(25);
@@ -43,7 +55,7 @@ public class EmailUtils {
             email.setFrom(senderName);
             email.setSubject(subject);
             email.setMsg(message);
-            email.addTo(receiverName);
+            email.addTo(receiver);
             email.send();
             logger.info(String.format("邮件发送成功！主题%s,内容%s", subject, message));
         } catch (EmailException e) {
