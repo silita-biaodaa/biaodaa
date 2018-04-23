@@ -18,12 +18,28 @@
     <select id="getUserByUserNameOrPhoneAndPassWd" parameterType="com.silita.biaodaa.model.UserTempBdd"
             resultType="com.silita.biaodaa.model.UserTempBdd">
         SELECT * FROM mishu_write.user_temp_bdd WHERE userName = #{username} AND userPass = #{userpass}
-        UNION SELECT * FROM mishu_write.user_temp_bdd WHERE userPhone = #{username} AND userPass = #{userpass}
+        UNION SELECT * FROM mishu_write.user_temp_bdd WHERE userPhone = #{userphone} AND userPass = #{userpass}
     </select>
 
     <update id="updateUserTempByWxBind" parameterType="com.silita.biaodaa.model.UserTempBdd">
         UPDATE mishu_write.user_temp_bdd
-        SET nickName = #{nickname}, imgUrl = #{imgurl}, gender = #{gender}, wxopenId = #{wxopenid}, wx_unionId = #{wxUnionid}, userPass = #{userpass}
+        <set>
+            <if test="nickname!=null and nickname!=''">
+                nickName = #{nickname},
+            </if>
+            <if test="imgurl!=null and imgurl!=''">
+                imgUrl = #{imgurl},
+            </if>
+            <if test="gender!=null and gender!=''">
+                gender = #{gender},
+            </if>
+            <if test="wxUnionid!=null and wxUnionid!=''">
+                wx_unionId = #{wxUnionid},
+            </if>
+            <if test="userpass!=null and userpass!=''">
+                userPass = #{userpass}
+            </if>
+        </set>
         WHERE userPhone = #{userphone}
     </update>
 

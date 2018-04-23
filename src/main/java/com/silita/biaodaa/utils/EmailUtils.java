@@ -25,7 +25,7 @@ public class EmailUtils {
     // 发件人默认密码
     public static final String SENDER_DEFAULT_PASS = "Yb20141125";
     // 收件人默认邮箱
-    public static final String RECEIVER_DEFAULT_NAME = "179956000@qq.com";
+    public static final String RECEIVER_DEFAULT_NAME = "chenyi@yaobangjs.com";
 
     /**
      * 发送邮件
@@ -57,7 +57,7 @@ public class EmailUtils {
             email.setMsg(message);
             email.addTo(receiver);
             email.send();
-            logger.info(String.format("邮件发送成功！主题%s,内容%s", subject, message));
+            logger.info(String.format("邮件发送成功！发件人：%s，收件人：%s，主题%s，内容%s", senderName, receiver, subject, message));
         } catch (EmailException e) {
             logger.error(e.toString());
             return FAILURE_MSG;
