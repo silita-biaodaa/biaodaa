@@ -149,6 +149,30 @@ public class AuthorizeController {
         return result;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/weChatLogin",produces = "application/json;charset=utf-8")
+    public Map<String,Object> weChatLogin(@RequestBody String code){
+        Map result = new HashMap();
+        result.put("code", 0);
+        result.put("data", null);
+        try{
+            Map map = authorizeService.weChatLogin(code);
+            int codeTemp = (int)map.get("code");
+            if(codeTemp == 3) {
+                map.put("msg", "用户已取消登录！");
+            } else if(codeTemp == 1) {
+                map.put("msg", "微信扫码登录成功！");
+                result.put("data", map.get("data"));
+            } else if(codeTemp == 2) {
+                map.put("msg", "用户还未绑定！");
+            }
+        } catch (Exception e) {
+            logger.error("微信扫描登录异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
 
     @ResponseBody
     @RequestMapping(value = "/getVerificationCode",produces = "application/json;charset=utf-8")

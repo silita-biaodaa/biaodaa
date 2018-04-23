@@ -278,7 +278,7 @@ public class GmyServiceTest extends ConfigTest {
     public void testController16()throws Exception{
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
-        jsonObject.put("companyid", 31);
+        jsonObject.put("companyid", 6666);
         jsonObject.put("tablename", "new_huNan");
 
         String requestBody = jsonObject.toJSONString();

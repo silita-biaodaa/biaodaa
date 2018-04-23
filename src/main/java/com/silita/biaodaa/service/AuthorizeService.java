@@ -2,6 +2,9 @@ package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.common.SendMessage;
+import com.silita.biaodaa.common.WeChat.model.WXAccessToken;
+import com.silita.biaodaa.common.WeChat.model.WXUserInfo;
+import com.silita.biaodaa.common.WeChat.util.WeChatLoginUtil;
 import com.silita.biaodaa.dao.InvitationBddMapper;
 import com.silita.biaodaa.dao.UserRoleBddMapper;
 import com.silita.biaodaa.dao.UserTempBddMapper;
@@ -55,7 +58,7 @@ public class AuthorizeService {
         InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
         if (null == invitationVo) {
             return "验证码错误或无效！";
-        } else if("1".equals(invitationVo.getInvitationState())){
+        } else if ("1".equals(invitationVo.getInvitationState())) {
             return "验证码失效！";
         }
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
@@ -76,6 +79,7 @@ public class AuthorizeService {
     /**
      * 第三方绑定 微信\qq
      * 1微信 2QQ
+     *
      * @param userTempBdd
      * @return
      */
@@ -87,7 +91,7 @@ public class AuthorizeService {
         InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
         if (null == invitationVo) {
             return "验证码错误或无效！";
-        } else if("1".equals(invitationVo.getInvitationState())){
+        } else if ("1".equals(invitationVo.getInvitationState())) {
             return "验证码失效！";
         }
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
@@ -104,9 +108,9 @@ public class AuthorizeService {
             userRoleBddMapper.insertUserRole(userTempBdd.getUserid());
         } else {
             //绑定更新
-            if(userTempBdd.getType() == 1) {
+            if (userTempBdd.getType() == 1) {
                 userTempBddMapper.updateUserTempByWxBind(userTempBdd);
-            } else if(userTempBdd.getType() == 2) {
+            } else if (userTempBdd.getType() == 2) {
                 userTempBddMapper.updateUserTempByQQBind(userTempBdd);
             }
         }
@@ -117,6 +121,7 @@ public class AuthorizeService {
 
     /**
      * 用户登录
+     *
      * @param userTempBdd
      * @return
      */
@@ -152,25 +157,26 @@ public class AuthorizeService {
     /**
      * 第三方登录
      * 1微信 2QQ
+     *
      * @param userTempBdd
      * @return
      */
-    public UserTempBdd queryUserTempByWXUnionIdOrQQOpenId(UserTempBdd userTempBdd){
+    public UserTempBdd queryUserTempByWXUnionIdOrQQOpenId(UserTempBdd userTempBdd) {
         UserTempBdd vo = null;
-        if(userTempBdd.getType() == 1) {
+        if (userTempBdd.getType() == 1) {
             //新版登录传wxUnionId，wxopenid
-            if(!StringUtils.isEmpty(userTempBdd.getWxUnionid())) {
+            if (!StringUtils.isEmpty(userTempBdd.getWxUnionid())) {
                 vo = userTempBddMapper.getUserTempByWXUnionId(userTempBdd.getWxUnionid());
                 //补以前的坑
-                if(vo != null) {
+                if (vo != null) {
                     userTempBddMapper.updateWXUnionIdByWXOpenId(vo);
                 }
             } else {
                 //老版登录wxopenid
-                vo  = userTempBddMapper.getUserTempByWXOpenId(userTempBdd.getOpenid());
+                vo = userTempBddMapper.getUserTempByWXOpenId(userTempBdd.getOpenid());
             }
-        } else if(userTempBdd.getType() == 2) {
-            vo  = userTempBddMapper.getUserTempByQQOpenId(userTempBdd.getQqopenid());
+        } else if (userTempBdd.getType() == 2) {
+            vo = userTempBddMapper.getUserTempByQQOpenId(userTempBdd.getQqopenid());
         }
         //权限token
         if (vo != null) {
@@ -201,7 +207,7 @@ public class AuthorizeService {
         InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
         if (null == invitationVo) {
             return "验证码错误或无效！";
-        } else if("1".equals(invitationVo.getInvitationState())){
+        } else if ("1".equals(invitationVo.getInvitationState())) {
             return "验证码失效！";
         }
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
@@ -216,6 +222,42 @@ public class AuthorizeService {
         return "";
     }
 
+    public Map<String, Object> weChatLogin(String code) {
+        Map<String, Object> map = new HashedMap();
+        if (StringUtils.isEmpty(code)) {
+            map.put("code", 3);
+        } else {
+            //得到授权令牌
+            WXAccessToken accessToken = WeChatLoginUtil.getAccessTokenByCode(code);
+            //用令牌取微信用户基本信息
+            WXUserInfo userInfo = WeChatLoginUtil.getWXUserInfo(accessToken.getAccessToken(), accessToken.getOpenId());
+            if (userInfo != null && !StringUtils.isEmpty(userInfo.getUnionid())) {
+                String wxUnionId = userInfo.getUnionid();
+                UserTempBdd vo = userTempBddMapper.getUserTempByWXUnionId(wxUnionId);
+                if (vo != null) {
+                    Map<String, String> parameters = new HashedMap();
+                    parameters.put("name", vo.getUsername());
+                    parameters.put("password", vo.getUserpass());
+                    parameters.put("phone", vo.getUserphone());
+                    parameters.put("userId", vo.getUserid());
+                    try {
+                        String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
+                        String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
+                        String parameterJson = JSONObject.toJSONString(parameters);
+                        String asB64 = Base64.getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
+                        String xtoken = sign + "." + asB64;
+                        vo.setXtoken(xtoken);
+                    } catch (Exception e) {
+                    }
+                    map.put("code", 1);
+                    map.put("data", vo);
+                } else {
+                    map.put("code", 2);
+                }
+            }
+        }
+        return map;
+    }
 
     /**
      * 验证码
