@@ -13,4 +13,31 @@ public interface MessagePushMapper extends MyMapper<MessagePush> {
      * @return
      */
     List<MessagePush> listMessageByUserIdAndType(Map<String, Object> params);
+
+    /**
+     *
+     * @param params
+     * @return
+     */
+    List<MessagePush> listMessage(Map<String, Object> params);
+
+    /**
+     *
+     * @return
+     */
+    Integer getNewMsgByUserId(Map<String, Object> params);
+
+    /**
+     *
+     * @param params
+     * @return
+     */
+    List<Map<String, Object>> listIdByUserId(Map<String, Object> params);
+
+    /**
+     *
+     * @return
+     */
+    MessagePush getMessageById(Integer id);
+
 }

@@ -36,4 +36,6 @@ public class MessagePush {
     private Integer type;
 
     private String message;
+
+    private Integer readOrReaded;
 }
