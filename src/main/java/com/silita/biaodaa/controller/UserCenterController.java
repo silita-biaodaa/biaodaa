@@ -8,6 +8,7 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.ColleCompany;
 import com.silita.biaodaa.model.CollecNotice;
+import com.silita.biaodaa.model.MessagePush;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.UserCenterService;
 import com.silita.biaodaa.utils.PropertiesUtils;
@@ -301,6 +302,45 @@ public class UserCenterController {
             result.put("pages",pageInfo.getPages());
         } catch (Exception e) {
             logger.error("获消息列表异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/allReadedRecordToRead", produces = "application/json;charset=utf-8")
+    public Map<String, Object> allReadedRecordToRead(@RequestBody Map<String, Object> params) {
+        Map result = new HashMap();
+        result.put("code", 1);
+        result.put("msg", "标记已读成功！");
+
+        try{
+            userCenterService.updateAllReadedRecordToRead(params);
+        } catch (Exception e) {
+            logger.error("标记已读异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getMessagePushById", produces = "application/json;charset=utf-8")
+    public Map<String, Object> getMessagePushById(@RequestBody Map<String, Object> params) {
+        Map result = new HashMap();
+        result.put("code", 1);
+        result.put("msg", "获取消息详情失败！");
+        result.put("data", null);
+
+        try{
+            MessagePush vo = userCenterService.getMessagePushById(params);
+            if(vo != null) {
+                result.put("msg", "获取消息详情成功！");
+                result.put("data", vo);
+            }
+        } catch (Exception e) {
+            logger.error("获取消息详情异常！" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }

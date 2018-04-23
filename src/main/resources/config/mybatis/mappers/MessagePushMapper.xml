@@ -15,4 +15,62 @@
         </where>
         ORDER BY id DESC
     </select>
+
+    <select id="listMessage" parameterType="Map" resultType="com.silita.biaodaa.model.MessagePush">
+        SELECT m.*, r.readOrReaded
+        FROM mishu.message_push m
+        LEFT JOIN mishu_write.readed_record AS r ON m.id = r.msg_id
+        <where>
+            m.is_send = 1
+            <if test="userId!=null and userId!=''">
+                AND m.userId = #{userId}
+            </if>
+            <if test="isSystem!=null">
+                AND m.is_system = #{isSystem}
+            </if>
+            <if test="readOrReaded!=null">
+                AND r.readOrReaded = #{readOrReaded}
+            </if>
+        </where>
+        ORDER BY m.id DESC
+    </select>
+
+    <select id="getNewMsgByUserId" parameterType="Map" resultType="Integer">
+        SELECT COUNT(*)
+        FROM mishu.message_push m
+        LEFT JOIN mishu_write.readed_record AS r ON m.id = r.msg_id
+        <where>
+            m.is_send = 1
+            <if test="userId!=null and userId!=''">
+                AND m.userId = #{userId}
+            </if>
+            <if test="isSystem!=null">
+                AND m.is_system = #{isSystem}
+            </if>
+                AND r.readOrReaded = 0
+        </where>
+        ORDER BY m.id DESC
+    </select>
+
+    <select id="listIdByUserId" parameterType="Map" resultType="Map">
+        SELECT id
+        FROM mishu.message_push
+        <where>
+            is_send = 1
+            <if test="userId!=null and userId!=''">
+                AND userId = #{userId}
+            </if>
+            <if test="isSystem!=null">
+                AND is_system = #{isSystem}
+            </if>
+        </where>
+    </select>
+
+    <select id="getMessageById" parameterType="Integer" resultType="com.silita.biaodaa.model.MessagePush">
+        SELECT m.*, r.readOrReaded
+        FROM mishu.message_push m
+        LEFT JOIN mishu_write.readed_record AS r ON m.id = r.msg_id
+        WHERE m.id = #{id}
+    </select>
+
 </mapper>

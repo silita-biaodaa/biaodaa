@@ -3,9 +3,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.biaodaa.dao.ArticlesMapper">
     <select id="queryArticleList" resultType="Map" parameterType="Map">
-        select id,title,content,contentDescribe,url,time,image
+        select id,title,contentDescribe,url,time,image
         from mishu.articles
-        where 1=1
+        where flag=1
         <if test="time !=null and time != ''">
             and time=#{time}
         </if>

@@ -33,6 +33,8 @@ public class UserCenterService {
     private CollecNoticeMapper collecNoticeMapper;
     @Autowired
     private ColleCompanyMapper colleCompanyMapper;
+    @Autowired
+    private ReadedRecordMapper readedRecordMapper;
 
     public UserTempBdd updateUserTemp(UserTempBdd userTempBdd) {
         userTempBddMapper.updateUserTemp(userTempBdd);
@@ -138,10 +140,36 @@ public class UserCenterService {
     public PageInfo queryMessageList(Page page, Map<String, Object> params){
         List<MessagePush> messagePushes = new ArrayList<>();
 
+        List<MessagePush> tempMessagePushes = messagePushMapper.listMessageByUserIdAndType(params);
+        if(tempMessagePushes.size() > 0) {
+            int msgId;
+            ReadedRecord readedRecord;
+            for (int i = 0; i < tempMessagePushes.size(); i++) {
+                msgId = tempMessagePushes.get(i).getId();
+                Integer count = readedRecordMapper.getTotalByMsgId(msgId);
+                if(count == 0) {
+                    readedRecord = new ReadedRecord();
+                    readedRecord.setMsgId(msgId);
+                    readedRecord.setUserid(tempMessagePushes.get(i).getUserid());
+                    readedRecordMapper.insertReadedRecord(readedRecord);
+                }
+            }
+        }
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        messagePushes = messagePushMapper.listMessageByUserIdAndType(params);
+        messagePushes = messagePushMapper.listMessage(params);
         PageInfo pageInfo = new PageInfo(messagePushes);
         return pageInfo;
+    }
+
+    public void updateAllReadedRecordToRead(Map<String, Object> params) {
+        List<Map<String, Object>> msgIds = messagePushMapper.listIdByUserId(params);
+        readedRecordMapper.batchUpdateReadOrReadedByUserIds(msgIds);
+    }
+
+    public MessagePush getMessagePushById(Map<String, Object> params) {
+        readedRecordMapper.updateReadOrReadedById(params);
+        Integer id = (Integer)params.get("msgId");
+        return messagePushMapper.getMessageById(id);
     }
 
 }

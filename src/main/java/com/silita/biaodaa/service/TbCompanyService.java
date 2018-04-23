@@ -2,16 +2,12 @@ package com.silita.biaodaa.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.cache.GlobalCache;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
-import com.silita.biaodaa.dao.AptitudeDictionaryMapper;
-import com.silita.biaodaa.dao.TbCompanyMapper;
-import com.silita.biaodaa.dao.TbCompanyQualificationMapper;
-import com.silita.biaodaa.dao.TbPersonQualificationMapper;
-import com.silita.biaodaa.model.AptitudeDictionary;
-import com.silita.biaodaa.model.TbCompany;
-import com.silita.biaodaa.model.TbCompanyQualification;
-import com.silita.biaodaa.model.TbPersonQualification;
+import com.silita.biaodaa.dao.*;
+import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,6 +33,14 @@ public class TbCompanyService {
 
     @Autowired
     AptitudeDictionaryMapper aptitudeDictionaryMapper;
+
+    @Autowired
+    CertBasicMapper certBasicMapper;
+
+    @Autowired
+    TbSafetyCertificateMapper tbSafetyCertificateMapper;
+
+    private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
 
     public PageInfo queryCompanyList(Page page,String keyWord){
@@ -223,8 +227,25 @@ public class TbCompanyService {
 
     public PageInfo filterCompany(Page page,Map<String,Object> param){
         List<TbCompany> list = new ArrayList<>();
+        Map<String,CertBasic> certBasicMap = getCertBasicMap();
+        Map<String,TbSafetyCertificate> safetyCertificateMap = getSafetyCertMap();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         list = tbCompanyMapper.filterCompany(param);
+        for(TbCompany company : list){
+            if(company.getComName()!=null&&company.getBusinessNum()!=null){
+                CertBasic certBasic = certBasicMap.get(company.getComName()+"|"+company.getBusinessNum());
+                if(certBasic!=null){
+                    company.setSubsist(certBasic.getRegisterstatus());
+                    company.setComRange(certBasic.getRunscope());
+                }
+                TbSafetyCertificate tbSafetyCertificate = safetyCertificateMap.get(company.getComName());
+                if(tbSafetyCertificate!=null){
+                    company.setCertNo(tbSafetyCertificate.getCertNo());
+                    company.setCertDate(tbSafetyCertificate.getCertDate());
+                    company.setValidDate(tbSafetyCertificate.getValidDate());
+                }
+            }
+        }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -400,8 +421,64 @@ public class TbCompanyService {
     }
 
 
+    public Map<String,CertBasic> getCertBasicMap(){
+        Map<String,CertBasic> certBasicMap;
+        Long time = globalCache.getVaildTime().get("certBasic");
+        long nowTime = System.currentTimeMillis();
+        long value = 18000000;
+        String cacheTime = PropertiesUtils.getProperty("cacheTime");
+        if( cacheTime!=null){
+            value = Long.parseLong(cacheTime);
+        }
+        if(time!=null&&nowTime-time<value){
+            certBasicMap = globalCache.getCertBasicMap();
+            if(certBasicMap!=null&&certBasicMap.size()>0){
+                logger.info("企业工商数据启用缓存========缓存数据共计["+certBasicMap.size()+"]条");
+                return certBasicMap;
+            }
+        }
+        List<CertBasic> certBasicList = certBasicMapper.getCertBasicMap();
+        certBasicMap = new HashMap<>();
+        for(CertBasic basic : certBasicList){
+            certBasicMap.put(basic.getCompanyname()+"|"+basic.getRegisterno(),basic);
+        }
+        globalCache.setCertBasicMap(certBasicMap);
+        globalCache.getVaildTime().put("certBasic",nowTime);
+        return certBasicMap;
+    }
 
+    public Map<String,TbSafetyCertificate> getSafetyCertMap(){
+        Map<String,TbSafetyCertificate> safetyCertificateMap;
+        Long time = globalCache.getVaildTime().get("safetyCert");
+        long nowTime = System.currentTimeMillis();
+        long value = 18000000;
+        String cacheTime = PropertiesUtils.getProperty("cacheTime");
+        if( cacheTime!=null){
+            value = Long.parseLong(cacheTime);
+        }
+        if(time!=null&&nowTime-time<value){
+            safetyCertificateMap = globalCache.getSafetyCertMap();
+            if(safetyCertificateMap!=null&&safetyCertificateMap.size()>0){
+                logger.info("企业安许证数据启用缓存========缓存数据共计["+safetyCertificateMap.size()+"]条");
+                return safetyCertificateMap;
+            }
+        }
+        List<TbSafetyCertificate> tbSafetyCertificateList = tbSafetyCertificateMapper.getSafetyCertMap();
+        safetyCertificateMap = new HashMap<>();
+        for(TbSafetyCertificate safetyCertificate : tbSafetyCertificateList){
+            safetyCertificateMap.put(safetyCertificate.getComName(),safetyCertificate);
+        }
+        globalCache.setSafetyCertMap(safetyCertificateMap);
+        globalCache.getVaildTime().put("safetyCert",nowTime);
+        return safetyCertificateMap;
+    }
 
-
-
+    /**
+     * 查询企业logo
+     * @param comId
+     * @return
+     */
+    public String getLogo(Integer comId) {
+        return tbCompanyMapper.getLogo(comId);
+    }
 }

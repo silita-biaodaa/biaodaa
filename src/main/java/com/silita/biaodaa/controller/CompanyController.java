@@ -1,6 +1,7 @@
 package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Preconditions;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbCompany;
@@ -9,6 +10,7 @@ import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -361,5 +363,28 @@ public class CompanyController {
         return result;
     }
 
-
+    /**
+     * 根据企业id获得logo
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getLogo", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> getLogo(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 1);
+        result.put("msg", "获得企业logo成功！");
+        try {
+            Integer comId = (Integer) params.get("comId");
+            Preconditions.checkArgument(null != comId && comId > 0, "comId不能为空且要大于0");
+            String logo = tbCompanyService.getLogo(comId);
+            result.put("data", logo);
+            result.put("code", 1);
+        } catch (Exception e) {
+            logger.error("获得企业logo异常：" + e.getMessage());
+            result.put("code", 0);
+            result.put("msg", "获得企业logo失败！");
+        }
+        return result;
+    }
 }

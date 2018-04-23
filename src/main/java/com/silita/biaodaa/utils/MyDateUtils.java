@@ -29,7 +29,10 @@ public class MyDateUtils {
 	private static SimpleDateFormat sdf = new SimpleDateFormat();
 
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-	/**
+
+    public static final String datetimePattern = "yyyy-MM-dd HH:mm:ss";
+
+    /**
 	 * 获得当天时间
 	 *
 	 * @param parrten

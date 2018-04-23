@@ -334,8 +334,6 @@ public class NoticeController extends BaseController{
             if (null == pageSize || pageSize <= 0) {
                 pageSize = Page.PAGE_SIZE_DEFAULT;
             }
-            params.put("start", (pageNo - 1) * pageSize);
-            params.put("size", pageSize);
             PageInfo pageInfo = noticeService.queryArticleList(page, params);
             result.put("data", pageInfo.getList());
             result.put("pageNum", pageInfo.getPageNum());
