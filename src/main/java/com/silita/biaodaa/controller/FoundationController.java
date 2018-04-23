@@ -122,7 +122,6 @@ public class FoundationController {
         result.put("msg", "申请保证金借款成功!");
         try {
             Preconditions.checkArgument(params.containsKey("region") && !Strings.isNullOrEmpty((String)params.get("region")), "region不能为空！");
-            Preconditions.checkArgument(params.containsKey("projNameId") && !Strings.isNullOrEmpty((String)params.get("projNameId")), "projNameId不能为空！");
             Preconditions.checkArgument(params.containsKey("projName") && !Strings.isNullOrEmpty((String)params.get("projName")), "projName不能为空！");
             Preconditions.checkArgument(params.containsKey("borrower") && !Strings.isNullOrEmpty((String)params.get("borrower")), "borrower不能为空！");
             Preconditions.checkArgument(params.containsKey("kbTime") && !Strings.isNullOrEmpty((String)params.get("kbTime")), "kbTime不能为空！");
