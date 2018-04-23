@@ -1,5 +1,8 @@
 package com.silita.biaodaa.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.CarouselImage;
 import com.silita.biaodaa.model.TbHotWords;
@@ -10,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +32,8 @@ public class FoundationService {
     private FeedbackMapper feedbackMapper;
     @Autowired
     private BorrowMapper borrowMapper;
+    @Autowired
+    private CustomUrlMapper customUrlMapper;
 
     /**
      * 根据showType取得全部的banner图
@@ -75,11 +81,11 @@ public class FoundationService {
      * 添加保证金借款并邮件提醒
      * @param params
      */
-    public void addBorrow(Map<String, Object> params){
+    public void addBorrow(Map<String, Object> params) {
         borrowMapper.insertBorrow(params);
-        String borrower = (String)params.get("borrower");
-        String projName = (String)params.get("projName");
-        String phone = (String)params.get("phone");
+        String borrower = (String) params.get("borrower");
+        String projName = (String) params.get("projName");
+        String phone = (String) params.get("phone");
         String datetime = MyDateUtils.getTime(MyDateUtils.datetimePattern);
         String subject = String.format("【%s】申请保证金借款", borrower);
         String message = String.format("借款人【%s】于 %s 发起了一笔保证金借款申请。借款项目为：%s，手机号码：%s", borrower, datetime, projName, phone);
@@ -88,5 +94,22 @@ public class FoundationService {
             receiver = EmailUtils.RECEIVER_DEFAULT_NAME;
         }
         EmailUtils.sendEmail(subject, message, receiver);
+    }
+
+    /**
+     * 查询第三方链接
+     * @param page
+     * @param params
+     * @return
+     */
+    public PageInfo queryLinks(Page page, Map<String, Object> params) {
+        List<Map> links = new ArrayList<>();
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        links = customUrlMapper.queryLinks(params);
+        if (null == links) {
+            links = new ArrayList<>();
+        }
+        PageInfo pageInfo = new PageInfo(links);
+        return pageInfo;
     }
 }

@@ -1,7 +1,9 @@
 package com.silita.biaodaa.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.CarouselImage;
 import com.silita.biaodaa.model.TbHotWords;
 import com.silita.biaodaa.service.FoundationService;
@@ -23,7 +25,7 @@ import java.util.Map;
  */
 @RequestMapping("/foundation")
 @Controller
-public class FoundationController {
+public class FoundationController extends BaseController {
 
     private static final Logger logger = Logger.getLogger(CompanyController.class);
 
@@ -114,6 +116,11 @@ public class FoundationController {
         return result;
     }
 
+    /**
+     * 申请保证金借款
+     * @param params
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value="/borrow", method=RequestMethod.POST, produces="application/json;charset=utf-8")
     public Map<String, Object> borrow(@RequestBody Map<String, Object> params) {
@@ -129,6 +136,41 @@ public class FoundationController {
             foundationService.addBorrow(params);
         } catch (Exception e) {
             logger.error(String.format("申请保证金借款失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 行业链接筛选
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/links", method=RequestMethod.POST, produces="application/json;charset=utf-8")
+    public Map<String, Object> links(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", 1);
+        result.put("msg", "行业链接筛选成功!");
+        try {
+            Page page = buildPage(params);
+            Integer pageNo = page.getCurrentPage();
+            Integer pageSize = page.getPageSize();
+            if (null == pageNo || pageNo <= 0) {
+                pageNo = 1;
+            }
+            if (null == pageSize || pageSize <= 0) {
+                pageSize = Page.PAGE_SIZE_DEFAULT;
+            }
+            PageInfo pageInfo = foundationService.queryLinks(page, params);
+            result.put("data", pageInfo.getList());
+            result.put("pageNum", pageInfo.getPageNum());
+            result.put("pageSize", pageInfo.getPageSize());
+            result.put("total", pageInfo.getTotal());
+            result.put("pages", pageInfo.getPages());
+        } catch (Exception e) {
+            logger.error(String.format("行业链接筛选失败！%s", e.getMessage()));
             result.put("code", 0);
             result.put("msg", e.getMessage());
         }
