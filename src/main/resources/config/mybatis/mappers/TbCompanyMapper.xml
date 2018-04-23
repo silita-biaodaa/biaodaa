@@ -92,4 +92,7 @@
     </foreach>
   </select>
 
+  <select id="getLogo" parameterType="Integer" resultType="String">
+      select logo from mishu.tb_company where com_id=#{com_id}
+  </select>
 </mapper>

@@ -473,9 +473,12 @@ public class TbCompanyService {
         return safetyCertificateMap;
     }
 
-
-
-
-
-
+    /**
+     * 查询企业logo
+     * @param comId
+     * @return
+     */
+    public String getLogo(Integer comId) {
+        return tbCompanyMapper.getLogo(comId);
+    }
 }
