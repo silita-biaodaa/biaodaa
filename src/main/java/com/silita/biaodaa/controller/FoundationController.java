@@ -68,7 +68,7 @@ public class FoundationController {
 
     /**
      * 版本查询
-     * @param loginChannel
+     * @param params
      * @return
      */
     @ResponseBody
@@ -108,6 +108,28 @@ public class FoundationController {
             foundationService.addFeedback(params);
         } catch (Exception e) {
             logger.error(String.format("反馈意见添加失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/borrow", method=RequestMethod.POST, produces="application/json;charset=utf-8")
+    public Map<String, Object> borrow(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", 1);
+        result.put("msg", "申请保证金借款成功!");
+        try {
+            Preconditions.checkArgument(params.containsKey("region") && !Strings.isNullOrEmpty((String)params.get("region")), "region不能为空！");
+            Preconditions.checkArgument(params.containsKey("projNameId") && !Strings.isNullOrEmpty((String)params.get("projNameId")), "projNameId不能为空！");
+            Preconditions.checkArgument(params.containsKey("projName") && !Strings.isNullOrEmpty((String)params.get("projName")), "projName不能为空！");
+            Preconditions.checkArgument(params.containsKey("borrower") && !Strings.isNullOrEmpty((String)params.get("borrower")), "borrower不能为空！");
+            Preconditions.checkArgument(params.containsKey("kbTime") && !Strings.isNullOrEmpty((String)params.get("kbTime")), "kbTime不能为空！");
+            Preconditions.checkArgument(params.containsKey("phone") && !Strings.isNullOrEmpty((String)params.get("phone")), "phone不能为空！");
+            foundationService.addBorrow(params);
+        } catch (Exception e) {
+            logger.error(String.format("申请保证金借款失败！%s", e.getMessage()));
             result.put("code", 0);
             result.put("msg", e.getMessage());
         }

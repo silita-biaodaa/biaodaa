@@ -26,7 +26,7 @@
   <name>biaodaa</name>
   <groupId>com.biaodaa</groupId>
   <artifactId>biaodaa</artifactId>
-  <version>1.0.45</version>
+  <version>1.0.46</version>
 
   <properties>
     <spring.version>4.1.6.RELEASE</spring.version>
@@ -163,6 +163,7 @@
       <version>${bonecp.version}</version>
     </dependency>
 
+    <!-- apache commons -->
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
@@ -172,6 +173,11 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-email</artifactId>
+      <version>1.5</version>
     </dependency>
 
     <dependency>
