@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.ReadedRecordMapper">
+
+    <select id="getTotalByMsgId" parameterType="Integer" resultType="Integer">
+      SELECT COUNT(*) FROM mishu_write.readed_record WHERE msg_id = #{msgId}
+    </select>
+
+    <select id="insertReadedRecord" parameterType="com.silita.biaodaa.model.ReadedRecord">
+     INSERT INTO mishu_write.readed_record(`id`, `msg_id`, `userId`, `readOrReaded`)
+      VALUES(#{id}, #{msgId}, #{userid}, 0)
+  </select>
+
+    <update id="batchUpdateReadOrReadedByUserIds" parameterType="java.util.List">
+        UPDATE mishu_write.readed_record
+        SET readOrReaded = 1
+        WHERE msg_id IN
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id, jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <select id="updateReadOrReadedById" parameterType="Map">
+        UPDATE mishu_write.readed_record
+        SET readOrReaded = 1
+        WHERE msg_id = #{msgId} AND userId = #{userId}
+    </select>
+</mapper>
