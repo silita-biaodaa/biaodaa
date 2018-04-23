@@ -133,6 +133,8 @@ public class FoundationController extends BaseController {
             Preconditions.checkArgument(params.containsKey("borrower") && !Strings.isNullOrEmpty((String)params.get("borrower")), "borrower不能为空！");
             Preconditions.checkArgument(params.containsKey("kbTime") && !Strings.isNullOrEmpty((String)params.get("kbTime")), "kbTime不能为空！");
             Preconditions.checkArgument(params.containsKey("phone") && !Strings.isNullOrEmpty((String)params.get("phone")), "phone不能为空！");
+            Double money = (Double)params.getOrDefault("money", 0);
+            Preconditions.checkArgument(null != money && money > 0, "money不正确！");
             foundationService.addBorrow(params);
         } catch (Exception e) {
             logger.error(String.format("申请保证金借款失败！%s", e.getMessage()));
