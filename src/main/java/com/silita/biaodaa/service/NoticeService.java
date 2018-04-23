@@ -2,6 +2,7 @@ package com.silita.biaodaa.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.ArticlesMapper;
 import com.silita.biaodaa.dao.NoticeMapper;
@@ -180,7 +181,7 @@ public class NoticeService {
      * @param params
      */
     public void addCollStatus(List list, Map params){
-        String userId = (String)params.get("userId");
+        String userId = VisitInfoHolder.getUid();
         if(MyStringUtils.isNull(userId)) {
             return;
         }
