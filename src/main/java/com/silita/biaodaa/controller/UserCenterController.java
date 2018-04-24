@@ -329,13 +329,14 @@ public class UserCenterController {
     @RequestMapping(value = "/getMessagePushById", produces = "application/json;charset=utf-8")
     public Map<String, Object> getMessagePushById(@RequestBody Map<String, Object> params) {
         Map result = new HashMap();
-        result.put("code", 1);
+        result.put("code", 0);
         result.put("msg", "获取消息详情失败！");
         result.put("data", null);
 
         try{
             MessagePush vo = userCenterService.getMessagePushById(params);
             if(vo != null) {
+                result.put("code", 1);
                 result.put("msg", "获取消息详情成功！");
                 result.put("data", vo);
             }
