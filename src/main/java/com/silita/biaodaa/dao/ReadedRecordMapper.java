@@ -9,10 +9,10 @@ import java.util.Map;
 public interface ReadedRecordMapper extends MyMapper<ReadedRecord> {
     /**
      *
-     * @param msgId
+     * @param params
      * @return
      */
-    Integer getTotalByMsgId(Integer msgId);
+    Integer getTotalByMsgId(Map<String, Object> params);
 
     /**
      *

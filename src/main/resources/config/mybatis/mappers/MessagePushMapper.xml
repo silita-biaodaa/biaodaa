@@ -6,8 +6,8 @@
         SELECT * FROM mishu.message_push
         <where>
             is_send = 1
-            <if test="userId!=null and userId!=''">
-                AND userId = #{userId}
+            <if test="userid!=null and userid!=''">
+                AND userId = #{userid}
             </if>
             <if test="isSystem!=null">
                 AND is_system = #{isSystem}
@@ -19,11 +19,11 @@
     <select id="listMessage" parameterType="Map" resultType="com.silita.biaodaa.model.MessagePush">
         SELECT m.*, r.readOrReaded
         FROM mishu.message_push m
-        LEFT JOIN mishu_write.readed_record AS r ON m.id = r.msg_id
+        LEFT JOIN mishu_write.readed_record r ON m.id = r.msg_id
         <where>
             m.is_send = 1
-            <if test="userId!=null and userId!=''">
-                AND m.userId = #{userId}
+            <if test="userid!=null and userid!=''">
+                AND m.userId = #{userid} AND r.userId = #{userid}
             </if>
             <if test="isSystem!=null">
                 AND m.is_system = #{isSystem}
@@ -41,8 +41,8 @@
         LEFT JOIN mishu_write.readed_record AS r ON m.id = r.msg_id
         <where>
             m.is_send = 1
-            <if test="userId!=null and userId!=''">
-                AND m.userId = #{userId}
+            <if test="userid!=null and userid!=''">
+                AND m.userId = #{userid}
             </if>
             <if test="isSystem!=null">
                 AND m.is_system = #{isSystem}
@@ -57,8 +57,8 @@
         FROM mishu.message_push
         <where>
             is_send = 1
-            <if test="userId!=null and userId!=''">
-                AND userId = #{userId}
+            <if test="userid!=null and userid!=''">
+                AND userId = #{userid}
             </if>
             <if test="isSystem!=null">
                 AND is_system = #{isSystem}
