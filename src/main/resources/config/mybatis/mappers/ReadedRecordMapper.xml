@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.biaodaa.dao.ReadedRecordMapper">
 
-    <select id="getTotalByMsgId" parameterType="Integer" resultType="Integer">
-      SELECT COUNT(*) FROM mishu_write.readed_record WHERE msg_id = #{msgId}
+    <select id="getTotalByMsgId" parameterType="Map" resultType="Integer">
+      SELECT COUNT(*) FROM mishu_write.readed_record WHERE msg_id = #{msgId} AND userId = #{userid}
     </select>
 
     <select id="insertReadedRecord" parameterType="com.silita.biaodaa.model.ReadedRecord">
@@ -20,9 +20,9 @@
         </foreach>
     </update>
 
-    <select id="updateReadOrReadedById" parameterType="Map">
+    <update id="updateReadOrReadedById" parameterType="Map">
         UPDATE mishu_write.readed_record
         SET readOrReaded = 1
-        WHERE msg_id = #{msgId} AND userId = #{userId}
-    </select>
+        WHERE msg_id = #{msgId} AND userId = #{userid}
+    </update>
 </mapper>

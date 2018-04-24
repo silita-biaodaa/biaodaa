@@ -2,6 +2,7 @@ package com.silita.biaodaa.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
@@ -35,7 +36,7 @@ public class FoundationService {
     @Autowired
     private BorrowMapper borrowMapper;
     @Autowired
-    private CustomUrlMapper customUrlMapper;
+    private BlogrollMapper blogrollMapper;
 
     /**
      * 根据showType取得全部的banner图
@@ -92,10 +93,10 @@ public class FoundationService {
         String borrower = (String) params.get("borrower");
         String projName = (String) params.get("projName");
         String phone = (String) params.get("phone");
-        Double money = (Double) params.get("money");
+        Number money = (Number)params.get("money");
         String datetime = MyDateUtils.getTime(MyDateUtils.datetimePattern);
         String subject = String.format("【%s】申请保证金借款", borrower);
-        String message = String.format("借款人【%s】于 %s 发起了一笔保证金借款申请。借款项目为：%s，借款金额：%s，手机号码：%s", borrower, datetime, projName, money, phone);
+        String message = String.format("借款人【%s】于 %s 发起了一笔保证金借款申请。借款项目为：%s，借款金额：%s，手机号码：%s", borrower, datetime, projName, money.doubleValue(), phone);
         String receivers = PropertiesUtils.getProperty("receiver.name.borrow");
         if (StringUtils.isBlank(receivers)) {
             receivers = EmailUtils.RECEIVER_DEFAULT_NAME;
@@ -116,7 +117,18 @@ public class FoundationService {
     public PageInfo queryLinks(Page page, Map<String, Object> params) {
         List<Map> links = new ArrayList<>();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        links = customUrlMapper.queryLinks(params);
+        List<String> regionList = new ArrayList<>();
+        String regionStr = (String) params.get("region");
+        Iterator<String> iterator = Splitter.onPattern(",|\\|").trimResults().omitEmptyStrings().split(regionStr).iterator();
+        while (iterator.hasNext()) {
+            String region = iterator.next();
+            if (region.contains("湘西")) {
+                region = "湘西土家族苗族自治州";
+            }
+            regionList.add(region);
+        }
+        params.put("region", regionList);
+        links = blogrollMapper.queryLinks(params);
         if (null == links) {
             links = new ArrayList<>();
         }

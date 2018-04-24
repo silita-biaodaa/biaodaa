@@ -2,11 +2,13 @@ package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.CarouselImage;
 import com.silita.biaodaa.model.TbHotWords;
 import com.silita.biaodaa.service.FoundationService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 基础模块
@@ -133,8 +133,9 @@ public class FoundationController extends BaseController {
             Preconditions.checkArgument(params.containsKey("borrower") && !Strings.isNullOrEmpty((String)params.get("borrower")), "borrower不能为空！");
             Preconditions.checkArgument(params.containsKey("kbTime") && !Strings.isNullOrEmpty((String)params.get("kbTime")), "kbTime不能为空！");
             Preconditions.checkArgument(params.containsKey("phone") && !Strings.isNullOrEmpty((String)params.get("phone")), "phone不能为空！");
-            Double money = (Double)params.getOrDefault("money", 0);
-            Preconditions.checkArgument(null != money && money > 0, "money不正确！");
+            Preconditions.checkArgument(params.containsKey("money") && null != params.get("money"), "money不能为空！");
+            Number money = (Number)params.get("money");
+            Preconditions.checkArgument(money.doubleValue() > 0, "money必须大于0！");
             foundationService.addBorrow(params);
         } catch (Exception e) {
             logger.error(String.format("申请保证金借款失败！%s", e.getMessage()));

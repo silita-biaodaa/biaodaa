@@ -159,11 +159,14 @@ public class AuthorizeController {
             Map map = authorizeService.weChatLogin(code);
             int codeTemp = (int)map.get("code");
             if(codeTemp == 3) {
+                result.put("code", 3);
                 map.put("msg", "用户已取消登录！");
             } else if(codeTemp == 1) {
+                result.put("code", 1);
                 map.put("msg", "微信扫码登录成功！");
                 result.put("data", map.get("data"));
             } else if(codeTemp == 2) {
+                result.put("code", 2);
                 map.put("msg", "用户还未绑定！");
             }
         } catch (Exception e) {

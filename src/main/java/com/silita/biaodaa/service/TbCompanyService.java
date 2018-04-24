@@ -300,12 +300,54 @@ public class TbCompanyService {
                     resultMap.put("securityCert",anrz.get("mateName"));
                     resultMap.put("securityScore",anrz.get("score"));
                 }
-                List<Map<String,Object>> qyhjList = tbCompanyMapper.getCertQyhj(param);
-                if(qyhjList!=null){
+                List<Map<String,Object>> qyhjListT = tbCompanyMapper.getCertQyhj(param);
+                Double unScore = tbCompanyMapper.getUndesirableScore(param);
+                if(qyhjListT!=null){
+                    //将过期的排出
+                    List<Map<String,Object>> qyhjList = new ArrayList<>();
+                    for(Map<String,Object> map : qyhjListT){
+                        // TODO: 18/4/24 时间有效期临时写死
+                        if(map.get("code")!=null&&map.get("years")!=null){
+                            String years = map.get("years").toString();
+                            String code = map.get("code").toString();
+
+                            if("b1".equals(code)&&(years.indexOf("2016")>-1||years.indexOf("2017")>-1)){
+                                qyhjList.add(map);
+                            }else if(years.indexOf("2017")>-1){
+                                qyhjList.add(map);
+                            }
+                        }
+                    }
+                    //--------------------
+
+
                     resultMap.put("allNum",qyhjList.size());
                     //分组-----------
                     Map<String,Map<String,List<Map<String,Object>>>> map = new HashMap<>();
+                    //分值
+                    List<Double> gjjScore = new ArrayList<>();
+                    List<Double> sjScore = new ArrayList<>();
+                    List<Double> sjScore7 = new ArrayList<>();
+
+
                     for(Map<String,Object> qyhj : qyhjList){
+
+                        //--计算分值------------start
+                        if(qyhj.get("score")!=null&&qyhj.get("type")!=null){
+                            String scoreStr = qyhj.get("score").toString();
+                            if("gjjhj".equals(qyhj.get("type").toString())&&gjjScore.size()<3){
+                                gjjScore.add(Double.valueOf(scoreStr));
+                            }
+                            if("sjhj".equals(qyhj.get("type").toString())){
+                                if(gjjScore.size()<7){
+                                    sjScore.add(Double.valueOf(scoreStr));
+                                }else{
+                                    sjScore7.add(Double.valueOf(scoreStr));
+                                }
+                            }
+                        }
+                        //--计算分值--------------end
+
                         if(qyhj.get("type")!=null&&qyhj.get("code")!=null){
                             String type = qyhj.get("type").toString();
                             String code = qyhj.get("code").toString();
@@ -350,12 +392,6 @@ public class TbCompanyService {
                             Map<String,Object> subRe = new HashMap<>();
                             List<Map<String,Object>> list = subMap.get(code);
                             if(list!=null&&list.size()>0){
-                                for(Map<String,Object> qyhj : list){
-                                    String scoreStr = qyhj.get("score").toString();
-                                    if(scoreStr!=null&&!"".equals(scoreStr)){
-                                        score = score + Double.valueOf(scoreStr);
-                                    }
-                                }
                                 subRe.put("name",list.get(0).get("mateName"));
                                 subRe.put("shortName",list.get(0).get("shortName"));
                                 subRe.put("shortRemark",list.get(0).get("shortRemark"));
@@ -370,6 +406,16 @@ public class TbCompanyService {
                         parentMap.put("list",subList);
                         resultList.add(parentMap);
                     }
+                    for(Double d :gjjScore){
+                        score = score + d;
+                    }
+                    for(Double d :sjScore){
+                        score = score + d;
+                    }
+                    for(Double d :sjScore7){
+                        score = score + d/5;
+                    }
+                    score = score + unScore;
                     resultMap.put("reputation",resultList);
                     resultMap.put("score",score);
                 }

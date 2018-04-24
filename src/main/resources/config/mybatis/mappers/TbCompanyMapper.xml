@@ -65,11 +65,11 @@
   <select id="getCertAqrz" parameterType="Map" resultType="Map">
     select zh.mateName,zh.score from cert_aqrz a 
     left join prize_zh zh on a.zhUuid=zh.uuid 
-    where a.zhUuid is not null and srcUuid in
+    where a.zhUuid is not null and a.yxqTime > date(now()) and srcUuid in
     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
       #{item}
     </foreach>
-    order by yxqTime desc limit 1;
+    order by zh.score desc limit 1;
   </select>
   
   <select id="getCertQyhj" parameterType="Map" resultType="Map">
@@ -81,12 +81,22 @@
     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
       #{item}
     </foreach>
+    order by zh.score desc
   </select>
 
   <select id="getUndesirable" parameterType="Map" resultType="Map">
     select nature,publishDate,projectName,actionCode,validityDate,publishSite,badBehaviorContent
     from cert_undesirable
-    where  srcUUid in
+    where  validityDate > date(now()) and srcUUid in
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="getUndesirableScore" parameterType="Map" resultType="Double">
+    select sum(score)
+    from cert_undesirable
+    where  validityDate > date(now()) and srcUUid in
     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
       #{item}
     </foreach>

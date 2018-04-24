@@ -327,8 +327,8 @@ public class GmyServiceTest extends ConfigTest {
     @Test
     public void testController20()throws Exception{
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("msgId", 18466);
-        jsonObject.put("userId", "dba718748d3e4a2096c1c948b77a77bd");
+        jsonObject.put("msgId", 20386);
+        jsonObject.put("userid", "02e69c89f513421187bb82ba63878fbf");
 
         String requestBody = jsonObject.toJSONString();
         String responseString = mockMvc.perform(post("/userCenter/getMessagePushById").characterEncoding("UTF-8")

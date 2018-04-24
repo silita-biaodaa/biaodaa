@@ -38,6 +38,6 @@ public interface MessagePushMapper extends MyMapper<MessagePush> {
      *
      * @return
      */
-    MessagePush getMessageById(Integer id);
+    MessagePush getMessageById(String id);
 
 }

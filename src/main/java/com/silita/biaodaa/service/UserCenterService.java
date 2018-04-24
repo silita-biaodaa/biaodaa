@@ -143,10 +143,14 @@ public class UserCenterService {
         List<MessagePush> tempMessagePushes = messagePushMapper.listMessageByUserIdAndType(params);
         if(tempMessagePushes.size() > 0) {
             int msgId;
+            Map<String, Object> temp;
             ReadedRecord readedRecord;
             for (int i = 0; i < tempMessagePushes.size(); i++) {
                 msgId = tempMessagePushes.get(i).getId();
-                Integer count = readedRecordMapper.getTotalByMsgId(msgId);
+                temp = new HashMap<>();
+                temp.put("msgId", msgId);
+                temp.put("userid", tempMessagePushes.get(i).getUserid());
+                Integer count = readedRecordMapper.getTotalByMsgId(temp);
                 if(count == 0) {
                     readedRecord = new ReadedRecord();
                     readedRecord.setMsgId(msgId);
@@ -168,7 +172,7 @@ public class UserCenterService {
 
     public MessagePush getMessagePushById(Map<String, Object> params) {
         readedRecordMapper.updateReadOrReadedById(params);
-        Integer id = (Integer)params.get("msgId");
+        String id = String.valueOf(params.get("msgId"));
         return messagePushMapper.getMessageById(id);
     }
 
