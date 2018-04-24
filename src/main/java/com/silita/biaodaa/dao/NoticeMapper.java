@@ -1,5 +1,7 @@
 package com.silita.biaodaa.dao;
 
+import com.silita.biaodaa.model.TbCompany;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,11 @@ public interface NoticeMapper {
 
     Integer queryCompanyCountByZZ(Collection zzList);
 
-    List<Map> queryComInfoByZZ(Map map);
+    List<TbCompany> queryComInfoByZZ(Map map);
+
+    List<TbCompany> selectCompanyCert(Map comList);
+
+    List<TbCompany> selectCompanyCertBasic(Map comList);
 
     List<Map> queryNoticeDetail(Map map);
 

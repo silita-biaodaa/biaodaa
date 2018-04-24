@@ -3,11 +3,13 @@ package com.silita.biaodaa.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
 @Setter
-public class TbCompany {
+public class TbCompany  implements Serializable{
+    private static final long serialVersionUID = 1L;
     /**
      * 企业ID
      */

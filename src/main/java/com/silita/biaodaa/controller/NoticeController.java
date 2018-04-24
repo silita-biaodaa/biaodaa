@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.silita.biaodaa.common.RedisConstantInterface.*;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
 import static org.apache.commons.collections.MapUtils.getString;
 
@@ -90,7 +91,7 @@ public class NoticeController extends BaseController{
                 if (pageInfo == null) {
                     pageInfo = noticeService.searchNoticeList(page, params);
                     if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
-                        myRedisTemplate.setObject(listKey, pageInfo, RedisConstantInterface.LIST_OVER_TIME);
+                        myRedisTemplate.setObject(listKey, pageInfo, LIST_OVER_TIME);
                     }
                 }
                 settingNoticeCollFlag(pageInfo, params);
@@ -143,7 +144,7 @@ public class NoticeController extends BaseController{
                 if (pageInfo == null) {
                     pageInfo = noticeService.queryNoticeList(page, params);
                     if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
-                        myRedisTemplate.setObject(listKey, pageInfo, RedisConstantInterface.LIST_OVER_TIME);
+                        myRedisTemplate.setObject(listKey, pageInfo, LIST_OVER_TIME);
                     }
                 }
                 settingNoticeCollFlag(pageInfo, params);
@@ -204,7 +205,7 @@ public class NoticeController extends BaseController{
             if(detailList ==null) {
                 detailList = noticeService.queryNoticeDetail(params);
                 if(detailList!=null && detailList.size()>0){
-                    myRedisTemplate.setObject(listKey,detailList,RedisConstantInterface.DETAIL_OVER_TIME);
+                    myRedisTemplate.setObject(listKey,detailList, DETAIL_OVER_TIME);
                 }
             }
             addNoticeCollStatus(detailList, params);
@@ -240,7 +241,14 @@ public class NoticeController extends BaseController{
             Map argMap = new HashMap();
             argMap.put("id",id);
             settingUserId(argMap);
-            List<Map> relationNotices =  noticeService.queryRelations(argMap);
+            String cacheKey = ObjectUtils.buildCacheKey(GG_REL_LIST,argMap);
+            List<Map> relationNotices = (List<Map>) myRedisTemplate.getObject(cacheKey);
+            if(relationNotices ==null) {
+                relationNotices = noticeService.queryRelations(argMap);
+                if(relationNotices!=null && relationNotices.size()>0){
+                    myRedisTemplate.setObject(cacheKey,relationNotices,LIST_OVER_TIME);
+                }
+            }
             addNoticeCollStatus(relationNotices, argMap);
             resultMap.put(DATA_FLAG,relationNotices);
             successMsg(resultMap);
@@ -275,7 +283,14 @@ public class NoticeController extends BaseController{
             settingUserId(params);
             params.put("id",id);
             Page page =buildPage(params);
-            PageInfo pageInfo = noticeService.queryCompanyListById(page,params);
+            String cacheKey = ObjectUtils.buildCacheKey(GG_REL_COM_LIST,params);
+            PageInfo pageInfo =  (PageInfo) myRedisTemplate.getObject(cacheKey);
+            if(pageInfo ==null) {
+                pageInfo = noticeService.queryCompanyListById(page, params);
+                if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
+                    myRedisTemplate.setObject(cacheKey,pageInfo,LIST_OVER_TIME);
+                }
+            }
             settingCompanyCollFlag(pageInfo,params);
             buildReturnMap(resultMap,pageInfo);
             successMsg(resultMap);

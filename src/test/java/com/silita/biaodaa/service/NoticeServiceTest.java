@@ -115,7 +115,7 @@ public class NoticeServiceTest extends ConfigTest {
     @Test  //4629 1801046 1803392  1805702 1805702
     public void testQueryRelNotice()throws Exception{
         String requestBody = "{\"type\":2}";
-        String responseString = mockMvc.perform(post("/notice/queryRelNotice/1801046").characterEncoding("UTF-8")
+        String responseString = mockMvc.perform(post("/notice/queryRelNotice/1805702").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
                 .header("X-TOKEN",token)

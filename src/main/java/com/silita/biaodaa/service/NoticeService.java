@@ -256,8 +256,31 @@ public class NoticeService {
                     zzList.addAll(zzSet);
                     argMap.put("zzList",zzList);
                     PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-                    List list = noticeMapper.queryComInfoByZZ(argMap);
-
+                    List<TbCompany> list = noticeMapper.queryComInfoByZZ(argMap);
+                    Map idsMap = new HashMap();
+                    idsMap.put("comList",list);
+                    List<TbCompany> companyCertList = noticeMapper.selectCompanyCert(idsMap);
+                    List<TbCompany> companyCertBasicList = noticeMapper.selectCompanyCertBasic(idsMap);
+                    for(TbCompany company: list){
+                        int comid = company.getComId().intValue();
+                        for(TbCompany cert:companyCertList){
+                                if(cert.getComId().intValue()==comid){
+                                    company.setCertNo(cert.getCertNo());
+                                    company.setCertDate(cert.getCertDate());
+                                    company.setValidDate(cert.getValidDate());
+                                    companyCertList.remove(cert);
+                                    break;
+                                }
+                        }
+                        for(TbCompany certBase:companyCertBasicList){
+                            if(certBase.getComId().intValue()==comid){
+                                company.setComRange(certBase.getComRange());
+                                company.setSubsist(certBase.getSubsist());
+                                companyCertBasicList.remove(certBase);
+                                break;
+                            }
+                        }
+                    }
                     PageInfo pageInfo = new PageInfo(list);
                     return pageInfo;
                 }

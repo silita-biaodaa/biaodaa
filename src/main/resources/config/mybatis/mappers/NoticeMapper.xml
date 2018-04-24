@@ -3,12 +3,39 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.biaodaa.dao.NoticeMapper">
     <sql id="selectCompanyInfo">
-        select DISTINCT c.*
-          ,s.cert_no,s.cert_date,s.valid_date,b.runScope as comRange,b.registerStatus as subsist
-        from mishu.tb_company c
-        left join mishu.tb_safety_certificate s on c.com_name = s.com_name
-        left join mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
+        SELECT DISTINCT c.*
+        FROM mishu.tb_company c
+        WHERE
+        <foreach collection="zzList" item="zz" separator=" or " >
+            c.`range` like '%${zz}%'
+        </foreach>
+        order by length(c.`range`) desc
     </sql>
+
+    <sql id="queryComByIds">
+        select c.com_id,c.com_name,c.org_code
+        from tb_company c
+        where c.com_id in
+        <foreach  collection="comList" item="com" separator=","  open="(" close=")">
+            #{com.comId}
+        </foreach>
+    </sql>
+
+    <select id="selectCompanyCert" resultType="com.silita.biaodaa.model.TbCompany" parameterType="com.silita.biaodaa.model.TbCompany">
+        SELECT cc.com_id,s.cert_no,s.cert_date,s.valid_date
+        FROM (
+          <include refid="queryComByIds"/>
+        ) cc,mishu.tb_safety_certificate s
+        WHERE s.com_name =cc.com_name
+    </select>
+
+    <select id="selectCompanyCertBasic" resultType="com.silita.biaodaa.model.TbCompany" parameterType="com.silita.biaodaa.model.TbCompany">
+        SELECT cc.com_id,b.runScope as comRange,b.registerStatus as subsist
+        FROM (
+        <include refid="queryComByIds"/>
+        ) cc, mishu_next.cert_basic b
+        WHERE b.registerNo = cc.org_code AND b.companyName = cc.com_name
+    </select>
 
     <sql id="noticeTypeConvert">
         (case s.otherType
@@ -269,18 +296,13 @@
     </select>
 
     <select id="queryNoticeZZById" resultType="String" parameterType="Map">
-        SELECT group_concat(zz.certificateuuid separator ',') as zzlist
+        SELECT group_concat(DISTINCT zz.certificateuuid separator ',') as zzlist
         FROM mishu.snatch_url_cert zz
         where zz.contid=#{id}
     </select>
 
     <select id="queryComInfoByZZ" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
        <include refid="selectCompanyInfo"></include>
-        where
-        <foreach collection="zzList" item="zz" separator=" or " >
-          c.`range` like '%${zz}%'
-        </foreach>
-        order by length(c.`range`) desc
     </select>
 
     <select id="queryCompanyCountByZZ" resultType="Integer" parameterType="java.util.List">

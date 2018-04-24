@@ -13,6 +13,18 @@ import java.util.*;
 public class ObjectUtils {
     private static Log logger = LogFactory.getLog(ObjectUtils.class);
 
+
+    /**
+     * 根据前缀+Map参数对象，生成缓存KEY
+     * @param prefix
+     * @param paramMap
+     * @return
+     */
+    public static String buildCacheKey(String prefix, Map paramMap){
+        int hash = buildMapParamHash(paramMap);
+        return prefix+hash;
+    }
+
     /**
      * 根据MAP对象的属性值计算出唯一的hash值。
      * @param paramMap
