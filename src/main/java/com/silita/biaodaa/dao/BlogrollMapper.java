@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * 第三方链接
  */
-public interface CustomUrlMapper {
+public interface BlogrollMapper {
     /**
      * 筛选第三方链接
      * @param params
