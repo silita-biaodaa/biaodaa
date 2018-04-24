@@ -172,7 +172,7 @@ public class UserCenterService {
 
     public MessagePush getMessagePushById(Map<String, Object> params) {
         readedRecordMapper.updateReadOrReadedById(params);
-        Integer id = (Integer)params.get("msgId");
+        String id = String.valueOf(params.get("msgId"));
         return messagePushMapper.getMessageById(id);
     }
 

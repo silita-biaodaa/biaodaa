@@ -66,7 +66,7 @@
         </where>
     </select>
 
-    <select id="getMessageById" parameterType="Integer" resultType="com.silita.biaodaa.model.MessagePush">
+    <select id="getMessageById" parameterType="String" resultType="com.silita.biaodaa.model.MessagePush">
         SELECT m.*, r.readOrReaded
         FROM mishu.message_push m
         LEFT JOIN mishu_write.readed_record AS r ON m.id = r.msg_id
