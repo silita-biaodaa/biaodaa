@@ -331,7 +331,14 @@ public class NoticeService {
      */
     public List queryNoticeDetail(Map params){
         buildNoticeDetilTable(params);
-        return noticeMapper.queryNoticeDetail(params);
+        List<Map> resList = noticeMapper.queryNoticeDetail(params);
+        if(resList!=null &&resList.size()>1){
+            for(int i=1;i<resList.size();i++){
+                Map res = resList.get(i);
+                res.remove("content");
+            }
+        }
+        return resList;
     }
 
     private void buildNoticeDetilTable(Map params){
