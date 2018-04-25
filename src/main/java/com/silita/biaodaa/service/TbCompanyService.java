@@ -3,6 +3,7 @@ package com.silita.biaodaa.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.cache.GlobalCache;
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
@@ -57,7 +58,15 @@ public class TbCompanyService {
     }
 
     public TbCompany getCompany(Integer comId){
-        return tbCompanyMapper.getCompany(comId);
+        TbCompany tbCompany = tbCompanyMapper.getCompany(comId);
+        Map<String,Object> param = new HashMap<>();
+        param.put("comId",comId);
+        param.put("userId", VisitInfoHolder.getUserId());
+        Integer num = tbCompanyMapper.getColleCount(param);
+        if(num>0){
+            tbCompany.setCollected(true);
+        }
+        return tbCompany;
     }
 
     public Map<String,List<TbCompanyQualification>> queryCompanyQualification(Integer comId){
@@ -305,6 +314,9 @@ public class TbCompanyService {
                 }
                 List<Map<String,Object>> qyhjListT = tbCompanyMapper.getCertQyhj(param);
                 Double unScore = tbCompanyMapper.getUndesirableScore(param);
+                if(unScore==null){
+                    unScore = 0d;
+                }
                 if(qyhjListT!=null){
                     //将过期的排出
                     List<Map<String,Object>> qyhjList = new ArrayList<>();

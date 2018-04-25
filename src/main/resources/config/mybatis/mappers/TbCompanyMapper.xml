@@ -105,4 +105,8 @@
   <select id="getLogo" parameterType="Integer" resultType="String">
       select logo from mishu.tb_company where com_id=#{com_id}
   </select>
+
+  <select id="getColleCount" parameterType="Map" resultType="Integer">
+    select count(*) from mishu_write.colle_company where companyId=#{comId} and userId=#{userId}
+  </select>
 </mapper>

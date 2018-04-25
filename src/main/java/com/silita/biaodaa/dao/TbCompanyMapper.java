@@ -33,4 +33,6 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     Double getUndesirableScore(Map<String,Object> param);
 
     String getLogo(Integer comId);
+
+    Integer getColleCount(Map<String,Object> param);
 }
