@@ -61,7 +61,7 @@ public class TbCompanyService {
         TbCompany tbCompany = tbCompanyMapper.getCompany(comId);
         Map<String,Object> param = new HashMap<>();
         param.put("comId",comId);
-        param.put("userId", VisitInfoHolder.getUserId());
+        param.put("userId", VisitInfoHolder.getUid());
         Integer num = tbCompanyMapper.getColleCount(param);
         if(num>0){
             tbCompany.setCollected(true);
