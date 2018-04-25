@@ -40,6 +40,9 @@ public class TbCompanyService {
     @Autowired
     TbSafetyCertificateMapper tbSafetyCertificateMapper;
 
+    @Autowired
+    TbPersonMapper tbPersonMapper;
+
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
 
@@ -526,5 +529,14 @@ public class TbCompanyService {
      */
     public String getLogo(Integer comId) {
         return tbCompanyMapper.getLogo(comId);
+    }
+
+    /**
+     * 获得企业人员详细信息
+     * @param params
+     * @return
+     */
+    public Map<String, Object> getPersonDetail(Map<String, Object> params) {
+        return tbPersonMapper.queryPersonDetail(params);
     }
 }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.biaodaa.dao.TbPersonMapper">
+    <select id="queryPersonDetail" parameterType="Map" resultType="Map">
+        SELECT
+			p.pkid,
+			p.name,
+			p.nation,
+			p.sex,
+			p.id_card,
+			p.education,
+			p.degree,
+			q.category,
+			q.cert_no,
+			q.cert_date,
+			q.valid_date,
+			q.com_name,
+			pro.category project_role,
+		CASE pro.type
+		WHEN 'build' THEN '施工'
+		WHEN 'supervision' THEN '监理'
+		ELSE '其他'
+		END AS project_type,
+			pro.status
+		FROM
+			mishu.tb_person p
+		JOIN mishu.tb_person_qualification q ON p.pkid=q.pkid
+		JOIN mishu.tb_person_project pro ON p.pkid=pro.pkid
+		WHERE p.pkid=#{pkid}
+    </select>
+</mapper>

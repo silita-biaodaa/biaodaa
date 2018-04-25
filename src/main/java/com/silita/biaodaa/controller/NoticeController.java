@@ -341,14 +341,6 @@ public class NoticeController extends BaseController{
         result.put("msg", "公告文章列表查询成功!");
         try {
             Page page = buildPage(params);
-            Integer pageNo = page.getCurrentPage();
-            Integer pageSize = page.getPageSize();
-            if (null == pageNo || pageNo <= 0) {
-                pageNo = 1;
-            }
-            if (null == pageSize || pageSize <= 0) {
-                pageSize = Page.PAGE_SIZE_DEFAULT;
-            }
             PageInfo pageInfo = noticeService.queryArticleList(page, params);
             result.put("data", pageInfo.getList());
             result.put("pageNum", pageInfo.getPageNum());
