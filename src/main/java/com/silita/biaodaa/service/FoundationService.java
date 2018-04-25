@@ -65,6 +65,10 @@ public class FoundationService {
      * @param params
      */
     public void addFeedback(Map<String, Object> params) {
+        String path = (String) params.getOrDefault("path", "");
+        String module = (String) params.getOrDefault("module", "");
+        params.put("path", path);
+        params.put("module", module);
         feedbackMapper.insertFeedback(params);
         String problem = (String)params.get("problem");
         String type = (String)params.get("type");
