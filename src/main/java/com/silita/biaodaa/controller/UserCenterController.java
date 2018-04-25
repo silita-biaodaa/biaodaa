@@ -5,6 +5,7 @@ package com.silita.biaodaa.controller;
  */
 
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.ColleCompany;
 import com.silita.biaodaa.model.CollecNotice;
@@ -50,6 +51,7 @@ public class UserCenterController {
         result.put("data", null);
 
         try{
+            userTempBdd.setUserid(VisitInfoHolder.getUid());
             UserTempBdd vo = userCenterService.updateUserTemp(userTempBdd);
             if(vo != null) {
                 result.put("msg", "更新账号基本信息成功！");
@@ -70,6 +72,7 @@ public class UserCenterController {
         result.put("code", 1);
 
         try{
+            userTempBdd.setUserid(VisitInfoHolder.getUid());
             String msg = userCenterService.updatePassWord(userTempBdd);
             if("".equals(msg)) {
                 result.put("msg", "更改密码成功！");
@@ -141,6 +144,7 @@ public class UserCenterController {
         result.put("code", 1);
 
         try{
+            collecNotice.setUserid(VisitInfoHolder.getUid());
             String msg = userCenterService.insertCollectionNotice(collecNotice);
             if("".equals(msg)) {
                 result.put("msg", "关注公告成功！");
@@ -163,6 +167,7 @@ public class UserCenterController {
         result.put("code", 1);
 
         try{
+            collecNotice.setUserid(VisitInfoHolder.getUid());
             userCenterService.deleteCollectionNotice(collecNotice);
             result.put("msg", "取消关注成功！");
         } catch (Exception e) {
@@ -185,6 +190,7 @@ public class UserCenterController {
         result.put("pages",1);
 
         try{
+            params.put("userid", VisitInfoHolder.getUid());
             checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
             Page page = new Page();
             page.setPageSize(MapUtils.getInteger(params, "pageSize"));
@@ -212,6 +218,7 @@ public class UserCenterController {
         result.put("code", 1);
 
         try{
+            colleCompany.setUserid(VisitInfoHolder.getUid());
             String msg = userCenterService.insertCollectionCompany(colleCompany);
             if("".equals(msg)) {
                 result.put("msg", "关注企业成功！");
@@ -234,6 +241,7 @@ public class UserCenterController {
         result.put("code", 1);
 
         try{
+            colleCompany.setUserid(VisitInfoHolder.getUid());
             userCenterService.deleteCollectionCompany(colleCompany);
             result.put("msg", "取消关注成功！");
         } catch (Exception e) {
@@ -256,6 +264,7 @@ public class UserCenterController {
         result.put("pages",1);
 
         try{
+            params.put("userid", VisitInfoHolder.getUid());
             checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
             Page page = new Page();
             page.setPageSize(MapUtils.getInteger(params, "pageSize"));
@@ -289,6 +298,7 @@ public class UserCenterController {
         result.put("pages",1);
 
         try{
+            params.put("userid", VisitInfoHolder.getUid());
             checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
             Page page = new Page();
             page.setPageSize(MapUtils.getInteger(params, "pageSize"));
@@ -316,6 +326,7 @@ public class UserCenterController {
         result.put("msg", "标记已读成功！");
 
         try{
+            params.put("userid", VisitInfoHolder.getUid());
             userCenterService.updateAllReadedRecordToRead(params);
         } catch (Exception e) {
             logger.error("标记已读异常！" + e.getMessage(), e);
@@ -334,6 +345,7 @@ public class UserCenterController {
         result.put("data", null);
 
         try{
+            params.put("userid", VisitInfoHolder.getUid());
             MessagePush vo = userCenterService.getMessagePushById(params);
             if(vo != null) {
                 result.put("code", 1);
