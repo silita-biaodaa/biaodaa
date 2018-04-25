@@ -85,7 +85,7 @@
   </select>
 
   <select id="getUndesirable" parameterType="Map" resultType="Map">
-    select nature,publishDate,projectName,actionCode,validityDate,publishSite,badBehaviorContent
+    select nature,publishDate,projectName,actionCode,validityDate,publishSite,badBehaviorContent,score
     from cert_undesirable
     where  validityDate > date(now()) and srcUUid in
     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">

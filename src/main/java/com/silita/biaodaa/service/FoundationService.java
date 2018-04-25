@@ -76,7 +76,12 @@ public class FoundationService {
         String version = (String)params.get("version");
         String datetime = MyDateUtils.getTime(MyDateUtils.datetimePattern);
         String subject = "用户意见反馈邮件通知";
-        String message = String.format("【" + (loginChannel.equals("1001") ? "Android" : "IOS") + "用户于 %s 提交了一条意见反馈。app版本：%s，问题类型：%s，问题内容：%s", datetime, version, type, problem);
+        String message = "";
+        if (StringUtils.isNotBlank(loginChannel) && StringUtils.isNotBlank(version)) {
+            message = String.format("【" + (loginChannel.equals("1001") ? "Android" : "IOS") + "用户于 %s 提交了一条意见反馈。app版本：%s，问题类型：%s，问题内容：%s", datetime, version, type, problem);
+        } else {
+            message = String.format("网页版用户于 %s 提交了一条反馈意见，问题类型：%s，问题内容：%s", datetime, type, problem);
+        }
         String receivers = PropertiesUtils.getProperty("receiver.name.feedback");
         if (StringUtils.isBlank(receivers)) {
             receivers = EmailUtils.RECEIVER_DEFAULT_NAME;
