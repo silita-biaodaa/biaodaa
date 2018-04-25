@@ -40,9 +40,9 @@
         (SELECT outdd.oneName from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id )) AS oneName,
         (SELECT outdd.pbMode  from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id )) AS pbMode ,
         d.projType, d.projDq, d.projXs, <include refid="com.silita.biaodaa.dao.NoticeMapper.noticeTypeConvert"/>
-        FROM  mishu_write.collec_notice n
+        FROM  mishu.snatchurl s
+        LEFT JOIN mishu_write.collec_notice n ON s.id = n.noticeId
         LEFT JOIN mishu.zhongbiao_detail d ON n.noticeId = d.snatchUrlId
-        LEFT JOIN mishu.snatchurl s ON d.snatchUrlId = s.id
         WHERE n.userId = #{userid} AND n.type = #{type}
         GROUP BY s.id
     </select>
