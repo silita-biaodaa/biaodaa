@@ -300,17 +300,21 @@ public class TbCompanyService {
     public Map<String,Object> getCompanyReputation(Integer comId){
         Map<String,Object> resultMap = new HashMap<>();
         Double score = 0d;
+        Double secur = 0d;
 
         TbCompany company = tbCompanyMapper.getCompanyOrgCode(comId);
         if(company!=null&&company.getOrgCode()!=null){
             List<String> srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
-            if(srcUuids!=null){
+            if(srcUuids!=null&&srcUuids.size()>0){
                 Map<String,Object> param = new HashMap<>();
                 param.put("list",srcUuids);
-                Map<String,String> anrz = tbCompanyMapper.getCertAqrz(param);
+                Map<String,Object> anrz = tbCompanyMapper.getCertAqrz(param);
                 if(anrz!=null){
-                    resultMap.put("securityCert",anrz.get("mateName"));
-                    resultMap.put("securityScore",anrz.get("score"));
+                    resultMap.put("securityCert",anrz.get("mateName").toString());
+                    resultMap.put("securityScore",anrz.get("score").toString());
+                    if(anrz.get("score")!=null){
+                        secur = Double.valueOf(anrz.get("score").toString());
+                    }
                 }
                 List<Map<String,Object>> qyhjListT = tbCompanyMapper.getCertQyhj(param);
                 Double unScore = tbCompanyMapper.getUndesirableScore(param);
@@ -430,7 +434,7 @@ public class TbCompanyService {
                     for(Double d :sjScore7){
                         score = score + d/5;
                     }
-                    score = score + unScore;
+                    score = score + secur + unScore;
                     resultMap.put("reputation",resultList);
                     resultMap.put("score",score);
                 }
@@ -445,7 +449,7 @@ public class TbCompanyService {
         TbCompany company = tbCompanyMapper.getCompanyOrgCode(comId);
         if (company != null && company.getOrgCode() != null) {
             List<String> srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
-            if(srcUuids!=null) {
+            if(srcUuids!=null&&srcUuids.size()>0) {
                 Map<String, Object> param = new HashMap<>();
                 param.put("list", srcUuids);
                 List<Map<String,Object>> list = tbCompanyMapper.getUndesirable(param);

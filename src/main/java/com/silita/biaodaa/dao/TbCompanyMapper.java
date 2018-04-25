@@ -24,7 +24,7 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
 
     List<String> getCertSrcUuid(String companyCode);
 
-    Map<String,String> getCertAqrz(Map<String,Object> param);
+    Map<String,Object> getCertAqrz(Map<String,Object> param);
 
     List<Map<String,Object>> getCertQyhj(Map<String,Object> param);
 

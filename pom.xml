@@ -26,7 +26,7 @@
   <name>biaodaa</name>
   <groupId>com.biaodaa</groupId>
   <artifactId>biaodaa</artifactId>
-  <version>1.0.63</version>
+  <version>1.0.64</version>
 
   <properties>
     <spring.version>4.1.6.RELEASE</spring.version>
