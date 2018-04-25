@@ -85,9 +85,9 @@ public class UserCenterService {
 
     public String insertCollectionNotice(CollecNotice collecNotice) {
         CollecNotice vo = collecNoticeMapper.getCollecNoticeByUserIdAndNoticeId(collecNotice);
-        //已收藏
+        //已关注
         if(vo != null) {
-            return "您已收藏该公告！";
+            return "您已关注该公告！";
         }
         collecNoticeMapper.insertCollecNotice(collecNotice);
         return "";
@@ -112,9 +112,9 @@ public class UserCenterService {
 
     public String insertCollectionCompany(ColleCompany colleCompany) {
         ColleCompany vo = colleCompanyMapper.getCollectionCompanyByUserIdAndCompanyId(colleCompany);
-        //已收藏
+        //已关注
         if(vo != null) {
-            return "您已收藏该公司！";
+            return "您已关注该公司！";
         }
         colleCompanyMapper.insertCollectionCompany(colleCompany);
         return "";
@@ -128,11 +128,11 @@ public class UserCenterService {
         List<Map<String, Object>> companys = new ArrayList<>();
 
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        if("new_huNan".equals(params.get("tablename"))) {
+//        if("new_huNan".equals(params.get("tablename"))) {
             companys = colleCompanyMapper.listHuNanCollectionCompany(params);
-        } else {
+//        } else {
 //            colleCompanyMapper.listNationWideCollectionCompany(params);
-        }
+//        }
         PageInfo pageInfo = new PageInfo(companys);
         return pageInfo;
     }

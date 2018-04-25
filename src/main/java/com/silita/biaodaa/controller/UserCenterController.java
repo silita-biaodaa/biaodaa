@@ -143,13 +143,13 @@ public class UserCenterController {
         try{
             String msg = userCenterService.insertCollectionNotice(collecNotice);
             if("".equals(msg)) {
-                result.put("msg", "收藏公告成功！");
+                result.put("msg", "关注公告成功！");
             } else {
                 result.put("msg",  msg);
                 result.put("code", 2);
             }
         } catch (Exception e) {
-            logger.error("收藏公告异常！" + e.getMessage(), e);
+            logger.error("关注公告异常！" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }
@@ -164,9 +164,9 @@ public class UserCenterController {
 
         try{
             userCenterService.deleteCollectionNotice(collecNotice);
-            result.put("msg", "取消收藏成功！");
+            result.put("msg", "取消关注成功！");
         } catch (Exception e) {
-            logger.error("取消收藏异常！" + e.getMessage(), e);
+            logger.error("取消关注异常！" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }
@@ -178,7 +178,7 @@ public class UserCenterController {
     public Map<String,Object> listCollectionNotice(@RequestBody Map<String, Object> params){
         Map<String,Object> result = new HashMap<>();
         result.put("code", 1);
-        result.put("msg", "获取公告收藏列表成功!");
+        result.put("msg", "获取公告关注列表成功!");
         result.put("pageNum",1);
         result.put("pageSize", 0);
         result.put("total",0);
@@ -197,7 +197,7 @@ public class UserCenterController {
             result.put("total",pageInfo.getTotal());
             result.put("pages",pageInfo.getPages());
         } catch (Exception e) {
-            logger.error("获取公告收藏列表异常！" + e.getMessage(), e);
+            logger.error("获取公告关注列表异常！" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }
@@ -214,13 +214,13 @@ public class UserCenterController {
         try{
             String msg = userCenterService.insertCollectionCompany(colleCompany);
             if("".equals(msg)) {
-                result.put("msg", "收藏企业成功！");
+                result.put("msg", "关注企业成功！");
             } else {
                 result.put("msg",  msg);
                 result.put("code", 2);
             }
         } catch (Exception e) {
-            logger.error("收藏企业异常！" + e.getMessage(), e);
+            logger.error("关注企业异常！" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }
@@ -235,9 +235,9 @@ public class UserCenterController {
 
         try{
             userCenterService.deleteCollectionCompany(colleCompany);
-            result.put("msg", "取消收藏成功！");
+            result.put("msg", "取消关注成功！");
         } catch (Exception e) {
-            logger.error("取消收藏异常！" + e.getMessage(), e);
+            logger.error("取消关注异常！" + e.getMessage(), e);
             result.put("code",0);
             result.put("msg",e.getMessage());
         }

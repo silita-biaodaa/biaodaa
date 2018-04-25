@@ -295,7 +295,7 @@ public class GmyServiceTest extends ConfigTest {
     @Test
     public void testController18()throws Exception{
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userid", "a91f2c0ef897407f98086acfc5f538d2");
+        jsonObject.put("userid", "13d7b3f982bf421198dcb8af797fe0b9");
         jsonObject.put("tablename", "new_huNan");
         jsonObject.put("pageNo", 1);
         jsonObject.put("pageSize", 20);
