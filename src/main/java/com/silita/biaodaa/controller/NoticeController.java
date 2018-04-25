@@ -367,7 +367,13 @@ public class NoticeController extends BaseController{
         result.put("code", 1);
         result.put("msg", "公告文章详情查询成功!");
         try {
-            Integer id = (Integer) params.get("id");
+            Object idObject = (Object) params.get("id");
+            Integer id = null;
+            if (idObject instanceof Integer) {
+                id = (Integer) idObject;
+            } else if (idObject instanceof String) {
+                id = Integer.parseInt((String) idObject);
+            }
             Preconditions.checkArgument(null != id, "id不能为null");
             Map<String, Object> detail = noticeService.queryArticleDetail(id);
             if (null == detail) {
