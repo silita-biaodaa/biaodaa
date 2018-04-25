@@ -118,7 +118,7 @@ public class FoundationService {
         List<Map> links = new ArrayList<>();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<String> regionList = new ArrayList<>();
-        String regionStr = (String) params.get("region");
+        String regionStr = (String) params.getOrDefault("region", "");
         Iterator<String> iterator = Splitter.onPattern(",|\\|").trimResults().omitEmptyStrings().split(regionStr).iterator();
         while (iterator.hasNext()) {
             String region = iterator.next();

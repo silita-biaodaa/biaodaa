@@ -10,7 +10,6 @@ import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +26,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 @Controller
 @RequestMapping("/company")
-public class CompanyController {
+public class CompanyController extends BaseController {
 
     private static final Logger logger = Logger.getLogger(CompanyController.class);
 
@@ -384,6 +383,28 @@ public class CompanyController {
             logger.error("获得企业logo异常：" + e.getMessage());
             result.put("code", 0);
             result.put("msg", "获得企业logo失败！");
+        }
+        return result;
+    }
+
+    /**
+     * 人员详细信息
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getPersonDetail", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> getPersonDetail(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 1);
+        result.put("msg", "获得企业人员详细信息成功！");
+        try {
+            Map<String, Object> data = tbCompanyService.getPersonDetail(params);
+            result.put("data", data);
+        } catch (Exception e) {
+            logger.error("获得企业人员详细信息异常：" + e.getMessage());
+            result.put("code", 0);
+            result.put("msg", "获得企业人员详细信息失败！");
         }
         return result;
     }

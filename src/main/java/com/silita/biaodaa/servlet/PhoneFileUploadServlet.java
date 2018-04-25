@@ -17,7 +17,7 @@ import java.util.List;
 
 
 /**
- * 为什么springmvc自带的文件上传不能用fuck
+ * 为什么springmvc自带的文件上传不能用
  */
 @WebServlet("/userCenter/updateHeadPortrait")
 public class PhoneFileUploadServlet extends HttpServlet {
@@ -58,7 +58,7 @@ public class PhoneFileUploadServlet extends HttpServlet {
                     JSONObject json = new JSONObject();
                     json.put("msg", "文件上传成功");
                     json.put("code", 1);
-                    json.put("imgPath", fileName);
+                    json.put("imgPath", "http://prefile.biaodaa.com/images/" + filename);
                     //将数据写入流中
                     response.setCharacterEncoding("utf-8");
                     response.setContentType("application/json; charset=utf-8");

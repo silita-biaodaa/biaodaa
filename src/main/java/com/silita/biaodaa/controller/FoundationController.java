@@ -134,7 +134,14 @@ public class FoundationController extends BaseController {
             Preconditions.checkArgument(params.containsKey("kbTime") && !Strings.isNullOrEmpty((String)params.get("kbTime")), "kbTime不能为空！");
             Preconditions.checkArgument(params.containsKey("phone") && !Strings.isNullOrEmpty((String)params.get("phone")), "phone不能为空！");
             Preconditions.checkArgument(params.containsKey("money") && null != params.get("money"), "money不能为空！");
-            Number money = (Number)params.get("money");
+            Object moneyObject = (Object) params.get("money");
+            Number money = null;
+            if (moneyObject instanceof String) {
+                money = Double.parseDouble((String) moneyObject);
+            } else if (moneyObject instanceof Number) {
+                money = (Number) moneyObject;
+            }
+            Preconditions.checkArgument(null != money, "money不能为空！");
             Preconditions.checkArgument(money.doubleValue() > 0, "money必须大于0！");
             foundationService.addBorrow(params);
         } catch (Exception e) {
@@ -158,14 +165,6 @@ public class FoundationController extends BaseController {
         result.put("msg", "行业链接筛选成功!");
         try {
             Page page = buildPage(params);
-            Integer pageNo = page.getCurrentPage();
-            Integer pageSize = page.getPageSize();
-            if (null == pageNo || pageNo <= 0) {
-                pageNo = 1;
-            }
-            if (null == pageSize || pageSize <= 0) {
-                pageSize = Page.PAGE_SIZE_DEFAULT;
-            }
             PageInfo pageInfo = foundationService.queryLinks(page, params);
             result.put("data", pageInfo.getList());
             result.put("pageNum", pageInfo.getPageNum());
