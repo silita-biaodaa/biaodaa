@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.CarouselImage;
 import com.silita.biaodaa.model.TbHotWords;
@@ -236,6 +237,9 @@ public class FoundationController extends BaseController {
         result.put("code", 1);
         result.put("msg", "常用链接筛选成功!");
         try {
+            String userId = VisitInfoHolder.getUid();
+            Preconditions.checkArgument(StringUtils.isNotBlank(userId), "未登录");
+            params.put("userId", userId);
             String region = (String) params.get("region");
             if (StringUtils.isNotBlank(region)) {
                 params.remove("region");
