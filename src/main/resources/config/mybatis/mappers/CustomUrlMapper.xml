@@ -4,7 +4,7 @@
 <mapper namespace="com.silita.biaodaa.dao.CustomUrlMapper">
     <select id="queryCustomUrls" parameterType="Map" resultType="Map">
         SELECT
-            c.id,
+            DISTINCT(c.id),
             c.userId,
             c.customName,
             c.customUrl,
