@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.biaodaa.dao.ZhaobiaoProjectMapper">
+    <select id="queryProjects" parameterType="Map" resultType="Map">
+       SELECT
+		projName,
+		tbEndDate,
+		tbEndTime
+		FROM mishu.zhaobiao_detail
+       		WHERE 1=1
+		<if test="city !=null and city != ''">
+			AND projDq like '%${city}%'
+		</if>
+		<if test="projName !=null and projName != ''">
+			AND projName like '%${projName}%'
+		</if>
+    </select>
+</mapper>

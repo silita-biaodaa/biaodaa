@@ -2,7 +2,6 @@ package com.silita.biaodaa.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
@@ -39,6 +38,8 @@ public class FoundationService {
     private BlogrollMapper blogrollMapper;
     @Autowired
     private CustomUrlMapper customUrlMapper;
+    @Autowired
+    private ZhaobiaoProjectMapper tbProjectMapper;
 
     /**
      * 根据showType取得全部的banner图
@@ -136,10 +137,33 @@ public class FoundationService {
         return pageInfo;
     }
 
+    /**
+     * 查询常用链接
+     * @param page
+     * @param params
+     * @return
+     */
     public PageInfo queryCustomUrls(Page page, Map<String, Object> params) {
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<Map> links = new ArrayList<>();
         links = customUrlMapper.queryCustomUrls(params);
+        if (null == links) {
+            links = new ArrayList<>();
+        }
+        PageInfo pageInfo = new PageInfo(links);
+        return pageInfo;
+    }
+
+    /**
+     * 获得招标项目列表
+     * @param page
+     * @param params
+     * @return
+     */
+    public PageInfo queryProjects(Page page, Map<String, Object> params) {
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List<Map<String, Object>> links = new ArrayList<>();
+        links = tbProjectMapper.queryProjects(params);
         if (null == links) {
             links = new ArrayList<>();
         }

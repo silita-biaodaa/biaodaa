@@ -304,4 +304,34 @@ public class FoundationController extends BaseController {
         }
         return result;
     }
+
+    /**
+     * 获得招标项目列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getProjects", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> getProjects(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", 1);
+        result.put("msg", "获取招标项目列表成功!");
+        try {
+            String city = (String) params.get("city");
+            if (StringUtils.isNotBlank(city) && city.contains("市")) {
+                params.put("city", city.replace("市", ""));
+            }
+            Page page = buildPage(params);
+            PageInfo pageInfo = foundationService.queryProjects(page, params);
+            result.put("data", pageInfo.getList());
+            result.put("pageNum", pageInfo.getPageNum());
+            result.put("pageSize", pageInfo.getPageSize());
+            result.put("total", pageInfo.getTotal());
+            result.put("pages", pageInfo.getPages());
+        } catch (Exception e) {
+            logger.error(String.format("获取招标项目列表失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
 }
