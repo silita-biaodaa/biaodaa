@@ -11,19 +11,19 @@
             c.customImgUrl
         FROM
 	        mishu_write.custom_url c
-        <if test="region!=null and region.size>0">
             JOIN mishu.area a ON c.regionCode = a.code
-            WHERE
-                a.name IN
-            <foreach item="region" index="index" collection="region" open="(" separator="," close=")">
-                #{region}
-            </foreach>
+            WHERE 1=1
+            <if test="region!=null and region.size>0">
+                AND a.name IN
+                <foreach item="region" index="index" collection="region" open="(" separator="," close=")">
+                    #{region}
+                </foreach>
+            </if>
             <if test="userId !=null and userId != ''">
                 AND c.userId=#{userId}
             </if>
             <if test="customName !=null and customName != ''">
                 AND c.customName like '%${customName}%'
             </if>
-        </if>
     </select>
 </mapper>
