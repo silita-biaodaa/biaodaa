@@ -176,4 +176,8 @@ public class UserCenterService {
         return messagePushMapper.getMessageById(id);
     }
 
+    public UserTempBdd getUserTempByUserId(String userid) {
+        return userTempBddMapper.getUserTempByUserId(userid);
+    }
+
 }

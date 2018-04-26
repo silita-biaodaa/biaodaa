@@ -359,4 +359,30 @@ public class UserCenterController {
         }
         return result;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/getUserTemp", produces = "application/json;charset=utf-8")
+    public Map<String, Object> getUserTemp() {
+        Map result = new HashMap();
+        result.put("code", 0);
+        result.put("msg", "获取用户信息失败！");
+        result.put("data", null);
+
+        try{
+            String userid = VisitInfoHolder.getUid();
+            UserTempBdd vo = userCenterService.getUserTempByUserId(userid);
+            if(vo != null) {
+                result.put("code", 1);
+                result.put("msg", "获取用户信息成功！");
+                result.put("data", vo);
+            }
+        } catch (Exception e) {
+            logger.error("获取用户信息异常！" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
+
+
 }
