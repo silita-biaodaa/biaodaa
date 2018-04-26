@@ -248,8 +248,6 @@ public class TbCompanyService {
                 CertBasic certBasic = certBasicMap.get(company.getComName()+"|"+company.getBusinessNum());
                 if(certBasic!=null){
                     //company.setSubsist(certBasic.getRegisterstatus());
-                    // TODO: 18/4/26  存续状态暂时写死
-                    company.setSubsist("存续");
                     company.setComRange(certBasic.getRunscope());
                 }
                 TbSafetyCertificate tbSafetyCertificate = safetyCertificateMap.get(company.getComName());
@@ -258,6 +256,8 @@ public class TbCompanyService {
                     company.setCertDate(tbSafetyCertificate.getCertDate());
                     company.setValidDate(tbSafetyCertificate.getValidDate());
                 }
+                // TODO: 18/4/26  存续状态暂时写死
+                company.setSubsist("存续");
             }
         }
         PageInfo pageInfo = new PageInfo(list);
