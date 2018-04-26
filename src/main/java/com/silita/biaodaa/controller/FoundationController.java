@@ -283,4 +283,25 @@ public class FoundationController extends BaseController {
         }
         return result;
     }
+
+    /**
+     * 获得省份和城市列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getProvinceCity", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> getProvinceCity() {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", 1);
+        result.put("msg", "获取省份和城市列表成功!");
+        try {
+            List<Map<String, Object>> list = tbCompanyService.getArea();
+            result.put("data", list);
+        } catch (Exception e) {
+            logger.error(String.format("获取省份和城市列表失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
 }
