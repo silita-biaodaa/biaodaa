@@ -2,12 +2,13 @@ package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.CarouselImage;
 import com.silita.biaodaa.model.TbHotWords;
 import com.silita.biaodaa.service.FoundationService;
+import com.silita.biaodaa.service.TbCompanyService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 基础模块
@@ -31,6 +35,9 @@ public class FoundationController extends BaseController {
 
     @Autowired
     private FoundationService foundationService;
+
+    @Autowired
+    TbCompanyService tbCompanyService;
 
     @ResponseBody
     @RequestMapping(value = "/listBannerImage",produces = "application/json;charset=utf-8")
@@ -132,17 +139,22 @@ public class FoundationController extends BaseController {
             Preconditions.checkArgument(params.containsKey("projName") && !Strings.isNullOrEmpty((String)params.get("projName")), "projName不能为空！");
             Preconditions.checkArgument(params.containsKey("borrower") && !Strings.isNullOrEmpty((String)params.get("borrower")), "borrower不能为空！");
             Preconditions.checkArgument(params.containsKey("kbTime") && !Strings.isNullOrEmpty((String)params.get("kbTime")), "kbTime不能为空！");
-            Preconditions.checkArgument(params.containsKey("phone") && !Strings.isNullOrEmpty((String)params.get("phone")), "phone不能为空！");
+            Preconditions.checkArgument(params.containsKey("phone"), "phone不能为空！");
             Preconditions.checkArgument(params.containsKey("money") && null != params.get("money"), "money不能为空！");
             Object moneyObject = (Object) params.get("money");
             Number money = null;
             if (moneyObject instanceof String) {
                 money = Double.parseDouble((String) moneyObject);
+                params.put("money", money);
             } else if (moneyObject instanceof Number) {
                 money = (Number) moneyObject;
             }
             Preconditions.checkArgument(null != money, "money不能为空！");
             Preconditions.checkArgument(money.doubleValue() > 0, "money必须大于0！");
+            Object phoneObject = (Object) params.get("phone");
+            if (phoneObject instanceof Number) {
+                params.put("phone", String.valueOf(phoneObject));
+            }
             foundationService.addBorrow(params);
         } catch (Exception e) {
             logger.error(String.format("申请保证金借款失败！%s", e.getMessage()));
@@ -164,6 +176,39 @@ public class FoundationController extends BaseController {
         result.put("code", 1);
         result.put("msg", "行业链接筛选成功!");
         try {
+            String region = (String) params.get("region");
+            if (StringUtils.isNotBlank(region)) {
+                params.remove("region");
+                List<Map<String,Object>> areaList = tbCompanyService.getArea();
+                String[] regions = StringUtils.split(region, "|");
+                Preconditions.checkArgument(null != regions && regions.length > 0 && regions.length <= 2, "地区格式传入不正确！正确格式为：湖南省||长沙市");
+                if (regions.length == 2) {
+                    String key = regions[1];
+                    if (key.contains("湘西")) {
+                        key = "湘西土家族苗族自治州";
+                    }
+                    params.put("region", Lists.newArrayList(key));
+                } else {
+                    String key = regions[0];
+                    boolean has = false;
+                    for (Map<String, Object> areaMap : areaList) {
+                        String name = (String) areaMap.get("name");
+                        List<String> list = (List<String>) areaMap.get("list");
+                        if (name.equals(key)) {
+                            list.add(key);
+                            params.put("region", list);
+                            has = true;
+                            break;
+                        }
+                    }
+                    Preconditions.checkArgument(has != false, "地区格式传入不正确！正确格式为：湖南省||长沙市");
+                }
+            } else {
+                params.put("region", new ArrayList<>());
+            }
+            if (!params.containsKey("region")) {
+                params.put("region", new ArrayList<>());
+            }
             Page page = buildPage(params);
             PageInfo pageInfo = foundationService.queryLinks(page, params);
             result.put("data", pageInfo.getList());
@@ -173,6 +218,66 @@ public class FoundationController extends BaseController {
             result.put("pages", pageInfo.getPages());
         } catch (Exception e) {
             logger.error(String.format("行业链接筛选失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 客户常用链接
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/customUrls", method=RequestMethod.POST, produces="application/json;charset=utf-8")
+    public Map<String, Object> customUrls(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", 1);
+        result.put("msg", "常用链接筛选成功!");
+        try {
+            String region = (String) params.get("region");
+            if (StringUtils.isNotBlank(region)) {
+                params.remove("region");
+                List<Map<String,Object>> areaList = tbCompanyService.getArea();
+                String[] regions = StringUtils.split(region, "|");
+                Preconditions.checkArgument(null != regions && regions.length > 0 && regions.length <= 2, "地区格式传入不正确！正确格式为：湖南省||长沙市");
+                if (regions.length == 2) {
+                    String key = regions[1];
+                    if (key.contains("湘西")) {
+                        key = "湘西土家族苗族自治州";
+                    }
+                    params.put("region", Lists.newArrayList(key));
+                } else {
+                    String key = regions[0];
+                    boolean has = false;
+                    for (Map<String, Object> areaMap : areaList) {
+                        String name = (String) areaMap.get("name");
+                        List<String> list = (List<String>) areaMap.get("list");
+                        if (name.equals(key)) {
+                            list.add(key);
+                            params.put("region", list);
+                            has = true;
+                            break;
+                        }
+                    }
+                    Preconditions.checkArgument(has != false, "地区格式传入不正确！正确格式为：湖南省||长沙市");
+                }
+            } else {
+                params.put("region", new ArrayList<>());
+            }
+            if (!params.containsKey("region")) {
+                params.put("region", new ArrayList<>());
+            }
+            Page page = buildPage(params);
+            PageInfo pageInfo = foundationService.queryCustomUrls(page, params);
+            result.put("data", pageInfo.getList());
+            result.put("pageNum", pageInfo.getPageNum());
+            result.put("pageSize", pageInfo.getPageSize());
+            result.put("total", pageInfo.getTotal());
+            result.put("pages", pageInfo.getPages());
+        } catch (Exception e) {
+            logger.error(String.format("常用链接筛选失败！%s", e.getMessage()));
             result.put("code", 0);
             result.put("msg", e.getMessage());
         }

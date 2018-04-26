@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.biaodaa.dao.CustomUrlMapper">
+    <select id="queryCustomUrls" parameterType="Map" resultType="Map">
+        SELECT
+            c.id,
+            c.userId,
+            c.customName,
+            c.customUrl,
+            c.customImgUrl
+        FROM
+	        mishu_write.custom_url c
+        <if test="region!=null and region.size>0">
+            JOIN mishu.area a ON c.regionCode = a.code
+            WHERE
+                a.name IN
+            <foreach item="region" index="index" collection="region" open="(" separator="," close=")">
+                #{region}
+            </foreach>
+          <if test="userId !=null and userId != ''">
+            AND c.userId=#{userId}
+          </if>
+        </if>
+    </select>
+</mapper>

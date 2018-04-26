@@ -37,6 +37,8 @@ public class FoundationService {
     private BorrowMapper borrowMapper;
     @Autowired
     private BlogrollMapper blogrollMapper;
+    @Autowired
+    private CustomUrlMapper customUrlMapper;
 
     /**
      * 根据showType取得全部的banner图
@@ -124,20 +126,20 @@ public class FoundationService {
      * @return
      */
     public PageInfo queryLinks(Page page, Map<String, Object> params) {
-        List<Map> links = new ArrayList<>();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        List<String> regionList = new ArrayList<>();
-        String regionStr = (String) params.getOrDefault("region", "");
-        Iterator<String> iterator = Splitter.onPattern(",|\\|").trimResults().omitEmptyStrings().split(regionStr).iterator();
-        while (iterator.hasNext()) {
-            String region = iterator.next();
-            if (region.contains("湘西")) {
-                region = "湘西土家族苗族自治州";
-            }
-            regionList.add(region);
-        }
-        params.put("region", regionList);
+        List<Map> links = new ArrayList<>();
         links = blogrollMapper.queryLinks(params);
+        if (null == links) {
+            links = new ArrayList<>();
+        }
+        PageInfo pageInfo = new PageInfo(links);
+        return pageInfo;
+    }
+
+    public PageInfo queryCustomUrls(Page page, Map<String, Object> params) {
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List<Map> links = new ArrayList<>();
+        links = customUrlMapper.queryCustomUrls(params);
         if (null == links) {
             links = new ArrayList<>();
         }
