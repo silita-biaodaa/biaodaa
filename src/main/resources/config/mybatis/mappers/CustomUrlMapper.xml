@@ -22,7 +22,7 @@
                 AND c.userId=#{userId}
             </if>
             <if test="customName !=null and customName != ''">
-                AND c.customName=#{customName}
+                AND c.customName like '%${customName}%'
             </if>
         </if>
     </select>
