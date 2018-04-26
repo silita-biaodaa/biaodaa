@@ -18,9 +18,12 @@
             <foreach item="region" index="index" collection="region" open="(" separator="," close=")">
                 #{region}
             </foreach>
-          <if test="userId !=null and userId != ''">
-            AND c.userId=#{userId}
-          </if>
+            <if test="userId !=null and userId != ''">
+                AND c.userId=#{userId}
+            </if>
+            <if test="customName !=null and customName != ''">
+                AND c.customName=#{customName}
+            </if>
         </if>
     </select>
 </mapper>
