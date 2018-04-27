@@ -141,17 +141,7 @@ public class FoundationController extends BaseController {
             Preconditions.checkArgument(params.containsKey("borrower") && !Strings.isNullOrEmpty((String)params.get("borrower")), "borrower不能为空！");
             Preconditions.checkArgument(params.containsKey("kbTime") && !Strings.isNullOrEmpty((String)params.get("kbTime")), "kbTime不能为空！");
             Preconditions.checkArgument(params.containsKey("phone"), "phone不能为空！");
-            Preconditions.checkArgument(params.containsKey("money") && null != params.get("money"), "money不能为空！");
-            Object moneyObject = (Object) params.get("money");
-            Number money = null;
-            if (moneyObject instanceof String) {
-                money = Double.parseDouble((String) moneyObject);
-                params.put("money", money);
-            } else if (moneyObject instanceof Number) {
-                money = (Number) moneyObject;
-            }
-            Preconditions.checkArgument(null != money, "money不能为空！");
-            Preconditions.checkArgument(money.doubleValue() > 0, "money必须大于0！");
+            Preconditions.checkArgument(params.containsKey("money") && !Strings.isNullOrEmpty((String)params.get("money")), "money不能为空！");
             Object phoneObject = (Object) params.get("phone");
             if (phoneObject instanceof Number) {
                 params.put("phone", String.valueOf(phoneObject));
