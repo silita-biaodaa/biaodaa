@@ -3,7 +3,7 @@
 <mapper namespace="com.silita.biaodaa.dao.TbPersonQualificationMapper" >
   <!-- 获取企业人员资质的注册类别-->
   <select id="getCompanyPersonCate" parameterType="Map" resultType="Map">
-    select category,count(*) as num from tb_person_qualification where  1=1
+    select category,count(*) as num from tb_person_qualification where  1=1 and `type`=1
     <if test="comId!=null and comId!=''">
       and com_id =#{comId}
     </if>
@@ -15,7 +15,7 @@
 
   <!-- 获取企业注册人员-->
   <select id="queryCompanyPerson" parameterType="Map" resultType="com.silita.biaodaa.model.TbPersonQualification">
-    select per.`name`,q.* from tb_person_qualification q left join tb_person per on q.per_id = per.pkid where 1=1
+    select per.`name`,q.* from tb_person_qualification q left join tb_person per on q.per_id = per.pkid where 1=1 and q.type=1
     <if test="comId!=null and comId!=''">
       and q.com_id = #{comId}
     </if>
