@@ -110,7 +110,7 @@ public class GmyServiceTest extends ConfigTest {
     public void testController7()throws Exception{
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("userphone", "18774987061");
-        jsonObject.put("userpass", "gmytest");
+        jsonObject.put("userpass", "123321");
         jsonObject.put("version", "10100");
         jsonObject.put("loginchannel", "1002");
         String requestBody = jsonObject.toJSONString();
@@ -295,7 +295,7 @@ public class GmyServiceTest extends ConfigTest {
     @Test
     public void testController18()throws Exception{
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userid", "13d7b3f982bf421198dcb8af797fe0b9");
+        jsonObject.put("userid", "8a7511734e6e4d81a5f71539153eeccd");
         jsonObject.put("tablename", "new_huNan");
         jsonObject.put("pageNo", 1);
         jsonObject.put("pageSize", 20);
@@ -340,5 +340,16 @@ public class GmyServiceTest extends ConfigTest {
                 .andReturn().getResponse().getContentAsString();
         System.out.println("-----返回的json = " + responseString);
     }
+//    eyJuYW1lIjoiMTg3NzQ5ODcwNjEiLCJwYXNzd29yZCI6IjRkOTAxMmI0YTc3YTk1MjRkNjc1ZGFkMjdjMzI3NmFiNTcwNWU1ZTgiLCJwaG9uZSI6IjE4Nzc0OTg3MDYxIiwidXNlcklkIjoiYTkxZjJjMGVmODk3NDA3Zjk4MDg2YWNmYzVmNTM4ZDIifQ
 
+    @Test
+    public void testController21()throws Exception{
+        String responseString = mockMvc.perform(post("/userCenter/getUserTemp").characterEncoding("UTF-8").header("X-TOKEN", "D65E4927F929EE478386F62B7E6125AF.eyJuYW1lIjoiMTg3NzQ5ODcwNjEiLCJwYXNzd29yZCI6IjRkOTAxMmI0YTc3YTk1MjRkNjc1ZGFkMjdjMzI3NmFiNTcwNWU1ZTgiLCJwaG9uZSI6IjE4Nzc0OTg3MDYxIiwidXNlcklkIjoiYTkxZjJjMGVmODk3NDA3Zjk4MDg2YWNmYzVmNTM4ZDIifQ==")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
 }

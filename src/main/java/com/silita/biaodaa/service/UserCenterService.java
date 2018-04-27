@@ -12,6 +12,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -35,6 +36,9 @@ public class UserCenterService {
     private ColleCompanyMapper colleCompanyMapper;
     @Autowired
     private ReadedRecordMapper readedRecordMapper;
+
+    @Autowired
+    private TbCompanyService tbCompanyService;
 
     public UserTempBdd updateUserTemp(UserTempBdd userTempBdd) {
         userTempBddMapper.updateUserTemp(userTempBdd);
@@ -126,13 +130,26 @@ public class UserCenterService {
 
     public PageInfo querCollectionCompany(Page page, Map<String, Object> params){
         List<Map<String, Object>> companys = new ArrayList<>();
-
+        Map<String,CertBasic> certBasicMap = tbCompanyService.getCertBasicMap();
+        Map<String,TbSafetyCertificate> safetyCertificateMap = tbCompanyService.getSafetyCertMap();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-//        if("new_huNan".equals(params.get("tablename"))) {
-            companys = colleCompanyMapper.listHuNanCollectionCompany(params);
-//        } else {
-//            colleCompanyMapper.listNationWideCollectionCompany(params);
-//        }
+        companys = colleCompanyMapper.listCollectionCompany(params);
+        for (Map<String, Object> map : companys) {
+            if(!StringUtils.isEmpty(map.get("comName")) && !StringUtils.isEmpty(map.get("businessNum"))) {
+                CertBasic certBasic = certBasicMap.get(map.get("comName") + "|" + map.get("businessNum"));
+                if(certBasic != null) {
+                    map.put("runScope", certBasic.getRunscope());
+                }
+                TbSafetyCertificate tbSafetyCertificate = safetyCertificateMap.get(map.get("comName"));
+                if(tbSafetyCertificate!=null){
+                    map.put("certNo", tbSafetyCertificate.getCertNo());
+                    map.put("certDate", tbSafetyCertificate.getCertDate());
+                    map.put("validDate", tbSafetyCertificate.getValidDate());
+                }
+                // TODO: 18/4/26  存续状态暂时写死
+                map.put("subsist", "存续");
+            }
+        }
         PageInfo pageInfo = new PageInfo(companys);
         return pageInfo;
     }

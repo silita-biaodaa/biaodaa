@@ -39,4 +39,11 @@ public interface ColleCompanyMapper extends MyMapper<ColleCompany> {
      * @return
      */
     List<Map<String, Object>> listNationWideCollectionCompany(Map<String, Object> params);
+
+    /**
+     *
+     * @param params
+     * @return
+     */
+    List<Map<String, Object>> listCollectionCompany(Map<String, Object> params);
 }
