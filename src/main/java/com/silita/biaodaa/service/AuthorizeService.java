@@ -210,7 +210,7 @@ public class AuthorizeService {
         } else if ("1".equals(invitationVo.getInvitationState())) {
             return "验证码失效！";
         }
-        if(userTempBddMapper.getTotalByUserPhone(userTempBdd.getUserphone()) > 0) {
+        if(userTempBddMapper.getTotalByUserPhone(userTempBdd.getUserphone()) == 0) {
             return "手机号码不存在！";
         }
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
