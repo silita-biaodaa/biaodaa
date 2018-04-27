@@ -75,5 +75,14 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
     void updateUserTemp(UserTempBdd userTempBdd);
 
 
+    /**
+     *
+     * @param userTempBdd
+     */
     void updatePassWdByUserIdAndPhone(UserTempBdd userTempBdd);
+
+    /**
+     *
+     */
+    Integer getTotalByUserPhone(String userphone);
 }

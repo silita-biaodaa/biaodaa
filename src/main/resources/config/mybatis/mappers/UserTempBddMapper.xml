@@ -99,4 +99,8 @@
         WHERE userPhone = #{userphone}
     </update>
 
+    <select id="getTotalByUserPhone" parameterType="" resultType="Integer">
+        SELECT COUNT(*) FROM mishu_write.user_temp_bdd WHERE userPhone = #{userphone}
+    </select>
+
 </mapper>
