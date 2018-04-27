@@ -4,19 +4,19 @@
 <mapper namespace="com.silita.biaodaa.dao.BlogrollMapper">
     <select id="queryLinks" parameterType="Map" resultType="Map">
         SELECT
-        b.id,b.linkName,b.linkUrl
+        DISTINCT(b.id),b.linkName,b.linkUrl
         FROM
         mishu.blogroll b
+        LEFT JOIN mishu.area a ON b.regionCode = a.code
+        WHERE 1=1
         <if test="region!=null and region.size>0">
-            LEFT JOIN mishu.area a ON b.regionCode = a.code
-            WHERE
-            a.name IN
+            AND a.name IN
             <foreach item="region" index="index" collection="region" open="(" separator="," close=")">
                 #{region}
             </foreach>
-            <if test="linkName !=null and linkName != ''">
-                AND b.linkName like '%${linkName}%'
-            </if>
+        </if>
+        <if test="linkName !=null and linkName != ''">
+            AND b.linkName like '%${linkName}%'
         </if>
     </select>
 </mapper>
