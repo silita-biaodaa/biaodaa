@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -106,9 +107,11 @@ public class FoundationService {
         String projName = (String) params.get("projName");
         String phone = (String) params.get("phone");
         Number money = (Number)params.get("money");
+        NumberFormat format = NumberFormat.getNumberInstance();
+        format.setGroupingUsed(false);
         String datetime = MyDateUtils.getTime(MyDateUtils.datetimePattern);
         String subject = String.format("【%s】申请保证金借款", borrower);
-        String message = String.format("借款人【%s】于 %s 发起了一笔保证金借款申请。借款项目为：%s，借款金额：%s，手机号码：%s", borrower, datetime, projName, money.doubleValue(), phone);
+        String message = String.format("借款人【%s】于 %s 发起了一笔保证金借款申请。借款项目为：%s，借款金额：%s，手机号码：%s", borrower, datetime, projName, format.format(money), phone);
         String receivers = PropertiesUtils.getProperty("receiver.name.borrow");
         if (StringUtils.isBlank(receivers)) {
             receivers = EmailUtils.RECEIVER_DEFAULT_NAME;
