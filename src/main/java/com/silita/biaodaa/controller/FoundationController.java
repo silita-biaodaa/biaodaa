@@ -227,11 +227,11 @@ public class FoundationController extends BaseController {
         result.put("code", 1);
         result.put("msg", "常用链接筛选成功!");
         try {
-            String userId = VisitInfoHolder.getUid();
+            /*String userId = VisitInfoHolder.getUid();
             if (StringUtils.isNotBlank(userId)) {
                 logger.info(String.format("筛选常用链接，用户id:%s", userId));
                 params.put("userId", userId);
-            }
+            }*/
             String region = (String) params.get("region");
             if (StringUtils.isNotBlank(region)) {
                 params.remove("region");
