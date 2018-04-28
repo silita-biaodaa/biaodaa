@@ -113,7 +113,10 @@ public class FoundationController extends BaseController {
         result.put("code", 1);
         result.put("msg", "反馈意见添加成功!");
         try {
-            Preconditions.checkArgument(params.containsKey("pid") && !Strings.isNullOrEmpty((String)params.get("pid")), "pid不能为空！");
+            String userId = VisitInfoHolder.getUid();
+            Preconditions.checkArgument(StringUtils.isNotBlank(userId), "未登录");
+            logger.info(String.format("添加反馈意见，用户id:%s", userId));
+            params.put("pid", userId);
             Preconditions.checkArgument(params.containsKey("problem") && !Strings.isNullOrEmpty((String)params.get("problem")), "problem不能为空！");
             foundationService.addFeedback(params);
         } catch (Exception e) {
