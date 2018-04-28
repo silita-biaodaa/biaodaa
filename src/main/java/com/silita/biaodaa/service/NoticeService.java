@@ -127,7 +127,7 @@ public class NoticeService {
 
 
 
-    public PageInfo queryNoticeList(Page page, Map params){
+    public PageInfo queryNoticeList(Page page, Map params)throws Exception {
         String dqsStr =  MapUtils.getString(params,"regions");
         String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
         if(dqsStrList!=null && dqsStrList.length>0){
@@ -329,7 +329,7 @@ public class NoticeService {
      * @param params
      * @return
      */
-    public List queryNoticeDetail(Map params){
+    public List queryNoticeDetail(Map params)throws Exception {
         buildNoticeDetilTable(params);
         List<Map> resList = noticeMapper.queryNoticeDetail(params);
         if(resList!=null &&resList.size()>1){
@@ -341,8 +341,11 @@ public class NoticeService {
         return resList;
     }
 
-    private void buildNoticeDetilTable(Map params){
+    private void buildNoticeDetilTable(Map params)throws Exception{
         String type= MapUtils.getString(params, "type");
+        if(type==null){
+            throw new Exception("prameter type is null![type+"+type+"]");
+        }
         if(type.equals(SNATCHURL_ZHAOBIAO)){
             params.put("detailTable","zhaobiao_detail");
         }else if(type.equals(SNATCHURL_ZHONGBIAO)){
@@ -392,7 +395,7 @@ public class NoticeService {
         }
     }
 
-    public PageInfo searchNoticeList(Page page, Map params){
+    public PageInfo searchNoticeList(Page page, Map params)throws Exception {
         //地区筛选
         String dqsStr =  MapUtils.getString(params,"regions");
         String[] dqsStrList =MyStringUtils.splitParam(dqsStr);

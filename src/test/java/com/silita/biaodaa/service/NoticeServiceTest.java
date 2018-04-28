@@ -151,7 +151,7 @@ public class NoticeServiceTest extends ConfigTest {
     }
 
     @Test
-    public void testNoticeService(){
+    public void testNoticeService()throws Exception {
         Page page = new Page();
         page.setPageSize(20);
         page.setCurrentPage(1);
