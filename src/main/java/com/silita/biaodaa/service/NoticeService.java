@@ -275,7 +275,7 @@ public class NoticeService {
                         for(TbCompany certBase:companyCertBasicList){
                             if(certBase.getComId().intValue()==comid){
                                 company.setComRange(certBase.getComRange());
-                                company.setSubsist(certBase.getSubsist());
+                                company.setSubsist("存续");//根据要求统一修改
                                 companyCertBasicList.remove(certBase);
                                 break;
                             }
