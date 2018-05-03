@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbProjectMapper">
+
+    <!--按工程查询业绩列表-->
+    <select id="queryObject" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT t.`pro_id` AS proId
+                ,t.`pro_no` AS proNo
+                ,t.`pro_name` AS proName
+                ,t.`pro_where` AS proWhere
+                ,t.`pro_org` AS proOrg
+                ,(SELECT t2.name FROM mishu.`area` t2 WHERE t2.`path` = SUBSTRING_INDEX(t1.path,',',1)) AS province
+        FROM tb_project t
+        LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
+        where 1=1
+        <if test="proName != null and proName != ''">
+            AND t.`pro_name` LIKE  CONCAT('%',#{proName},'%')
+        </if>
+        <if test="proType != null and proName != ''">
+            AND t.`pro_type` = #{proType}
+        </if>
+        <if test="proOrg != null and proOrg != ''">
+            AND t.`pro_org` LIKE CONCAT('%',#{proOrg},'%')
+        </if>
+        <if test="areaCode != null and areaCode != ''">
+            AND t1.`code` LIKE CONCAT(#{areaCode},'%')
+        </if>
+    </select>
+
+    <!--按单位查询列表-->
+    <select id="queryObjectByUnit" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.`pro_id` AS proId
+        ,t.`pro_no` AS proNo
+        ,t.`pro_name` AS proName
+        ,t.`pro_where` AS proWhere
+        ,t1.`path` AS path
+        ,<if test="pactType == '施工'">t2.`b_org` AS proOrg</if>
+        <if test="pactType == '监理'">t3.`super_org` AS proOrg</if>
+        <if test="pactType == '勘察'">t4.`explore_org` AS proOrg</if>
+        <if test="pactType == '设计'">t5.`design_org` AS proOrg</if>
+        FROM tb_project t
+        LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
+        <if test="pactType == '施工'">
+            LEFT JOIN mishu.`tb_project_build` t2 ON t2.`pro_id` = t.`pro_id`
+            <if test="proOrg != null and proOrg != ''">
+                AND t2.`b_org` LIKE  CONCAT('%',#{proOrg},'%')
+            </if>
+        </if>
+        <if test="pactType == '监理'">
+            LEFT JOIN mishu.`tb_project_supervision` t3 ON t3.`pro_id` = t.`pro_id`
+            <if test="proOrg != null and proOrg != ''">
+                AND t3.`super_org` LIKE  CONCAT('%',#{proOrg},'%')
+            </if>
+        </if>
+        <if test="pactType == '勘察'">
+            LEFT JOIN mishu.`tb_project_design` t4 ON t4.`pro_id` = t.`pro_id`
+            <if test="proOrg != null and proOrg != ''">
+                AND t4.`explore_org` LIKE  CONCAT('%',#{proOrg},'%')
+            </if>
+        </if>
+        <if test="pactType == '设计'">
+            LEFT JOIN mishu.`tb_project_design` t5 ON t5.`pro_id` = t.`pro_id`
+            <if test="proOrg != null and proOrg != ''">
+                AND t5.`design_org` LIKE  CONCAT('%',#{proOrg},'%')
+            </if>
+        </if>
+        WHERE
+        1=1
+        <if test="proName != null and proName != ''">
+            AND t.`pro_name` LIKE  CONCAT('%',#{proName},'%')
+        </if>
+        <if test="proType != null and proName != ''">
+            AND t.`pro_type` = #{proType}
+        </if>
+        <if test="areaCode != null and areaCode != ''">
+            AND t1.`code` LIKE CONCAT(#{areaCode},'%')
+        </if>
+        GROUP BY t.`pro_id`
+    </select>
+
+    <select id="queryNameByPath"  resultType="java.util.Map">
+        select name,path from area where grade=0 order by name_abbr
+    </select>
+</mapper>
