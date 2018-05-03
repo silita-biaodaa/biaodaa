@@ -109,7 +109,7 @@ public class GmyServiceTest extends ConfigTest {
     @Test
     public void testController7()throws Exception{
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userphone", "18774987061");
+        jsonObject.put("userphone", "18539343936");
         jsonObject.put("userpass", "123321");
         jsonObject.put("version", "10100");
         jsonObject.put("loginchannel", "1002");

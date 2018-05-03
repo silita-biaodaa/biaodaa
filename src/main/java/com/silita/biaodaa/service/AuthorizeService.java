@@ -199,7 +199,10 @@ public class AuthorizeService {
         return vo;
     }
 
-    public String UpdatePassWdByForgotPassword(UserTempBdd userTempBdd) {
+    public String UpdatePassWdByForgetPassword(UserTempBdd userTempBdd) {
+        if(userTempBddMapper.getTotalByUserPhone(userTempBdd.getUserphone()) == 0) {
+            return "手机号码不存在！";
+        }
         //判断验证码是否有效
         Map<String, Object> params = new HashMap<>(1);
         params.put("invitationPhone", userTempBdd.getUserphone());
@@ -209,9 +212,6 @@ public class AuthorizeService {
             return "验证码错误或无效！";
         } else if ("1".equals(invitationVo.getInvitationState())) {
             return "验证码失效！";
-        }
-        if(userTempBddMapper.getTotalByUserPhone(userTempBdd.getUserphone()) == 0) {
-            return "手机号码不存在！";
         }
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
         if (userTempBdd.getLoginchannel().equals("1002") && Integer.parseInt(userTempBdd.getVersion()) > 10100) {
@@ -318,5 +318,12 @@ public class AuthorizeService {
             }
         }
         return vo;
+    }
+
+    public String checkUserPhone(UserTempBdd userTempBdd) {
+        if(userTempBddMapper.getTotalByUserPhone(userTempBdd.getUserphone()) == 0) {
+            return "手机号码不存在！";
+        }
+        return "";
     }
 }

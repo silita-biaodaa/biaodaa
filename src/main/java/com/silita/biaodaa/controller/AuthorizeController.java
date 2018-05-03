@@ -59,13 +59,19 @@ public class AuthorizeController {
         result.put("data", null);
 
         try{
-            UserTempBdd vo = authorizeService.queryUserTempByUserNameOrPhoneAndPassWd(userTempBdd);
-            if(vo != null) {
-                result.put("msg", "用户登录成功！");
-                result.put("data", vo);
+            String msg = authorizeService.checkUserPhone(userTempBdd);
+            if("".equals(msg)) {
+                UserTempBdd vo = authorizeService.queryUserTempByUserNameOrPhoneAndPassWd(userTempBdd);
+                if(vo != null) {
+                    result.put("msg", "用户登录成功！");
+                    result.put("data", vo);
+                } else {
+                    result.put("code", 0);
+                    result.put("msg", "手机号码或密码错误!");
+                }
             } else {
                 result.put("code", 0);
-                result.put("msg", "用户名或密码错误!");
+                result.put("msg", "手机号码不存在!");
             }
         } catch (Exception e) {
             logger.error("用户登录异常！" + e.getMessage(), e);
@@ -134,7 +140,7 @@ public class AuthorizeController {
         result.put("code", 1);
 
         try{
-            String msg = authorizeService.UpdatePassWdByForgotPassword(userTempBdd);
+            String msg = authorizeService.UpdatePassWdByForgetPassword(userTempBdd);
             if("".equals(msg)) {
                 result.put("msg", "找回密码成功！");
             } else {
