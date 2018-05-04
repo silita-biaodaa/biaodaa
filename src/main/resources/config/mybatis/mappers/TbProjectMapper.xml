@@ -26,8 +26,8 @@
         <if test="areaCode != null and areaCode != ''">
             AND t1.`code` LIKE CONCAT(#{areaCode},'%')
         </if>
-        GROUP BY t.`pro_no`,t.`pro_org`
-        ORDER BY t.`pro_where` DESC
+        GROUP BY t.`pro_id`,t.`pro_org`
+        ORDER BY t.`pro_where` desc,t.`pro_org` desc
     </select>
 
     <!--按单位查询列表-->
