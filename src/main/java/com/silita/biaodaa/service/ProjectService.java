@@ -42,7 +42,7 @@ public class ProjectService {
 
         PageHelper.startPage(page.getCurrentPage(),page.getPageSize());
         projectList = tbProjectMapper.queryObject(param);
-
+        this.putProvince(projectList);
         PageInfo pageInfo = new PageInfo(projectList);
         result.put("data",pageInfo.getList());
         result.put("pageNum",pageInfo.getPageNum());
@@ -72,9 +72,25 @@ public class ProjectService {
 
         PageHelper.startPage(page.getCurrentPage(),page.getPageSize());
         List<Map<String,Object>> projectList = tbProjectMapper.queryObjectByUnit(params);
+        this.putProvince(projectList);
+        PageInfo pageInfo = new PageInfo(projectList);
+        result.put("data",pageInfo.getList());
+        result.put("pageNum",pageInfo.getPageNum());
+        result.put("pageSize", pageInfo.getPageSize());
+        result.put("total",pageInfo.getTotal());
+        result.put("pages",pageInfo.getPages());
+        return result;
+    }
+
+    /**
+     * 将省信息放入集合中
+     * created by zhushuai
+     * @param list
+     */
+    private void putProvince(List<Map<String,Object>> list){
         List<Map<String,Object>> areaList = tbProjectMapper.queryNameAndPath();
-        if(null != projectList && projectList.size() > 0){
-            for (Map<String,Object> map : projectList){
+        if(null != list && list.size() > 0){
+            for (Map<String,Object> map : list){
                 for (Map<String,Object> areaMap : areaList){
                     if(null == map.get("path")){
                         map.put("province","湖南省");
@@ -87,12 +103,5 @@ public class ProjectService {
                 }
             }
         }
-        PageInfo pageInfo = new PageInfo(projectList);
-        result.put("data",pageInfo.getList());
-        result.put("pageNum",pageInfo.getPageNum());
-        result.put("pageSize", pageInfo.getPageSize());
-        result.put("total",pageInfo.getTotal());
-        result.put("pages",pageInfo.getPages());
-        return result;
     }
 }

@@ -10,7 +10,7 @@
                 ,t.`pro_where` AS proWhere
                 ,t.`pro_org` AS proOrg
                 ,t.`pro_type` AS proType
-                ,(SELECT t2.name FROM mishu.`area` t2 WHERE t2.`path` = SUBSTRING_INDEX(t1.path,',',1)) AS province
+                ,t1.`path` AS path
         FROM tb_project t
         LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
         where 1=1
@@ -26,6 +26,8 @@
         <if test="areaCode != null and areaCode != ''">
             AND t1.`code` LIKE CONCAT(#{areaCode},'%')
         </if>
+        GROUP BY t.`pro_no`,t.`pro_org`
+        ORDER BY t.`pro_where` DESC
     </select>
 
     <!--按单位查询列表-->
