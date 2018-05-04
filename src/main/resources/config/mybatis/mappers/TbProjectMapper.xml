@@ -9,6 +9,7 @@
                 ,t.`pro_name` AS proName
                 ,t.`pro_where` AS proWhere
                 ,t.`pro_org` AS proOrg
+                ,t.`pro_type` AS proType
                 ,(SELECT t2.name FROM mishu.`area` t2 WHERE t2.`path` = SUBSTRING_INDEX(t1.path,',',1)) AS province
         FROM tb_project t
         LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
@@ -33,6 +34,7 @@
         ,t.`pro_no` AS proNo
         ,t.`pro_name` AS proName
         ,t.`pro_where` AS proWhere
+        ,t.`pro_type` AS proType
         ,t1.`path` AS path
         ,<if test="pactType == '施工'">t2.`b_org` AS proOrg</if>
         <if test="pactType == '监理'">t3.`super_org` AS proOrg</if>
@@ -78,7 +80,8 @@
         GROUP BY t.`pro_id`
     </select>
 
-    <select id="queryNameByPath"  resultType="java.util.Map">
+    <!--获取区域省级的名称和path-->
+    <select id="queryNameAndPath"  resultType="java.util.Map">
         select name,path from area where grade=0 order by name_abbr
     </select>
 </mapper>

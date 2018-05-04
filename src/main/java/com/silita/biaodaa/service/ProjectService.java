@@ -72,11 +72,14 @@ public class ProjectService {
 
         PageHelper.startPage(page.getCurrentPage(),page.getPageSize());
         List<Map<String,Object>> projectList = tbProjectMapper.queryObjectByUnit(params);
-        List<Map<String,Object>> areaList = tbProjectMapper.queryNameByPath();
+        List<Map<String,Object>> areaList = tbProjectMapper.queryNameAndPath();
         if(null != projectList && projectList.size() > 0){
             for (Map<String,Object> map : projectList){
                 for (Map<String,Object> areaMap : areaList){
-                    if(map.get("path").toString().split(",")[0].equals(areaMap.get("path").toString())){
+                    if(null == map.get("path")){
+                        map.put("province","湖南省");
+                        break;
+                    }else if(map.get("path").toString().split(",")[0].equals(areaMap.get("path").toString())){
                         map.put("province",areaMap.get("name"));
                         map.remove("path");
                         break;

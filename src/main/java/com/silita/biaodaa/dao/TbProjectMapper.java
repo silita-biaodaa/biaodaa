@@ -25,9 +25,9 @@ public interface TbProjectMapper extends MyMapper {
     List<Map<String,Object>> queryObjectByUnit(Map<String,Object> params);
 
     /**
-     * 根据path查询区域名称
+     * 根据区域名称和Path
      * @param path
      * @return
      */
-    List<Map<String,Object>> queryNameByPath();
+    List<Map<String,Object>> queryNameAndPath();
 }
