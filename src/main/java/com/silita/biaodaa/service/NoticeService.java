@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHONGBIAO;
@@ -438,9 +440,19 @@ public class NoticeService {
      */
     public PageInfo queryArticleList(Page page, Map params) {
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        List list = articlesMapper.queryArticleList(params);
+        List<Map<String,Object>> list = articlesMapper.queryArticleList(params);
         if (null == list) {
             list = new ArrayList<>();
+        }else{
+            String content ="";
+            for(Map<String,Object> map : list){
+                if(null != map.get("content")){
+                    content = map.get("content").toString();
+//                    content.substring(content.lastIndexOf("&nbsp;"),20);
+                    map.put("content",this.removeHtml(content).substring(0,20)+".....");
+
+                }
+            }
         }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -461,5 +473,28 @@ public class NoticeService {
 
     public List<Long> queryNoticeCollStatus(Map map){
         return noticeMapper.queryNoticeCollStatus(map);
+    }
+
+    /**
+     * 去掉HTML标签
+     * created by zhushuai
+     * @param content
+     * @return
+     */
+    private String removeHtml(String content){
+        String regEx_style="<style[^>]*?>[\\s\\S]*?<\\/style>";
+        String regEx_html="<[^>]+>";
+        //去掉style标签
+        Pattern p_style=Pattern.compile(regEx_style,Pattern.CASE_INSENSITIVE);
+        Matcher m_style=p_style.matcher(content);
+        content=m_style.replaceAll("");
+        //去掉Html
+        Pattern p_html=Pattern.compile(regEx_html,Pattern.CASE_INSENSITIVE);
+        Matcher m_html=p_html.matcher(content);
+        content=m_html.replaceAll(""); //过滤html标签
+        if(content.contains("&nbsp;")){
+            content.replaceAll("&nbsp;","");
+        }
+        return content.trim();
     }
 }
