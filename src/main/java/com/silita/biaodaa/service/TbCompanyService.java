@@ -66,6 +66,8 @@ public class TbCompanyService {
         if(num>0){
             tbCompany.setCollected(true);
         }
+        // TODO: 18/5/7 存续状态写死
+        tbCompany.setSubsist("存续");
         return tbCompany;
     }
 
