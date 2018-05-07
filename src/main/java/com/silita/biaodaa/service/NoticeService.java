@@ -485,15 +485,15 @@ public class NoticeService {
         String regEx_style="<style[^>]*?>[\\s\\S]*?<\\/style>";
         String regEx_html="<[^>]+>";
         //去掉style标签
-        Pattern p_style=Pattern.compile(regEx_style,Pattern.CASE_INSENSITIVE);
-        Matcher m_style=p_style.matcher(content);
-        content=m_style.replaceAll("");
+        Pattern p_style = Pattern.compile(regEx_style,Pattern.CASE_INSENSITIVE);
+        Matcher m_style = p_style.matcher(content);
+        content = m_style.replaceAll("");
         //去掉Html
-        Pattern p_html=Pattern.compile(regEx_html,Pattern.CASE_INSENSITIVE);
-        Matcher m_html=p_html.matcher(content);
-        content=m_html.replaceAll(""); //过滤html标签
+        Pattern p_html = Pattern.compile(regEx_html,Pattern.CASE_INSENSITIVE);
+        Matcher m_html = p_html.matcher(content);
+        content = m_html.replaceAll(""); //过滤html标签
         if(content.contains("&nbsp;")){
-            content.replaceAll("&nbsp;","");
+            content = content.replaceAll("&nbsp;","");
         }
         return content.trim();
     }
