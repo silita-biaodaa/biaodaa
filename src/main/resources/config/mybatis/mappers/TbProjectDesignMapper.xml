@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbProjectDesignMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectDesign" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="sgtxh" property="sgtxh" jdbcType="VARCHAR" />
+    <result column="pro_id" property="proId" jdbcType="INTEGER" />
+    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+    <result column="pro_type" property="proType" jdbcType="VARCHAR" />
+    <result column="com_id" property="comId" jdbcType="INTEGER" />
+    <result column="explore_org" property="exploreOrg" jdbcType="VARCHAR" />
+    <result column="design_org" property="designOrg" jdbcType="VARCHAR" />
+    <result column="check_org" property="checkOrg" jdbcType="VARCHAR" />
+    <result column="check_no" property="checkNo" jdbcType="VARCHAR" />
+    <result column="check_number" property="checkNumber" jdbcType="VARCHAR" />
+    <result column="check_finish_date" property="checkFinishDate" jdbcType="VARCHAR" />
+    <result column="check_person" property="checkPerson" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="pro_scope" property="proScope" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <select id="queryProjectDesignByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+      SELECT t.`explore_org`
+       ,t.`design_org`
+       ,t.`check_org`
+       ,t.`check_finish_date`
+    FROM tb_project_design t
+    WHERE t.`pro_id` = #{proId}
+  </select>
+</mapper>
