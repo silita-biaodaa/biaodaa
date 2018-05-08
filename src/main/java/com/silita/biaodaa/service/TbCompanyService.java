@@ -442,7 +442,7 @@ public class TbCompanyService {
                     }
                     score7 = score7 / 5;
                     score = score + score7 + secur + unScore;
-                    if(score==0&&unScore==0){
+                    if(score==0&&unScore==0&&resultList.size()==0){
                         score = null;
                     }
                     resultMap.put("reputation",resultList);
