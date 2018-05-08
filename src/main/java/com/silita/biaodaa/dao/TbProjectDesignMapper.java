@@ -17,4 +17,18 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @return
      */
     List<TbProjectDesign> queryProjectDesignByProId(Integer id);
+
+    /**
+     * 获取详情
+     * @param proId
+     * @return
+     */
+    TbProjectDesign queryProjectDesignDetailByProId(Integer proId);
+
+    /**
+     * 根据市获取省
+     * @param name
+     * @return
+     */
+    String queryProvinceByName(String name);
 }

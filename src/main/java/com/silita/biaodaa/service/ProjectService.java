@@ -375,26 +375,6 @@ public class ProjectService {
     }
 
     /**
-     * 获取某个字符出现的次数和下标
-     * @param scope
-     * @param chart
-     * @return
-     */
-    private Map<String,Object> getIndexCount(String scope,String chart){
-        Map<String,Object> map = new HashMap<>();
-        List<Integer> indexCountList = new ArrayList<>();
-        Matcher matcher = Pattern.compile(chart).matcher(scope);
-        int count = 0;
-        while (matcher.find()){
-            count++;
-            indexCountList.add(matcher.start());
-        }
-        map.put("count",count);
-        map.put("indexCountList",indexCountList);
-        return map;
-    }
-
-    /**
      * 截取日期
      * @param str
      * @return

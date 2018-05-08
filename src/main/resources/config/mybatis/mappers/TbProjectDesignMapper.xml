@@ -22,6 +22,11 @@
     <result column="created" property="created" jdbcType="TIMESTAMP" />
     <result column="updated" property="updated" jdbcType="TIMESTAMP" />
     <result column="pro_scope" property="proScope" jdbcType="LONGVARCHAR" />
+    <result column="checkOrgCode" property="checkOrgCode" jdbcType="VARCHAR"/>
+    <result column="designOrgCode" property="designOrgCode" jdbcType="VARCHAR"/>
+    <result column="exploreOrgCode" property="exploreOrgCode" jdbcType="VARCHAR"/>
+      <result column="regisAddressDesign" property="regisAddressDesign" jdbcType="VARCHAR"/>
+      <result column="regisAddressExplore" property="regisAddressExplore" jdbcType="VARCHAR"/>
   </resultMap>
 
   <select id="queryProjectDesignByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
@@ -37,4 +42,38 @@
     FROM tb_project_design t
     WHERE t.`pro_id` = #{proId}
   </select>
+
+  <select id="queryProjectDesignDetailByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT
+         t.*
+        ,t1.`pro_scope`
+        ,t2.`org_code` AS checkOrgCode
+        ,t3.`org_code` AS designOrgCode
+        ,t4.`org_code` AS exploreOrgCode
+        ,t3.`regis_address` AS regisAddressDesign
+	    ,t4.`regis_address` AS regisAddressExplore
+    FROM tb_project_design t
+    LEFT JOIN tb_project t1 ON t.`pro_id` = t1.`pro_id`
+    LEFT JOIN tb_company t2 ON t.`check_org` = t2.`com_name`
+    LEFT JOIN tb_company t3 ON t.`design_org` = t3.`com_name`
+    LEFT JOIN tb_company t4 ON t.`explore_org` = t4.`com_name`
+    WHERE t.`pro_id` = #{proId}
+  </select>
+
+    <select id="queryProvinceByName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+          t.`display_name`
+        FROM
+          mishu.`area` t
+        WHERE t.`path` = SUBSTRING_INDEX(
+            (SELECT
+              t1.`path`
+            FROM
+              mishu.`area` t1
+            WHERE t1.`name` = #{name}),
+            ',',
+            1
+          )
+
+    </select>
 </mapper>

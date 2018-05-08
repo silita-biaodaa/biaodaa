@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Getter
@@ -32,7 +33,6 @@ public class TbProjectZhaotoubiao {
     /**
      * 招标类型
      */
-    @Column(name = "zhaobiao_type")
     private String zhaobiaoType;
 
     /**
@@ -79,4 +79,31 @@ public class TbProjectZhaotoubiao {
      * 创建时间
      */
     private Date created;
+
+    /**非表字段**/
+
+    /**
+     * 面积
+     */
+    private String acreage;
+
+    /**
+     * 建设规模
+     */
+    private String proScope;
+
+    /**
+     * 人员姓名
+     */
+    private String name;
+
+    /**
+     * 身份证
+     */
+    private String idCard;
+
+    /**
+     * 人员列表
+     */
+    private List personList;
 }

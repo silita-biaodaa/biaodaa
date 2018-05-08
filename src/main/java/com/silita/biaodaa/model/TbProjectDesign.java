@@ -93,4 +93,39 @@ public class TbProjectDesign {
      * 项目规模
      */
     private String proScope;
+
+    /**
+     * 审查机构代码
+     */
+    private String checkOrgCode;
+
+    /**
+     * 设计单位代码
+     */
+    private String designOrgCode;
+
+    /**
+     * 勘查单位代码
+     */
+    private String exploreOrgCode;
+
+    /**
+     * 设计单位所在地
+     */
+    private String regisAddressDesign;
+
+    /**
+     * 勘察单位所在地
+     */
+    private String regisAddressExplore;
+
+    /**
+     * 设计单位所在地(省)
+     */
+    private String designProvince;
+
+    /**
+     * 勘察单位所在地(省)
+     */
+    private String exploreProvince;
 }

@@ -1,6 +1,8 @@
 package com.silita.biaodaa.controller;
 
+import com.silita.biaodaa.service.ProjectDesignService;
 import com.silita.biaodaa.service.ProjectService;
+import com.silita.biaodaa.service.ProjectZhaotoubiaoService;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,10 @@ public class ProjectController extends BaseController{
 
     @Autowired
     ProjectService projectService;
+    @Autowired
+    ProjectZhaotoubiaoService projectZhaotoubiaoService;
+    @Autowired
+    ProjectDesignService projectDesignService;
 
     /**
      * 业绩筛选
@@ -64,6 +70,25 @@ public class ProjectController extends BaseController{
         result.put("code",this.SUCCESS_CODE);
         result.put("msg",this.SUCCESS_MSG);
         projectService.getTabProjectDetail(param,result);
+        return result;
+    }
+
+    /**
+     * 获取tab列表下的详情
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/list/detail",method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> tabListDatail(@RequestBody Map<String, Object> param){
+        Map<String,Object> result = new HashMap<String,Object>();
+        result.put("code",this.SUCCESS_CODE);
+        result.put("msg",this.SUCCESS_MSG);
+        if("zhaotoubiao".equals(param.get("tabType").toString())){
+            result.put("data",projectZhaotoubiaoService.getProjectZhaotoubiaoDetail(param));
+        }else if("design".equals(param.get("tabType").toString())){
+            result.put("data",projectDesignService.getProjectDesignDetail(param));
+        }
         return result;
     }
 }
