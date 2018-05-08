@@ -210,7 +210,7 @@ public class ProjectService {
             String zhongbiaoDate = "";
             TbProjectZhaotoubiao zhaotoubiao = null;
             for(TbProjectBuild buid : buildList){
-                if(null != buid.getBidRemark() || !"未办理中标备案".equals(buid.getBidRemark())){
+                if(null != buid.getBidRemark() && !"未办理中标备案".equals(buid.getBidRemark())){
                     remark = buid.getBidRemark();
                     zhaotoubiao = new TbProjectZhaotoubiao();
                     zhongbiaoDate = remark.substring(this.getIndex(remark,"中标日期："),this.getIndex(remark,","));
@@ -232,7 +232,7 @@ public class ProjectService {
             String remark = null;
             String amount = null;
             for(TbProjectBuild project : proBuildList){
-                if (null != project.getContractRemark()|| !"未办理合同备案".equals(project.getContractRemark())){
+                if (null != project.getContractRemark() && !"未办理合同备案".equals(project.getContractRemark())){
                     remark = project.getContractRemark();
                     amount = remark.substring(this.getIndex(remark,"合同价格："),this.getIndex(remark,"万元"));
                     project.setConstractAmount(amount == null ? null : amount.substring(this.getIndex(amount,"：")+1,amount.length()));
