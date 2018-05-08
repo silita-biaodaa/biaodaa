@@ -25,7 +25,12 @@
   </resultMap>
 
   <select id="queryProjectDesignByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-      SELECT t.`explore_org`
+    SELECT t.`pkid`
+       ,t.`pro_id`
+       ,t.`pro_name`
+       ,t.`pro_type`
+       ,t.`explore_org`
+       ,t.`com_id`
        ,t.`design_org`
        ,t.`check_org`
        ,t.`check_finish_date`
