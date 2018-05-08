@@ -27,11 +27,29 @@
     <result column="created" property="created" jdbcType="TIMESTAMP" />
     <result column="updated" property="updated" jdbcType="TIMESTAMP" />
     <result column="b_scope" property="bScope" jdbcType="LONGVARCHAR" />
+    <result column="com_name" property="comName" jdbcType="VARCHAR"/>
+    <result column="bid_type" property="bidType" jdbcType="VARCHAR"/>
   </resultMap>
 
   <select id="queryConstartProBuildByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
       SELECT t.`contract_remark`
        ,t.`contract_category`
+      FROM tb_project_build t
+      WHERE t.`pro_id` = #{proId}
+  </select>
+
+  <select id="queryZhaobiaoProByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+      SELECT
+        t.`bid_price`
+        ,t.`bid_remark`
+        ,t.`b_org`
+        ,'施工' AS bidType
+      FROM tb_project_build t
+      WHERE t.`pro_id` = #{proId}
+  </select>
+
+  <select id="queryProjectBuildByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+      SELECT t.*
       FROM tb_project_build t
       WHERE t.`pro_id` = #{proId}
   </select>

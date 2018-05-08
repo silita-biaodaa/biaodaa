@@ -119,4 +119,24 @@ public class TbProjectBuild {
      */
     private String bScope;
 
+    /**非表字段**/
+    /**
+     * 公司名称
+     */
+    private String comName;
+
+    /**
+     * 施工类型
+     */
+    private String bidType;
+
+    /**
+     * 合同金额
+     */
+    private String constractAmount;
+
+    /**
+     * 面积
+     */
+    private String acreage;
 }

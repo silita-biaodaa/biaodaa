@@ -7,6 +7,7 @@ import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.TbProject;
 import com.silita.biaodaa.model.TbProjectBuild;
 import com.silita.biaodaa.model.TbProjectContract;
+import com.silita.biaodaa.model.TbProjectZhaotoubiao;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class ProjectService {
     TbProjectContractMapper tbProjectContractMapper;
     @Autowired
     TbProjectBuildMapper tbProjectBuildMapper;
+    @Autowired
+    TbProjectZhaotoubiaoMapper tbProjectZhaotoubiaoMapper;
+    private Matcher matcher;
 
     /**
      * 按工程查询
@@ -146,12 +150,22 @@ public class ProjectService {
             resultList = tbProjectDesignMapper.queryProjectDesignByProId(proId);
         }else if("constact".equals(tabType)){
             resultList = this.getContractList(proId);
+        }else if ("zhaotoubiao".equals(tabType)){
+            resultList = this.getZhaotoubiaoList(proId);
+        }else if ("build".equals(tabType)){
+            resultList = this.getProjectBuildDetail(proId);
         }
         result.put("data",resultList);
         return result;
     }
 
 
+    /**
+     * 获取项目下的合同备案列表
+     * created by zhushuai
+     * @param proId
+     * @return
+     */
     private List<TbProjectContract> getContractList(Integer proId){
         List<TbProjectContract> list  = tbProjectContractMapper.queryProjectContractListByProId(proId);
         if(null != list && list.size() >0 && null != list.get(0)){
@@ -165,7 +179,7 @@ public class ProjectService {
             String constartNo = null;
             TbProjectContract tbProjectContract = null;
             for(TbProjectBuild build : projectBuildList){
-                if (null != build.getContractRemark()|| "未办理合同备案".equals(build.getContractRemark())){
+                if (null != build.getContractRemark()|| !"未办理合同备案".equals(build.getContractRemark())){
                     remark = build.getContractRemark();
                     contractDate = null;
                     constartPrice = null;
@@ -185,6 +199,49 @@ public class ProjectService {
         return list;
     }
 
+    private List<TbProjectZhaotoubiao> getZhaotoubiaoList(Integer proId){
+        List<TbProjectZhaotoubiao> list = tbProjectZhaotoubiaoMapper.queryZhaotoubiaoListByProId(proId);
+        if(null != list && list.size() >0 && null != list.get(0)){
+            return list;
+        }
+        List<TbProjectBuild> buildList = tbProjectBuildMapper.queryZhaobiaoProByProId(proId);
+        if(null != buildList && buildList.size() >0 && null != buildList.get(0)){
+            String remark = "";
+            String zhongbiaoDate = "";
+            TbProjectZhaotoubiao zhaotoubiao = null;
+            for(TbProjectBuild buid : buildList){
+                if(null != buid.getBidRemark() || !"未办理中标备案".equals(buid.getBidRemark())){
+                    remark = buid.getBidRemark();
+                    zhaotoubiao = new TbProjectZhaotoubiao();
+                    zhongbiaoDate = remark.substring(this.getIndex(remark,"中标日期："),this.getIndex(remark,","));
+                    zhaotoubiao.setProId(proId.toString());
+                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(this.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
+                    zhaotoubiao.setZhongbiaoAmount(buid.getBidPrice());
+                    zhaotoubiao.setZhaobiaoType(buid.getBidType());
+                    zhaotoubiao.setZhongbiaoCompany(buid.getBOrg());
+                    list.add(zhaotoubiao);
+                }
+            }
+        }
+        return list;
+    }
+
+    private List<TbProjectBuild> getProjectBuildDetail(Integer proId){
+        List<TbProjectBuild> proBuildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
+        if(null != proBuildList && proBuildList.size() >0 && null != proBuildList.get(0)){
+            String remark = null;
+            String amount = null;
+            for(TbProjectBuild project : proBuildList){
+                if (null != project.getContractRemark()|| !"未办理合同备案".equals(project.getContractRemark())){
+                    remark = project.getContractRemark();
+                    amount = remark.substring(this.getIndex(remark,"合同价格："),this.getIndex(remark,"万元"));
+                    project.setConstractAmount(amount == null ? null : amount.substring(this.getIndex(amount,"：")+1,amount.length()));
+                    project.setCompleteRemark(null);
+                }
+            }
+        }
+        return proBuildList;
+    }
     /**
      * 将省信息放入集合中
      * created by zhushuai
@@ -336,4 +393,33 @@ public class ProjectService {
         map.put("indexCountList",indexCountList);
         return map;
     }
+
+    /**
+     * 截取日期
+     * @param str
+     * @return
+     */
+    private String getStrDate(String str){
+        String reg = "[0-9]{4}[-][0-9]{1,2}[-][0-9]{1,2}[ ][0-9]{1,2}[:][0-9]{1,2}[:][0-9]{1,2}";
+        Matcher matcher = Pattern.compile(str).matcher(reg);
+        if(matcher.find()){
+            return matcher.group(0);
+        }
+        return str;
+    }
+
+    /**
+     * 截取数字
+     * @param str
+     * @return
+     */
+    private String getStrNumber(String str){
+        String reg = "([1-9]\\d*\\.?\\d*)|(0\\.\\d*[1-9])";
+        Matcher matcher = Pattern.compile(str).matcher(reg);
+        while (matcher.find()){
+            return matcher.group(0);
+        }
+        return str;
+    }
+
 }
