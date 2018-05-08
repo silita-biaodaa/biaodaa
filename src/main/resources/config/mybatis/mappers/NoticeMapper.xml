@@ -236,7 +236,14 @@
         <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
             AND  !(detail.projSum REGEXP '[^0-9.]') AND detail.projSum !=''
         </if>
-        and s.type = #{type}
+        <choose>
+            <when test="type==99">
+                and (s.type =0 or s.type=2)
+            </when>
+            <otherwise>
+                and s.type = #{type}
+            </otherwise>
+        </choose>
         <include refid="noticeListTail"/>
     </select>
 
