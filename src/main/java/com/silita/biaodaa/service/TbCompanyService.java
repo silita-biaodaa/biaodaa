@@ -66,6 +66,8 @@ public class TbCompanyService {
         if(num>0){
             tbCompany.setCollected(true);
         }
+        // TODO: 18/5/7 存续状态写死
+        tbCompany.setSubsist("存续");
         return tbCompany;
     }
 
@@ -331,7 +333,6 @@ public class TbCompanyService {
                         if(map.get("code")!=null&&map.get("years")!=null){
                             String years = map.get("years").toString();
                             String code = map.get("code").toString();
-
                             if("b1".equals(code)&&(years.indexOf("2016")>-1||years.indexOf("2017")>-1)){
                                 qyhjList.add(map);
                             }else if(years.indexOf("2017")>-1){
@@ -353,14 +354,16 @@ public class TbCompanyService {
 
                     for(Map<String,Object> qyhj : qyhjList){
 
-                        //--计算分值------------start
-                        if(qyhj.get("score")!=null&&qyhj.get("type")!=null){
+                        //--计算分值------------start--只计算 joinType = 承建单位
+                        if(qyhj.get("score")!=null&&qyhj.get("type")!=null
+                                &&qyhj.get("joinType")!=null
+                                &&"承建单位".equals(qyhj.get("joinType").toString())){
                             String scoreStr = qyhj.get("score").toString();
                             if("gjjhj".equals(qyhj.get("type").toString())&&gjjScore.size()<3){
                                 gjjScore.add(Double.valueOf(scoreStr));
                             }
                             if("sjhj".equals(qyhj.get("type").toString())){
-                                if(gjjScore.size()<7){
+                                if(sjScore.size()<7){
                                     sjScore.add(Double.valueOf(scoreStr));
                                 }else{
                                     sjScore7.add(Double.valueOf(scoreStr));
@@ -433,10 +436,15 @@ public class TbCompanyService {
                     for(Double d :sjScore){
                         score = score + d;
                     }
+                    Double score7 = 0d;
                     for(Double d :sjScore7){
-                        score = score + d/5;
+                        score7 = score7 + d;
                     }
-                    score = score + secur + unScore;
+                    score7 = score7 / 5;
+                    score = score + score7 + secur + unScore;
+                    if(score==0&&unScore==0){
+                        score = null;
+                    }
                     resultMap.put("reputation",resultList);
                     resultMap.put("score",score);
                 }

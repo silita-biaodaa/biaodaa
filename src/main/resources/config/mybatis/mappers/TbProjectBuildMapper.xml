@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbProjectBuildMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectBuild" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="bdxh" property="bdxh" jdbcType="VARCHAR" />
+    <result column="pro_id" property="proId" jdbcType="INTEGER" />
+    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+    <result column="pro_type" property="proType" jdbcType="VARCHAR" />
+    <result column="com_id" property="comId" jdbcType="INTEGER" />
+    <result column="b_name" property="bName" jdbcType="VARCHAR" />
+    <result column="b_org" property="bOrg" jdbcType="VARCHAR" />
+    <result column="bid_remark" property="bidRemark" jdbcType="VARCHAR" />
+    <result column="bid_price" property="bidPrice" jdbcType="VARCHAR" />
+    <result column="contract_remark" property="contractRemark" jdbcType="VARCHAR" />
+    <result column="b_licence" property="bLicence" jdbcType="VARCHAR" />
+    <result column="build_licence" property="buildLicence" jdbcType="VARCHAR" />
+    <result column="review_number" property="reviewNumber" jdbcType="VARCHAR" />
+    <result column="contract_category" property="contractCategory" jdbcType="VARCHAR" />
+    <result column="licence_date" property="licenceDate" jdbcType="VARCHAR" />
+    <result column="complete_remark" property="completeRemark" jdbcType="VARCHAR" />
+    <result column="complete_date" property="completeDate" jdbcType="VARCHAR" />
+    <result column="sub_contrace" property="subContrace" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="b_scope" property="bScope" jdbcType="LONGVARCHAR" />
+    <result column="com_name" property="comName" jdbcType="VARCHAR"/>
+    <result column="bid_type" property="bidType" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <select id="queryConstartProBuildByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+      SELECT t.`contract_remark`
+       ,t.`contract_category`
+      FROM tb_project_build t
+      WHERE t.`pro_id` = #{proId}
+  </select>
+
+  <select id="queryZhaobiaoProByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+      SELECT
+        t.`bid_price`
+        ,t.`bid_remark`
+        ,t.`b_org`
+        ,'施工' AS bidType
+      FROM tb_project_build t
+      WHERE t.`pro_id` = #{proId}
+  </select>
+
+  <select id="queryProjectBuildByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+      SELECT t.*
+      FROM tb_project_build t
+      WHERE t.`pro_id` = #{proId}
+  </select>
+</mapper>
