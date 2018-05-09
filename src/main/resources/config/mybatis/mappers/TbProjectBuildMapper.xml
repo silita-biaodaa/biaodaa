@@ -42,7 +42,8 @@
 
   <select id="queryZhaobiaoProByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
       SELECT
-        t.`bid_price`
+        t.`pkid`
+        ,t.`bid_price`
         ,t.`bid_remark`
         ,t.`b_org`
         ,'施工' AS bidType
