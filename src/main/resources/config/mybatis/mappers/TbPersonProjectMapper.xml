@@ -66,4 +66,13 @@
      </foreach>
      GROUP BY t.`innerid`;
   </select>
+
+  <select id="queryPersonProjectByPid" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select
+      t.*
+    from tb_person_project t
+    where t.pid = #{pid}
+    and (t.role = #{role} or t.role = #{roleOther})
+    and t.type = 'build'
+  </select>
 </mapper>

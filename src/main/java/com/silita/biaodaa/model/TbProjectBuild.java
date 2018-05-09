@@ -139,4 +139,24 @@ public class TbProjectBuild {
      * 面积
      */
     private String acreage;
+
+    /**
+     * 项目经理
+     */
+    private String pmName;
+
+    /**
+     * 项目经理身份证
+     */
+    private String pmIdCard;
+
+    /**
+     * 项目总监
+     */
+    private String pdName;
+
+    /**
+     * 项目总监身份证
+     */
+    private String pdIdCard;
 }

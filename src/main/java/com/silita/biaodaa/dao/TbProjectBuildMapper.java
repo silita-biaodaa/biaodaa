@@ -4,6 +4,7 @@ import com.silita.biaodaa.model.TbProjectBuild;
 import com.silita.biaodaa.utils.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *施工许可
@@ -32,4 +33,19 @@ public interface TbProjectBuildMapper extends MyMapper<TbProjectBuild> {
      * @return
      */
     List<TbProjectBuild> queryProjectBuildByProId(Integer proId);
+
+    /**
+     * 获取施工许可详情
+     * @param proId
+     * @param pkid
+     * @return
+     */
+    TbProjectBuild queryProjectBuildDetail(Integer proId,Integer pkid);
+
+    /**
+     * 获取该项目下的施工单位
+     * @param proId
+     * @return
+     */
+    List<Map<String,Object>> queryProjectBuildCompany(Integer proId);
 }

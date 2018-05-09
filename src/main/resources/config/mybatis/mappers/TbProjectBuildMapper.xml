@@ -29,6 +29,7 @@
     <result column="b_scope" property="bScope" jdbcType="LONGVARCHAR" />
     <result column="com_name" property="comName" jdbcType="VARCHAR"/>
     <result column="bid_type" property="bidType" jdbcType="VARCHAR"/>
+    <result column="acreage" property="acreage" jdbcType="VARCHAR"/>
   </resultMap>
 
   <select id="queryConstartProBuildByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -53,4 +54,18 @@
       FROM tb_project_build t
       WHERE t.`pro_id` = #{proId}
   </select>
+
+    <select id="queryProjectBuildDetail" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+          t.*
+          ,t1.`acreage`
+        FROM tb_project_build t
+        LEFT JOIN tb_project t1 ON t.`pro_id` = t1.`pro_id`
+        WHERE t.`pro_id` = #{proId}
+        AND t.`pkid` = #{pkid}
+    </select>
+
+    <select id="queryProjectBuildCompany" parameterType="java.lang.Integer" resultType="java.util.Map">
+
+    </select>
 </mapper>

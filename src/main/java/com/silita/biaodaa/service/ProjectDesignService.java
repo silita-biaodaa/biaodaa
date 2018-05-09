@@ -27,34 +27,27 @@ public class ProjectDesignService {
     TbProjectZhaotoubiaoMapper tbProjectZhaotoubiaoMapper;
 
     public TbProjectDesign getProjectDesignDetail(Map<String,Object> param){
+        Integer pkid = MapUtils.getInteger(param,"pkid");
         Integer proId = MapUtils.getInteger(param,"proId");
-        TbProjectDesign projectDesign = tbProjectDesignMapper.queryProjectDesignDetailLimitOneByProId(proId);
+        TbProjectDesign projectDesign = tbProjectDesignMapper.queryProjectDesignDetailByPkid(pkid);
         if(null == projectDesign){
             return new TbProjectDesign();
         }
         //获取勘察和设计单位
-        projectDesign.setDesignOrg(null);
-        projectDesign.setExploreOrg(null);
-        List<TbProjectDesign> projectDesignList = tbProjectDesignMapper.queryProjectDesignDetailByProId(proId);
-        if(null != projectDesignList && projectDesignList.size() > 0){
-            for(TbProjectDesign design : projectDesignList){
-                if(MyStringUtils.isNotNull(design.getRegisAddressDesign())){
-                    String desiginProvince = tbProjectDesignMapper.queryProvinceByName(design.getRegisAddressDesign());
-                    if(MyStringUtils.isNull(desiginProvince)){
-                        desiginProvince = "湖南省";
-                    }
-                    design.setDesignProvince(desiginProvince);
-                }
-                if(MyStringUtils.isNotNull(design.getRegisAddressExplore())){
-                    String exproloreProvince = tbProjectDesignMapper.queryProvinceByName(design.getRegisAddressExplore());
-                    if(MyStringUtils.isNull(exproloreProvince)){
-                        exproloreProvince = "湖南省";
-                    }
-                    design.setExploreProvince(exproloreProvince);
-                }
+        if(MyStringUtils.isNotNull(projectDesign.getRegisAddressDesign())){
+            String desiginProvince = tbProjectDesignMapper.queryProvinceByName(projectDesign.getRegisAddressDesign());
+            if(MyStringUtils.isNull(desiginProvince)){
+                desiginProvince = "湖南省";
             }
+            projectDesign.setDesignProvince(desiginProvince);
         }
-        projectDesign.setCompanyList(projectDesignList);
+        if(MyStringUtils.isNotNull(projectDesign.getRegisAddressExplore())){
+            String exproloreProvince = tbProjectDesignMapper.queryProvinceByName(projectDesign.getRegisAddressExplore());
+            if(MyStringUtils.isNull(exproloreProvince)){
+                exproloreProvince = "湖南省";
+            }
+            projectDesign.setExploreProvince(exproloreProvince);
+        }
         List<TbPersonProject> personProjectList = new ArrayList<>();
         //获取该项目下的施工
         List<TbProjectBuild> buildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
@@ -67,6 +60,7 @@ public class ProjectDesignService {
             personProjectList.addAll(this.getPersonList(projectSupervisionList));
         }
         //获取项目下的勘察和设计
+        List<TbProjectDesign> projectDesignList = tbProjectDesignMapper.queryProjectDesignDetailByProId(proId);
         if(null != projectDesignList && projectDesignList.size() > 0){
             personProjectList.addAll(this.getPersonList(projectDesignList));
         }

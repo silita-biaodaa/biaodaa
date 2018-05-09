@@ -38,4 +38,6 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @return
      */
     TbProjectDesign queryProjectDesignDetailLimitOneByProId(Integer proId);
+
+    TbProjectDesign queryProjectDesignDetailByPkid(Integer pkid);
 }

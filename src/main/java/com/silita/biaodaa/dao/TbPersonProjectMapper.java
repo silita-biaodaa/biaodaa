@@ -28,4 +28,11 @@ public interface TbPersonProjectMapper extends MyMapper<TbPersonProject> {
      * @return
      */
     List<TbPersonProject> queryInnerIdByPkid(List list);
+
+    /**
+     * 根据id获取人员信息
+     * @param param
+     * @return
+     */
+    List<TbPersonProject> queryPersonProjectByPid(Map<String,Object> param);
 }

@@ -134,9 +134,4 @@ public class TbProjectDesign {
      * 项目下的人
      */
     private List personList;
-
-    /**
-     * 项目下的单位
-     */
-    private List companyList;
 }
