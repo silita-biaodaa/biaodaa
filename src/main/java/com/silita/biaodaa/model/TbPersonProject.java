@@ -80,4 +80,9 @@ public class TbPersonProject {
      * 身份证
      */
     private  String idCard;
+
+    /**
+     * 执业印章号
+     */
+    private String sealNo;
 }

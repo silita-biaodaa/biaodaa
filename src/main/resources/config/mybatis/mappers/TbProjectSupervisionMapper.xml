@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbProjectSupervisionMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectSupervision" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="jlbdxh" property="jlbdxh" jdbcType="VARCHAR" />
+    <result column="pro_id" property="proId" jdbcType="INTEGER" />
+    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+    <result column="pro_type" property="proType" jdbcType="VARCHAR" />
+    <result column="com_id" property="comId" jdbcType="INTEGER" />
+    <result column="super_org" property="superOrg" jdbcType="VARCHAR" />
+    <result column="contract_date" property="contractDate" jdbcType="VARCHAR" />
+    <result column="contract_price" property="contractPrice" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="b_scope" property="bScope" jdbcType="LONGVARCHAR" />
+    <result column="bid_remark" property="bidRemark" jdbcType="LONGVARCHAR" />
+    <result column="contract_remark" property="contractRemark" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <select id="queryProjectSupervisionListByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    SELECT
+      t.*
+    FROM tb_project_supervision t
+    WHERE t.`pro_id` =#{proId};
+  </select>
+</mapper>

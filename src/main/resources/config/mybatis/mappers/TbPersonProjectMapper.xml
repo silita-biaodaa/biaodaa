@@ -28,11 +28,10 @@
       ,t.`safe_no`
       ,t.`status`
       ,t.`role`
-      ,t2.`id_card`
+      ,t.`innerid`
       ,t.`name`
     FROM tb_person_project t
     LEFT JOIN tb_project_build t1 ON t.`pid` = t1.`pkid`
-    LEFT JOIN tb_person t2 ON t.`name` = t2.`name`
     WHERE 1=1
     <if test="type != null and type != ''">
       and t.`type` = #{type}
@@ -42,7 +41,29 @@
       AND (t.`role` = #{role} OR t.`role` = #{roleOne})
     </if>
     <if test="company != null and company != ''">
-      AND t1.`b_name` = #{company}
+      AND t1.`b_org` = #{company}
     </if>
+    GROUP BY t.`innerid`
+  </select>
+
+  <select id="queryPersonByInnerId" resultType="java.util.Map" parameterType="java.lang.String">
+      SELECT
+        t1.`id_card` as idCard
+        ,t.`seal_no` AS sealNo
+      FROM tb_person_qualification t
+      LEFT JOIN tb_person t1 ON t.`per_id` = t1.`pkid`
+      WHERE t.`innerid` = #{innerId}
+      GROUP BY t1.`name`,t1.`id_card`
+  </select>
+
+  <select id="queryInnerIdByPkid" parameterType="java.util.List" resultMap="BaseResultMap">
+    SELECT
+      t.*
+     FROM tb_person_project t
+     WHERE t.`pid` IN
+     <foreach collection="list" item="list" index="index" separator="," open="(" close=")">
+       #{list.pkid}
+     </foreach>
+     GROUP BY t.`innerid`;
   </select>
 </mapper>

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Getter
@@ -128,4 +129,14 @@ public class TbProjectDesign {
      * 勘察单位所在地(省)
      */
     private String exploreProvince;
+
+    /**
+     * 项目下的人
+     */
+    private List personList;
+
+    /**
+     * 项目下的单位
+     */
+    private List companyList;
 }

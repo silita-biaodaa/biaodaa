@@ -23,7 +23,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @param proId
      * @return
      */
-    TbProjectDesign queryProjectDesignDetailByProId(Integer proId);
+    List<TbProjectDesign> queryProjectDesignDetailByProId(Integer proId);
 
     /**
      * 根据市获取省
@@ -31,4 +31,11 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @return
      */
     String queryProvinceByName(String name);
+
+    /**
+     * 查询基本信息
+     * @param proId
+     * @return
+     */
+    TbProjectDesign queryProjectDesignDetailLimitOneByProId(Integer proId);
 }

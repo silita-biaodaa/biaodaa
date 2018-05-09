@@ -56,16 +56,29 @@ public class ProjectZhaotoubiaoService {
         zhaoParam.put("type","build");
         List<TbPersonProject> personProjectList = tbPersonProjectMapper.queryPersonProject(zhaoParam);
         if((null != personProjectList && personProjectList.size() > 0) && null != personProjectList.get(0)){
+            if (null != personProjectList.get(0).getInnerid()){
+                Map<String,Object> cardMap = tbPersonProjectMapper.queryPersonByInnerId(personProjectList.get(0).getInnerid());
+                if (null != cardMap && null != cardMap.get("idCard")){
+                    zhaotoubiao.setIdCard(cardMap.get("idCard").toString());
+                }
+            }
             zhaotoubiao.setName(personProjectList.get(0).getName());
-            zhaotoubiao.setIdCard(personProjectList.get(0).getIdCard());
         }
 
-        //获取该项目下的所有人员
+        //获取该项目下施工的所有人员
         zhaoParam.remove("role");
         zhaoParam.remove("roleOne");
-        zhaoParam.remove("type");
-        zhaoParam.remove("company");
         List<TbPersonProject> personProjectAllList = tbPersonProjectMapper.queryPersonProject(zhaoParam);
+        if(null != personProjectAllList && personProjectAllList.size() >0){
+            for (TbPersonProject personProject : personProjectAllList){
+                if(null != personProject.getInnerid()){
+                    Map<String,Object> cardMap = tbPersonProjectMapper.queryPersonByInnerId(personProject.getInnerid());
+                    if (null != cardMap && null != cardMap.get("idCard")){
+                        personProject.setIdCard(cardMap.get("idCard").toString());
+                    }
+                }
+            }
+        }
         zhaotoubiao.setPersonList(personProjectAllList);
         return zhaotoubiao;
     }

@@ -43,17 +43,28 @@
     WHERE t.`pro_id` = #{proId}
   </select>
 
-  <select id="queryProjectDesignDetailByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    SELECT
+    <select id="queryProjectDesignDetailLimitOneByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
          t.*
         ,t1.`pro_scope`
+    FROM tb_project_design t
+    LEFT JOIN tb_project t1 ON t.`pro_id` = t1.`pro_id`
+    WHERE t.`pro_id` = #{proId}
+    limit 1
+    </select>
+
+  <select id="queryProjectDesignDetailByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT
+         t.`pkid`
+        ,t.`check_org`
+        ,t.`design_org`
+        ,t.`explore_org`
         ,t2.`org_code` AS checkOrgCode
         ,t3.`org_code` AS designOrgCode
         ,t4.`org_code` AS exploreOrgCode
         ,t3.`regis_address` AS regisAddressDesign
 	    ,t4.`regis_address` AS regisAddressExplore
     FROM tb_project_design t
-    LEFT JOIN tb_project t1 ON t.`pro_id` = t1.`pro_id`
     LEFT JOIN tb_company t2 ON t.`check_org` = t2.`com_name`
     LEFT JOIN tb_company t3 ON t.`design_org` = t3.`com_name`
     LEFT JOIN tb_company t4 ON t.`explore_org` = t4.`com_name`
