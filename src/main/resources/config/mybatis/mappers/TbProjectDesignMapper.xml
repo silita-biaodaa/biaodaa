@@ -90,18 +90,44 @@
 
 
     <select id="queryProjectDesignDetailByPkid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-      SELECT
-          t.*
-        ,t2.`org_code` AS checkOrgCode
-        ,t3.`org_code` AS designOrgCode
-        ,t4.`org_code` AS exploreOrgCode
-        ,t3.`regis_address` AS regisAddressDesign
-	    ,t4.`regis_address` AS regisAddressExplore
-    FROM tb_project_design t
-    LEFT JOIN tb_company t2 ON t.`check_org` = t2.`com_name`
-    LEFT JOIN tb_company t3 ON t.`design_org` = t3.`com_name`
-    LEFT JOIN tb_company t4 ON t.`explore_org` = t4.`com_name`
-    WHERE t.`pkid` = #{pkid}
-    GROUP BY t.`pkid`
+        SELECT
+              t.*
+            ,t2.`org_code` AS checkOrgCode
+            ,t3.`org_code` AS designOrgCode
+            ,t4.`org_code` AS exploreOrgCode
+            ,t3.`regis_address` AS regisAddressDesign
+            ,t4.`regis_address` AS regisAddressExplore
+        FROM tb_project_design t
+        LEFT JOIN tb_company t2 ON t.`check_org` = t2.`com_name`
+        LEFT JOIN tb_company t3 ON t.`design_org` = t3.`com_name`
+        LEFT JOIN tb_company t4 ON t.`explore_org` = t4.`com_name`
+        WHERE t.`pkid` = #{pkid}
+        GROUP BY t.`pkid`
+    </select>
+
+    <select id="queryExProjectDesignCompany" resultType="java.util.Map" parameterType="java.lang.Integer">
+        SELECT t.`explore_org` AS comName
+            ,t1.`org_code` AS orgCode
+            ,(SELECT t3.display_name FROM mishu.`area` t3 WHERE t3.path = SUBSTRING_INDEX(t2.`path`,',',1)) AS province
+            ,'勘查单位' AS companyType
+        FROM tb_project_design t
+        LEFT JOIN tb_company t1 ON t.`explore_org` = t1.`com_name`
+        LEFT JOIN mishu.`area` t2 ON t1.`regis_address` = t2.`name`
+        WHERE t.`pro_id` = #{proId}
+        AND t.`type` = 'explore'
+        GROUP BY t1.`com_id`
+    </select>
+
+    <select id="queryDeProjectDesignCompany" resultType="java.util.Map" parameterType="java.lang.Integer">
+        SELECT t.`design_org` AS comName
+            ,t1.`org_code` AS orgCode
+            ,(SELECT t3.display_name FROM mishu.`area` t3 WHERE t3.path = SUBSTRING_INDEX(t2.`path`,',',1)) AS province
+            ,'勘查单位' AS companyType
+        FROM tb_project_design t
+        LEFT JOIN tb_company t1 ON t.`design_org` = t1.`com_name`
+        LEFT JOIN mishu.`area` t2 ON t1.`regis_address` = t2.`name`
+        WHERE t.`pro_id` = #{proId}
+        AND t.`type` = 'design'
+        GROUP BY t1.`com_id`
     </select>
 </mapper>

@@ -4,6 +4,7 @@ import com.silita.biaodaa.model.TbProjectDesign;
 import com.silita.biaodaa.utils.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 施工图审查Mapper
@@ -13,6 +14,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
 
     /**
      * 根据项目id获取施工图审查
+     * created by zhushuai
      * @param id
      * @return
      */
@@ -20,6 +22,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
 
     /**
      * 获取详情
+     * created by zhushuai
      * @param proId
      * @return
      */
@@ -34,10 +37,33 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
 
     /**
      * 查询基本信息
+     * created by zhushuai
      * @param proId
      * @return
      */
     TbProjectDesign queryProjectDesignDetailLimitOneByProId(Integer proId);
 
+    /**
+     * 根据主键id获取详情
+     * created by zhushuai
+     * @param pkid
+     * @return
+     */
     TbProjectDesign queryProjectDesignDetailByPkid(Integer pkid);
+
+    /**
+     * 获取勘察公司名称
+     * created by zhushuai
+     * @param proId
+     * @return
+     */
+    List<Map<String,Object>> queryExProjectDesignCompany(Integer proId);
+
+    /**
+     * 获取设计公司名称
+     * created by zhushuai
+     * @param proId
+     * @return
+     */
+    List<Map<String,Object>> queryDeProjectDesignCompany(Integer proId);
 }

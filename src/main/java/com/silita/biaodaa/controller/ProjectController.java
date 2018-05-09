@@ -1,5 +1,6 @@
 package com.silita.biaodaa.controller;
 
+import com.silita.biaodaa.service.ProjectBuildService;
 import com.silita.biaodaa.service.ProjectDesignService;
 import com.silita.biaodaa.service.ProjectService;
 import com.silita.biaodaa.service.ProjectZhaotoubiaoService;
@@ -23,6 +24,8 @@ public class ProjectController extends BaseController{
     ProjectZhaotoubiaoService projectZhaotoubiaoService;
     @Autowired
     ProjectDesignService projectDesignService;
+    @Autowired
+    ProjectBuildService projectBuildService;
 
     /**
      * 业绩筛选
@@ -88,6 +91,8 @@ public class ProjectController extends BaseController{
             result.put("data",projectZhaotoubiaoService.getProjectZhaotoubiaoDetail(param));
         }else if("design".equals(param.get("tabType").toString())){
             result.put("data",projectDesignService.getProjectDesignDetail(param));
+        }else if("build".equals(param.get("tabType").toString())){
+            result.put("data",projectBuildService.getProjectDetail(param));
         }
         return result;
     }

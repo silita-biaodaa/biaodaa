@@ -27,4 +27,17 @@
     FROM tb_project_supervision t
     WHERE t.`pro_id` =#{proId};
   </select>
+
+  <select id="queryProjectSupCompany" parameterType="java.lang.Integer" resultType="java.util.Map">
+    SELECT
+      t1.`com_name` AS comName
+      ,t1.`org_code` AS orgCode
+      ,(SELECT t3.display_name FROM mishu.`area` t3 WHERE t3.path = SUBSTRING_INDEX(t2.`path`,',',1)) AS province
+      ,'监理单位' AS companyType
+    FROM tb_project_supervision t
+    LEFT JOIN tb_company t1 ON t.`com_id` = t1.`com_id`
+    LEFT JOIN mishu.`area` t2 ON t1.`regis_address` = t2.`name`
+    WHERE t.`pro_id`= #{proId}
+    GROUP BY t1.`com_id`
+  </select>
 </mapper>

@@ -30,6 +30,7 @@
     <result column="com_name" property="comName" jdbcType="VARCHAR"/>
     <result column="bid_type" property="bidType" jdbcType="VARCHAR"/>
     <result column="acreage" property="acreage" jdbcType="VARCHAR"/>
+    <result column="record_date" property="recordDate" jdbcType="VARCHAR"/>
   </resultMap>
 
   <select id="queryConstartProBuildByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -66,6 +67,14 @@
     </select>
 
     <select id="queryProjectBuildCompany" parameterType="java.lang.Integer" resultType="java.util.Map">
-
+        SELECT t.`b_org` AS comName
+            ,t1.`org_code` AS orgCode
+            ,(SELECT t3.display_name FROM mishu.`area` t3 WHERE t3.path = SUBSTRING_INDEX(t2.`path`,',',1)) AS province
+            ,'施工单位' AS companyType
+        FROM tb_project_build t
+        LEFT JOIN tb_company t1 ON t.`b_org` = t1.`com_name`
+        LEFT JOIN mishu.`area` t2 ON t1.`regis_address` = t2.`name`
+        WHERE t.`pro_id` = #{proId}
+        GROUP BY t1.`com_id`
     </select>
 </mapper>

@@ -37,6 +37,7 @@
       and t.`type` = #{type}
     </if>
     AND t1.`pro_id` = #{proId}
+    AND t1.`pkid` = #{pkid}
     <if test="role != null and role != ''">
       AND (t.`role` = #{role} OR t.`role` = #{roleOne})
     </if>

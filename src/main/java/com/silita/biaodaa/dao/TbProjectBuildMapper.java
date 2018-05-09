@@ -2,6 +2,7 @@ package com.silita.biaodaa.dao;
 
 import com.silita.biaodaa.model.TbProjectBuild;
 import com.silita.biaodaa.utils.MyMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public interface TbProjectBuildMapper extends MyMapper<TbProjectBuild> {
      * @param pkid
      * @return
      */
-    TbProjectBuild queryProjectBuildDetail(Integer proId,Integer pkid);
+    TbProjectBuild queryProjectBuildDetail(@Param("proId") Integer proId,@Param("pkid") Integer pkid);
 
     /**
      * 获取该项目下的施工单位

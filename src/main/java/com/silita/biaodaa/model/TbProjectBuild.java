@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.Map;
 import javax.persistence.*;
 
 @Getter
@@ -136,6 +137,11 @@ public class TbProjectBuild {
     private String constractAmount;
 
     /**
+     * 记录登记时间
+     */
+    private String recordDate;
+
+    /**
      * 面积
      */
     private String acreage;
@@ -159,4 +165,9 @@ public class TbProjectBuild {
      * 项目总监身份证
      */
     private String pdIdCard;
+
+    /**
+     * 公司
+     */
+    private Map companyMap;
 }
