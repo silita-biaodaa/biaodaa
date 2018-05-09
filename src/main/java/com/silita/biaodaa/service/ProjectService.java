@@ -219,6 +219,7 @@ public class ProjectService {
                     zhaotoubiao.setZhongbiaoAmount(buid.getBidPrice());
                     zhaotoubiao.setZhaobiaoType(buid.getBidType());
                     zhaotoubiao.setZhongbiaoCompany(buid.getBOrg());
+                    zhaotoubiao.setPkid(buid.getPkid());
                     list.add(zhaotoubiao);
                 }
             }
