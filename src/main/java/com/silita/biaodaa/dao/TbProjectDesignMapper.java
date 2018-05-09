@@ -66,4 +66,11 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @return
      */
     List<Map<String,Object>> queryDeProjectDesignCompany(Integer proId);
+
+    /**
+     * 获取勘察设计下的主项目Id
+     * @param comId
+     * @return
+     */
+    List<Integer> queryProIdByComId(Integer comId);
 }

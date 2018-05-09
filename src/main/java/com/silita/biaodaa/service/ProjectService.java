@@ -12,10 +12,7 @@ import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +31,8 @@ public class ProjectService {
     TbProjectBuildMapper tbProjectBuildMapper;
     @Autowired
     TbProjectZhaotoubiaoMapper tbProjectZhaotoubiaoMapper;
-    private Matcher matcher;
+    @Autowired
+    TbProjectSupervisionMapper tbProjectSupervisionMapper;
 
     /**
      * 按工程查询
@@ -58,7 +56,11 @@ public class ProjectService {
 
         PageHelper.startPage(page.getCurrentPage(),page.getPageSize());
         projectList = tbProjectMapper.queryObject(param);
-        this.putProvince(projectList);
+        if(null != projectList && projectList.size() > 0){
+            for(Map<String,Object> map : projectList){
+                this.putProvince(map);
+            }
+        }
         PageInfo pageInfo = new PageInfo(projectList);
         result.put("data",pageInfo.getList());
         result.put("pageNum",pageInfo.getPageNum());
@@ -95,7 +97,11 @@ public class ProjectService {
 
         PageHelper.startPage(page.getCurrentPage(),page.getPageSize());
         List<Map<String,Object>> projectList = tbProjectMapper.queryObjectByUnit(params);
-        this.putProvince(projectList);
+        if(null != projectList && projectList.size() > 0){
+            for(Map<String,Object> map : projectList){
+                this.putProvince(map);
+            }
+        }
         PageInfo pageInfo = new PageInfo(projectList);
         result.put("data",pageInfo.getList());
         result.put("pageNum",pageInfo.getPageNum());
@@ -246,23 +252,12 @@ public class ProjectService {
     /**
      * 将省信息放入集合中
      * created by zhushuai
-     * @param list
+     * @param param
      */
-    private void putProvince(List<Map<String,Object>> list){
-        List<Map<String,Object>> areaList = tbProjectMapper.queryNameAndPath();
-        if(null != list && list.size() > 0){
-            for (Map<String,Object> map : list){
-                for (Map<String,Object> areaMap : areaList){
-                    if(null == map.get("path")){
-                        map.put("province","湖南省");
-                        break;
-                    }else if(map.get("path").toString().split(",")[0].equals(areaMap.get("path").toString())){
-                        map.put("province",areaMap.get("name"));
-                        map.remove("path");
-                        break;
-                    }
-                }
-            }
+    private void putProvince(Map<String,Object> param){
+        if(null != param.get("proWhere")){
+            String province = tbProjectDesignMapper.queryProvinceByName(param.get("proWhere").toString());
+            param.put("province",province == null ? null : province);
         }
     }
 
@@ -403,4 +398,23 @@ public class ProjectService {
         return str;
     }
 
+
+    public List<Map<String,Object>> getProjectCompanyList(Integer companyId){
+        List<Map<String,Object>> resultMap = new ArrayList<>();
+        //获取施工下的主项目
+        List<Integer> list = tbProjectBuildMapper.queryProIdByComId(companyId);
+        //获取监理下的主项目
+        list.addAll(tbProjectSupervisionMapper.queryProIdByComId(companyId));
+        //获取勘察设计的主项目
+        list.addAll(tbProjectDesignMapper.queryProIdByComId(companyId));
+
+        //去掉重复的proId
+        if(null != list && list.size() > 0){
+            Set set = new HashSet(list);
+            List<Integer> proList = new ArrayList<>();
+            proList.addAll(set);
+            resultMap = tbProjectMapper.queryProjectListByIds(proList);
+        }
+        return resultMap;
+    }
 }

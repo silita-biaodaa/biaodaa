@@ -40,4 +40,11 @@
     WHERE t.`pro_id`= #{proId}
     GROUP BY t1.`com_id`
   </select>
+
+  <select id="queryProIdByComId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select
+      t.pro_id
+    from tb_project_supervision t
+    where t.`com_id` = #{comId}
+  </select>
 </mapper>

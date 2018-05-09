@@ -10,9 +10,7 @@
                 ,t.`pro_where` AS proWhere
                 ,t.`pro_org` AS proOrg
                 ,t.`pro_type` AS proType
-                ,t1.`path` AS path
         FROM tb_project t
-        LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
         where 1=1
         <if test="proName != null and proName != ''">
             AND (t.`pro_name` LIKE  CONCAT('%',#{proName},'%')  OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))
@@ -79,7 +77,6 @@
         <if test="areaCode != null and areaCode != ''">
             AND t1.`code` LIKE CONCAT(#{areaCode},'%')
         </if>
-        GROUP BY t.`pro_id`
     </select>
 
     <!--获取区域省级的名称和path-->
@@ -112,5 +109,21 @@
       LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
       LEFT JOIN tb_company t3 ON t.`pro_org` = t3.`com_name`
       WHERE t.`pro_id` = #{proId}
+    </select>
+
+    <select id="queryProjectListByIds" parameterType="java.util.List" resultType="java.util.Map">
+        SELECT
+            t.`pro_id` AS proId
+            ,t.`pro_name` AS proName
+            ,t.`pro_type` AS proType
+            ,t.`pro_where` AS proWhere
+            ,null AS pmName
+            ,(SELECT t2.display_name FROM mishu.`area` t2 WHERE t2.path = SUBSTRING_INDEX(t1.`path`,',',1)) AS province
+        FROM tb_project t
+        LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
+        WHERE t.`pro_id` IN
+        <foreach collection="list" item="list" index="index" open="(" close=")" separator=",">
+            #{index}
+        </foreach>
     </select>
 </mapper>

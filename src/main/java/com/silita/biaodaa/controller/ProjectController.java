@@ -96,4 +96,19 @@ public class ProjectController extends BaseController{
         }
         return result;
     }
+
+    /**
+     * 企业下的业绩列表
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/company/list",method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> companyProjectList(@RequestBody Map<String,Object> param){
+        Map<String,Object> result = new HashMap<String,Object>();
+        result.put("code",this.SUCCESS_CODE);
+        result.put("msg",this.SUCCESS_MSG);
+        result.put("data",projectService.getProjectCompanyList(MapUtils.getInteger(param,"comId")));
+        return result;
+    }
 }

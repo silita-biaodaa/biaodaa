@@ -130,4 +130,11 @@
         AND t.`type` = 'design'
         GROUP BY t1.`com_id`
     </select>
+
+    <select id="queryProIdByComId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select
+          t.pro_id
+        from tb_project_design t
+        WHERE t.`com_id` = #{comId}
+    </select>
 </mapper>

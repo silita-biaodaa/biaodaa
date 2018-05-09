@@ -4,6 +4,7 @@ import com.silita.biaodaa.model.TbProjectBuild;
 import com.silita.biaodaa.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.net.Inet4Address;
 import java.util.List;
 import java.util.Map;
 
@@ -49,4 +50,11 @@ public interface TbProjectBuildMapper extends MyMapper<TbProjectBuild> {
      * @return
      */
     List<Map<String,Object>> queryProjectBuildCompany(Integer proId);
+
+    /**
+     * 公司下的主项目Id
+     * @param comId
+     * @return
+     */
+    List<Integer> queryProIdByComId(Integer comId);
 }

@@ -27,4 +27,11 @@ public interface TbProjectSupervisionMapper extends MyMapper<TbProjectSupervisio
      * @return
      */
     List<Map<String,Object>> queryProjectSupCompany(Integer proId);
+
+    /**
+     * 获取监理下的主项目Id
+     * @param comId
+     * @return
+     */
+    List<Integer> queryProIdByComId(Integer comId);
 }
