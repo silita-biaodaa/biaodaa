@@ -56,7 +56,7 @@ public class ProjectZhaotoubiaoService {
 //        zhaoParam.put("company",param.get("company"));
         zhaoParam.put("role","项目经理");
         zhaoParam.put("roleOne","总监理工程师");
-        zhaoParam.put("type","build");
+//        zhaoParam.put("type","build");
         zhaoParam.put("pkid",param.get("pkid"));
         List<TbPersonProject> personProjectList = tbPersonProjectMapper.queryPersonProject(zhaoParam);
         if((null != personProjectList && personProjectList.size() > 0) && null != personProjectList.get(0)){
