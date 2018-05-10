@@ -62,7 +62,7 @@ public class ProjectDesignService {
         //获取项目下的勘察和设计
         List<Integer> pkidList = new ArrayList<>();
         pkidList.add(pkid);
-        personProjectList.addAll(this.getPersonList(pkidList));
+        personProjectList = this.getPersonList(pkidList);
 //        List<TbProjectDesign> projectDesignList = tbProjectDesignMapper.queryProjectDesignDetailByProId(proId);
 //        if(null != projectDesignList && projectDesignList.size() > 0){
 //            personProjectList.addAll(this.getPersonList(projectDesignList));

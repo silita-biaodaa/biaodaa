@@ -50,7 +50,7 @@ public class ProjectZhaotoubiaoService {
         //获取管理者姓名
         Map<String,Object> zhaoParam = new HashMap<>();
         zhaoParam.put("proId",param.get("proId"));
-        zhaoParam.put("company",param.get("company"));
+//        zhaoParam.put("company",param.get("company"));
         zhaoParam.put("role","项目经理");
         zhaoParam.put("roleOne","总监理工程师");
         zhaoParam.put("type","build");
