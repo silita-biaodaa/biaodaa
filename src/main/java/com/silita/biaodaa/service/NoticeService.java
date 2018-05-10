@@ -173,6 +173,7 @@ public class NoticeService {
         buildNoticeDetilTable(params);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<Map> list = noticeMapper.queryNoticeList(params);
+        sortingResult(list);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }

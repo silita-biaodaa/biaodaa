@@ -163,9 +163,17 @@
 
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
         <include refid="noticeListHead"/>
-        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
+        <choose>
+            <when test="type==99">
+                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
+                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
+            </when>
+            <otherwise>
+                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
+            </otherwise>
+        </choose>
         ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
-        <if test="type == 2">
+        <if test="type == 2 or type==99">
             <include refid="zhongbidaoDetailField"/>
         </if>
         <include refid="noticeListBaseFrom"/>
