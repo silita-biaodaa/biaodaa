@@ -182,21 +182,21 @@ public class ProjectService {
             String constartNo = null;
             TbProjectContract tbProjectContract = null;
             for(TbProjectBuild build : projectBuildList){
-                if (null != build.getContractRemark()|| !"未办理合同备案".equals(build.getContractRemark())){
                     remark = build.getContractRemark();
                     contractDate = null;
                     constartPrice = null;
                     constartNo = null;
                     tbProjectContract = new TbProjectContract();
+                if (null != build.getContractRemark()|| !"未办理合同备案".equals(build.getContractRemark())){
                     contractDate = remark.substring(this.getIndex(remark,"合同日期：")+5,this.getIndex(remark,","));
                     constartPrice = remark.substring(this.getIndex(remark,"合同价格：")+5,this.getIndex(remark,"万元"));
                     constartNo = remark.substring(this.getIndex(remark,"合同备案编号：")+7,remark.length());
-                    tbProjectContract.setProvRecordCode(constartNo);
-                    tbProjectContract.setAmount(constartPrice);
-                    tbProjectContract.setSignDate(contractDate);
-                    tbProjectContract.setCategory(build.getContractCategory());
-                    list.add(tbProjectContract);
                 }
+                tbProjectContract.setProvRecordCode(constartNo);
+                tbProjectContract.setAmount(constartPrice);
+                tbProjectContract.setSignDate(contractDate);
+                tbProjectContract.setCategory(build.getContractCategory());
+                list.add(tbProjectContract);
             }
         }
         return list;
@@ -214,18 +214,18 @@ public class ProjectService {
             String zhongbiaoDate = "";
             TbProjectZhaotoubiao zhaotoubiao = null;
             for(TbProjectBuild buid : buildList){
+                remark = buid.getBidRemark();
+                zhaotoubiao = new TbProjectZhaotoubiao();
                 if(null != buid.getBidRemark() && !"未办理中标备案".equals(buid.getBidRemark())){
-                    remark = buid.getBidRemark();
-                    zhaotoubiao = new TbProjectZhaotoubiao();
                     zhongbiaoDate = remark.substring(this.getIndex(remark,"中标日期："),this.getIndex(remark,","));
                     zhaotoubiao.setProId(proId.toString());
                     zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(this.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
-                    zhaotoubiao.setZhongbiaoAmount(buid.getBidPrice());
-                    zhaotoubiao.setZhaobiaoType(buid.getBidType());
-                    zhaotoubiao.setZhongbiaoCompany(buid.getBOrg());
-                    zhaotoubiao.setPkid(buid.getPkid());
-                    list.add(zhaotoubiao);
                 }
+                zhaotoubiao.setZhongbiaoAmount(buid.getBidPrice());
+                zhaotoubiao.setZhaobiaoType(buid.getBidType());
+                zhaotoubiao.setZhongbiaoCompany(buid.getBOrg());
+                zhaotoubiao.setPkid(buid.getPkid());
+                list.add(zhaotoubiao);
             }
         }
         //监理表
@@ -236,19 +236,19 @@ public class ProjectService {
             TbProjectZhaotoubiao zhaotoubiao = null;
             String amount = null;
             for(TbProjectSupervision proSup : projectSupervisionList){
+                remark = proSup.getBidRemark();
+                zhaotoubiao = new TbProjectZhaotoubiao();
+                zhaotoubiao.setProId(proId.toString());
                 if(null != proSup.getBidRemark() && !"未办理中标备案".equals(proSup.getBidRemark())){
-                    remark = proSup.getBidRemark();
-                    zhaotoubiao = new TbProjectZhaotoubiao();
                     zhongbiaoDate = remark.substring(this.getIndex(remark,"中标日期："),this.getIndex(remark,","));
-                    zhaotoubiao.setProId(proId.toString());
                     zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(this.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
-                    amount = remark.substring(this.getIndex(remark,"中标价格：")+"中标价格：".length(),this.getIndex(remark,","));
-                    zhaotoubiao.setZhongbiaoAmount(amount == null ? null : amount.substring(this.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
-                    zhaotoubiao.setZhaobiaoType("监理");
-                    zhaotoubiao.setZhongbiaoCompany(proSup.getSuperOrg());
-                    zhaotoubiao.setPkid(proSup.getPkid());
-                    list.add(zhaotoubiao);
+                    amount = remark.substring(this.getIndex(remark,"中标价格："),this.getIndex(remark,"万元"));
+                    zhaotoubiao.setZhongbiaoAmount(isNumeric(amount) == true ? amount.substring(amount.lastIndexOf("中标价格：")+"中标价格：".length(),amount.length()) : null);
                 }
+                zhaotoubiao.setZhaobiaoType("监理");
+                zhaotoubiao.setZhongbiaoCompany(proSup.getSuperOrg());
+                zhaotoubiao.setPkid(proSup.getPkid());
+                list.add(zhaotoubiao);
             }
         }
         return list;
@@ -410,5 +410,14 @@ public class ProjectService {
             resultMap = tbProjectMapper.queryProjectListByIds(proList);
         }
         return resultMap;
+    }
+
+    public static boolean isNumeric(String str){
+        for (int i =  str.length(); --i>=0;) {
+            if(Character.isDigit(str.charAt(i))){
+                return true;
+            }
+        }
+        return false;
     }
 }

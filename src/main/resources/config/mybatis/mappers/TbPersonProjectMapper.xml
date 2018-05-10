@@ -63,6 +63,7 @@
      <foreach collection="list" item="list" index="index" separator="," open="(" close=")">
        #{list.pkid}
      </foreach>
+      and t.type = 'design'
   </select>
 
   <select id="queryPersonProjectByPid" resultMap="BaseResultMap" parameterType="java.util.Map">
