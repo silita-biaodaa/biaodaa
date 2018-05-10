@@ -120,6 +120,7 @@
             ,t.`pro_name` AS proName
             ,t.`pro_type` AS proType
             ,t.`pro_where` AS proWhere
+            ,t.`pro_org` AS proOrg
             ,null AS pmName
             ,(SELECT t2.display_name FROM mishu.`area` t2 WHERE t2.path = SUBSTRING_INDEX(t1.`path`,',',1)) AS province
         FROM tb_project t
