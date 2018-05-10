@@ -50,19 +50,19 @@ public class ProjectBuildService {
         }
         //获取所有企业
         //获取施工单位
-        List<Map<String,Object>> projectBuildCompany = tbProjectBuildMapper.queryProjectBuildCompany(proId);
-        Map<String,Object> map = new HashMap<>();
-        map.put("companyBuild",projectBuildCompany);
+//        List<Map<String,Object>> projectBuildCompany = tbProjectBuildMapper.queryProjectBuildCompany(proId);
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("companyBuild",projectBuildCompany);
         //获取勘察单位
-        List<Map<String,Object>> projectExCompany = tbProjectDesignMapper.queryExProjectDesignCompany(proId);
-        map.put("companyExplore",projectExCompany);
+//        List<Map<String,Object>> projectExCompany = tbProjectDesignMapper.queryExProjectDesignCompany(proId);
+//        map.put("companyExplore",projectExCompany);
         //获取设计单位
-        List<Map<String,Object>> projectDeCompany = tbProjectDesignMapper.queryDeProjectDesignCompany(proId);
-        map.put("companyDesign",projectDeCompany);
+//        List<Map<String,Object>> projectDeCompany = tbProjectDesignMapper.queryDeProjectDesignCompany(proId);
+//        map.put("companyDesign",projectDeCompany);
         //获取监理单位
-        List<Map<String,Object>> projectSuvCompany = tbProjectSupervisionMapper.queryProjectSupCompany(proId);
-        map.put("companySuv",projectSuvCompany);
-        projectBuild.setCompanyMap(map);
+//        List<Map<String,Object>> projectSuvCompany = tbProjectSupervisionMapper.queryProjectSupCompany(proId);
+//        map.put("companySuv",projectSuvCompany);
+//        projectBuild.setCompanyMap(map);
         return projectBuild;
     }
 

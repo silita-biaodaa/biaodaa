@@ -11,6 +11,9 @@
                 ,t.`pro_org` AS proOrg
                 ,t.`pro_type` AS proType
         FROM tb_project t
+        <if test="areaCode != null and areaCode != ''">
+          LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
+        </if>
         where 1=1
         <if test="proName != null and proName != ''">
             AND (t.`pro_name` LIKE  CONCAT('%',#{proName},'%')  OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))

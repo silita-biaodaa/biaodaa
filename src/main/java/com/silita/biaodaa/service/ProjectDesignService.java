@@ -28,7 +28,7 @@ public class ProjectDesignService {
 
     public TbProjectDesign getProjectDesignDetail(Map<String,Object> param){
         Integer pkid = MapUtils.getInteger(param,"pkid");
-        Integer proId = MapUtils.getInteger(param,"proId");
+//        Integer proId = MapUtils.getInteger(param,"proId");
         TbProjectDesign projectDesign = tbProjectDesignMapper.queryProjectDesignDetailByPkid(pkid);
         if(null == projectDesign){
             return new TbProjectDesign();
@@ -50,25 +50,28 @@ public class ProjectDesignService {
         }
         List<TbPersonProject> personProjectList = new ArrayList<>();
         //获取该项目下的施工
-        List<TbProjectBuild> buildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
-        if (null != buildList && buildList.size() > 0){
-            personProjectList.addAll(this.getPersonList(buildList));
-        }
+//        List<TbProjectBuild> buildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
+//        if (null != buildList && buildList.size() > 0){
+//            personProjectList.addAll(this.getPersonList(buildList));
+//        }
         //获取该项目下的监理
-        List<TbProjectSupervision> projectSupervisionList = tbProjectSupervisionMapper.queryProjectSupervisionListByProId(proId);
-        if(null != personProjectList && projectSupervisionList.size() > 0){
-            personProjectList.addAll(this.getPersonList(projectSupervisionList));
-        }
+//        List<TbProjectSupervision> projectSupervisionList = tbProjectSupervisionMapper.queryProjectSupervisionListByProId(proId);
+//        if(null != personProjectList && projectSupervisionList.size() > 0){
+//            personProjectList.addAll(this.getPersonList(projectSupervisionList));
+//        }
         //获取项目下的勘察和设计
-        List<TbProjectDesign> projectDesignList = tbProjectDesignMapper.queryProjectDesignDetailByProId(proId);
-        if(null != projectDesignList && projectDesignList.size() > 0){
-            personProjectList.addAll(this.getPersonList(projectDesignList));
-        }
+        List<Integer> pkidList = new ArrayList<>();
+        pkidList.add(pkid);
+        personProjectList.addAll(this.getPersonList(pkidList));
+//        List<TbProjectDesign> projectDesignList = tbProjectDesignMapper.queryProjectDesignDetailByProId(proId);
+//        if(null != projectDesignList && projectDesignList.size() > 0){
+//            personProjectList.addAll(this.getPersonList(projectDesignList));
+//        }
         //获取招投标
-        List<TbProjectZhaotoubiao> projectZhaotoubiaoList = tbProjectZhaotoubiaoMapper.queryZhaotoubiaoListByProId(proId);
-        if(null != projectZhaotoubiaoList && projectZhaotoubiaoList.size() > 0){
-            personProjectList.addAll(this.getPersonList(projectZhaotoubiaoList));
-        }
+//        List<TbProjectZhaotoubiao> projectZhaotoubiaoList = tbProjectZhaotoubiaoMapper.queryZhaotoubiaoListByProId(proId);
+//        if(null != projectZhaotoubiaoList && projectZhaotoubiaoList.size() > 0){
+//            personProjectList.addAll(this.getPersonList(projectZhaotoubiaoList));
+//        }
         projectDesign.setPersonList(personProjectList);
         return projectDesign;
     }
