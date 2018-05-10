@@ -36,7 +36,7 @@ public class ProjectZhaotoubiaoService {
                 Map<String,Object> zhaoSuMap = tbProjectSupervisionMapper.querySuperDetail(param);
                 if(null != zhaoSuMap){
                     zhaoSuMap.put("bidType","监理");
-                    zhaotoubiao = this.getProjectZhao(zhaoMap);
+                    zhaotoubiao = this.getProjectZhao(zhaoSuMap);
                 }
             }
         }
@@ -83,7 +83,9 @@ public class ProjectZhaotoubiaoService {
 
     private TbProjectZhaotoubiao getProjectZhao(Map<String,Object> map){
         TbProjectZhaotoubiao zhaotoubiao = new TbProjectZhaotoubiao();
-        zhaotoubiao.setZhongbiaoCompany(map.get("bOrg").toString());
+        if(null != map.get("bOrg")){
+            zhaotoubiao.setZhongbiaoCompany(map.get("bOrg").toString());
+        }
         if(null != map.get("orgCode")){
             zhaotoubiao.setZhongbiaoCompanyCode(map.get("orgCode").toString());
         }
@@ -103,10 +105,20 @@ public class ProjectZhaotoubiaoService {
             zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate);
             zhaotoubiao.setZhongbiaoDate(zhongbiaoDate);
             if(null == zhaotoubiao.getZhongbiaoAmount()){
-                String amount = remark.substring(analysisUtil.getIndex(remark,"中标价格：")+5,analysisUtil.getIndex(remark,"万元"));
-                zhaotoubiao.setZhongbiaoAmount(amount == null ? null : amount);
+                String amount = remark.substring(analysisUtil.getIndex(remark,"中标价格："),analysisUtil.getIndex(remark,"万元"));
+                zhaotoubiao.setZhongbiaoAmount(isNumeric(amount) == true ? amount.substring(amount.lastIndexOf("中标价格：")+"中标价格：".length(),amount.length()) : null);
             }
         }
         return zhaotoubiao;
+    }
+
+
+    public static boolean isNumeric(String str){
+        for (int i =  str.length(); --i>=0;) {
+            if(Character.isDigit(str.charAt(i))){
+                return true;
+            }
+        }
+        return false;
     }
 }
