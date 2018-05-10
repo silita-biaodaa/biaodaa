@@ -41,6 +41,7 @@
        ,t.`check_finish_date`
     FROM tb_project_design t
     WHERE t.`pro_id` = #{proId}
+    GROUP BY t.`sgtxh`
   </select>
 
     <select id="queryProjectDesignDetailLimitOneByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">

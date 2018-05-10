@@ -49,6 +49,7 @@
         ,'施工' AS bidType
       FROM tb_project_build t
       WHERE t.`pro_id` = #{proId}
+      GROUP BY t.`bdxh`
   </select>
 
   <select id="queryProjectBuildByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">

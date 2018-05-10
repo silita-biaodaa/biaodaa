@@ -44,7 +44,6 @@
     <if test="company != null and company != ''">
       AND t1.`b_org` = #{company}
     </if>
-    GROUP BY t.`innerid`
   </select>
 
   <select id="queryPersonByInnerId" resultType="java.util.Map" parameterType="java.lang.String">
@@ -54,7 +53,6 @@
       FROM tb_person_qualification t
       LEFT JOIN tb_person t1 ON t.`per_id` = t1.`pkid`
       WHERE t.`innerid` = #{innerId}
-      GROUP BY t1.`name`,t1.`id_card`
   </select>
 
   <select id="queryInnerIdByPkid" parameterType="java.util.List" resultMap="BaseResultMap">
@@ -65,7 +63,6 @@
      <foreach collection="list" item="list" index="index" separator="," open="(" close=")">
        #{list.pkid}
      </foreach>
-     GROUP BY t.`innerid`;
   </select>
 
   <select id="queryPersonProjectByPid" resultMap="BaseResultMap" parameterType="java.util.Map">
