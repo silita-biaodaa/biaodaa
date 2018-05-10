@@ -4,10 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
-import com.silita.biaodaa.model.TbProject;
-import com.silita.biaodaa.model.TbProjectBuild;
-import com.silita.biaodaa.model.TbProjectContract;
-import com.silita.biaodaa.model.TbProjectZhaotoubiao;
+import com.silita.biaodaa.model.*;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -210,6 +207,7 @@ public class ProjectService {
         if(null != list && list.size() >0 && null != list.get(0)){
             return list;
         }
+        //施工表
         List<TbProjectBuild> buildList = tbProjectBuildMapper.queryZhaobiaoProByProId(proId);
         if(null != buildList && buildList.size() >0 && null != buildList.get(0)){
             String remark = "";
@@ -226,6 +224,29 @@ public class ProjectService {
                     zhaotoubiao.setZhaobiaoType(buid.getBidType());
                     zhaotoubiao.setZhongbiaoCompany(buid.getBOrg());
                     zhaotoubiao.setPkid(buid.getPkid());
+                    list.add(zhaotoubiao);
+                }
+            }
+        }
+        //监理表
+        List<TbProjectSupervision> projectSupervisionList = tbProjectSupervisionMapper.queryProjectSupervisionListByProId(proId);
+        if(null != projectSupervisionList && projectSupervisionList.size() > 0){
+            String remark = "";
+            String zhongbiaoDate = "";
+            TbProjectZhaotoubiao zhaotoubiao = null;
+            String amount = null;
+            for(TbProjectSupervision proSup : projectSupervisionList){
+                if(null != proSup.getBidRemark() && !"未办理中标备案".equals(proSup.getBidRemark())){
+                    remark = proSup.getBidRemark();
+                    zhaotoubiao = new TbProjectZhaotoubiao();
+                    zhongbiaoDate = remark.substring(this.getIndex(remark,"中标日期："),this.getIndex(remark,","));
+                    zhaotoubiao.setProId(proId.toString());
+                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(this.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
+                    amount = remark.substring(this.getIndex(remark,"中标价格：")+"中标价格：".length(),this.getIndex(remark,","));
+                    zhaotoubiao.setZhongbiaoAmount(amount == null ? null : amount.substring(this.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
+                    zhaotoubiao.setZhaobiaoType("监理");
+                    zhaotoubiao.setZhongbiaoCompany(proSup.getSuperOrg());
+                    zhaotoubiao.setPkid(proSup.getPkid());
                     list.add(zhaotoubiao);
                 }
             }
@@ -332,6 +353,8 @@ public class ProjectService {
         }else if (scope.contains("长") && scope.contains("宽")){
             //判断出现的次数
 
+        }else{
+            scope = null;
         }
         return scope;
     }
@@ -369,35 +392,6 @@ public class ProjectService {
         }
         return unitIndex;
     }
-
-    /**
-     * 截取日期
-     * @param str
-     * @return
-     */
-    private String getStrDate(String str){
-        String reg = "[0-9]{4}[-][0-9]{1,2}[-][0-9]{1,2}[ ][0-9]{1,2}[:][0-9]{1,2}[:][0-9]{1,2}";
-        Matcher matcher = Pattern.compile(str).matcher(reg);
-        if(matcher.find()){
-            return matcher.group(0);
-        }
-        return str;
-    }
-
-    /**
-     * 截取数字
-     * @param str
-     * @return
-     */
-    private String getStrNumber(String str){
-        String reg = "([1-9]\\d*\\.?\\d*)|(0\\.\\d*[1-9])";
-        Matcher matcher = Pattern.compile(str).matcher(reg);
-        while (matcher.find()){
-            return matcher.group(0);
-        }
-        return str;
-    }
-
 
     public List<Map<String,Object>> getProjectCompanyList(Integer companyId){
         List<Map<String,Object>> resultMap = new ArrayList<>();

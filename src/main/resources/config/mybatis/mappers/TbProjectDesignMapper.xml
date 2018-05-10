@@ -137,5 +137,6 @@
           t.pro_id
         from tb_project_design t
         WHERE t.`com_id` = #{comId}
+        group by t.pro_id
     </select>
 </mapper>

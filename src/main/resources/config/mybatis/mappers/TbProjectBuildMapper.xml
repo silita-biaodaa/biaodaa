@@ -85,5 +85,6 @@
           t.pro_id
         from tb_project_build t
         where t.com_id = #{comId}
+        GROUP BY t.`pro_id`
     </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.dao.TbPersonProjectMapper;
+import com.silita.biaodaa.dao.TbProjectSupervisionMapper;
 import com.silita.biaodaa.dao.TbProjectZhaotoubiaoMapper;
 import com.silita.biaodaa.model.TbPersonProject;
 import com.silita.biaodaa.model.TbProjectZhaotoubiao;
@@ -19,6 +20,8 @@ public class ProjectZhaotoubiaoService {
     TbProjectZhaotoubiaoMapper tbProjectZhaotoubiaoMapper;
     @Autowired
     TbPersonProjectMapper tbPersonProjectMapper;
+    @Autowired
+    TbProjectSupervisionMapper tbProjectSupervisionMapper;
 
     private static ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
 
@@ -27,23 +30,13 @@ public class ProjectZhaotoubiaoService {
         if (null == zhaotoubiao || null == zhaotoubiao.getPkid()){
             Map<String,Object> zhaoMap = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByBuild(param);
             if(null != zhaoMap){
-                zhaotoubiao = new TbProjectZhaotoubiao();
-                zhaotoubiao.setZhongbiaoCompany(zhaoMap.get("bOrg").toString());
-                if(null != zhaoMap.get("orgCode")){
-                    zhaotoubiao.setZhongbiaoCompanyCode(zhaoMap.get("orgCode").toString());
-                }
-                zhaotoubiao.setZhaobiaoType("施工");
-                if(null != zhaoMap.get("bidPrice")){
-                    zhaotoubiao.setZhongbiaoAmount(zhaoMap.get("bidPrice").toString());
-                }
-                if(null != zhaoMap.get("proScope")){
-                    zhaotoubiao.setProScope(zhaoMap.get("proScope").toString());
-                }
-                if(null != zhaoMap.get("bidRemark") && !"未办理中标备案".equals(zhaoMap.get("bidRemark").toString())){
-                    String remark = zhaoMap.get("bidRemark").toString();
-                    String zhongbiaoDate = remark.substring("中标日期：".length(),analysisUtil.getIndex(remark,","));
-                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate);
-                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate);
+                zhaoMap.put("bidType","施工");
+                zhaotoubiao = this.getProjectZhao(zhaoMap);
+            }else {
+                Map<String,Object> zhaoSuMap = tbProjectSupervisionMapper.querySuperDetail(param);
+                if(null != zhaoSuMap){
+                    zhaoSuMap.put("bidType","监理");
+                    zhaotoubiao = this.getProjectZhao(zhaoMap);
                 }
             }
         }
@@ -88,4 +81,32 @@ public class ProjectZhaotoubiaoService {
     }
 
 
+    private TbProjectZhaotoubiao getProjectZhao(Map<String,Object> map){
+        TbProjectZhaotoubiao zhaotoubiao = new TbProjectZhaotoubiao();
+        zhaotoubiao.setZhongbiaoCompany(map.get("bOrg").toString());
+        if(null != map.get("orgCode")){
+            zhaotoubiao.setZhongbiaoCompanyCode(map.get("orgCode").toString());
+        }
+        if(null != map.get("acreage")){
+            zhaotoubiao.setAcreage(map.get("acreage").toString());
+        }
+        zhaotoubiao.setZhaobiaoType(map.get("bidType").toString());
+        if(null != map.get("bidPrice")){
+            zhaotoubiao.setZhongbiaoAmount(map.get("bidPrice").toString());
+        }
+        if(null != map.get("proScope")){
+            zhaotoubiao.setProScope(map.get("proScope").toString());
+        }
+        if(null != map.get("bidRemark") && !"未办理中标备案".equals(map.get("bidRemark").toString())){
+            String remark = map.get("bidRemark").toString();
+            String zhongbiaoDate = remark.substring("中标日期：".length(),analysisUtil.getIndex(remark,","));
+            zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate);
+            zhaotoubiao.setZhongbiaoDate(zhongbiaoDate);
+            if(null == zhaotoubiao.getZhongbiaoAmount()){
+                String amount = remark.substring(analysisUtil.getIndex(remark,"中标价格：")+5,analysisUtil.getIndex(remark,"万元"));
+                zhaotoubiao.setZhongbiaoAmount(amount == null ? null : amount);
+            }
+        }
+        return zhaotoubiao;
+    }
 }
