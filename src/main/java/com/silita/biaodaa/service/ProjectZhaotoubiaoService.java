@@ -29,7 +29,9 @@ public class ProjectZhaotoubiaoService {
             if(null != zhaoMap){
                 zhaotoubiao = new TbProjectZhaotoubiao();
                 zhaotoubiao.setZhongbiaoCompany(zhaoMap.get("bOrg").toString());
-                zhaotoubiao.setZhongbiaoCompanyCode(zhaoMap.get("orgCode").toString());
+                if(null != zhaoMap.get("orgCode")){
+                    zhaotoubiao.setZhongbiaoCompanyCode(zhaoMap.get("orgCode").toString());
+                }
                 zhaotoubiao.setZhaobiaoType("施工");
                 if(null != zhaoMap.get("bidPrice")){
                     zhaotoubiao.setZhongbiaoAmount(zhaoMap.get("bidPrice").toString());
@@ -39,8 +41,8 @@ public class ProjectZhaotoubiaoService {
                 }
                 if(null != zhaoMap.get("bidRemark") && !"未办理中标备案".equals(zhaoMap.get("bidRemark").toString())){
                     String remark = zhaoMap.get("bidRemark").toString();
-                    String zhongbiaoDate = remark.substring(analysisUtil.getIndex(remark,"中标日期：")+"中标日期：".length(),analysisUtil.getIndex(remark,","));
-                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(analysisUtil.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
+                    String zhongbiaoDate = remark.substring("中标日期：".length(),analysisUtil.getIndex(remark,","));
+                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate);
                     zhaotoubiao.setZhongbiaoDate(zhongbiaoDate);
                 }
             }
