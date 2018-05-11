@@ -335,7 +335,13 @@ public class TbCompanyService {
                             String code = map.get("code").toString();
                             if("b1".equals(code)&&(years.indexOf("2016")>-1||years.indexOf("2017")>-1)){
                                 qyhjList.add(map);
-                            }else if(years.indexOf("2017")>-1){
+                            }else if("b2".equals(code)&&years.indexOf("2017")>-1){
+                                qyhjList.add(map);
+                            }else if("b3".equals(code)&&(years.indexOf("2017")>-1||years.indexOf("2018")>-1)){
+                                qyhjList.add(map);
+                            }else if("c1".equals(code)&&years.indexOf("2016")>-1){
+                                qyhjList.add(map);
+                            }else if("c2".equals(code)&&years.indexOf("2016")>-1){
                                 qyhjList.add(map);
                             }
                         }
