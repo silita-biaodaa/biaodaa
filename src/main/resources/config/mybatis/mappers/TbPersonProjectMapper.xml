@@ -31,18 +31,13 @@
       ,t.`innerid`
       ,t.`name`
     FROM tb_person_project t
-    LEFT JOIN tb_project_build t1 ON t.`pid` = t1.`pkid`
     WHERE 1=1
     <if test="type != null and type != ''">
       and t.`type` = #{type}
     </if>
-    AND t1.`pro_id` = #{proId}
-    AND t1.`pkid` = #{pkid}
+    AND t.`pid` = #{pkid}
     <if test="role != null and role != ''">
       AND (t.`role` = #{role} OR t.`role` = #{roleOne})
-    </if>
-    <if test="company != null and company != ''">
-      AND t1.`b_org` = #{company}
     </if>
   </select>
 
@@ -74,5 +69,22 @@
     where t.pid = #{pid}
     and (t.role = #{role} or t.role = #{roleOther})
     and t.type = 'build'
+  </select>
+
+  <select id="queryPersonByParam" resultMap="BaseResultMap" parameterType="java.util.Map">
+    SELECT
+      t.com_name,
+      t.`cert_no`,
+      t.`safe_no`,
+      t.`status`,
+      t.`role`,
+      t.`innerid`,
+      t.`name` ,
+      t.`type`
+    FROM
+      tb_person_project t
+    WHERE 1 = 1
+      AND t.`type` = #{type}
+      AND t.`pid`= #{pkid}
   </select>
 </mapper>

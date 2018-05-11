@@ -49,7 +49,11 @@ public class ProjectZhaotoubiaoService {
 //        zhaoParam.put("company",param.get("company"));
         zhaoParam.put("role","项目经理");
         zhaoParam.put("roleOne","总监理工程师");
-//        zhaoParam.put("type","build");
+        if("监理".equals(param.get("zhaobiaoType").toString())){
+            zhaoParam.put("type","supervision");
+        }else {
+            zhaoParam.put("type","build");
+        }
         zhaoParam.put("pkid",param.get("pkid"));
         List<TbPersonProject> personProjectList = tbPersonProjectMapper.queryPersonProject(zhaoParam);
         if((null != personProjectList && personProjectList.size() > 0) && null != personProjectList.get(0)){
@@ -65,7 +69,7 @@ public class ProjectZhaotoubiaoService {
         //获取该项目下施工的所有人员
         zhaoParam.remove("role");
         zhaoParam.remove("roleOne");
-        List<TbPersonProject> personProjectAllList = tbPersonProjectMapper.queryPersonProject(zhaoParam);
+        List<TbPersonProject> personProjectAllList = tbPersonProjectMapper.queryPersonByParam(zhaoParam);
         if(null != personProjectAllList && personProjectAllList.size() >0){
             for (TbPersonProject personProject : personProjectAllList){
                 if(null != personProject.getInnerid()){

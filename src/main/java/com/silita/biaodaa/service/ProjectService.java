@@ -404,9 +404,8 @@ public class ProjectService {
 
         //去掉重复的proId
         if(null != list && list.size() > 0){
-            Set set = new HashSet(list);
-            List<Integer> proList = new ArrayList<>();
-            proList.addAll(set);
+            Set<Integer> set = new HashSet(list);
+            List<Integer> proList = new ArrayList<>(set);
             resultMap = tbProjectMapper.queryProjectListByIds(proList);
         }
         return resultMap;
