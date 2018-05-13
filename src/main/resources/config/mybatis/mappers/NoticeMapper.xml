@@ -66,16 +66,39 @@
     </sql>
 
     <sql id="noticeListHead">
-        SELECT DISTINCT s.id,s.title,s.opendate,s.type
+        SELECT DISTINCT s.id,s.title,s.opendate,s.type,s.source
         ,<include refid="noticeTypeConvert"/>
+        <if test="source==null or source=='' or source=='hunan'">
+        <choose>
+            <when test="type==99 or type ==null or type ==''">
+                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
+                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
+            </when>
+            <otherwise>
+                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
+            </otherwise>
+        </choose>
+        ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
+        <if test="type == 2 or type==99  or type ==null or type ==''">
+            <include refid="zhongbidaoDetailField"/>
+        </if>
+        </if>
     </sql>
 
     <sql id="noticeListBaseFrom">
-        FROM mishu.snatchurl s
+        FROM
+        <choose>
+            <when test="snatchurl_tbn != null and snatchurl_tbn != ''">
+            ${snatchurl_tbn} s
+            </when>
+            <otherwise>
+            mishu.snatchurl s
+            </otherwise>
+        </choose>
     </sql>
 
     <sql id="noticeListTail">
-        and DATE_ADD(now(),INTERVAL -90 DAY) &lt; openDate
+        and DATE_ADD(now(),INTERVAL -90 DAY) &lt; s.openDate
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </sql>
 
@@ -123,19 +146,6 @@
 
     <select id="searchNoticeList" resultType="Map" parameterType="Map">
         <include refid="noticeListHead"/>
-        <choose>
-            <when test="type==99">
-                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
-                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
-            </when>
-            <otherwise>
-                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
-            </otherwise>
-        </choose>
-        ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
-        <if test="type == 2 or type==99">
-            <include refid="zhongbidaoDetailField"/>
-        </if>
         <include refid="noticeListBaseFrom"/>
         WHERE s.isShow = 0
         <if test="projectType !=null and projectType!=''">
@@ -163,20 +173,8 @@
 
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
         <include refid="noticeListHead"/>
-        <choose>
-            <when test="type==99">
-                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
-                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
-            </when>
-            <otherwise>
-                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
-            </otherwise>
-        </choose>
-        ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
-        <if test="type == 2 or type==99">
-            <include refid="zhongbidaoDetailField"/>
-        </if>
         <include refid="noticeListBaseFrom"/>
+        <if test="source==null or source=='' or source=='hunan'">
         <!--资质判断 -->
         <if test="(zzTypeOne !=null and zzTypeOne !='') or (zzTypeTwo !=null and zzTypeTwo !='') or (zzTypeThree !=null and zzTypeThree !='')">
             join mishu.snatch_url_cert suc on suc.contId=s.id
@@ -222,12 +220,13 @@
                     AND detail.tbEndDate &lt;= #{kbDateEnd}
                 </if>
             </when>
-            <otherwise>
-                <if test="type == 2 ">
-                    left join mishu.${detailTable} detail on s.id=detail.snatchurlid
-                </if>
-            </otherwise>
+            <!--<otherwise>-->
+                <!--<if test="type == 2 ">-->
+                    <!--left join mishu.${detailTable} detail on s.id=detail.snatchurlid-->
+                <!--</if>-->
+            <!--</otherwise>-->
         </choose>
+        </if>
         WHERE s.isShow = 0
         <if test="projectType !=null and projectType!=''">
             AND s.biddingType =#{projectType}
@@ -241,8 +240,10 @@
         <if test="title !=null and title !=''">
             AND s.title LIKE '%${title}%'
         </if>
-        <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
-            AND  !(detail.projSum REGEXP '[^0-9.]') AND detail.projSum !=''
+        <if test="source==null or source=='' or source=='hunan'">
+            <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
+                AND  !(detail.projSum REGEXP '[^0-9.]') AND detail.projSum !=''
+            </if>
         </if>
         <choose>
             <when test="type==99">
@@ -258,21 +259,36 @@
     <select id="queryNoticeDetail" resultType="Map" parameterType="Map">
         SELECT s.id,s.title,s.opendate,s.type
         ,<include refid="noticeTypeConvert"/>
-        ,s.url,IFNULL(dl.projdq,aa.name) as projDq,dl.pbMode,dl.projSum,
-        <if test="type == 0">
-            dl.bmSite,dl.kbSite,dl.kbStaffAsk,
-            (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} ) zzRank,
-            dl.tbAssureEndDate,
-            dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
-            dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
+        ,s.url,
+        <if test="source==null or source=='' or source=='hunan'">
+            IFNULL(dl.projdq,aa.name) as projDq,dl.pbMode,dl.projSum,
+            <if test="type == 0">
+                dl.bmSite,dl.kbSite,dl.kbStaffAsk,
+                (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} ) zzRank,
+                dl.tbAssureEndDate,
+                dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
+                dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
+            </if>
+            <if test="type == 2">
+                dl.oneName,dl.oneOffer,dl.twoName,dl.twoOffer,dl.threeName,dl.threeOffer,
+            </if>
+            dl.block,
         </if>
-        <if test="type == 2">
-            dl.oneName,dl.oneOffer,dl.twoName,dl.twoOffer,dl.threeName,dl.threeOffer,
-        </if>
-        dl.block,sc.content
+        sc.content
         <include refid="noticeListBaseFrom"/>
-         left join mishu.snatchurlcontent sc on sc.snatchurlid=s.id
+        left join
+        <choose>
+            <when test="snatchurlcontent_tbn != null and snatchurlcontent_tbn != ''">
+                ${snatchurlcontent_tbn} sc
+            </when>
+            <otherwise>
+                mishu.snatchurlcontent sc
+            </otherwise>
+        </choose>
+        on sc.snatchurlid=s.id
+        <if test="source==null or source=='' or source=='hunan'">
          left join mishu.${detailTable} dl on dl.snatchurlid=s.id
+        </if>
         left join mishu.area aa on aa.name_abbr=s.city and aa.grade=1
          where s.type = #{type} and s.isshow=0 and s.id=#{id}
     </select>
@@ -299,10 +315,6 @@
 
     <select id="queryRelations" resultType="Map" parameterType="Long">
         <include refid="noticeListHead"/>
-        ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail WHERE snatchUrlId =s.id ) as zhaobiao_pbMode
-        ,(SELECT GROUP_CONCAT(distinct pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail WHERE snatchUrlId =s.id ) as zhongbiao_pbMode
-        ,(SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
-        <include refid="zhongbidaoDetailField"/>
         <include refid="noticeListBaseFrom"/>
          join (
         <include refid="relationNotices"/>

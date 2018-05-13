@@ -12,6 +12,7 @@ import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
+import com.silita.biaodaa.utils.RouteUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import static com.silita.biaodaa.common.RedisConstantInterface.*;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
+import static com.silita.biaodaa.utils.RouteUtils.HUNAN_SOURCE;
 import static org.apache.commons.collections.MapUtils.getString;
 
 /**
@@ -53,10 +55,130 @@ public class NoticeController extends BaseController{
         }
     }
 
+    private Map accessFilter(Map params){
+        Map resultMap = new HashMap();
+        Page page = buildPage(params);
+        Integer pageNo = page.getCurrentPage();
+        Integer pageSize = page.getPageSize();
+        String kbDateStart= MapUtils.getString(params, "kbDateStart");
+        String kbDateEnd= MapUtils.getString(params, "kbDateEnd");
+        if(MyStringUtils.isNotNull(kbDateStart)
+                && MyDateUtils.getDistanceOfTwoDate(kbDateStart,this.minDate)>0){
+            resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
+            resultMap.put(this.MSG_FLAG, "开标开始时间超出访问范围！");
+        }else if(MyStringUtils.isNotNull(kbDateEnd)
+                && MyDateUtils.getDistanceOfTwoDate(kbDateEnd,this.minDate)>0){
+            resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
+            resultMap.put(this.MSG_FLAG, "开标结束时间超出访问范围！");
+        }else if(pageSize>maxPageSize || pageNo>maxPageNum) {
+            resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
+            resultMap.put(this.MSG_FLAG, "超出访问范围！");
+        }
+        return resultMap;
+    }
+
+    private  void parseRouteSource(Map params){
+        String source =null;
+        String province =  MapUtils.getString(params,"province");
+        if(MyStringUtils.isNotNull(province)){
+            province = province.substring(0,2);
+            switch (province){
+                case"北京":source="beij";break;
+                case"天津":source="tianj";break;
+                case"河北":source="hebei";break;
+                case"山西":source="sanx";break;
+                case"内蒙":source="neimg";break;
+                case"辽宁":source="liaon";break;
+                case"吉林":source="jil";break;
+                case"黑龙":source="heilj";break;
+                case"上海":source="shangh";break;
+                case"江苏":source="jiangs";break;
+                case"浙江":source="zhej";break;
+                case"安徽":source="anh";break;
+                case"福建":source="fuj";break;
+                case"江西":source="jiangx";break;
+                case"山东":source="shand";break;
+                case"河南":source="henan";break;
+                case"湖北":source="hubei";break;
+                case"广东":source="guangd";break;
+                case"广西":source="guangx";break;
+                case"海南":source="hain";break;
+                case"重庆":source="chongq";break;
+                case"四川":source="sichuan";break;
+                case"贵州":source="guiz";break;
+                case"云南":source="yunn";break;
+                case"陕西":source="shanxi";break;
+                case"甘肃":source="gans";break;
+                case"青海":source="qingh";break;
+                case"宁夏":source="ningx";break;
+                case"湖南":source=HUNAN_SOURCE;break;
+                case"新疆":source="xinjiang";break;
+                case"西藏":source="xizang";break;
+            }
+        }
+        params.put("source",source);
+        settingRouteTable(params);
+    }
+
+    private void settingRouteTable(Map params){
+        String source =  MapUtils.getString(params,"source");
+        if(MyStringUtils.isNotNull(source)) {
+            params.put("snatchurl_tbn", RouteUtils.routeTableName("mishu.snatchurl", source));
+            params.put("snatchurlcontent_tbn", RouteUtils.routeTableName("mishu.snatchurlcontent", source));
+            params.put("snatchpress_tbn", RouteUtils.routeTableName("mishu.snatchpress", source));
+        }
+    }
+
+    private void parseViewParams(Map params){
+        String dqsStr =  MapUtils.getString(params,"regions");
+        String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
+        if(dqsStrList!=null && dqsStrList.length>0){
+            if(dqsStrList.length==1){
+                params.put("province",dqsStrList[0]);
+            }else if(dqsStrList.length==2){
+                params.put("province",dqsStrList[0]);
+                if(MyStringUtils.isNotNull(dqsStrList[1])) {
+                    params.put("city", dqsStrList[1].replace("市",""));
+                }
+            }
+        }
+
+        parseRouteSource(params);//从地区解析出source，设置表名
+
+        String pbModes = MapUtils.getString(params,"pbModes");
+        String[] pbModesList =MyStringUtils.splitParam(pbModes);
+        if(pbModesList!=null && pbModesList.length>0){
+            StringBuffer modeStr = new StringBuffer();
+            for(String mode: pbModesList){
+                modeStr.append("'"+mode+"',");
+            }
+            modeStr.deleteCharAt(modeStr.length()-1);
+            params.put("modeStr",modeStr.toString());
+        }
+
+        String zztype = MapUtils.getString(params,"zzType");
+        String[] zztypeList =MyStringUtils.splitParam(zztype);
+        if(zztypeList!=null && zztypeList.length>0){
+            if(zztypeList.length==1){
+                params.put("zzTypeOne",zztypeList[0]);
+            }else if(zztypeList.length==2){
+                params.put("zzTypeTwo",zztypeList[1]);
+            }else if(zztypeList.length==3){
+                params.put("zzTypeThree",zztypeList[2]);
+            }
+        }
+        if(MyStringUtils.isNotNull(params.get("projSumStart"))){
+            params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));
+        }
+        if(MyStringUtils.isNotNull(params.get("projSumEnd"))){
+            params.put("projSumEnd",Integer.parseInt(params.get("projSumEnd").toString()));
+        }
+    }
+
     @ResponseBody
     @RequestMapping(value = "/searchList",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map<String,Object> searchList(@RequestBody Map params){
-        Map resultMap = new HashMap();
+        Map resultMap =null;
         try {
 //        search.setTypeToInt(type);
 //        encodingConvert(search);
@@ -64,20 +186,9 @@ public class NoticeController extends BaseController{
 
             Page page = buildPage(params);
             Integer pageNo = page.getCurrentPage();
-            Integer pageSize = page.getPageSize();
-            String kbDateStart= MapUtils.getString(params, "kbDateStart");
-            String kbDateEnd= MapUtils.getString(params, "kbDateEnd");
-            if(MyStringUtils.isNotNull(kbDateStart)
-                    && MyDateUtils.getDistanceOfTwoDate(kbDateStart,this.minDate)>0){
-                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
-                resultMap.put(this.MSG_FLAG, "开标开始时间超出访问范围！");
-            }else if(MyStringUtils.isNotNull(kbDateEnd)
-                    && MyDateUtils.getDistanceOfTwoDate(kbDateEnd,this.minDate)>0){
-                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
-                resultMap.put(this.MSG_FLAG, "开标结束时间超出访问范围！");
-            }else if(pageSize>maxPageSize || pageNo>maxPageNum){
-                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
-                resultMap.put(this.MSG_FLAG, "超出访问范围！");
+            resultMap=accessFilter(params);
+           if(resultMap.size()>0){
+               return resultMap;
             }else {
                 if (pageNo >= maxPageNum) {
                     resultMap.put("isLastPage", true);
@@ -89,6 +200,7 @@ public class NoticeController extends BaseController{
                 String listKey = RedisConstantInterface.GG_SEARCH_LIST + paramHash;
                 PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
                 if (pageInfo == null) {
+                    parseViewParams(params);
                     pageInfo = noticeService.searchNoticeList(page, params);
                     if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
                         myRedisTemplate.setObject(listKey, pageInfo, LIST_OVER_TIME);
@@ -110,27 +222,16 @@ public class NoticeController extends BaseController{
     @ResponseBody
     @RequestMapping(value = "/queryList",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map<String,Object> queryList(@RequestBody Map params){
-        Map resultMap = new HashMap();
+        Map resultMap = null;
         try {
             settingUserId(params);
 //        search.setTypeToInt(type);
 //        encodingConvert(search);
             Page page = buildPage(params);
             Integer pageNo = page.getCurrentPage();
-            Integer pageSize = page.getPageSize();
-            String kbDateStart= MapUtils.getString(params, "kbDateStart");
-            String kbDateEnd= MapUtils.getString(params, "kbDateEnd");
-            if(MyStringUtils.isNotNull(kbDateStart)
-                    && MyDateUtils.getDistanceOfTwoDate(kbDateStart,this.minDate)>0){
-                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
-                resultMap.put(this.MSG_FLAG, "开标开始时间超出访问范围！");
-            }else if(MyStringUtils.isNotNull(kbDateEnd)
-                    && MyDateUtils.getDistanceOfTwoDate(kbDateEnd,this.minDate)>0){
-                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
-                resultMap.put(this.MSG_FLAG, "开标结束时间超出访问范围！");
-            }else if(pageSize>maxPageSize || pageNo>maxPageNum){
-                resultMap.put(this.CODE_FLAG, INVALIDATE_PARAM_CODE);
-                resultMap.put(this.MSG_FLAG, "超出访问范围！");
+            resultMap=accessFilter(params);
+            if(resultMap.size()>0){
+                return resultMap;
             }else {
                 if (pageNo >= maxPageNum) {
                     resultMap.put("isLastPage", true);
@@ -142,6 +243,7 @@ public class NoticeController extends BaseController{
                 String listKey = RedisConstantInterface.GG_LIST + paramHash;
                 PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
                 if (pageInfo == null) {
+                    parseViewParams(params);
                     pageInfo = noticeService.queryNoticeList(page, params);
                     if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
                         myRedisTemplate.setObject(listKey, pageInfo, LIST_OVER_TIME);
@@ -203,27 +305,42 @@ public class NoticeController extends BaseController{
             String listKey = RedisConstantInterface.GG_DETAIL + paramHash;
             List<Map> detailList = (List<Map>) myRedisTemplate.getObject(listKey);
             if(detailList ==null) {
+                settingRouteTable(params);
                 detailList = noticeService.queryNoticeDetail(params);
                 if(detailList!=null && detailList.size()>0){
                     myRedisTemplate.setObject(listKey,detailList, DETAIL_OVER_TIME);
                 }
             }
-            addNoticeCollStatus(detailList, params);
-            resultMap.put(DATA_FLAG,detailList);
-            Long relNoticeCount =  noticeService.queryRelCount(id);
-            resultMap.put("relNoticeCount",relNoticeCount);//相关公告数量
 
-            //招标详情
-            String type= MapUtils.getString(params, "type");
-            if(type.equals(SNATCHURL_ZHAOBIAO)){
-                Integer relCompanySize = noticeService.queryCompanyCountById(params);
-                List<Map> fileList = noticeService.queryNoticeFile(id);
-                int fileSize =0;
-                if(fileList !=null && fileList.size()>0){
-                    fileSize = fileList.size();
+            String source =  MapUtils.getString(params,"source");
+            if(MyStringUtils.isNull(source) || source.equals(HUNAN_SOURCE)) {
+                addNoticeCollStatus(detailList, params);
+            }else{
+                //todo:全国公告暂不支持关注状态，统一返回false
+                noticeService.addCollStatusByRoute(detailList);
+            }
+            resultMap.put(DATA_FLAG,detailList);
+
+            if(MyStringUtils.isNull(source) || source.equals(HUNAN_SOURCE)) {
+                Long relNoticeCount = noticeService.queryRelCount(id);
+                resultMap.put("relNoticeCount", relNoticeCount);//相关公告数量
+                //招标详情
+                String type = MapUtils.getString(params, "type");
+                if (type.equals(SNATCHURL_ZHAOBIAO)) {
+                    Integer relCompanySize = noticeService.queryCompanyCountById(params);
+                    List<Map> fileList = noticeService.queryNoticeFile(id);
+                    int fileSize = 0;
+                    if (fileList != null && fileList.size() > 0) {
+                        fileSize = fileList.size();
+                    }
+                    resultMap.put("relCompanySize", relCompanySize);//资质相关企业
+                    resultMap.put("fileCount", fileSize);//文件列表
                 }
-                resultMap.put("relCompanySize",relCompanySize);//资质相关企业
-                resultMap.put("fileCount",fileSize);//文件列表
+            }else{
+                //todo:全国公告暂不支持
+                resultMap.put("relNoticeCount", 0);//相关公告数量
+                resultMap.put("relCompanySize", 0);//资质相关企业
+                resultMap.put("fileCount", 0);//文件列表
             }
             successMsg(resultMap);
         }catch (Exception e){
