@@ -389,6 +389,11 @@ public class ProjectService {
             List<Integer> proList = new ArrayList<>(set);
             resultMap = tbProjectMapper.queryProjectListByIds(proList);
         }
+        if(null != resultMap && resultMap.size() > 0){
+            for(Map<String,Object> map : resultMap){
+                this.putProvince(map);
+            }
+        }
         return resultMap;
     }
 

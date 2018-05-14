@@ -28,6 +28,7 @@
     <if test="keyWord!=null and keyWord!=''">
       and ( q.name like CONCAT('%',#{keyWord},'%') or q.com_name like CONCAT('%',#{keyWord},'%') )
     </if>
+    ORDER BY q.`valid_date` DESC
   </select>
 
 
