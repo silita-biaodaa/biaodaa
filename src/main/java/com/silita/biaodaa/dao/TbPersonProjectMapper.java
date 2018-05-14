@@ -20,7 +20,7 @@ public interface TbPersonProjectMapper extends MyMapper<TbPersonProject> {
      * @param innerId
      * @return
      */
-    Map<String,Object> queryPersonByInnerId(String innerId);
+    List<Map<String,Object>> queryPersonByInnerId(List list);
 
     /**
      * 根据Pkid获取innerId

@@ -58,9 +58,12 @@ public class ProjectZhaotoubiaoService {
         List<TbPersonProject> personProjectList = tbPersonProjectMapper.queryPersonProject(zhaoParam);
         if((null != personProjectList && personProjectList.size() > 0) && null != personProjectList.get(0)){
             if (null != personProjectList.get(0).getInnerid()){
-                Map<String,Object> cardMap = tbPersonProjectMapper.queryPersonByInnerId(personProjectList.get(0).getInnerid());
-                if (null != cardMap && null != cardMap.get("idCard")){
-                    zhaotoubiao.setIdCard(cardMap.get("idCard").toString());
+                List<Map<String,Object>> list = tbPersonProjectMapper.queryPersonByInnerId(personProjectList);
+                if(null != list && list.size() > 0){
+                    Map<String,Object> cardMap = list.get(0);
+                    if (null != cardMap && null != cardMap.get("idCard")){
+                        zhaotoubiao.setIdCard(cardMap.get("idCard").toString());
+                    }
                 }
             }
             zhaotoubiao.setName(personProjectList.get(0).getName());
@@ -71,11 +74,16 @@ public class ProjectZhaotoubiaoService {
         zhaoParam.remove("roleOne");
         List<TbPersonProject> personProjectAllList = tbPersonProjectMapper.queryPersonByParam(zhaoParam);
         if(null != personProjectAllList && personProjectAllList.size() >0){
-            for (TbPersonProject personProject : personProjectAllList){
-                if(null != personProject.getInnerid()){
-                    Map<String,Object> cardMap = tbPersonProjectMapper.queryPersonByInnerId(personProject.getInnerid());
-                    if (null != cardMap && null != cardMap.get("idCard")){
-                        personProject.setIdCard(cardMap.get("idCard").toString());
+            List<Map<String,Object>> cardList = tbPersonProjectMapper.queryPersonByInnerId(personProjectAllList);
+            if(null != cardList && cardList.size() > 0){
+                for (TbPersonProject personProject : personProjectAllList){
+                    for(Map<String,Object> map : cardList){
+                        if(null != map.get("innerid") && map.get("innerid").toString().equals(personProject.getInnerid())){
+                            if (null != map && null != map.get("idCard")){
+                                personProject.setIdCard(map.get("idCard").toString());
+                                break;
+                            }
+                        }
                     }
                 }
             }

@@ -41,13 +41,17 @@
     </if>
   </select>
 
-  <select id="queryPersonByInnerId" resultType="java.util.Map" parameterType="java.lang.String">
+  <select id="queryPersonByInnerId" resultType="java.util.Map" parameterType="java.util.List">
       SELECT
         t1.`id_card` as idCard
         ,t.`seal_no` AS sealNo
+        ,t.`innerid` AS innerid
       FROM tb_person_qualification t
       LEFT JOIN tb_person t1 ON t.`per_id` = t1.`pkid`
-      WHERE t.`innerid` = #{innerId}
+      WHERE t.`innerid` in
+      <foreach collection="list" separator="," index="index" close=")" open="(" item="list">
+        #{list.innerid}
+      </foreach>
       GROUP BY t.`innerid`
   </select>
 

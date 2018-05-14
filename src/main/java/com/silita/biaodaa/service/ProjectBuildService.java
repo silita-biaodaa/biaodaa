@@ -12,6 +12,7 @@ import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,13 +68,17 @@ public class ProjectBuildService {
     }
 
     private String getIdCard(TbPersonProject pser){
-        Map<String,Object> resutMap = null;
+        List<TbPersonProject> perList = new ArrayList<>();
+        List<Map<String,Object>> resutMapList = null;
         String idCard = null;
         if(null != pser){
             if(null != pser.getInnerid()){
-                resutMap =  tbPersonProjectMapper.queryPersonByInnerId(pser.getInnerid());
-                if(null != resutMap && null != resutMap.get("idCrad")){
-                    idCard = resutMap.get("idCrad").toString();
+                perList.add(pser);
+                resutMapList =  tbPersonProjectMapper.queryPersonByInnerId(perList);
+                if(null != resutMapList &&  resutMapList.size() > 0){
+                    if(null != resutMapList.get(0).get("idCrad")){
+                        idCard =  resutMapList.get(0).get("idCrad").toString();
+                    }
                 }
             }
         }

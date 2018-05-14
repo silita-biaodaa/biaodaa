@@ -82,18 +82,21 @@ public class ProjectDesignService {
     private List<TbPersonProject> getPersonList (List list){
         List<TbPersonProject> personProjectList = new ArrayList<>();
         List<TbPersonProject> person = tbPersonProjectMapper.queryInnerIdByPkid(list);
-        Map<String,Object> resultMap = null;
+        List<Map<String,Object>> resultMapList  = tbPersonProjectMapper.queryPersonByInnerId(person);;
         for(TbPersonProject per : person){
-            if(null != per.getInnerid()){
-                resultMap = tbPersonProjectMapper.queryPersonByInnerId(per.getInnerid());
-                if (null != resultMap && null != resultMap.get("idCard")){
-                    per.setIdCard(resultMap.get("idCard").toString());
-                }
-                if(null != resultMap && null != resultMap.get("sealNo")){
-                    per.setSealNo(resultMap.get("sealNo").toString());
+            for(Map<String,Object> map : resultMapList){
+                if(null != map.get("innerid") && map.get("innerid").toString().equals(per.getInnerid())){
+                    if (null != map && null != map.get("idCard")){
+                        per.setIdCard(map.get("idCard").toString());
+                    }
+                    if(null != map && null != map.get("sealNo")){
+                        per.setSealNo(map.get("sealNo").toString());
+                    }
+                    personProjectList.add(per);
+                    break;
                 }
             }
-            personProjectList.add(per);
+
         }
         return personProjectList;
     }
