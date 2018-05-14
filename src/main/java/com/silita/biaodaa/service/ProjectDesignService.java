@@ -82,21 +82,23 @@ public class ProjectDesignService {
     private List<TbPersonProject> getPersonList (List list){
         List<TbPersonProject> personProjectList = new ArrayList<>();
         List<TbPersonProject> person = tbPersonProjectMapper.queryInnerIdByPkid(list);
-        List<Map<String,Object>> resultMapList  = tbPersonProjectMapper.queryPersonByInnerId(person);;
-        for(TbPersonProject per : person){
-            for(Map<String,Object> map : resultMapList){
-                if(null != map.get("innerid") && map.get("innerid").toString().equals(per.getInnerid())){
-                    if (null != map && null != map.get("idCard")){
-                        per.setIdCard(map.get("idCard").toString());
+        if(null != person && person.size() > 0){
+            List<Map<String,Object>> resultMapList  = tbPersonProjectMapper.queryPersonByInnerId(person);;
+            for(TbPersonProject per : person){
+                for(Map<String,Object> map : resultMapList){
+                    if(null != map.get("innerid") && map.get("innerid").toString().equals(per.getInnerid())){
+                        if (null != map && null != map.get("idCard")){
+                            per.setIdCard(map.get("idCard").toString());
+                        }
+                        if(null != map && null != map.get("sealNo")){
+                            per.setSealNo(map.get("sealNo").toString());
+                        }
+                        personProjectList.add(per);
+                        break;
                     }
-                    if(null != map && null != map.get("sealNo")){
-                        per.setSealNo(map.get("sealNo").toString());
-                    }
-                    personProjectList.add(per);
-                    break;
                 }
-            }
 
+            }
         }
         return personProjectList;
     }

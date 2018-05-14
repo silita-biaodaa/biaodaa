@@ -258,7 +258,7 @@ public class ProjectService {
     private void putProvince(Map<String,Object> param){
         if(null != param.get("proWhere")){
             String proWhere = param.get("proWhere").toString();
-            String province = proWhere.substring(0,projectAnalysisUtil.getIndex(proWhere,"省"));
+            String province = proWhere.substring(0,projectAnalysisUtil.getIndex(proWhere,"省")+1);
             param.put("province",province == null ? null : province);
         }
     }
