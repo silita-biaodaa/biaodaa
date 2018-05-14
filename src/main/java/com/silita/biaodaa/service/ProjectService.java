@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,8 @@ public class ProjectService {
     @Autowired
     TbProjectSupervisionMapper tbProjectSupervisionMapper;
 
+    private static ProjectAnalysisUtil projectAnalysisUtil = new ProjectAnalysisUtil();
+
     /**
      * 按工程查询
      * @param param
@@ -44,12 +47,6 @@ public class ProjectService {
         Page page = new Page();
         page.setPageSize(pageSize);
         page.setCurrentPage(pageNum);
-
-        String areaCode = "";
-        if (null != param.get("area")){
-            areaCode = tbCompanyMapper.getAreaCode(param.get("area").toString());
-        }
-        param.put("areaCode",areaCode);
 
         PageHelper.startPage(page.getCurrentPage(),page.getPageSize());
         projectList = tbProjectMapper.queryObject(param);
@@ -86,12 +83,6 @@ public class ProjectService {
         page.setCurrentPage(pageNum);
         page.setPageSize(pageSize);
 
-        String areaCode = "";
-        if (null != params.get("area")){
-            areaCode = tbCompanyMapper.getAreaCode(params.get("area").toString());
-        }
-        params.put("areaCode",areaCode);
-
         PageHelper.startPage(page.getCurrentPage(),page.getPageSize());
         List<Map<String,Object>> projectList = tbProjectMapper.queryObjectByUnit(params);
         if(null != projectList && projectList.size() > 0){
@@ -121,17 +112,6 @@ public class ProjectService {
         if(null != scope){
             scope = this.analysisScope(scope);
             project.setAcreage(scope);
-        }
-        if(null != project.getPath()){
-            project.setProvince("湖南省");
-            List<Map<String,Object>> areaList = tbProjectMapper.queryNameAndPath();
-            for (Map<String,Object> areaMap : areaList){
-                if(project.getPath().split(",")[0].equals(areaMap.get("path").toString())){
-                    project.setProvince(areaMap.get("name").toString());
-                    project.setPath(null);
-                    break;
-                }
-            }
         }
         result.put("data",project);
         return result;
@@ -277,7 +257,8 @@ public class ProjectService {
      */
     private void putProvince(Map<String,Object> param){
         if(null != param.get("proWhere")){
-            String province = tbProjectDesignMapper.queryProvinceByName(param.get("proWhere").toString());
+            String proWhere = param.get("proWhere").toString();
+            String province = proWhere.substring(0,projectAnalysisUtil.getIndex(proWhere,"省"));
             param.put("province",province == null ? null : province);
         }
     }
