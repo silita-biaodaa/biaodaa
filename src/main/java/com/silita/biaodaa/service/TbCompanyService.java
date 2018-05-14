@@ -123,7 +123,19 @@ public class TbCompanyService {
         Map<String,Object> param = new HashMap<>();
         if(comId!=null){
             if(comId==0){
-                return tbPersonQualificationMapper.getCompanyPersonCate(param);
+                List<Map<String,Object>> categoryList = new ArrayList<>();
+                String [] str = {"一级注册建筑师","一级临时注册建造师","一级注册建造师","一级注册结构工程师",
+                        "二级注册建筑师","二级临时注册建造师","二级注册建造师","二级注册结构工程师",
+                        "注册公用设备工程师（动力）","注册公用设备工程师（暖通空调）","注册公用设备工程师（给水排水）",
+                        "注册化工工程师","注册土木工程师（岩土）","注册电气工程师（供配电）","注册电气工程师（发输变电）",
+                        "注册监理工程师","注册造价工程师"};
+                for(int i=0 ; i<str.length ; i++){
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("category",str[i]);
+                    map.put("num",0);
+                    categoryList.add(map);
+                }
+                return categoryList;
             }
             TbCompany company = getCompany(comId);
             if(company!=null){

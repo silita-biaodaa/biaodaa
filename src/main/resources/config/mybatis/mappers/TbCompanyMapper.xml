@@ -22,7 +22,7 @@
 
   <select id="filterCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
     select c.*
-    from tb_company_bak c
+    from tb_company c
     where 1=1
     <if test="keyWord!=null and keyWord!=''">
       and c.com_name like CONCAT('%',#{keyWord},'%')
