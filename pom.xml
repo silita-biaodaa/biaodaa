@@ -26,7 +26,7 @@
   <name>biaodaa</name>
   <groupId>com.biaodaa</groupId>
   <artifactId>biaodaa</artifactId>
-  <version>1.0.113</version>
+  <version>1.0.114</version>
 
   <properties>
     <spring.version>4.1.6.RELEASE</spring.version>
@@ -65,7 +65,7 @@
     <repository>
       <id>public</id>  <!--这个ID需要与你新建的组group ID一致-->
       <name>Public Repository</name>
-      <url>http://120.78.253.169/nexus/content/groups/public/</url>
+      <url>http://120.78.253.169:8081/nexus/content/groups/public/</url>
     </repository>
     <repository>
       <id>aliyun</id>
