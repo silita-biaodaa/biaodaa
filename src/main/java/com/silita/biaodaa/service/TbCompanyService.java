@@ -607,7 +607,7 @@ public class TbCompanyService {
 
             }
         }
-        PageInfo pageInfo  = filterCompany(page,param);
+        PageInfo pageInfo  = queryCompanyPerson(page,param);
         personMap.put(key,pageInfo);
         globalCache.setPersonMap(personMap);
         globalCache.getVaildTime().put(key,nowTime);
