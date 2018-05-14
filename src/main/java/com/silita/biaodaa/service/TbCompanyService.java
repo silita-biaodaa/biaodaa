@@ -66,6 +66,8 @@ public class TbCompanyService {
         if(num>0){
             tbCompany.setCollected(true);
         }
+        // TODO: 18/5/7 存续状态写死
+        tbCompany.setSubsist("存续");
         return tbCompany;
     }
 
@@ -121,7 +123,19 @@ public class TbCompanyService {
         Map<String,Object> param = new HashMap<>();
         if(comId!=null){
             if(comId==0){
-                return tbPersonQualificationMapper.getCompanyPersonCate(param);
+                List<Map<String,Object>> categoryList = new ArrayList<>();
+                String [] str = {"一级注册建筑师","一级临时注册建造师","一级注册建造师","一级注册结构工程师",
+                        "二级注册建筑师","二级临时注册建造师","二级注册建造师","二级注册结构工程师",
+                        "注册公用设备工程师（动力）","注册公用设备工程师（暖通空调）","注册公用设备工程师（给水排水）",
+                        "注册化工工程师","注册土木工程师（岩土）","注册电气工程师（供配电）","注册电气工程师（发输变电）",
+                        "注册监理工程师","注册造价工程师"};
+                for(int i=0 ; i<str.length ; i++){
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("category",str[i]);
+                    map.put("num",0);
+                    categoryList.add(map);
+                }
+                return categoryList;
             }
             TbCompany company = getCompany(comId);
             if(company!=null){
@@ -331,10 +345,15 @@ public class TbCompanyService {
                         if(map.get("code")!=null&&map.get("years")!=null){
                             String years = map.get("years").toString();
                             String code = map.get("code").toString();
-
                             if("b1".equals(code)&&(years.indexOf("2016")>-1||years.indexOf("2017")>-1)){
                                 qyhjList.add(map);
-                            }else if(years.indexOf("2017")>-1){
+                            }else if("b2".equals(code)&&years.indexOf("2017")>-1){
+                                qyhjList.add(map);
+                            }else if("b3".equals(code)&&(years.indexOf("2017")>-1||years.indexOf("2018")>-1)){
+                                qyhjList.add(map);
+                            }else if("c1".equals(code)&&years.indexOf("2016")>-1){
+                                qyhjList.add(map);
+                            }else if("c2".equals(code)&&years.indexOf("2016")>-1){
                                 qyhjList.add(map);
                             }
                         }
@@ -353,14 +372,16 @@ public class TbCompanyService {
 
                     for(Map<String,Object> qyhj : qyhjList){
 
-                        //--计算分值------------start
-                        if(qyhj.get("score")!=null&&qyhj.get("type")!=null){
+                        //--计算分值------------start--只计算 joinType = 承建单位
+                        if(qyhj.get("score")!=null&&qyhj.get("type")!=null
+                                &&qyhj.get("joinType")!=null
+                                &&"承建单位".equals(qyhj.get("joinType").toString())){
                             String scoreStr = qyhj.get("score").toString();
                             if("gjjhj".equals(qyhj.get("type").toString())&&gjjScore.size()<3){
                                 gjjScore.add(Double.valueOf(scoreStr));
                             }
                             if("sjhj".equals(qyhj.get("type").toString())){
-                                if(gjjScore.size()<7){
+                                if(sjScore.size()<7){
                                     sjScore.add(Double.valueOf(scoreStr));
                                 }else{
                                     sjScore7.add(Double.valueOf(scoreStr));
@@ -433,10 +454,15 @@ public class TbCompanyService {
                     for(Double d :sjScore){
                         score = score + d;
                     }
+                    Double score7 = 0d;
                     for(Double d :sjScore7){
-                        score = score + d/5;
+                        score7 = score7 + d;
                     }
-                    score = score + secur + unScore;
+                    score7 = score7 / 5;
+                    score = score + score7 + secur + unScore;
+                    if(score==0&&unScore==0&&resultList.size()==0){
+                        score = null;
+                    }
                     resultMap.put("reputation",resultList);
                     resultMap.put("score",score);
                 }

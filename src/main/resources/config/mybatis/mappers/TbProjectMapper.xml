@@ -10,22 +10,23 @@
                 ,t.`pro_where` AS proWhere
                 ,t.`pro_org` AS proOrg
                 ,t.`pro_type` AS proType
-                ,(SELECT t2.name FROM mishu.`area` t2 WHERE t2.`path` = SUBSTRING_INDEX(t1.path,',',1)) AS province
+                ,t.`pro_address` AS proAddress
         FROM tb_project t
-        LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
         where 1=1
         <if test="proName != null and proName != ''">
-            AND t.`pro_name` LIKE  CONCAT('%',#{proName},'%')
+            AND (t.`pro_name` LIKE  CONCAT('%',#{proName},'%')  OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))
         </if>
         <if test="proType != null and proName != ''">
             AND t.`pro_type` = #{proType}
         </if>
-        <if test="proOrg != null and proOrg != ''">
-            AND t.`pro_org` LIKE CONCAT('%',#{proOrg},'%')
+        <!--<if test="proOrg != null and proOrg != ''">-->
+            <!--AND t.`pro_org` LIKE CONCAT('%',#{proOrg},'%')-->
+        <!--</if>-->
+        <if test="area != null and area != ''">
+            AND t.`pro_where` LIKE CONCAT(#{area},'%')
         </if>
-        <if test="areaCode != null and areaCode != ''">
-            AND t1.`code` LIKE CONCAT(#{areaCode},'%')
-        </if>
+        GROUP BY t.`pro_id`,t.`pro_org`
+        ORDER BY t.`pro_where` desc,t.`pro_org` desc
     </select>
 
     <!--按单位查询列表-->
@@ -35,13 +36,12 @@
         ,t.`pro_name` AS proName
         ,t.`pro_where` AS proWhere
         ,t.`pro_type` AS proType
-        ,t1.`path` AS path
+        ,t.`pro_address` AS proAddress
         ,<if test="pactType == '施工'">t2.`b_org` AS proOrg</if>
         <if test="pactType == '监理'">t3.`super_org` AS proOrg</if>
         <if test="pactType == '勘察'">t4.`explore_org` AS proOrg</if>
         <if test="pactType == '设计'">t5.`design_org` AS proOrg</if>
         FROM tb_project t
-        LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
         <if test="pactType == '施工'">
             LEFT JOIN mishu.`tb_project_build` t2 ON t2.`pro_id` = t.`pro_id`
             <if test="proOrg != null and proOrg != ''">
@@ -74,14 +74,55 @@
         <if test="proType != null and proName != ''">
             AND t.`pro_type` = #{proType}
         </if>
-        <if test="areaCode != null and areaCode != ''">
-            AND t1.`code` LIKE CONCAT(#{areaCode},'%')
+        <if test="area != null and area != ''">
+            AND t.`pro_where` LIKE CONCAT(#{area},'%')
         </if>
-        GROUP BY t.`pro_id`
     </select>
 
     <!--获取区域省级的名称和path-->
     <select id="queryNameAndPath"  resultType="java.util.Map">
         select name,path from area where grade=0 order by name_abbr
+    </select>
+
+    <!--获取项目详情-->
+    <select id="queryProjectDetail" parameterType="java.lang.Integer" resultType="com.silita.biaodaa.model.TbProject">
+       SELECT t.pro_id AS proId
+       ,t.`xmid` AS xmlid
+       ,t.`pro_name` AS proName
+       ,t.`pro_no` AS proNo
+       ,t.`project_no` AS projectNo
+       ,t.`pro_org` AS proOrg
+       ,t.`pro_where` AS proWhere
+       ,t.`pro_address` AS proAddress
+       ,t.`invest_amount` AS investAmount
+       ,t.`approval_num` AS approvalNum
+       ,t.`pro_type` AS proType
+       ,t.`build_type` AS buildType
+       ,(CASE WHEN t.`acreage` IS NULL THEN t.`pro_scope` ELSE t.`acreage`END) AS acreage
+       ,t.`land_licence` AS landLicence
+       ,t.`plan_licence` AS planLicence
+       ,t.`pro_level` AS proLevel
+       ,t.`pro_use` AS proUse
+       ,t3.`org_code` AS orgCode
+      FROM tb_project t
+      LEFT JOIN tb_company t3 ON t.`pro_org` = t3.`com_name`
+      WHERE t.`pro_id` = #{proId}
+    </select>
+
+    <select id="queryProjectListByIds" parameterType="java.util.List" resultType="java.util.Map">
+        SELECT
+            t.`pro_id` AS proId
+            ,t.`pro_name` AS proName
+            ,t.`pro_type` AS proType
+            ,t.`pro_where` AS proWhere
+            ,t.`pro_org` AS proOrg
+            ,null AS pmName
+            ,(SELECT t2.display_name FROM mishu.`area` t2 WHERE t2.path = SUBSTRING_INDEX(t1.`path`,',',1)) AS province
+        FROM tb_project t
+        LEFT JOIN mishu.`area` t1 ON t.`pro_where` = t1.`name`
+        WHERE t.`pro_id` IN
+        <foreach collection="list" item="list" index="index" open="(" close=")" separator=",">
+            #{list}
+        </foreach>
     </select>
 </mapper>

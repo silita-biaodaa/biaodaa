@@ -23,13 +23,12 @@
   <select id="filterCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
     select c.*
     from tb_company c
-    left join area a on a.name = c.regis_address
     where 1=1
     <if test="keyWord!=null and keyWord!=''">
       and c.com_name like CONCAT('%',#{keyWord},'%')
     </if>
-    <if test="areaCode!=null and areaCode!=''">
-      and a.code like CONCAT(#{areaCode},'%')
+    <if test="areaName!=null and areaName!=''">
+      and c.regis_address like CONCAT(#{areaName},'%')
     </if>
     <if test="minCapital!=null">
       <![CDATA[ and c.regis_capital >= #{minCapital} ]]>
@@ -73,7 +72,7 @@
   </select>
   
   <select id="getCertQyhj" parameterType="Map" resultType="Map">
-    select q.projName,q.projType,q.years,zh.type,zh.code,zh.mateName,zh.score,zh.shortName,zh.shortRemark
+    select q.projName,q.projType,q.joinType,q.years,zh.type,zh.code,zh.mateName,zh.score,zh.shortName,zh.shortRemark
     from cert_qyhj q
     left join prize_zh zh on q.zhUuid=zh.uuid
     where q.zhUuid is not null
@@ -87,7 +86,7 @@
   <select id="getUndesirable" parameterType="Map" resultType="Map">
     select nature,publishDate,projectName,actionCode,validityDate,publishSite,badBehaviorContent,score
     from cert_undesirable
-    where  validityDate > date(now()) and srcUUid in
+    where  validityDate > date(now()) and persionName is null and  srcUUid in
     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
       #{item}
     </foreach>
@@ -96,7 +95,7 @@
   <select id="getUndesirableScore" parameterType="Map" resultType="Double">
     select sum(score)
     from cert_undesirable
-    where  validityDate > date(now()) and srcUUid in
+    where  validityDate > date(now()) and persionName is null and srcUUid in
     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
       #{item}
     </foreach>

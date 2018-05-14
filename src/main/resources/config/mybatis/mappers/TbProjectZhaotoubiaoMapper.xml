@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbProjectZhaotoubiaoMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectZhaotoubiao" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="pro_id" property="proId" jdbcType="VARCHAR" />
+    <result column="zhongbiao_code" property="zhongbiaoCode" jdbcType="VARCHAR" />
+    <result column="prov_zhongbiao_code" property="provZhongbiaoCode" jdbcType="VARCHAR" />
+    <result column="zhaobiao_type" property="zhaobiaoType" jdbcType="VARCHAR" />
+    <result column="zhaobiao_way" property="zhaobiaoWay" jdbcType="VARCHAR" />
+    <result column="zhongbiao_date" property="zhongbiaoDate" jdbcType="VARCHAR" />
+    <result column="zhongbiao_amount" property="zhongbiaoAmount" jdbcType="VARCHAR" />
+    <result column="zhaobiao_agency_company" property="zhaobiaoAgencyCompany" jdbcType="VARCHAR" />
+    <result column="zhaobiao_company_code" property="zhaobiaoCompanyCode" jdbcType="VARCHAR" />
+    <result column="zhongbiao_company" property="zhongbiaoCompany" jdbcType="VARCHAR" />
+    <result column="zhongbiao_company_code" property="zhongbiaoCompanyCode" jdbcType="VARCHAR" />
+    <result column="record_date" property="recordDate" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="acreage" property="acreage" jdbcType="VARCHAR"/>
+    <result column="pro_scope" property="proScope" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <!--获取项目下的招投标列表-->
+  <select id="queryZhaotoubiaoListByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+     select t.`pkid`
+            ,t.`pro_id`
+            ,t.`zhongbiao_code`
+            ,t.`prov_zhongbiao_code`
+            ,t.`record_date`
+            ,t.`zhaobiao_agency_company`
+            ,t.`zhaobiao_company_code`
+            ,t.`zhaobiao_type`
+            ,t.`zhaobiao_way`
+            ,t.`zhongbiao_amount`
+            ,t.`zhongbiao_company`
+            ,t.`zhongbiao_date`
+            ,(CASE WHEN t.`created` = '0000-00-00 00:00:00' THEN NULL
+              ELSE t.`created`
+              END
+            ) AS created
+     from tb_project_zhaotoubiao t
+     where t.pro_id = #{proId}
+  </select>
+
+    <select id="queryZhaobiaoDetailByProId" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT t1.*
+          ,t.`acreage`
+          ,t.`pro_scope`
+        FROM tb_project t
+        LEFT JOIN tb_project_zhaotoubiao t1 ON t.`pro_id` = t1.`pro_id`
+        WHERE t.`pro_id` = #{proId}
+        AND t1.`zhongbiao_company` = #{company}
+        AND t1.`pkid` = #{pkid}
+    </select>
+
+    <select id="queryZhaobiaoDetailByBuild" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT t.`acreage` AS acreage
+            ,t.`pro_scope` AS proScope
+            ,t1.`bid_price` AS bidPrice
+            ,t1.`bid_remark` AS bidRemark
+            ,t1.`b_org` AS bOrg
+            ,t3.`org_code` AS orgCode
+        FROM tb_project t
+        LEFT JOIN tb_project_build t1 ON t.`pro_id` = t1.`pro_id`
+        LEFT JOIN tb_company t3 ON t1.`com_id` = t3.`com_id`
+        WHERE t.`pro_id` = #{proId}
+        AND t1.`b_org` = #{company}
+        AND t1.`pkid` = #{pkid}
+    </select>
+</mapper>

@@ -72,8 +72,8 @@ public class NoticeServiceTest extends ConfigTest {
      * @throws Exception
      */
     @Test  //,"zzType":"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||4c7f85db-2934-11e5-a311-63b86f04c8dd/2"
-    public void testqueryList()throws Exception{//,"regions":"湖南省||长沙市","projectType":"0","projSumStart":"0","projSumEnd":"1000","regions":"湖南省||长沙市","pbModes":"合理定价评审抽取法||综合评估法Ⅰ" ,,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ","projSumStart":"500","projSumEnd":"1000" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
-        String requestBody = "{\"pageNo\":1,\"pageSize\":20,\"type\":2,\"title\":\"桃江县滨江棚户区向荣片\"}";
+    public void testqueryList()throws Exception{//,"projectType":"0","regions":"湖南省||长沙市","projectType":"0","title":"小东","projSumStart":"0","projSumEnd":"1000","regions":"湖南省||长沙市","pbModes":"合理定价评审抽取法||综合评估法Ⅰ" ,,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ","projSumStart":"500","projSumEnd":"1000" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
+        String requestBody = "{\"pageNo\":1,\"pageSize\":20,\"type\":99}";
         String responseString = mockMvc.perform(post("/notice/queryList").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -86,8 +86,8 @@ public class NoticeServiceTest extends ConfigTest {
     }
 
     @Test  //,"zzType":"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||4c7f85db-2934-11e5-a311-63b86f04c8dd/2"
-    public void testSearchList()throws Exception{//,"regions":"湖南省||长沙市","projectType":"0","projSumStart":"0","projSumEnd":"1000","regions":"湖南省||长沙市","pbModes":"合理定价评审抽取法||综合评估法Ⅰ" ,,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ","projSumStart":"500","projSumEnd":"1000" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
-        String requestBody = "{\"pageNo\":1,\"search\":\"桃江县滨江棚户区\",\"pageSize\":20,\"type\":99}";
+    public void testSearchList()throws Exception{//,"regions":"福建省||","regions":"湖南省||长沙市","projectType":"0","projSumStart":"0","projSumEnd":"1000","regions":"湖南省||长沙市","pbModes":"合理定价评审抽取法||综合评估法Ⅰ" ,,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ","projSumStart":"500","projSumEnd":"1000" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
+        String requestBody = "{\"pageNo\":1,\"pageSize\":20,\"type\":99}";
         String responseString = mockMvc.perform(post("/notice/searchList").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -99,10 +99,10 @@ public class NoticeServiceTest extends ConfigTest {
         System.out.println("-----返回的json = " + responseString);
     }
 
-    @Test   //1805443 1800849 1801046    1805238   多 1813931
+    @Test   //1805443 1800849 1801046    1805238   多 1813931  4 source:'yunn'
     public void testNoticeDetail()throws Exception{
-        String requestBody = "{\"type\":0}";
-        String responseString = mockMvc.perform(post("/notice/detail/1813931").characterEncoding("UTF-8")
+        String requestBody = "{\"type\":2,\"source\":\"yunn\"}";
+        String responseString = mockMvc.perform(post("/notice/detail/4").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
                 .header("X-TOKEN",token)

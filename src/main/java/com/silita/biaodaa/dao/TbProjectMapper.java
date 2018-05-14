@@ -1,5 +1,6 @@
 package com.silita.biaodaa.dao;
 
+import com.silita.biaodaa.model.TbProject;
 import com.silita.biaodaa.utils.MyMapper;
 
 import java.rmi.MarshalledObject;
@@ -26,8 +27,22 @@ public interface TbProjectMapper extends MyMapper {
 
     /**
      * 根据区域名称和Path
-     * @param path
+     * @param
      * @return
      */
     List<Map<String,Object>> queryNameAndPath();
+
+    /**
+     * 获取项目详情
+     * @param proId 项目Id
+     * @return
+     */
+    TbProject queryProjectDetail(Integer proId);
+
+    /**
+     * 根据Id获取详情
+     * @param list
+     * @return
+     */
+    List<Map<String,Object>> queryProjectListByIds(List<Integer> list);
 }

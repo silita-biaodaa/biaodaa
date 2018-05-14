@@ -1,6 +1,10 @@
 package com.silita.biaodaa.controller;
 
+import com.silita.biaodaa.service.ProjectBuildService;
+import com.silita.biaodaa.service.ProjectDesignService;
 import com.silita.biaodaa.service.ProjectService;
+import com.silita.biaodaa.service.ProjectZhaotoubiaoService;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +20,12 @@ public class ProjectController extends BaseController{
 
     @Autowired
     ProjectService projectService;
+    @Autowired
+    ProjectZhaotoubiaoService projectZhaotoubiaoService;
+    @Autowired
+    ProjectDesignService projectDesignService;
+    @Autowired
+    ProjectBuildService projectBuildService;
 
     /**
      * 业绩筛选
@@ -34,5 +44,71 @@ public class ProjectController extends BaseController{
         }
         projectService.getObjectListByUnit(params,result);
         return  result;
+    }
+
+    /**
+     * 获取项目基本详情
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/detail",method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> detail(@RequestBody Map<String, Object> param){
+        Map<String,Object> result = new HashMap<String, Object>();
+        result.put("code",this.SUCCESS_CODE);
+        result.put("msg",this.SUCCESS_MSG);
+        projectService.getProjectDetail(MapUtils.getInteger(param,"id"),result);
+        return result;
+    }
+
+    /**
+     * 获取tab列表
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/company/detail",method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> companyDetail(@RequestBody Map<String, Object> param){
+        Map<String,Object> result = new HashMap<String,Object>();
+        result.put("code",this.SUCCESS_CODE);
+        result.put("msg",this.SUCCESS_MSG);
+        projectService.getTabProjectDetail(param,result);
+        return result;
+    }
+
+    /**
+     * 获取tab列表下的详情
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/list/detail",method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> tabListDatail(@RequestBody Map<String, Object> param){
+        Map<String,Object> result = new HashMap<String,Object>();
+        result.put("code",this.SUCCESS_CODE);
+        result.put("msg",this.SUCCESS_MSG);
+        if("zhaotoubiao".equals(param.get("tabType").toString())){
+            result.put("data",projectZhaotoubiaoService.getProjectZhaotoubiaoDetail(param));
+        }else if("design".equals(param.get("tabType").toString())){
+            result.put("data",projectDesignService.getProjectDesignDetail(param));
+        }else if("build".equals(param.get("tabType").toString())){
+            result.put("data",projectBuildService.getProjectDetail(param));
+        }
+        return result;
+    }
+
+    /**
+     * 企业下的业绩列表
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/company/list",method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> companyProjectList(@RequestBody Map<String,Object> param){
+        Map<String,Object> result = new HashMap<String,Object>();
+        result.put("code",this.SUCCESS_CODE);
+        result.put("msg",this.SUCCESS_MSG);
+        result.put("data",projectService.getProjectCompanyList(MapUtils.getInteger(param,"comId")));
+        return result;
     }
 }

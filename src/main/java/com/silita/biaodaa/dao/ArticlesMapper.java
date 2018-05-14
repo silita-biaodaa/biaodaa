@@ -12,7 +12,7 @@ public interface ArticlesMapper {
      * @param params
      * @return
      */
-    List<Map> queryArticleList(Map params);
+    List<Map<String,Object>> queryArticleList(Map params);
 
     /**
      * 查询详细

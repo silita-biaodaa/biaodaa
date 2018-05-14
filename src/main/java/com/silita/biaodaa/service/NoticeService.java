@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHONGBIAO;
@@ -128,51 +130,29 @@ public class NoticeService {
 
 
     public PageInfo queryNoticeList(Page page, Map params)throws Exception {
-        String dqsStr =  MapUtils.getString(params,"regions");
-        String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
-        if(dqsStrList!=null && dqsStrList.length>0){
-            if(dqsStrList.length==1){
-                params.put("province",dqsStrList[0]);
-            }else if(dqsStrList.length==2){
-                params.put("province",dqsStrList[0]);
-                if(MyStringUtils.isNotNull(dqsStrList[1])) {
-                    params.put("city", dqsStrList[1].replace("市",""));
-                }
-            }
-        }
-        String pbModes = MapUtils.getString(params,"pbModes");
-        String[] pbModesList =MyStringUtils.splitParam(pbModes);
-        if(pbModesList!=null && pbModesList.length>0){
-            StringBuffer modeStr = new StringBuffer();
-            for(String mode: pbModesList){
-                modeStr.append("'"+mode+"',");
-            }
-            modeStr.deleteCharAt(modeStr.length()-1);
-            params.put("modeStr",modeStr.toString());
-        }
-
-        String zztype = MapUtils.getString(params,"zzType");
-        String[] zztypeList =MyStringUtils.splitParam(zztype);
-        if(zztypeList!=null && zztypeList.length>0){
-            if(zztypeList.length==1){
-                params.put("zzTypeOne",zztypeList[0]);
-            }else if(zztypeList.length==2){
-                params.put("zzTypeTwo",zztypeList[1]);
-            }else if(zztypeList.length==3){
-                params.put("zzTypeThree",zztypeList[2]);
-            }
-        }
-        if(MyStringUtils.isNotNull(params.get("projSumStart"))){
-            params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));
-        }
-        if(MyStringUtils.isNotNull(params.get("projSumEnd"))){
-            params.put("projSumEnd",Integer.parseInt(params.get("projSumEnd").toString()));
-        }
         buildNoticeDetilTable(params);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<Map> list = noticeMapper.queryNoticeList(params);
+        sortingResult(list);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
+    }
+
+    /**
+     * (非湖南省的公告)获取结果集中的关注状态
+     * @param list
+     */
+    public void addCollStatusByRoute(List list) {
+        String userId = VisitInfoHolder.getUid();
+        if(MyStringUtils.isNull(userId)) {
+            return;
+        }
+        if(list !=null && list.size()>0) {
+            for (Object obj : list) {
+                Map map = (Map)obj;
+                map.put("collected", false);
+            }
+        }
     }
 
     /**
@@ -396,26 +376,6 @@ public class NoticeService {
     }
 
     public PageInfo searchNoticeList(Page page, Map params)throws Exception {
-        //地区筛选
-        String dqsStr =  MapUtils.getString(params,"regions");
-        String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
-        if(dqsStrList!=null && dqsStrList.length>0){
-            if(dqsStrList.length==1){
-                params.put("province",dqsStrList[0]);
-            }else if(dqsStrList.length==2){
-                params.put("province",dqsStrList[0]);
-                if(MyStringUtils.isNotNull(dqsStrList[1])) {
-                    params.put("city", dqsStrList[1].replace("市",""));
-                }
-            }
-        }
-        //项目金额筛选
-        if(MyStringUtils.isNotNull(params.get("projSumStart"))){
-            params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));
-        }
-        if(MyStringUtils.isNotNull(params.get("projSumEnd"))){
-            params.put("projSumEnd",Integer.parseInt(params.get("projSumEnd").toString()));
-        }
         buildNoticeDetilTable(params);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<Map> list = noticeMapper.searchNoticeList(params);
@@ -438,9 +398,19 @@ public class NoticeService {
      */
     public PageInfo queryArticleList(Page page, Map params) {
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        List list = articlesMapper.queryArticleList(params);
+        List<Map<String,Object>> list = articlesMapper.queryArticleList(params);
         if (null == list) {
             list = new ArrayList<>();
+        }else{
+            String content ="";
+            for(Map<String,Object> map : list){
+                if(null != map.get("content")){
+                    content = map.get("content").toString();
+//                    content.substring(content.lastIndexOf("&nbsp;"),20);
+                    map.put("content",this.removeHtml(content).substring(0,20)+".....");
+
+                }
+            }
         }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -461,5 +431,28 @@ public class NoticeService {
 
     public List<Long> queryNoticeCollStatus(Map map){
         return noticeMapper.queryNoticeCollStatus(map);
+    }
+
+    /**
+     * 去掉HTML标签
+     * created by zhushuai
+     * @param content
+     * @return
+     */
+    private String removeHtml(String content){
+        String regEx_style="<style[^>]*?>[\\s\\S]*?<\\/style>";
+        String regEx_html="<[^>]+>";
+        //去掉style标签
+        Pattern p_style = Pattern.compile(regEx_style,Pattern.CASE_INSENSITIVE);
+        Matcher m_style = p_style.matcher(content);
+        content = m_style.replaceAll("");
+        //去掉Html
+        Pattern p_html = Pattern.compile(regEx_html,Pattern.CASE_INSENSITIVE);
+        Matcher m_html = p_html.matcher(content);
+        content = m_html.replaceAll(""); //过滤html标签
+        if(content.contains("&nbsp;")){
+            content = content.replaceAll("&nbsp;","");
+        }
+        return content.trim();
     }
 }
