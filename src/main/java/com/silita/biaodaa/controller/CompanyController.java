@@ -193,8 +193,7 @@ public class CompanyController extends BaseController {
             Page page = new Page();
             page.setPageSize(pageSize);
             page.setCurrentPage(pageNo);
-
-            PageInfo pageInfo  = tbCompanyService.queryCompanyPerson(page,param);
+            PageInfo pageInfo  = tbCompanyService.getPersonCacheMap(page,param);
             result.put("data",pageInfo.getList());
             result.put("pageNum",pageInfo.getPageNum());
             result.put("pageSize", pageInfo.getPageSize());
