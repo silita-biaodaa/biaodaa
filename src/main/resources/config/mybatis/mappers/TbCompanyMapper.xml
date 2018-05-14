@@ -22,14 +22,13 @@
 
   <select id="filterCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
     select c.*
-    from tb_company c
-    left join area a on a.name = c.regis_address
+    from tb_company_bak c
     where 1=1
     <if test="keyWord!=null and keyWord!=''">
       and c.com_name like CONCAT('%',#{keyWord},'%')
     </if>
-    <if test="areaCode!=null and areaCode!=''">
-      and a.code like CONCAT(#{areaCode},'%')
+    <if test="areaName!=null and areaName!=''">
+      and c.regis_address like CONCAT(#{areaName},'%')
     </if>
     <if test="minCapital!=null">
       <![CDATA[ and c.regis_capital >= #{minCapital} ]]>
