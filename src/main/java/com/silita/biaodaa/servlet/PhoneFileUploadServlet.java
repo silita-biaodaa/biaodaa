@@ -58,7 +58,7 @@ public class PhoneFileUploadServlet extends HttpServlet {
                     JSONObject json = new JSONObject();
                     json.put("msg", "文件上传成功");
                     json.put("code", 1);
-                    json.put("imgPath", "http://prefile.biaodaa.com/images/" + filename);
+                    json.put("imgPath", PropertiesUtils.getProperty("HEAD_PORTRAIT_URL") + filename);
                     //将数据写入流中
                     response.setCharacterEncoding("utf-8");
                     response.setContentType("application/json; charset=utf-8");
