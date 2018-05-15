@@ -90,16 +90,16 @@ public class ProjectDesignService {
                         if (null != map && null != map.get("idCard")){
                             per.setIdCard(map.get("idCard").toString());
                         }
-                        if(null != map && null != map.get("sealNo")){
+                        if(per != map && null != map.get("sealNo")){
                             per.setSealNo(map.get("sealNo").toString());
                         }
-                        personProjectList.add(per);
-                        break;
+//                        personProjectList.add(per);
+//                        break;
                     }
                 }
 
             }
         }
-        return personProjectList;
+        return person;
     }
 }

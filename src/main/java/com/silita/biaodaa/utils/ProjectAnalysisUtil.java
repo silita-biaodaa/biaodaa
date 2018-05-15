@@ -22,64 +22,63 @@ public class ProjectAnalysisUtil {
             startIndex = getIndex(scope,"总建筑面积");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
+            scope = scope.substring("总建筑面积".length(),endIndex);
         }else if (scope.contains("建筑总面积")){
             startIndex = getIndex(scope,"建筑总面积");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
+            scope = scope.substring("建筑总面积".length(),endIndex);
         }else if (scope.contains("总面积")){
             startIndex = getIndex(scope,"总面积");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
+            scope = scope.substring("总面积".length(),endIndex);
         }else if (scope.contains("实际用地面积")){
             startIndex = getIndex(scope,"实际用地面积");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
+            scope = scope.substring("实际用地面积".length(),endIndex);
         }else if (scope.contains("改造面积")){
             startIndex = getIndex(scope,"改造面积");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
+            scope = scope.substring("改造面积".length(),endIndex);
         }else if(scope.contains("廉租住房")){
             startIndex = getIndex(scope,"廉租住房");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
             if(scope.contains("套")){
-                scope = scope.substring(getIndex(scope,"套"),endIndex);
+                scope = scope.substring(getIndex(scope,"套")+1,endIndex);
             }else{
-                scope = scope.substring(0,endIndex);
+                scope = scope.substring("廉租住房".length(),endIndex);
             }
-        }else if (scope.contains("面积")){
-            startIndex = getIndex(scope,"面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
         }else if (scope.contains("绿化面积")){
             startIndex = getIndex(scope,"绿化面积");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
+            scope = scope.substring("绿化面积".length(),endIndex);
         }else if (scope.contains("支护为")){
             startIndex = getIndex(scope,"支护为");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
+            scope = scope.substring("支护为".length(),endIndex);
         }else if (scope.contains("建筑面积")){
             startIndex = getIndex(scope,"建筑面积");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
+            scope = scope.substring("建筑面积".length(),endIndex);
         }else if (scope.contains("扩建面积")){
             startIndex = getIndex(scope,"扩建面积");
             scope = scope.substring(startIndex,scope.length());
             endIndex = getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("长") && scope.contains("宽")){
-            //判断出现的次数
-
+            scope = scope.substring("扩建面积".length(),endIndex);
+        }else if (scope.contains("面积")){
+            startIndex = getIndex(scope,"面积");
+            scope = scope.substring(startIndex,scope.length());
+            endIndex = getUnitIndex(scope);
+            scope = scope.substring("面积".length(),endIndex);
+        }else{
+            scope = null;
         }
         return scope;
     }

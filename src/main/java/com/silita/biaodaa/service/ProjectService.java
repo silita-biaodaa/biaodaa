@@ -109,10 +109,10 @@ public class ProjectService {
     public Map<String,Object> getProjectDetail(Integer proId,Map<String,Object> result){
         TbProject project = tbProjectMapper.queryProjectDetail(proId);
         String scope = project.getAcreage() == null ? null : project.getAcreage();
-        if(null != scope){
-            scope = this.analysisScope(scope);
-            project.setAcreage(scope);
-        }
+//        if(null != scope){
+//            scope = projectAnalysisUtil.analysisScope(scope);
+//            project.setAcreage(scope);
+//        }
         result.put("data",project);
         return result;
     }
@@ -168,9 +168,9 @@ public class ProjectService {
                     constartNo = null;
                     tbProjectContract = new TbProjectContract();
                 if (null != build.getContractRemark()|| !"未办理合同备案".equals(build.getContractRemark())){
-                    contractDate = remark.substring(this.getIndex(remark,"合同日期：")+5,this.getIndex(remark,","));
-                    constartPrice = remark.substring(this.getIndex(remark,"合同价格：")+5,this.getIndex(remark,"万元"));
-                    constartNo = remark.substring(this.getIndex(remark,"合同备案编号：")+7,remark.length());
+                    contractDate = remark.substring(projectAnalysisUtil.getIndex(remark,"合同日期：")+"合同日期：".length(),projectAnalysisUtil.getIndex(remark,","));
+                    constartPrice = remark.substring(projectAnalysisUtil.getIndex(remark,"合同价格：")+"合同价格：".length(),projectAnalysisUtil.getIndex(remark,"万元"));
+                    constartNo = remark.substring(projectAnalysisUtil.getIndex(remark,"合同备案编号：")+"合同备案编号：".length(),remark.length());
                 }
                 tbProjectContract.setProvRecordCode(constartNo);
                 tbProjectContract.setAmount(constartPrice);
@@ -197,9 +197,9 @@ public class ProjectService {
                 remark = buid.getBidRemark();
                 zhaotoubiao = new TbProjectZhaotoubiao();
                 if(null != buid.getBidRemark() && !"未办理中标备案".equals(buid.getBidRemark())){
-                    zhongbiaoDate = remark.substring(this.getIndex(remark,"中标日期："),this.getIndex(remark,","));
+                    zhongbiaoDate = remark.substring(projectAnalysisUtil.getIndex(remark,"中标日期："),projectAnalysisUtil.getIndex(remark,","));
                     zhaotoubiao.setProId(proId.toString());
-                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(this.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
+                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(projectAnalysisUtil.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
                 }
                 zhaotoubiao.setZhongbiaoAmount(buid.getBidPrice());
                 zhaotoubiao.setZhaobiaoType(buid.getBidType());
@@ -220,9 +220,9 @@ public class ProjectService {
                 zhaotoubiao = new TbProjectZhaotoubiao();
                 zhaotoubiao.setProId(proId.toString());
                 if(null != proSup.getBidRemark() && !"未办理中标备案".equals(proSup.getBidRemark())){
-                    zhongbiaoDate = remark.substring(this.getIndex(remark,"中标日期："),this.getIndex(remark,","));
-                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(this.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
-                    amount = remark.substring(this.getIndex(remark,"中标价格："),this.getIndex(remark,"万元"));
+                    zhongbiaoDate = remark.substring(projectAnalysisUtil.getIndex(remark,"中标日期："),projectAnalysisUtil.getIndex(remark,","));
+                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(projectAnalysisUtil.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
+                    amount = remark.substring(projectAnalysisUtil.getIndex(remark,"中标价格："),projectAnalysisUtil.getIndex(remark,"万元"));
                     zhaotoubiao.setZhongbiaoAmount(isNumeric(amount) == true ? amount.substring(amount.lastIndexOf("中标价格：")+"中标价格：".length(),amount.length()) : null);
                 }
                 zhaotoubiao.setZhaobiaoType("监理");
@@ -242,8 +242,8 @@ public class ProjectService {
             for(TbProjectBuild project : proBuildList){
                 if (null != project.getContractRemark() && !"未办理合同备案".equals(project.getContractRemark())){
                     remark = project.getContractRemark();
-                    amount = remark.substring(this.getIndex(remark,"合同价格："),this.getIndex(remark,"万元"));
-                    project.setConstractAmount(amount == null ? null : amount.substring(this.getIndex(amount,"：")+1,amount.length()));
+                    amount = remark.substring(projectAnalysisUtil.getIndex(remark,"合同价格："),projectAnalysisUtil.getIndex(remark,"万元"));
+                    project.setConstractAmount(amount == null ? null : amount.substring(projectAnalysisUtil.getIndex(amount,"：")+1,amount.length()));
                     project.setCompleteRemark(null);
                 }
             }
@@ -261,117 +261,6 @@ public class ProjectService {
             String province = proWhere.substring(0,projectAnalysisUtil.getIndex(proWhere,"省")+1);
             param.put("province",province == null ? null : province);
         }
-    }
-
-    /**
-     * 解析面积
-     * @param scope
-     * @return
-     */
-    private String analysisScope(String scope){
-        //判断中间是否有总建筑面积
-        int startIndex = -2;
-        int endIndex = -2;
-        if(scope.contains("总建筑面积")){
-            startIndex = this.getIndex(scope,"总建筑面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("建筑总面积")){
-            startIndex = this.getIndex(scope,"建筑总面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("总面积")){
-            startIndex = this.getIndex(scope,"总面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("实际用地面积")){
-            startIndex = this.getIndex(scope,"实际用地面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("改造面积")){
-            startIndex = this.getIndex(scope,"改造面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if(scope.contains("廉租住房")){
-            startIndex = this.getIndex(scope,"廉租住房");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            if(scope.contains("套")){
-                scope = scope.substring(this.getIndex(scope,"套"),endIndex);
-            }else{
-                scope = scope.substring(0,endIndex);
-            }
-        }else if (scope.contains("面积")){
-            startIndex = this.getIndex(scope,"面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("绿化面积")){
-            startIndex = this.getIndex(scope,"绿化面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("支护为")){
-            startIndex = this.getIndex(scope,"支护为");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("建筑面积")){
-            startIndex = this.getIndex(scope,"建筑面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("扩建面积")){
-            startIndex = this.getIndex(scope,"扩建面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = this.getUnitIndex(scope);
-            scope = scope.substring(0,endIndex);
-        }else if (scope.contains("长") && scope.contains("宽")){
-            //判断出现的次数
-
-        }else{
-            scope = null;
-        }
-        return scope;
-    }
-
-    /**
-     * 获取某个字符在字符串中的下标
-     * @param str
-     * @param chart
-     * @return
-     */
-    public int getIndex(String str,String chart){
-        Matcher matcher = Pattern.compile(chart).matcher(str);
-        int index = -2;
-        if(matcher.find()){
-            index = matcher.start();
-        }
-        return index;
-    }
-
-    /**
-     * 获取单位所在字符串的下标
-     * @param str
-     * @return
-     */
-    private int getUnitIndex(String str){
-        int unitIndex = -2;
-        if(str.contains("平方")){
-            unitIndex = this.getIndex(str,"平方");
-        }else if (str.contains("m2")){
-            unitIndex = this.getIndex(str,"m2");
-        }else if (str.contains("M2")){
-            unitIndex = this.getIndex(str,"M2");
-        }else if (str.contains("㎡")){
-            unitIndex = this.getIndex(str,"㎡");
-        }
-        return unitIndex;
     }
 
     public List<Map<String,Object>> getProjectCompanyList(Integer companyId){
