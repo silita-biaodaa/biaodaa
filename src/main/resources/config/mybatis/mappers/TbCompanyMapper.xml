@@ -28,7 +28,7 @@
       and c.com_name like CONCAT('%',#{keyWord},'%')
     </if>
     <if test="areaName!=null and areaName!=''">
-      and c.regis_address like CONCAT(#{areaName},'%')
+      and c.regis_address like CONCAT('%',#{areaName},'%')
     </if>
     <if test="minCapital!=null">
       <![CDATA[ and c.regis_capital >= #{minCapital} ]]>
@@ -39,6 +39,7 @@
     <if test="qualCode!=null and qualCode!=''">
       and c.range like CONCAT('%',#{qualCode},'%')
     </if>
+    order by c.px desc
   </select>
 
   <select id="getAreaCode" parameterType="String" resultType="String">

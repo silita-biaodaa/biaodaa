@@ -28,7 +28,7 @@
     <if test="keyWord!=null and keyWord!=''">
       and q.name like CONCAT('%',#{keyWord},'%')
     </if>
-    ORDER BY q.`valid_date` DESC
+    ORDER BY q.px DESC
   </select>
 
 
