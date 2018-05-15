@@ -108,7 +108,8 @@ public class ProjectService {
      */
     public Map<String,Object> getProjectDetail(Integer proId,Map<String,Object> result){
         TbProject project = tbProjectMapper.queryProjectDetail(proId);
-        String scope = project.getAcreage() == null ? null : project.getAcreage();
+        project.setAcreage(null);
+//        String scope = project.getAcreage() == null ? null : project.getAcreage();
 //        if(null != scope){
 //            scope = projectAnalysisUtil.analysisScope(scope);
 //            project.setAcreage(scope);
