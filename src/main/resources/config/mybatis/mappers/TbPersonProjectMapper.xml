@@ -39,6 +39,7 @@
     <if test="role != null and role != ''">
       AND (t.`role` = #{role} OR t.`role` = #{roleOne})
     </if>
+    ORDER BY t.`created` DESC
   </select>
 
   <select id="queryPersonByInnerId" resultType="java.util.Map" parameterType="java.util.List">

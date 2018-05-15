@@ -583,4 +583,34 @@ public class TbCompanyService {
     public Map<String, Object> getPersonDetail(Map<String, Object> params) {
         return tbPersonMapper.queryPersonDetail(params);
     }
+
+
+    public PageInfo getPersonCacheMap(Page page,Map<String,Object> param){
+        Map<String,PageInfo> personMap = globalCache.getPersonMap();
+        String key = "person|"+page.getCurrentPage()+"|"+page.getPageSize()+"|"
+                +param.get("comId")+"|"+param.get("category")+"|"+param.get("keyWord");
+        Long time = globalCache.getVaildTime().get(key);
+
+        long nowTime = System.currentTimeMillis();
+        long value = 3600000;
+        String cacheTime = PropertiesUtils.getProperty("personCacheTime");
+        if( cacheTime!=null){
+            value = Long.parseLong(cacheTime);
+        }
+        if(time!=null&&nowTime-time<value){
+            if(personMap!=null&&personMap.size()>0){
+                PageInfo pageInfo = personMap.get(key);
+                if(pageInfo!=null&&pageInfo.getList()!=null){
+                    logger.info("注册人员数据启用缓存["+key+"]========缓存数据共计["+pageInfo.getList().size()+"]条");
+                    return pageInfo;
+                }
+
+            }
+        }
+        PageInfo pageInfo  = queryCompanyPerson(page,param);
+        personMap.put(key,pageInfo);
+        globalCache.setPersonMap(personMap);
+        globalCache.getVaildTime().put(key,nowTime);
+        return pageInfo;
+    }
 }

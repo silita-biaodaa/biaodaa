@@ -9,6 +9,7 @@ import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,9 +57,21 @@ public class ProjectZhaotoubiaoService {
         }
         zhaoParam.put("pkid",param.get("pkid"));
         List<TbPersonProject> personProjectList = tbPersonProjectMapper.queryPersonProject(zhaoParam);
-        if((null != personProjectList && personProjectList.size() > 0) && null != personProjectList.get(0)){
-            if (null != personProjectList.get(0).getInnerid()){
-                List<Map<String,Object>> list = tbPersonProjectMapper.queryPersonByInnerId(personProjectList);
+        List<TbPersonProject> paramPersonList = new ArrayList<>();
+        if(null != personProjectList && personProjectList.size() > 0){
+            for (TbPersonProject personProject : personProjectList){
+                if(!"已离岗".equals(personProject.getStatus())){
+                    paramPersonList.add(personProject);
+                    break;
+                }else{
+                    paramPersonList.add(personProject);
+                    break;
+                }
+            }
+        }
+        if((null != paramPersonList && paramPersonList.size() > 0)){
+            if (null != paramPersonList.get(0).getInnerid()){
+                List<Map<String,Object>> list = tbPersonProjectMapper.queryPersonByInnerId(paramPersonList);
                 if(null != list && list.size() > 0){
                     Map<String,Object> cardMap = list.get(0);
                     if (null != cardMap && null != cardMap.get("idCard")){
@@ -66,7 +79,7 @@ public class ProjectZhaotoubiaoService {
                     }
                 }
             }
-            zhaotoubiao.setName(personProjectList.get(0).getName());
+            zhaotoubiao.setName(paramPersonList.get(0).getName());
         }
 
         //获取该项目下施工的所有人员

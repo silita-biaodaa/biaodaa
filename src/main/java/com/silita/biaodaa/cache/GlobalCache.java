@@ -1,5 +1,6 @@
 package com.silita.biaodaa.cache;
 
+import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.model.CertBasic;
 import com.silita.biaodaa.model.TbSafetyCertificate;
 import org.apache.log4j.Logger;
@@ -24,12 +25,15 @@ public class GlobalCache {
 
 	private Map<String,TbSafetyCertificate> safetyCertMap;
 
+	private Map<String,PageInfo> personMap;
+
 	private Map<String,Long> vaildTime;
 
 	private GlobalCache() {
 		analyzeRangeByFieldMap = new ConcurrentHashMap<>();
 		certBasicMap = new ConcurrentHashMap<>();
 		safetyCertMap = new ConcurrentHashMap<>();
+		personMap = new ConcurrentHashMap<>();
 		vaildTime = new ConcurrentHashMap<>();
 	}
 
@@ -68,5 +72,13 @@ public class GlobalCache {
 
 	public void setVaildTime(Map<String, Long> vaildTime) {
 		this.vaildTime = vaildTime;
+	}
+
+	public Map<String, PageInfo> getPersonMap() {
+		return personMap;
+	}
+
+	public void setPersonMap(Map<String, PageInfo> personMap) {
+		this.personMap = personMap;
 	}
 }

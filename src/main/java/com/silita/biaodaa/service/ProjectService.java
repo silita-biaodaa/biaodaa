@@ -258,7 +258,7 @@ public class ProjectService {
     private void putProvince(Map<String,Object> param){
         if(null != param.get("proWhere")){
             String proWhere = param.get("proWhere").toString();
-            String province = proWhere.substring(0,projectAnalysisUtil.getIndex(proWhere,"省"));
+            String province = proWhere.substring(0,projectAnalysisUtil.getIndex(proWhere,"省")+1);
             param.put("province",province == null ? null : province);
         }
     }
@@ -388,6 +388,11 @@ public class ProjectService {
             Set<Integer> set = new HashSet(list);
             List<Integer> proList = new ArrayList<>(set);
             resultMap = tbProjectMapper.queryProjectListByIds(proList);
+        }
+        if(null != resultMap && resultMap.size() > 0){
+            for(Map<String,Object> map : resultMap){
+                this.putProvince(map);
+            }
         }
         return resultMap;
     }
