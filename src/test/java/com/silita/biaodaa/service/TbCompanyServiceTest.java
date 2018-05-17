@@ -41,7 +41,7 @@ public class TbCompanyServiceTest extends ConfigTest {
 
     @Test
     public void getCompanyReputation(){
-        Map<String,Object> map = tbCompanyService.getCompanyReputation(114);
+        Map<String,Object> map = tbCompanyService.getCompanyReputation(3875);
         System.out.println("-------");
     }
 }

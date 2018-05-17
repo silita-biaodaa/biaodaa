@@ -77,7 +77,7 @@
     from cert_qyhj q
     left join prize_zh zh on q.zhUuid=zh.uuid
     where q.zhUuid is not null
-    and srcUuid in
+    and q.joinType='承建单位' and srcUuid in
     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
       #{item}
     </foreach>
