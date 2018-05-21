@@ -32,7 +32,7 @@
   </select>
 
   <select id="getProvinceList" resultType="Map">
-    select `name`.code from twf_dict where `type`=2 and is_valid=1
+    select `name`,code from twf_dict where `type`=2 and is_valid=1
   </select>
 
   <select id="getProvinceCode" parameterType="String" resultType="String">
