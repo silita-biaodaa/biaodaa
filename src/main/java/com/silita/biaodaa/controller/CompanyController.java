@@ -407,4 +407,19 @@ public class CompanyController extends BaseController {
         }
         return result;
     }
+
+    /**
+     * 获取公司详情根据名称
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/detail", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String,Object> getCompanyDetail(@RequestBody Map<String, Object> params){
+        Map<String,Object> result = new HashMap<>();
+        result.put(CODE_FLAG,SUCCESS_CODE);
+        result.put(MSG_FLAG,SUCCESS_MSG);
+        result.put("data",tbCompanyService.getCompanyDetailByName(params));
+        return result;
+    }
 }

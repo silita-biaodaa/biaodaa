@@ -613,4 +613,18 @@ public class TbCompanyService {
         globalCache.getVaildTime().put(key,nowTime);
         return pageInfo;
     }
+
+    public TbCompany getCompanyDetailByName(Map<String,Object> param){
+        String comName = param.get("comName").toString();
+        TbCompany tbCompany = tbCompanyMapper.queryCompanyDetail(comName);
+        param.put("comId",tbCompany.getComId());
+        param.put("userId", VisitInfoHolder.getUid());
+        Integer num = tbCompanyMapper.getColleCount(param);
+        if(num>0){
+            tbCompany.setCollected(true);
+        }
+        // TODO: 18/5/7 存续状态写死
+        tbCompany.setSubsist("存续");
+        return tbCompany;
+    }
 }

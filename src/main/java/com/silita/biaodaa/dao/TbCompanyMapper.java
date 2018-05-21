@@ -12,6 +12,13 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
 
     TbCompany getCompany(Integer comId);
 
+    /**
+     * 根据名称获取公司详情
+     * @param comName
+     * @return
+     */
+    TbCompany queryCompanyDetail(String comName);
+
     List<TbCompany> filterCompany(Map<String,Object> param);
 
     String getAreaCode(String name);
