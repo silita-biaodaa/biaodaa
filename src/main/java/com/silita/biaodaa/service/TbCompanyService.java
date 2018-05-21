@@ -645,6 +645,9 @@ public class TbCompanyService {
     public TbCompany getCompanyDetailByName(Map<String,Object> param){
         String comName = param.get("comName").toString();
         TbCompany tbCompany = tbCompanyMapper.queryCompanyDetail(comName);
+        if(null == tbCompany){
+            return null;
+        }
         param.put("comId",tbCompany.getComId());
         param.put("userId", VisitInfoHolder.getUid());
         Integer num = tbCompanyMapper.getColleCount(param);

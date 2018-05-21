@@ -460,7 +460,13 @@ public class CompanyController extends BaseController {
         Map<String,Object> result = new HashMap<>();
         result.put(CODE_FLAG,SUCCESS_CODE);
         result.put(MSG_FLAG,SUCCESS_MSG);
-        result.put("data",tbCompanyService.getCompanyDetailByName(params));
+        TbCompany company = tbCompanyService.getCompanyDetailByName(params);
+        if(null == company){
+            result.put(CODE_FLAG,0);
+            result.put(MSG_FLAG,"未查询到公司详情");
+            return result;
+        }
+        result.put("data",company);
         return result;
     }
 }
