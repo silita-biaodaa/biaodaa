@@ -11,4 +11,10 @@ public interface TbPersonQualificationMapper extends MyMapper<TbPersonQualificat
     List<Map<String,Object>> getCompanyPersonCate(Map<String,Object> param);
 
     List<TbPersonQualification> queryCompanyPerson(Map<String,Object> param);
+
+    List<Map<String,Object>> getProvinceList();
+
+    String getProvinceCode(String name);
+
+    void updatePersonPX(Map<String,Object> param);
 }

@@ -176,9 +176,22 @@ public class CompanyController extends BaseController {
             String comId = MapUtils.getString(params, "comId");
             String category = MapUtils.getString(params, "category");
             String keyWord = MapUtils.getString(params, "keyWord");
+            String province = MapUtils.getString(params, "province");
             Map<String,Object> param = new HashMap<>();
-
+            String tableCode = null;
+            if(province!=null){
+                tableCode = tbCompanyService.getProvinceCode(province);
+            }
+            if(tableCode == null){
+                tableCode = "hunan";
+            }
+            param.put("tableCode",tableCode);
             param.put("category",category);
+
+            if(keyWord!=null&&!"".equals(keyWord)){
+                // TODO: 18/5/21 更新排序移到打开人员处理
+                //tbCompanyService.updatePersonPX(tableCode,keyWord);
+            }
             param.put("keyWord",keyWord);
             if(comId!=null&&!"".equals(comId)){
                 TbCompany company = tbCompanyService.getCompany(Integer.parseInt(comId));
@@ -404,6 +417,34 @@ public class CompanyController extends BaseController {
             logger.error("获得企业人员详细信息异常：" + e.getMessage());
             result.put("code", 0);
             result.put("msg", "获得企业人员详细信息失败！");
+        }
+        return result;
+    }
+
+    /**
+     * 返回地区列表
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/province", method = RequestMethod.GET,produces = "application/json")
+    public Map<String, Object> getProvince() {
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 0);
+        result.put("msg", "获取地区列表失败!");
+        try {
+            List<Map<String,Object>> list = tbCompanyService.getProvince();
+            result.put("data",list);
+            result.put("code", 1);
+            result.put("msg", "获取地区列表成功!");
+        } catch (IllegalArgumentException e) {
+            logger.error("获取地区列表异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        } catch (Exception e) {
+            logger.error("获取地区列表异常" + e.getMessage(), e);
+            result.put("code",0);
+            result.put("msg",e.getMessage());
         }
         return result;
     }

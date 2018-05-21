@@ -15,7 +15,7 @@
 
   <!-- 获取企业注册人员-->
   <select id="queryCompanyPerson" parameterType="Map" resultType="com.silita.biaodaa.model.TbPersonQualification">
-    select q.* from tb_person_qualification q where 1=1 and q.type=1
+    select q.* from tb_person_${tableCode} q where 1=1 and q.type=1
     <if test="comId!=null and comId!=''">
       and q.com_id = #{comId}
     </if>
@@ -26,10 +26,22 @@
       and q.category = #{category}
     </if>
     <if test="keyWord!=null and keyWord!=''">
-      and q.name like CONCAT('%',#{keyWord},'%')
+      and q.name = #{keyWord}
     </if>
     ORDER BY q.px DESC
   </select>
+
+  <select id="getProvinceList" resultType="Map">
+    select `name`.code from twf_dict where `type`=2 and is_valid=1
+  </select>
+
+  <select id="getProvinceCode" parameterType="String" resultType="String">
+    select code from twf_dict where `type`=2 and is_valid=1 and `name`=#{name}
+  </select>
+
+  <update id="updatePersonPX" parameterType="Map">
+    update tb_person_${tableCode} set px = px + 1 where `name`= #{name}
+  </update>
 
 
 

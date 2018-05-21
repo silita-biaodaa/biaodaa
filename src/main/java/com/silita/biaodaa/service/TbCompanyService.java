@@ -588,7 +588,7 @@ public class TbCompanyService {
     public PageInfo getPersonCacheMap(Page page,Map<String,Object> param){
         Map<String,PageInfo> personMap = globalCache.getPersonMap();
         String key = "person|"+page.getCurrentPage()+"|"+page.getPageSize()+"|"
-                +param.get("comId")+"|"+param.get("category")+"|"+param.get("keyWord");
+                +param.get("comId")+"|"+param.get("category")+"|"+param.get("keyWord")+"|"+param.get("tableCode");
         Long time = globalCache.getVaildTime().get(key);
 
         long nowTime = System.currentTimeMillis();
@@ -612,6 +612,34 @@ public class TbCompanyService {
         globalCache.setPersonMap(personMap);
         globalCache.getVaildTime().put(key,nowTime);
         return pageInfo;
+    }
+
+
+
+    public List<Map<String,Object>> getProvince(){
+        return tbPersonQualificationMapper.getProvinceList();
+    }
+
+    public String getProvinceCode(String name){
+        String code = null;
+        Map<String,String> provinceMap  = globalCache.getProvinceMap();
+        if(provinceMap.get(name)!=null){
+            code = provinceMap.get(name);
+        }else{
+            code = tbPersonQualificationMapper.getProvinceCode(name);
+            provinceMap.put(name,code);
+            globalCache.setProvinceMap(provinceMap);
+        }
+        return code;
+    }
+
+    public void updatePersonPX(String tableCode,String name){
+        Map<String,Object> param = new HashMap<>();
+        if(tableCode!=null&&name!=null){
+            param.put("tableCode",tableCode);
+            param.put("name",name);
+            tbPersonQualificationMapper.updatePersonPX(param);
+        }
     }
 
     public TbCompany getCompanyDetailByName(Map<String,Object> param){
