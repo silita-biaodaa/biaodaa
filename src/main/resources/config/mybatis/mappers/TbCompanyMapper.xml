@@ -107,7 +107,7 @@
   </select>
 
   <select id="getColleCount" parameterType="Map" resultType="Integer">
-    select count(*) from mishu_write.colle_company where companyId=#{comId} and userId=#{userId}
+    select count(*) from mishu_write.colle_company_new where companyId=#{comId} and userId=#{userId}
   </select>
 
   <select id="queryCompanyDetail" resultType="com.silita.biaodaa.model.TbCompany" parameterType="java.lang.String">

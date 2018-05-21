@@ -124,7 +124,7 @@
 
     <select id="queryCompanyCollStatus" parameterType="Map" resultType="Long">
         SELECT  cc.companyId
-        FROM mishu_write.colle_company cc
+        FROM mishu_write.colle_company_new cc
         WHERE cc.companyId IN
         <foreach collection="idSet" item="id" open="(" close=")" separator=",">
         #{id}
