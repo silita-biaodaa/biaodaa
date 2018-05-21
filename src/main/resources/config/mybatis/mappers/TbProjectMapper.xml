@@ -11,7 +11,9 @@
                 ,t.`pro_org` AS proOrg
                 ,t.`pro_type` AS proType
                 ,t.`pro_address` AS proAddress
+                ,t1.`complete_date` AS completeDate
         FROM tb_project t
+        LEFT JOIN tb_project_build t1 ON t.`pro_id` = t1.`pro_id`
         where 1=1
         <if test="proName != null and proName != ''">
             AND (t.`pro_name` LIKE  CONCAT('%',#{proName},'%')  OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))
@@ -25,8 +27,20 @@
         <if test="area != null and area != ''">
             AND t.`pro_where` LIKE CONCAT(#{area},'%')
         </if>
+        <if test="completeType != null and completeType != '' and completeType == '已竣工'">
+            AND t1.`complete_date` is not null
+        </if>
+        <if test="comStartDate != null and comStartDate != ''">
+            AND t1.`complete_date` &lt;= #{comStartDate}
+        </if>
+        <if test="comEndDate != null and comEndDate != ''">
+            AND t1.`complete_date` &gt;= #{comEndDate}
+        </if>
+        <if test="completeType != null and completeType != '' and completeType == '未竣工'">
+            AND t1.`complete_date` is null
+        </if>
         GROUP BY t.`pro_id`,t.`pro_org`
-        ORDER BY t.`pro_where` desc,t.`pro_org` desc
+        ORDER BY t1.`complete_date` desc,t.`pro_where` DESC,t.`pro_org` DESC
     </select>
 
     <!--按单位查询列表-->
@@ -104,9 +118,13 @@
        ,t.`pro_level` AS proLevel
        ,t.`pro_use` AS proUse
        ,t3.`org_code` AS orgCode
+       ,t1.`complete_date` AS completeDate
       FROM tb_project t
       LEFT JOIN tb_company t3 ON t.`pro_org` = t3.`com_name`
+      LEFT JOIN tb_project_build t1 ON t.`pro_id` = t1.`pro_id`
       WHERE t.`pro_id` = #{proId}
+      order by t1.`complete_date` desc
+      limit 1
     </select>
 
     <select id="queryProjectListByIds" parameterType="java.util.List" resultType="java.util.Map">

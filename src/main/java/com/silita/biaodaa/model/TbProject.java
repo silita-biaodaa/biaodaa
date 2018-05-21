@@ -120,4 +120,6 @@ public class TbProject {
     private String orgCode;
     /**省**/
     private String province;
+    /**竣工时间**/
+    private String completeDate;
 }
