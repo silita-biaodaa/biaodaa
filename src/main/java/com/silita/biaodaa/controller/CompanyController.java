@@ -179,7 +179,7 @@ public class CompanyController extends BaseController {
             String province = MapUtils.getString(params, "province");
             Map<String,Object> param = new HashMap<>();
             String tableCode = null;
-            if(province!=null){
+            if(province!=null&&!"".equals(province)){
                 tableCode = tbCompanyService.getProvinceCode(province);
             }
             if(tableCode == null){
