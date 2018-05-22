@@ -69,19 +69,19 @@
         SELECT DISTINCT s.id,s.title,s.opendate,s.type,s.source
         ,<include refid="noticeTypeConvert"/>
         <if test="source==null or source=='' or source=='hunan'">
-        <choose>
-            <when test="type==99 or type ==null or type ==''">
-                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
-                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
-            </when>
-            <otherwise>
-                ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
-            </otherwise>
-        </choose>
-        ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
-        <if test="type == 2 or type==99  or type ==null or type ==''">
-            <include refid="zhongbidaoDetailField"/>
-        </if>
+            <choose>
+                <when test="type==99 or type ==null or type ==''">
+                    ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
+                    ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
+                </when>
+                <otherwise>
+                    ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
+                </otherwise>
+            </choose>
+            ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
+            <if test="type == 2 or type==99  or type ==null or type ==''">
+                <include refid="zhongbidaoDetailField"/>
+            </if>
         </if>
     </sql>
 
@@ -173,6 +173,9 @@
 
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
         <include refid="noticeListHead"/>
+        <if test="type==0">
+          ,detail.bmSite
+        </if>
         <include refid="noticeListBaseFrom"/>
         <if test="source==null or source=='' or source=='hunan'">
         <!--资质判断 -->
@@ -192,8 +195,7 @@
                 </when>
             </choose>
         </if>
-        <choose>
-            <when test=" (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')">
+            <if test=" (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')">
                 join mishu.${detailTable} detail on s.id=detail.snatchurlid
                 <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
                 <!--and(-->
@@ -204,6 +206,22 @@
                 <!--</foreach>-->
                 <!--)-->
                 <!--</if>-->
+
+                <if test="type==0">
+                <!--报名地址-->
+                  <if test="bmSiteStr!=null and bmSiteStr!=''">
+                      <choose>
+                          <when test="bmSite==2">
+                              AND LENGTH(detail.bmSite)>1 AND detail.bmSite not like '%网上%'
+                          </when>
+                          <otherwise>
+                              AND detail.bmSite like #{bmSiteStr}
+                          </otherwise>
+                      </choose>
+                  </if>
+                </if>
+
+                <!--评标办法 -->
                 <if test="modeStr != null">
                     AND detail.pbMode in(${modeStr})
                 </if>
@@ -219,13 +237,7 @@
                 <if test="( kbDateEnd !=null and kbDateEnd !='')">
                     AND detail.tbEndDate &lt;= #{kbDateEnd}
                 </if>
-            </when>
-            <!--<otherwise>-->
-                <!--<if test="type == 2 ">-->
-                    <!--left join mishu.${detailTable} detail on s.id=detail.snatchurlid-->
-                <!--</if>-->
-            <!--</otherwise>-->
-        </choose>
+            </if>
         </if>
         WHERE s.isShow = 0
         <if test="projectType !=null and projectType!=''">

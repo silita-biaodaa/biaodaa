@@ -94,6 +94,23 @@ public class NoticeController extends BaseController{
     }
 
     private void parseViewParams(Map params){
+        //报名地址条件判断
+        String bmSite =  MapUtils.getString(params,"bmSite");
+        if(MyStringUtils.isNotNull(bmSite)) {
+            switch (bmSite) {
+                case "0"://全部
+                    break;
+                case "1"://网上报名
+                    params.put("bmSiteStr", "%网上%");
+                    break;
+                case "2"://现场报名
+                    params.put("bmSiteStr", "线下");
+                    break;
+                default:params.put("bmSiteStr", "%" + bmSite + "%");
+            }
+        }
+
+        //地区条件获取
         String dqsStr =  MapUtils.getString(params,"regions");
         String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
         if(dqsStrList!=null && dqsStrList.length>0){
@@ -131,6 +148,7 @@ public class NoticeController extends BaseController{
                 params.put("zzTypeThree",zztypeList[2]);
             }
         }
+
         if(MyStringUtils.isNotNull(params.get("projSumStart"))){
             params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));
         }
