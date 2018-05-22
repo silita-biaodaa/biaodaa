@@ -1,12 +1,11 @@
 package com.silita.biaodaa.service;
 
-import com.silita.biaodaa.dao.TbPersonProjectMapper;
-import com.silita.biaodaa.dao.TbProjectBuildMapper;
-import com.silita.biaodaa.dao.TbProjectDesignMapper;
-import com.silita.biaodaa.dao.TbProjectSupervisionMapper;
+import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.TbPersonProject;
+import com.silita.biaodaa.model.TbProject;
 import com.silita.biaodaa.model.TbProjectBuild;
 import com.silita.biaodaa.model.TbProjectDesign;
+import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
 import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +27,25 @@ public class ProjectBuildService {
     TbProjectDesignMapper tbProjectDesignMapper;
     @Autowired
     TbProjectSupervisionMapper tbProjectSupervisionMapper;
+    @Autowired
+    TbCompanyService tbCompanyService;
+    @Autowired
+    TbProjectMapper tbProjectMapper;
+
+    private static ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
 
     public TbProjectBuild getProjectDetail(Map<String,Object> param){
         Integer pkid = MapUtils.getInteger(param,"pkid");
         Integer proId = MapUtils.getInteger(param,"proId");
+        TbProject project = tbProjectMapper.queryProjectDetail(proId);
+        String province = "湖南省";
+        if(null != project){
+            if(null != project.getProWhere() && project.getProWhere().equals("省")){
+                province = project.getProWhere().substring(0,analysisUtil.getIndex(project.getProWhere(),"省")+1);
+            }
+        }
+        String tabCode = tbCompanyService.getProvinceCode(province);
+
         TbProjectBuild projectBuild = tbProjectBuildMapper.queryProjectBuildDetail(proId,pkid);
         Map<String, Object> perMap = new HashMap<String,Object>();
         perMap.put("pkid",pkid);
@@ -42,10 +56,10 @@ public class ProjectBuildService {
             for(TbPersonProject pser : personProjectList){
                 if(null != pser.getRole() && "项目经理".equals(pser.getRole())){
                     projectBuild.setPmName(pser.getName());
-                    projectBuild.setPmIdCard(this.getIdCard(pser));
+                    projectBuild.setPmIdCard(this.getIdCard(pser,tabCode));
                 }else if (null != pser.getRole() && "项目总监".equals(pser.getRole())){
                     projectBuild.setPdName(pser.getName());
-                    projectBuild.setPdIdCard(this.getIdCard(pser));
+                    projectBuild.setPdIdCard(this.getIdCard(pser,tabCode));
                 }
             }
         }
@@ -67,14 +81,14 @@ public class ProjectBuildService {
         return projectBuild;
     }
 
-    private String getIdCard(TbPersonProject pser){
+    private String getIdCard(TbPersonProject pser,String tabCode){
         List<TbPersonProject> perList = new ArrayList<>();
         List<Map<String,Object>> resutMapList = null;
         String idCard = null;
         if(null != pser){
             if(null != pser.getInnerid()){
                 perList.add(pser);
-                resutMapList =  tbPersonProjectMapper.queryPersonByInnerId(perList);
+                resutMapList =  tbPersonProjectMapper.queryPersonByInnerId(perList,tabCode);
                 if(null != resutMapList &&  resutMapList.size() > 0){
                     if(null != resutMapList.get(0).get("idCrad")){
                         idCard =  resutMapList.get(0).get("idCrad").toString();

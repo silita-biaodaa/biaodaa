@@ -1,9 +1,11 @@
 package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.dao.TbPersonProjectMapper;
+import com.silita.biaodaa.dao.TbProjectMapper;
 import com.silita.biaodaa.dao.TbProjectSupervisionMapper;
 import com.silita.biaodaa.dao.TbProjectZhaotoubiaoMapper;
 import com.silita.biaodaa.model.TbPersonProject;
+import com.silita.biaodaa.model.TbProject;
 import com.silita.biaodaa.model.TbProjectZhaotoubiao;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,22 @@ public class ProjectZhaotoubiaoService {
     TbPersonProjectMapper tbPersonProjectMapper;
     @Autowired
     TbProjectSupervisionMapper tbProjectSupervisionMapper;
+    @Autowired
+    TbCompanyService tbCompanyService;
+    @Autowired
+    TbProjectMapper tbProjectMapper;
 
     private static ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
 
     public TbProjectZhaotoubiao getProjectZhaotoubiaoDetail(Map<String,Object> param){
+        TbProject project = tbProjectMapper.queryProjectDetail(Integer.valueOf(param.get("proId").toString()));
+        String province = "湖南省";
+        if(null != project){
+            if(null != project.getProWhere() && project.getProWhere().equals("省")){
+                province = project.getProWhere().substring(0,analysisUtil.getIndex(project.getProWhere(),"省")+1);
+            }
+        }
+        String tabCode = tbCompanyService.getProvinceCode(province);
         TbProjectZhaotoubiao zhaotoubiao = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByProId(param);
         if (null == zhaotoubiao || null == zhaotoubiao.getPkid()){
             Map<String,Object> zhaoMap = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByBuild(param);
@@ -71,7 +85,7 @@ public class ProjectZhaotoubiaoService {
         }
         if((null != paramPersonList && paramPersonList.size() > 0)){
             if (null != paramPersonList.get(0).getInnerid()){
-                List<Map<String,Object>> list = tbPersonProjectMapper.queryPersonByInnerId(paramPersonList);
+                List<Map<String,Object>> list = tbPersonProjectMapper.queryPersonByInnerId(paramPersonList,tabCode);
                 if(null != list && list.size() > 0){
                     Map<String,Object> cardMap = list.get(0);
                     if (null != cardMap && null != cardMap.get("idCard")){
@@ -87,7 +101,7 @@ public class ProjectZhaotoubiaoService {
         zhaoParam.remove("roleOne");
         List<TbPersonProject> personProjectAllList = tbPersonProjectMapper.queryPersonByParam(zhaoParam);
         if(null != personProjectAllList && personProjectAllList.size() >0){
-            List<Map<String,Object>> cardList = tbPersonProjectMapper.queryPersonByInnerId(personProjectAllList);
+            List<Map<String,Object>> cardList = tbPersonProjectMapper.queryPersonByInnerId(personProjectAllList,tabCode);
             if(null != cardList && cardList.size() > 0){
                 for (TbPersonProject personProject : personProjectAllList){
                     for(Map<String,Object> map : cardList){

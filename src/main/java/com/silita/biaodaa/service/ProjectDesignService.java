@@ -3,6 +3,7 @@ package com.silita.biaodaa.service;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.MyStringUtils;
+import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,10 +26,16 @@ public class ProjectDesignService {
     TbProjectSupervisionMapper tbProjectSupervisionMapper;
     @Autowired
     TbProjectZhaotoubiaoMapper tbProjectZhaotoubiaoMapper;
+    @Autowired
+    TbCompanyService tbCompanyService;
+    @Autowired
+    TbProjectMapper tbProjectMapper;
+
+    private static ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
 
     public TbProjectDesign getProjectDesignDetail(Map<String,Object> param){
         Integer pkid = MapUtils.getInteger(param,"pkid");
-//        Integer proId = MapUtils.getInteger(param,"proId");
+        Integer proId = MapUtils.getInteger(param,"proId");
         TbProjectDesign projectDesign = tbProjectDesignMapper.queryProjectDesignDetailByPkid(pkid);
         if(null == projectDesign){
             return new TbProjectDesign();
@@ -49,6 +56,14 @@ public class ProjectDesignService {
             projectDesign.setExploreProvince(exproloreProvince);
         }
         List<TbPersonProject> personProjectList = new ArrayList<>();
+        TbProject project = tbProjectMapper.queryProjectDetail(proId);
+        String province = "湖南省";
+        if(null != project){
+            if(null != project.getProWhere() && project.getProWhere().equals("省")){
+                province = project.getProWhere().substring(0,analysisUtil.getIndex(project.getProWhere(),"省")+1);
+            }
+        }
+        String tabCode = tbCompanyService.getProvinceCode(province);
         //获取该项目下的施工
 //        List<TbProjectBuild> buildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
 //        if (null != buildList && buildList.size() > 0){
@@ -64,7 +79,7 @@ public class ProjectDesignService {
         Map<String,Object> pkMap = new HashMap<>();
         pkMap.put("pkid",pkid);
         pkidList.add(pkMap);
-        personProjectList = this.getPersonList(pkidList);
+        personProjectList = this.getPersonList(pkidList,tabCode);
 //        List<TbProjectDesign> projectDesignList = tbProjectDesignMapper.queryProjectDesignDetailByProId(proId);
 //        if(null != projectDesignList && projectDesignList.size() > 0){
 //            personProjectList.addAll(this.getPersonList(projectDesignList));
@@ -79,11 +94,11 @@ public class ProjectDesignService {
     }
 
 
-    private List<TbPersonProject> getPersonList (List list){
+    private List<TbPersonProject> getPersonList (List list,String tabCode){
         List<TbPersonProject> personProjectList = new ArrayList<>();
         List<TbPersonProject> person = tbPersonProjectMapper.queryInnerIdByPkid(list);
         if(null != person && person.size() > 0){
-            List<Map<String,Object>> resultMapList  = tbPersonProjectMapper.queryPersonByInnerId(person);;
+            List<Map<String,Object>> resultMapList  = tbPersonProjectMapper.queryPersonByInnerId(person,tabCode);
             for(TbPersonProject per : person){
                 for(Map<String,Object> map : resultMapList){
                     if(null != map.get("innerid") && map.get("innerid").toString().equals(per.getInnerid())){

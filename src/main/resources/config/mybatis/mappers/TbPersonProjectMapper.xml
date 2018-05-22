@@ -42,13 +42,12 @@
     ORDER BY t.`created` DESC
   </select>
 
-  <select id="queryPersonByInnerId" resultType="java.util.Map" parameterType="java.util.List">
+  <select id="queryPersonByInnerId" resultType="java.util.Map">
       SELECT
-        t1.`id_card` as idCard
+        t.`id_card` as idCard
         ,t.`seal_no` AS sealNo
         ,t.`innerid` AS innerid
-      FROM tb_person_qualification t
-      LEFT JOIN tb_person t1 ON t.`per_id` = t1.`pkid`
+      FROM tb_person_${tabCode} t
       WHERE t.`innerid` in
       <foreach collection="list" separator="," index="index" close=")" open="(" item="list">
         #{list.innerid}
@@ -91,5 +90,19 @@
     WHERE 1 = 1
       AND t.`type` = #{type}
       AND t.`pid`= #{pkid}
+  </select>
+
+  <select id="queryPersonByCode" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select t.*
+    from tb_person_${tabCode} t
+    where 1=1
+    <if test="type != null and type != ''">
+      and t.`type` = #{type}
+    </if>
+    AND t.`pid` = #{pkid}
+    <if test="role != null and role != ''and roleOne != null and roleOne != ''">
+      AND (t.`role` = #{role} OR t.`role` = #{roleOne})
+    </if>
+    ORDER BY t.`created` DESC
   </select>
 </mapper>
