@@ -261,7 +261,7 @@
         ,<include refid="noticeTypeConvert"/>
         ,s.url,
         <if test="source==null or source=='' or source=='hunan'">
-            IFNULL(dl.projdq,aa.name) as projDq,dl.pbMode,dl.projSum,
+            concat(#{provName},IFNULL(concat('-',IFNULL(dl.projdq,aa.name)),''),IFNULL(concat('-',dl.projXs),'')) as projDq,dl.pbMode,dl.projSum,
             <if test="type == 0">
                 dl.bmSite,dl.kbSite,dl.kbStaffAsk,
                 (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} ) zzRank,

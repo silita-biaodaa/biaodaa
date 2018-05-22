@@ -79,45 +79,8 @@ public class NoticeController extends BaseController{
     }
 
     private  void parseRouteSource(Map params){
-        String source =null;
         String province =  MapUtils.getString(params,"province");
-        if(MyStringUtils.isNotNull(province)){
-            province = province.substring(0,2);
-            switch (province){
-                case"北京":source="beij";break;
-                case"天津":source="tianj";break;
-                case"河北":source="hebei";break;
-                case"山西":source="sanx";break;
-                case"内蒙":source="neimg";break;
-                case"辽宁":source="liaon";break;
-                case"吉林":source="jil";break;
-                case"黑龙":source="heilj";break;
-                case"上海":source="shangh";break;
-                case"江苏":source="jiangs";break;
-                case"浙江":source="zhej";break;
-                case"安徽":source="anh";break;
-                case"福建":source="fuj";break;
-                case"江西":source="jiangx";break;
-                case"山东":source="shand";break;
-                case"河南":source="henan";break;
-                case"湖北":source="hubei";break;
-                case"广东":source="guangd";break;
-                case"广西":source="guangx";break;
-                case"海南":source="hain";break;
-                case"重庆":source="chongq";break;
-                case"四川":source="sichuan";break;
-                case"贵州":source="guiz";break;
-                case"云南":source="yunn";break;
-                case"陕西":source="shanxi";break;
-                case"甘肃":source="gans";break;
-                case"青海":source="qingh";break;
-                case"宁夏":source="ningx";break;
-                case"湖南":source=HUNAN_SOURCE;break;
-                case"新疆":source="xinjiang";break;
-                case"西藏":source="xizang";break;
-            }
-        }
-        params.put("source",source);
+        params.put("source",RouteUtils.parseProvinceToSource(province));
         settingRouteTable(params);
     }
 
@@ -295,6 +258,16 @@ public class NoticeController extends BaseController{
         noticeService.addCollStatus(list, params);
     }
 
+
+    /**
+     * 根据source，转换出省名称
+     * @param params
+     */
+    private void settingProvName(Map params){
+        String source =  MapUtils.getString(params,"source");
+        params.put("provName",RouteUtils.parseSourceToProv(source));
+    }
+
     @ResponseBody
     @RequestMapping(value = "/detail/{id}",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map<String,Object> queryDetail(@PathVariable Long id,@RequestBody Map params){
@@ -307,6 +280,7 @@ public class NoticeController extends BaseController{
             List<Map> detailList = (List<Map>) myRedisTemplate.getObject(listKey);
             if(detailList ==null) {
                 settingRouteTable(params);
+                settingProvName(params);
                 detailList = noticeService.queryNoticeDetail(params);
                 if(detailList!=null && detailList.size()>0){
                     myRedisTemplate.setObject(listKey,detailList, DETAIL_OVER_TIME);
