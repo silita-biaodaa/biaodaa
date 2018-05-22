@@ -5,9 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.ArticlesMapper;
-import com.silita.biaodaa.dao.ClickRecordMapper;
 import com.silita.biaodaa.dao.NoticeMapper;
-import com.silita.biaodaa.model.ClickRecord;
+import com.silita.biaodaa.dao.TbClickStatisticsMapper;
+import com.silita.biaodaa.model.TbClickStatistics;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
@@ -33,7 +33,7 @@ public class NoticeService {
     @Autowired
     private ArticlesMapper articlesMapper;
     @Autowired
-    private ClickRecordMapper clickRecordMapper;
+    private TbClickStatisticsMapper tbClickStatisticsMapper;
 
     /**
      * 资质id拼接
@@ -439,18 +439,23 @@ public class NoticeService {
 
     /**
      * 获取公告点击次数
-     * @param clickRecord
+     * @param params
      * @return
      */
-    public Integer getClickCountByTypeAndNoticeId(ClickRecord clickRecord) {
-        //取得当天某条公告点击数
-        Integer curDateTotal = clickRecordMapper.getTotalByTypeAndAimIdAndDate(clickRecord);
+    public Integer getClickCountBySourceAndTypeAndInnertId(Map<String, Object> params) {
+        TbClickStatistics tbClickStatistics = new TbClickStatistics();
+        tbClickStatistics.setSource(String.valueOf(params.get("source")));
+        tbClickStatistics.setType("content");
+        tbClickStatistics.setInnertId(Math.toIntExact((Long) params.get("id")));
+
+        //判断是否存在
+        Integer curDateTotal = tbClickStatisticsMapper.getTotalBySourceAndTypeAndInnertId(tbClickStatistics);
         if(curDateTotal > 0) {
-            clickRecordMapper.updateClickRecordByTypeAndAimIdAndDate(clickRecord);
+            tbClickStatisticsMapper.updateClickStatisticsBySourceAndTypeAndInnertId(tbClickStatistics);
         } else {
-            clickRecordMapper.insertClickRecord(clickRecord);
+            tbClickStatisticsMapper.insertClickStatistics(tbClickStatistics);
         }
-        return clickRecordMapper.getClickCountByTypeAndNoticeId(clickRecord);
+        return tbClickStatisticsMapper.getClickCountByBySourceAndTypeAndInnertId(tbClickStatistics);
     }
 
     /**

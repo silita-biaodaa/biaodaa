@@ -7,7 +7,6 @@ import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.SnatchContent;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
-import com.silita.biaodaa.model.ClickRecord;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.utils.MyDateUtils;
@@ -313,6 +312,8 @@ public class NoticeController extends BaseController{
                 noticeService.addCollStatusByRoute(detailList);
             }
             resultMap.put(DATA_FLAG,detailList);
+            //添加点击次数
+            resultMap.put("clickCount", noticeService.getClickCountBySourceAndTypeAndInnertId(params));
 
             if(MyStringUtils.isNull(source) || source.equals(HUNAN_SOURCE)) {
                 Long relNoticeCount = noticeService.queryRelCount(id);
@@ -329,6 +330,7 @@ public class NoticeController extends BaseController{
                     resultMap.put("relCompanySize", relCompanySize);//资质相关企业
                     resultMap.put("fileCount", fileSize);//文件列表
                 }
+
             }else{
                 //todo:全国公告暂不支持
                 resultMap.put("relNoticeCount", 0);//相关公告数量
@@ -492,27 +494,6 @@ public class NoticeController extends BaseController{
             result.put("data", detail);
         } catch (Exception e) {
             logger.error(String.format("公告文章详情查询失败！%s", e.getMessage()));
-            result.put("code", 0);
-            result.put("msg", e.getMessage());
-        }
-        return result;
-    }
-
-    /**
-     * 获取公告点击次数
-     * @param clickRecord
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/queryNoticeClickCount", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String, Object> queryNoticeClickCount(@RequestBody ClickRecord clickRecord) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 1);
-        result.put("msg", "公告文章点击数查询成功!");
-        try {
-            result.put("data", noticeService.getClickCountByTypeAndNoticeId(clickRecord));
-        } catch (Exception e) {
-            logger.error(String.format("公告文章点击数查询失败！", e.getMessage()));
             result.put("code", 0);
             result.put("msg", e.getMessage());
         }
