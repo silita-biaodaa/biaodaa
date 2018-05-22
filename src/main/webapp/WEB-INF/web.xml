@@ -3,13 +3,27 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
 	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <display-name>trasen-manage</display-name>
-    <welcome-file-list>
-        <welcome-file>index</welcome-file>
-    </welcome-file-list>
     <context-param>
         <param-name>webAppRootKey</param-name>
         <param-value>trasen-manage</param-value>
     </context-param>
+    <context-param>
+        <param-name>log4jRefreshInterval</param-name>
+        <param-value>60000</param-value>
+    </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath*:config/spring/applicationContext.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
     <filter>
         <filter-name>encodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -37,23 +51,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <context-param>
-        <param-name>log4jRefreshInterval</param-name>
-        <param-value>60000</param-value>
-    </context-param>
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>classpath*:config/spring/applicationContext.xml</param-value>
-    </context-param>
-    <listener>
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
-    </listener>
 
     <!-- springmvc -->
     <servlet>
@@ -71,22 +68,9 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-    <!-- flex上传文件。 -->
-    <servlet-mapping>
-        <servlet-name>excel-upload</servlet-name>
-        <url-pattern>/upload/*</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>excel-upload</servlet-name>
-        <servlet-class>com.silita.biaodaa.servlet.NoticeFileUploadServlet</servlet-class>
-        <init-param>
-            <param-name>uploadPath</param-name>
-            <param-value>/mnt/file/</param-value>
-        </init-param>
-        <init-param>
-            <param-name>maxSize</param-name>
-            <param-value>100</param-value>
-        </init-param>
-    </servlet>
 
+
+    <welcome-file-list>
+        <welcome-file>index</welcome-file>
+    </welcome-file-list>
 </web-app>
