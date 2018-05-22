@@ -260,20 +260,25 @@
         SELECT s.id,s.title,s.opendate,s.type
         ,<include refid="noticeTypeConvert"/>
         ,s.url,
-        <if test="source==null or source=='' or source=='hunan'">
-            concat(#{provName},IFNULL(concat('-',IFNULL(dl.projdq,aa.name)),''),IFNULL(concat('-',dl.projXs),'')) as projDq,dl.pbMode,dl.projSum,
-            <if test="type == 0">
-                dl.bmSite,dl.kbSite,dl.kbStaffAsk,
-                (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} ) zzRank,
-                dl.tbAssureEndDate,
-                dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
-                dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
-            </if>
-            <if test="type == 2">
-                dl.oneName,dl.oneOffer,dl.twoName,dl.twoOffer,dl.threeName,dl.threeOffer,
-            </if>
-            dl.block,
-        </if>
+        <choose>
+            <when test="source==null or source=='' or source=='hunan'">
+                concat(#{provName},IFNULL(concat('-',IFNULL(dl.projdq,aa.name)),''),IFNULL(concat('-',dl.projXs),'')) as projDq,dl.pbMode,dl.projSum,
+                <if test="type == 0">
+                    dl.bmSite,dl.kbSite,dl.kbStaffAsk,
+                    (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} ) zzRank,
+                    dl.tbAssureEndDate,
+                    dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
+                    dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
+                </if>
+                <if test="type == 2">
+                    dl.oneName,dl.oneOffer,dl.twoName,dl.twoOffer,dl.threeName,dl.threeOffer,
+                </if>
+                dl.block,
+            </when>
+            <otherwise>
+                #{provName} as projDq,
+            </otherwise>
+        </choose>
         sc.content
         <include refid="noticeListBaseFrom"/>
         left join
