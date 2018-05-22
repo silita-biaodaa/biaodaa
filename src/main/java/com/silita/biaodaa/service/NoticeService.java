@@ -5,7 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.ArticlesMapper;
+import com.silita.biaodaa.dao.ClickRecordMapper;
 import com.silita.biaodaa.dao.NoticeMapper;
+import com.silita.biaodaa.model.ClickRecord;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
@@ -30,6 +32,8 @@ public class NoticeService {
 
     @Autowired
     private ArticlesMapper articlesMapper;
+    @Autowired
+    private ClickRecordMapper clickRecordMapper;
 
     /**
      * 资质id拼接
@@ -431,6 +435,22 @@ public class NoticeService {
 
     public List<Long> queryNoticeCollStatus(Map map){
         return noticeMapper.queryNoticeCollStatus(map);
+    }
+
+    /**
+     * 获取公告点击次数
+     * @param clickRecord
+     * @return
+     */
+    public Integer getClickCountByTypeAndNoticeId(ClickRecord clickRecord) {
+        //取得当天某条公告点击数
+        Integer curDateTotal = clickRecordMapper.getTotalByTypeAndAimIdAndDate(clickRecord);
+        if(curDateTotal > 0) {
+            clickRecordMapper.updateClickRecordByTypeAndAimIdAndDate(clickRecord);
+        } else {
+            clickRecordMapper.insertClickRecord(clickRecord);
+        }
+        return clickRecordMapper.getClickCountByTypeAndNoticeId(clickRecord);
     }
 
     /**

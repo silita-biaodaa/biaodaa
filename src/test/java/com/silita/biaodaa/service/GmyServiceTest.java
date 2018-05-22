@@ -352,4 +352,17 @@ public class GmyServiceTest extends ConfigTest {
                 .andReturn().getResponse().getContentAsString();
         System.out.println("-----返回的json = " + responseString);
     }
+
+    @Test
+    public void testController22()throws Exception{
+        String requestBody = "{\"type\":\"neirong\",\"aimId\":666}";
+        String responseString = mockMvc.perform(post("/notice/queryNoticeClickCount").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.getBytes())
+        )
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println("-----返回的json = " + responseString);
+    }
 }

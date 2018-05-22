@@ -7,6 +7,7 @@ import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.SnatchContent;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.model.ClickRecord;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.utils.MyDateUtils;
@@ -499,6 +500,27 @@ public class NoticeController extends BaseController{
             result.put("data", detail);
         } catch (Exception e) {
             logger.error(String.format("公告文章详情查询失败！%s", e.getMessage()));
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 获取公告点击次数
+     * @param clickRecord
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/queryNoticeClickCount", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> queryNoticeClickCount(@RequestBody ClickRecord clickRecord) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("code", 1);
+        result.put("msg", "公告文章点击数查询成功!");
+        try {
+            result.put("data", noticeService.getClickCountByTypeAndNoticeId(clickRecord));
+        } catch (Exception e) {
+            logger.error(String.format("公告文章点击数查询失败！", e.getMessage()));
             result.put("code", 0);
             result.put("msg", e.getMessage());
         }
