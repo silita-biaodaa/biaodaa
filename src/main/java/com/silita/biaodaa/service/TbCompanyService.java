@@ -251,12 +251,21 @@ public class TbCompanyService {
         return aptitudeDictionaryMapper.getIndustry();
     }
 
-    public PageInfo filterCompany(Page page,Map<String,Object> param){
+    public PageInfo filterCompany(Page page,Map<String,Object> param,String levelRank){
         List<TbCompany> list = new ArrayList<>();
         Map<String,CertBasic> certBasicMap = getCertBasicMap();
         Map<String,TbSafetyCertificate> safetyCertificateMap = getSafetyCertMap();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        list = tbCompanyMapper.filterCompany(param);
+        if(levelRank!=null&&levelRank.length()==4){
+            String level = levelRank.substring(0,2);
+            String rank = levelRank.substring(2,4);
+            param.put("level",level);
+            param.put("rank",rank);
+            list = tbCompanyMapper.filterSecureCompany(param);
+        }else{
+            list = tbCompanyMapper.filterCompany(param);
+        }
+
         for(TbCompany company : list){
             if(company.getComName()!=null&&company.getBusinessNum()!=null){
                 CertBasic certBasic = certBasicMap.get(company.getComName()+"|"+company.getBusinessNum());
@@ -272,6 +281,10 @@ public class TbCompanyService {
                 }
                 // TODO: 18/4/26  存续状态暂时写死
                 company.setSubsist("存续");
+            }
+            if(company.getRegisAddress()!=null&&company.getRegisAddress().indexOf("湖南")>-1){
+                String url = tbCompanyMapper.getCompanyUrl(company.getComId());
+                company.setUrl(url);
             }
         }
         PageInfo pageInfo = new PageInfo(list);
@@ -627,8 +640,10 @@ public class TbCompanyService {
             code = provinceMap.get(name);
         }else{
             code = tbPersonQualificationMapper.getProvinceCode(name);
-            provinceMap.put(name,code);
-            globalCache.setProvinceMap(provinceMap);
+            if(code!=null){
+                provinceMap.put(name,code);
+                globalCache.setProvinceMap(provinceMap);
+            }
         }
         return code;
     }

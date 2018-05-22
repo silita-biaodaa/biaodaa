@@ -21,6 +21,8 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
 
     List<TbCompany> filterCompany(Map<String,Object> param);
 
+    List<TbCompany> filterSecureCompany(Map<String,Object> param);
+
     String getAreaCode(String name);
 
     List<Map<String,String>> queryProvinceList();
@@ -42,4 +44,6 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     String getLogo(Integer comId);
 
     Integer getColleCount(Map<String,Object> param);
+
+    String getCompanyUrl(Integer comId);
 }

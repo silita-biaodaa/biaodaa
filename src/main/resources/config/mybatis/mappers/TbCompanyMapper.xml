@@ -130,4 +130,37 @@
       ORDER BY c.`created` DESC
       LIMIT 1
   </select>
+
+  <select id="filterSecureCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
+    select c.* from cert_aqrz a
+    left join cert_src s on a.srcUuid=s.`uuid`
+    left join tb_company c on c.com_name = s.companyName
+    where c.com_id is not null
+    <if test="keyWord!=null and keyWord!=''">
+      and c.com_name like CONCAT('%',#{keyWord},'%')
+    </if>
+    <if test="areaName!=null and areaName!=''">
+      and c.regis_address like CONCAT('%',#{areaName},'%')
+    </if>
+    <if test="minCapital!=null">
+      <![CDATA[ and c.regis_capital >= #{minCapital} ]]>
+    </if>
+    <if test="maxCapital!=null">
+      <![CDATA[ and c.regis_capital <= #{maxCapital} ]]>
+    </if>
+    <if test="qualCode!=null and qualCode!=''">
+      and c.range like CONCAT('%',#{qualCode},'%')
+    </if>
+    <if test="level!=null and level!=''">
+      and a.secureLevel=#{level}
+    </if>
+    <if test="rank!=null and rank!=''">
+      and a.secureRank=#{rank}
+    </if>
+    order by c.px desc
+  </select>
+
+  <select id="getCompanyUrl" parameterType="Integer" resultType="String">
+    select  url from tb_company_qualification where com_id = #{comId} limit 1
+  </select>
 </mapper>

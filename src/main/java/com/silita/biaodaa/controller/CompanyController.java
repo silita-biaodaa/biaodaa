@@ -178,13 +178,16 @@ public class CompanyController extends BaseController {
             String keyWord = MapUtils.getString(params, "keyWord");
             String province = MapUtils.getString(params, "province");
             Map<String,Object> param = new HashMap<>();
-            String tableCode = null;
+            String tableCode = "hunan";
             if(province!=null&&!"".equals(province)){
                 tableCode = tbCompanyService.getProvinceCode(province);
+                if(tableCode==null){
+                    result.put("code",0);
+                    result.put("msg","该区域无法查询到数据");
+                    return result;
+                }
             }
-            if(tableCode == null){
-                tableCode = "hunan";
-            }
+
             param.put("tableCode",tableCode);
             param.put("category",category);
 
@@ -286,6 +289,9 @@ public class CompanyController extends BaseController {
             String qualCode = MapUtils.getString(params, "qualCode");
             String keyWord = MapUtils.getString(params, "keyWord");
 
+            String levelRank = MapUtils.getString(params, "levelRank");
+
+
             String code = "";
             String [] qualCodes = MyStringUtils.splitParam(qualCode);
             if(qualCodes!=null&&qualCodes.length>0){
@@ -305,7 +311,7 @@ public class CompanyController extends BaseController {
             page.setPageSize(pageSize);
             page.setCurrentPage(pageNo);
 
-            PageInfo pageInfo  = tbCompanyService.filterCompany(page,param);
+            PageInfo pageInfo  = tbCompanyService.filterCompany(page,param,levelRank);
             Map<String,String> typeMap = new HashMap<>();
             typeMap.put("collType","company");
             noticeService.addCollStatus(pageInfo.getList(), typeMap);
