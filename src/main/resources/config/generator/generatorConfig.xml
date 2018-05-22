@@ -27,7 +27,7 @@
         <javaClientGenerator targetPackage="com.silita.biaodaa.dao" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
-        <table tableName="readed_record">
+        <table tableName="tb_click_statistics">
             <!--mysql 配置-->
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
             <!--oracle 配置-->

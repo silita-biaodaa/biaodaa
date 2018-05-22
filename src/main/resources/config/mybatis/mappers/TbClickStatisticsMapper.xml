@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbClickStatisticsMapper">
+
+    <select id="getTotalBySourceAndTypeAndInnertId" parameterType="com.silita.biaodaa.model.TbClickStatistics"
+            resultType="Integer">
+      SELECT COUNT(*) FROM mishu_write.tb_click_statistics WHERE `source` = #{source} AND `type` = #{type} AND `innert_id` = #{innertId}
+  </select>
+
+    <update id="updateClickStatisticsBySourceAndTypeAndInnertId"
+            parameterType="com.silita.biaodaa.model.TbClickStatistics">
+      UPDATE mishu_write.tb_click_statistics
+      SET `click_count` = `click_count` + 1,`updated` = NOW()
+      WHERE `source` = #{source} AND `type` = #{type} AND `innert_id` = #{innertId}
+  </update>
+
+    <insert id="insertClickStatistics" parameterType="com.silita.biaodaa.model.TbClickStatistics">
+      INSERT INTO mishu_write.tb_click_statistics(`type`, `innert_id`, `click_count`, `source`, `created`) VALUES(#{type}, #{innertId}, 1, #{source}, NOW())
+  </insert>
+
+    <select id="getClickCountByBySourceAndTypeAndInnertId" parameterType="com.silita.biaodaa.model.TbClickStatistics"
+            resultType="Integer">
+      SELECT SUM(IFNULL(click_count, 0))
+      FROM mishu_write.tb_click_statistics
+      WHERE `source` = #{source} AND `type` = #{type} AND `innert_id` = #{innertId}
+  </select>
+</mapper>

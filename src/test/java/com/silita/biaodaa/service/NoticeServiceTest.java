@@ -101,7 +101,7 @@ public class NoticeServiceTest extends ConfigTest {
 
     @Test   //1805443 1800849 1801046    1805238   多 1813931  4 source:'yunn' ,"source":"hunan"
     public void testNoticeDetail()throws Exception{
-        String requestBody = "{\"type\":2}";
+        String requestBody = "{\"type\":2, \"source\":\"yunn\"}";
         String responseString = mockMvc.perform(post("/notice/detail/1804911").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
