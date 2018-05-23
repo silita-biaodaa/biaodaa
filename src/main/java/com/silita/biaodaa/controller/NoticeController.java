@@ -156,9 +156,22 @@ public class NoticeController extends BaseController{
         }
     }
 
+    /**
+     * 性能问题，禁止查询所有类别公告。
+     * @param params
+     */
+    private void forbidAllType(Map params){
+        Integer type = MapUtils.getInteger(params,"type");
+        if(MyStringUtils.isNull(type) || type==99){
+            params.put("type",0);
+        }
+
+    }
+
     @ResponseBody
     @RequestMapping(value = "/searchList",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map<String,Object> searchList(@RequestBody Map params){
+        forbidAllType(params);//性能问题，暂禁止查询所有type公告
         Map resultMap =null;
         try {
 //        search.setTypeToInt(type);
@@ -204,6 +217,7 @@ public class NoticeController extends BaseController{
     @RequestMapping(value = "/queryList",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     public Map<String,Object> queryList(@RequestBody Map params){
         Map resultMap = null;
+        forbidAllType(params);//性能问题，暂禁止查询所有type公告
         try {
             settingUserId(params);
 //        search.setTypeToInt(type);
