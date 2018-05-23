@@ -173,9 +173,9 @@
 
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
         <include refid="noticeListHead"/>
-        <if test="type==0">
-          ,detail.bmSite
-        </if>
+        <!--<if test="type==0 and bmSiteStr !=null and bmSiteStr!=''">-->
+          <!--,detail.bmSite-->
+        <!--</if>-->
         <include refid="noticeListBaseFrom"/>
         <if test="source==null or source=='' or source=='hunan'">
         <!--资质判断 -->
