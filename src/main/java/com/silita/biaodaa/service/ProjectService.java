@@ -7,10 +7,13 @@ import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,12 +111,12 @@ public class ProjectService {
      */
     public Map<String,Object> getProjectDetail(Integer proId,Map<String,Object> result){
         TbProject project = tbProjectMapper.queryProjectDetail(proId);
-        project.setAcreage(null);
-//        String scope = project.getAcreage() == null ? null : project.getAcreage();
-//        if(null != scope){
-//            scope = projectAnalysisUtil.analysisScope(scope);
-//            project.setAcreage(scope);
-//        }
+        if(null == project.getAcreage()){
+            if(null != project.getProScope()){
+                project.setAcreage(projectAnalysisUtil.analysisData(projectAnalysisUtil.regx,project.getProScope()));
+            }
+        }
+        project.setAcreage(projectAnalysisUtil.getNumber(project.getAcreage()));
         result.put("data",project);
         return result;
     }
@@ -294,5 +297,29 @@ public class ProjectService {
             }
         }
         return false;
+    }
+
+
+    public void analysisData(){
+        List<Map<String,Object>> paramList = new ArrayList<>();
+        List<Map<String,Object>> proList = tbProjectMapper.queryObject(null);
+        String regx = "[总建筑面积|建筑总面积|总面积|实际用地面积|改造面积|绿化面积|支护为|建筑面积|建筑面积|扩建面积|面积]?.*?(\\d*?\\.?\\d*[万|亩]?\\s*(平方米|M2|m2|㎡|万㎡|平米|万平|亩|平方))";
+        for(Map<String,Object> map : proList){
+            if(null != map.get("scope")){
+                String scope = map.get("scope").toString();
+                map.put("acreage",projectAnalysisUtil.analysisData(projectAnalysisUtil.regx,scope));
+                paramList.add(map);
+            }
+        }
+        //修改
+        System.out.println("size================="+paramList.size());
+        for(Map<String,Object> resMap : paramList){
+            System.out.println(resMap.get("scope")+"----------------------"+resMap.get("acreage"));
+            if(null != resMap.get("acreage")){
+                if(projectAnalysisUtil.isNumeric(resMap.get("acreage").toString())) {
+                    tbProjectMapper.update(resMap);
+                }
+            }
+        }
     }
 }

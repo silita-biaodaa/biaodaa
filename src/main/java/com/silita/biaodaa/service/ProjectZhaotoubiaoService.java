@@ -36,22 +36,24 @@ public class ProjectZhaotoubiaoService {
         TbProject project = tbProjectMapper.queryProjectDetail(Integer.valueOf(param.get("proId").toString()));
         String province = "湖南省";
         if(null != project){
-            if(null != project.getProWhere() && project.getProWhere().equals("省")){
+            if(null != project.getProWhere() && project.getProWhere().contains("省")){
                 province = project.getProWhere().substring(0,analysisUtil.getIndex(project.getProWhere(),"省")+1);
             }
         }
         String tabCode = tbCompanyService.getProvinceCode(province);
         TbProjectZhaotoubiao zhaotoubiao = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByProId(param);
         if (null == zhaotoubiao || null == zhaotoubiao.getPkid()){
-            Map<String,Object> zhaoMap = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByBuild(param);
-            if(null != zhaoMap){
-                zhaoMap.put("bidType","施工");
-                zhaotoubiao = this.getProjectZhao(zhaoMap);
-            }else {
+            if("监理".equals(param.get("zhaobiaoType").toString())){
                 Map<String,Object> zhaoSuMap = tbProjectSupervisionMapper.querySuperDetail(param);
                 if(null != zhaoSuMap){
                     zhaoSuMap.put("bidType","监理");
                     zhaotoubiao = this.getProjectZhao(zhaoSuMap);
+                }
+            }else{
+                Map<String,Object> zhaoMap = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByBuild(param);
+                if(null != zhaoMap){
+                    zhaoMap.put("bidType","施工");
+                    zhaotoubiao = this.getProjectZhao(zhaoMap);
                 }
             }
         }
@@ -137,6 +139,12 @@ public class ProjectZhaotoubiaoService {
         }
         if(null != map.get("proScope")){
             zhaotoubiao.setProScope(map.get("proScope").toString());
+            if(null == map.get("acreage")){
+                zhaotoubiao.setAcreage(analysisUtil.analysisData(analysisUtil.regx,map.get("proScope").toString()));
+            }
+        }
+        if(null != zhaotoubiao.getAcreage()){
+            zhaotoubiao.setAcreage(analysisUtil.getNumber(zhaotoubiao.getAcreage()));
         }
         if(null != map.get("bidRemark") && !"未办理中标备案".equals(map.get("bidRemark").toString())){
             String remark = map.get("bidRemark").toString();
@@ -145,19 +153,9 @@ public class ProjectZhaotoubiaoService {
             zhaotoubiao.setZhongbiaoDate(zhongbiaoDate);
             if(null == zhaotoubiao.getZhongbiaoAmount()){
                 String amount = remark.substring(analysisUtil.getIndex(remark,"中标价格："),analysisUtil.getIndex(remark,"万元"));
-                zhaotoubiao.setZhongbiaoAmount(isNumeric(amount) == true ? amount.substring(amount.lastIndexOf("中标价格：")+"中标价格：".length(),amount.length()) : null);
+                zhaotoubiao.setZhongbiaoAmount(analysisUtil.isNumeric(amount) == true ? amount.substring(amount.lastIndexOf("中标价格：")+"中标价格：".length(),amount.length()) : null);
             }
         }
         return zhaotoubiao;
-    }
-
-
-    public static boolean isNumeric(String str){
-        for (int i =  str.length(); --i>=0;) {
-            if(Character.isDigit(str.charAt(i))){
-                return true;
-            }
-        }
-        return false;
     }
 }

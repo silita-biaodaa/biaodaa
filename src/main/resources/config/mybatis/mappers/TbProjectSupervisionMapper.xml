@@ -50,16 +50,14 @@
   </select>
 
   <select id="querySuperDetail" parameterType="java.util.Map" resultType="java.util.Map">
-      SELECT t.`acreage` AS acreage
-            ,t.`pro_scope` AS proScope
+      SELECT
+            t1.`b_scope` AS proScope
             ,t1.`bid_remark` AS bidRemark
             ,t1.`super_org` AS bOrg
             ,t3.`org_code` AS orgCode
-      FROM tb_project t
-      LEFT JOIN `tb_project_supervision` t1 ON t.`pro_id` = t1.`pro_id`
+      FROM`tb_project_supervision` t1
       LEFT JOIN tb_company t3 ON t1.`com_id` = t3.`com_id`
-      WHERE t.`pro_id` = #{proId}
-      AND t1.`super_org` = #{company}
+      WHERE t1.`super_org` = #{company}
       AND t1.`pkid` = #{pkid}
   </select>
 </mapper>
