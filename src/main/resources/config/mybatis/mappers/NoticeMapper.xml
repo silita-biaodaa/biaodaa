@@ -173,17 +173,21 @@
 
     <select id="queryNoticeList" resultType="Map" parameterType="Map">
         <include refid="noticeListHead"/>
+        <!--报名地点 -->
         <!--<if test="type==0 and bmSiteStr !=null and bmSiteStr!=''">-->
           <!--,detail.bmSite-->
         <!--</if>-->
         <include refid="noticeListBaseFrom"/>
         <if test="source==null or source=='' or source=='hunan'">
-        <!--资质判断 -->
-        <if test="(zzTypeOne !=null and zzTypeOne !='') or (zzTypeTwo !=null and zzTypeTwo !='') or (zzTypeThree !=null and zzTypeThree !='')">
+        <!--资质筛选 -->
+        <if test="(zzTypeOne !=null and zzTypeOne !='') or (zzTypeTwo !=null and zzTypeTwo !='') or (threeAptList !=null and threeAptList !='')">
             join mishu.snatch_url_cert suc on suc.contId=s.id
             <choose>
-                <when test="zzTypeThree !=null and zzTypeThree !=''">
-                  and suc.certificateuuid like '%${zzTypeThree}%'
+                <when test="threeAptList !=null and threeAptList !=''">
+                    and
+                    <foreach collection="threeAptList" item="zzTypeThree" open="(" close=")" separator=" or ">
+                      suc.certificateuuid like '%${zzTypeThree}%'
+                    </foreach>
                 </when>
                 <when test="zzTypeTwo !=null and zzTypeTwo !=''">
                     and suc.certificateuuid like '%${zzTypeTwo}%'

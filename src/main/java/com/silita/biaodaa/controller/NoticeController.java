@@ -9,10 +9,7 @@ import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
-import com.silita.biaodaa.utils.MyDateUtils;
-import com.silita.biaodaa.utils.MyStringUtils;
-import com.silita.biaodaa.utils.ObjectUtils;
-import com.silita.biaodaa.utils.RouteUtils;
+import com.silita.biaodaa.utils.*;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -136,6 +133,7 @@ public class NoticeController extends BaseController{
             params.put("modeStr",modeStr.toString());
         }
 
+        //资质条件处理
         String zztype = MapUtils.getString(params,"zzType");
         String[] zztypeList =MyStringUtils.splitParam(zztype);
         if(zztypeList!=null && zztypeList.length>0){
@@ -144,7 +142,8 @@ public class NoticeController extends BaseController{
             }else if(zztypeList.length==2){
                 params.put("zzTypeTwo",zztypeList[1]);
             }else if(zztypeList.length==3){
-                params.put("zzTypeThree",zztypeList[2]);
+                List<String> aptList =AptitudeUtils.parseThreeAptCode(zztypeList[2]);
+                params.put("threeAptList",aptList);
             }
         }
 
