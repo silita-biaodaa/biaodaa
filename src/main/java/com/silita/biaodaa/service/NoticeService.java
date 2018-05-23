@@ -13,6 +13,7 @@ import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHONGBIAO;
+import static com.silita.biaodaa.utils.RouteUtils.HUNAN_SOURCE;
 
 /**
  * Created by dh on 2018/4/9.
@@ -444,7 +446,13 @@ public class NoticeService {
      */
     public Integer getClickCountBySourceAndTypeAndInnertId(Map<String, Object> params) {
         TbClickStatistics tbClickStatistics = new TbClickStatistics();
-        tbClickStatistics.setSource(String.valueOf(params.get("source")));
+
+        String source = String.valueOf(params.get("source"));
+        if(StringUtils.isEmpty(source) || "hunan".equals(source) || "null".equals(source)) {
+            tbClickStatistics.setSource(HUNAN_SOURCE);
+        } else {
+            tbClickStatistics.setSource(String.valueOf(params.get("source")));
+        }
         tbClickStatistics.setType("content");
         tbClickStatistics.setInnertId(Math.toIntExact((Long) params.get("id")));
 
