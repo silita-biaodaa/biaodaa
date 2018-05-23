@@ -704,7 +704,14 @@ public class TbCompanyService {
         return tbCompany;
     }
 
-    private static Map<String,Object> getQualCode(Map<String,Object> param,String qualCode,String zzLevel){
+    /**
+     *
+     * @param param
+     * @param qualCode 原先code
+     * @param zzLevel 级数(31/21/11)
+     * @return
+     */
+    public  Map<String,Object> getQualCode(Map<String,Object> param,String qualCode,String zzLevel){
         String superfineLevel = null;
         String stairLevel = null;
         String secondLevel = null;
