@@ -111,4 +111,14 @@ public class ProjectController extends BaseController{
         result.put("data",projectService.getProjectCompanyList(MapUtils.getInteger(param,"comId")));
         return result;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/update",method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> analysisData(){
+        Map<String,Object> result = new HashMap<String,Object>();
+        result.put("code",this.SUCCESS_CODE);
+        result.put("msg",this.SUCCESS_MSG);
+        projectService.analysisData();
+       return result;
+    }
 }

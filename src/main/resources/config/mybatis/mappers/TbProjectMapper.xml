@@ -12,9 +12,7 @@
                 ,t.`pro_type` AS proType
                 ,t.`pro_address` AS proAddress
                 ,t.`pro_scope` AS scope
-                ,t5.`complete_date` AS completeDate
         FROM tb_project t
-        LEFT JOIN (SELECT t4.* FROM (SELECT t3.* FROM (SELECT t2.* FROM tb_project_build t2 WHERE 1=1 AND (t2.`complete_date` IS NOT NULL OR t2.`complete_date` IS NULL) ORDER BY t2.`complete_date` DESC ) t3 GROUP BY t3.pro_id ) t4) t5  ON t.`pro_id` = t5.pro_id
         where 1=1
         <if test="proName != null and proName != ''">
             AND (t.`pro_name` LIKE  CONCAT('%',#{proName},'%')  OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))
@@ -27,18 +25,6 @@
         <!--</if>-->
         <if test="area != null and area != ''">
             AND t.`pro_where` LIKE CONCAT(#{area},'%')
-        </if>
-        <if test="completeType != null and completeType == '已竣工'">
-            AND t5.`complete_date` is not null
-        </if>
-        <if test="completeType != null and completeType == '未竣工'">
-            AND t5.`complete_date` is null
-        </if>
-        <if test="comStartDate != null and comStartDate != ''">
-          AND t5.`complete_date` &lt;= #{comStartDate}
-        </if>
-        <if test="comEndDate != null and comEndDate != ''">
-          AND t5.`complete_date` &gt;= #{comEndDate}
         </if>
         ORDER BY t.`pro_no` DESC
     </select>
@@ -112,7 +98,8 @@
        ,t.`approval_num` AS approvalNum
        ,t.`pro_type` AS proType
        ,t.`build_type` AS buildType
-       ,(CASE WHEN t.`acreage` IS NULL THEN t.`pro_scope` ELSE t.`acreage`END) AS acreage
+       ,t.`acreage` AS acreage
+       ,t.`pro_scope` AS proScope
        ,t.`land_licence` AS landLicence
        ,t.`plan_licence` AS planLicence
        ,t.`pro_level` AS proLevel

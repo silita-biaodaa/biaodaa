@@ -1,5 +1,7 @@
 package com.silita.biaodaa.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.regex.Pattern;
 
 public class ProjectAnalysisUtil {
 
+    public static String regx = "[总建筑面积|建筑总面积|总面积|实际用地面积|改造面积|占地面积|建筑面积|扩建面积|总计|面积]?.*?(\\d*?\\.?\\d*[万|亩]?\\s*(平方米|平方公里|M2|m2|㎡|万㎡|平米|万平|亩|平方))";
+
     /**
      * 解析面积
      * @param scope
@@ -17,66 +21,56 @@ public class ProjectAnalysisUtil {
     public static String analysisScope(String scope){
         //判断中间是否有总建筑面积
         int startIndex = -2;
-        int endIndex = -2;
+//        int endIndex = -2;
         if(scope.contains("总建筑面积")){
             startIndex = getIndex(scope,"总建筑面积");
             scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("总建筑面积".length(),endIndex);
+            return scope;
         }else if (scope.contains("建筑总面积")){
             startIndex = getIndex(scope,"建筑总面积");
             scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("建筑总面积".length(),endIndex);
+            return scope;
         }else if (scope.contains("总面积")){
             startIndex = getIndex(scope,"总面积");
             scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("总面积".length(),endIndex);
+            return scope;
         }else if (scope.contains("实际用地面积")){
             startIndex = getIndex(scope,"实际用地面积");
             scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("实际用地面积".length(),endIndex);
+            return scope;
         }else if (scope.contains("改造面积")){
             startIndex = getIndex(scope,"改造面积");
             scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("改造面积".length(),endIndex);
-        }else if(scope.contains("廉租住房")){
-            startIndex = getIndex(scope,"廉租住房");
+            return scope;
+        }else if (scope.contains("占地面积")){
+            startIndex = getIndex(scope,"占地面积");
             scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            if(scope.contains("套")){
-                scope = scope.substring(getIndex(scope,"套")+1,endIndex);
-            }else{
-                scope = scope.substring("廉租住房".length(),endIndex);
-            }
-        }else if (scope.contains("绿化面积")){
-            startIndex = getIndex(scope,"绿化面积");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("绿化面积".length(),endIndex);
-        }else if (scope.contains("支护为")){
-            startIndex = getIndex(scope,"支护为");
-            scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("支护为".length(),endIndex);
+            return scope;
         }else if (scope.contains("建筑面积")){
+            if(charCount(scope,"建筑面积") > 1){
+                return null;
+            }
             startIndex = getIndex(scope,"建筑面积");
             scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("建筑面积".length(),endIndex);
+            scope = getScope(scope);
+            return scope;
         }else if (scope.contains("扩建面积")){
             startIndex = getIndex(scope,"扩建面积");
             scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("扩建面积".length(),endIndex);
+            return scope;
+        }else if (scope.contains("总计")){
+            startIndex = getIndex(scope,"总计");
+            scope = scope.substring(startIndex,scope.length());
+            return scope;
         }else if (scope.contains("面积")){
+            if(charCount(scope,"面积") > 1){
+                return null;
+            }
             startIndex = getIndex(scope,"面积");
             scope = scope.substring(startIndex,scope.length());
-            endIndex = getUnitIndex(scope);
-            scope = scope.substring("面积".length(),endIndex);
+            return scope;
+        }else if (getUnitIndex(scope) > -2){
+            return getScope(scope);
         }else{
             scope = null;
         }
@@ -113,6 +107,18 @@ public class ProjectAnalysisUtil {
             unitIndex = getIndex(str,"M2");
         }else if (str.contains("㎡")){
             unitIndex = getIndex(str,"㎡");
+        }else if (str.contains("平米")){
+            unitIndex = getIndex(str,"平米");
+        }else if(str.contains("平方米")){
+            unitIndex = getIndex(str,"平方米");
+        }else if(str.contains("万㎡")){
+            unitIndex = getIndex(str,"万㎡");
+        }else if (str.contains("万平")){
+            unitIndex = getIndex(str,"万平");
+        }else if(str.contains("亩")){
+            unitIndex = getIndex(str,"亩");
+        }else if(str.contains("平方公里")){
+            unitIndex = getIndex(str,"平方公里");
         }
         return unitIndex;
     }
@@ -157,11 +163,111 @@ public class ProjectAnalysisUtil {
      * @return
      */
     public static String getStrNumber(String str){
-        String reg = "([1-9]\\d*\\.?\\d*)|(0\\.\\d*[1-9])";
-        Matcher matcher = Pattern.compile(str).matcher(reg);
-        while (matcher.find()){
+        String regex = "^\\d+(\\.\\d+)?";
+        Matcher matcher = Pattern.compile(regex).matcher(str);
+        if(matcher.find()){
             return matcher.group(0);
         }
-        return str;
+        return null;
+    }
+
+    public static int charCount(String scope,String str){
+        int indexStart = 0;
+        //获取查找字符串的长度，这里有个规律：第二次查找出字符串的起始位置等于 第一次ab字符串出现的位置+ab的长度
+        int compareStrLength = str.length();
+        int count = 0;
+        while(true){
+            int tm = scope.indexOf(str,indexStart);
+            if( tm >= 0){
+                count ++;
+                //  没查找一次就从新计算下次开始查找的位置
+                indexStart = tm+compareStrLength;
+            }else{
+                //直到没有匹配结果为止
+                break;
+            }
+        }
+        return count;
+    }
+
+    public static boolean isNumeric(String str){
+        for (int i =  str.length(); --i>=0;) {
+            if(Character.isDigit(str.charAt(i))){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String analysisData(String regex,String scope){
+        String acreage;
+        acreage = null;
+        if(MyStringUtils.isNotNull(scope)){
+            scope = analysisScope(scope);
+            if(MyStringUtils.isNull(scope)){
+                return null;
+            }
+            scope = scope.replaceAll(" ","");
+            scope = scope.replaceAll("。",".");
+            Matcher ma = Pattern.compile(regex).matcher(scope);
+            if(ma.find()){
+                acreage = ma.group(1);
+            }
+            if(StringUtils.isNotBlank(acreage) && isNumeric(acreage)){
+                if(!acreage.equals("m2") && !acreage.equals("M2")){
+                    return acreage;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String getNumber(String scope){
+        if(MyStringUtils.isNull(scope)){
+            return null;
+        }else if("M2".equals(scope) || "m2".equals(scope)){
+            return null;
+        }else if(scope.contains("万平")){
+            scope = scope.replace("万平","万平方米");
+        }else if (scope.contains("万㎡")){
+            scope = scope.replace("万㎡","万平方米");
+        }else if(scope.contains("㎡")){
+            scope = scope.replace("㎡","平方米");
+        }else if(scope.contains("m2")){
+            scope = scope.replace("m2","平方米");
+        }else if(scope.contains("M2")){
+            scope = scope.replace("m2","平方米");
+        }else if(scope.contains("平方") && !scope.contains("平方米")){
+            scope = scope.replace("平方","平方米");
+        }else if(scope.contains("平米")){
+            scope = scope.replace("平米","平方米");
+        }
+        return scope;
+    }
+
+    public static String getScope(String scope){
+        if(charCount(scope,"平方米") > 1){
+            return null;
+        }else if(charCount(scope,"M2") > 1){
+            return null;
+        }else if(charCount(scope,"m2") > 1){
+            return null;
+        }else if(charCount(scope,"万㎡") > 1){
+            return null;
+        }else if(charCount(scope,"平米") > 1){
+            return null;
+        }else if(charCount(scope,"万平") > 1){
+            return null;
+        }else if(charCount(scope,"亩") > 1){
+            return null;
+        }else if(charCount(scope,"平方") > 1){
+            return null;
+        }else if (charCount(scope,"㎡") > 1){
+            return null;
+        }else if(charCount(scope,"平方公里") > 1){
+            return null;
+        }else{
+            return scope;
+        }
     }
 }
