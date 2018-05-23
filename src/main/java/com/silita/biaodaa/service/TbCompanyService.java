@@ -68,6 +68,10 @@ public class TbCompanyService {
         }
         // TODO: 18/5/7 存续状态写死
         tbCompany.setSubsist("存续");
+        if(tbCompany.getRegisAddress()!=null&&tbCompany.getRegisAddress().indexOf("湖南")>-1){
+            String url = tbCompanyMapper.getCompanyUrl(tbCompany.getComId());
+            tbCompany.setUrl(url);
+        }
         return tbCompany;
     }
 
@@ -141,6 +145,18 @@ public class TbCompanyService {
             if(company!=null){
                 param.put("comId",comId);
                 param.put("comName",company.getComName());
+                String province = company.getRegisAddress();
+                String tableCode = "hunan";
+                if(province.indexOf("湖南省")>-1){
+                    province = "湖南省";
+                }
+                if(province!=null&&!"".equals(province)){
+                    tableCode = getProvinceCode(province);
+                    if(tableCode==null){
+                        return list;
+                    }
+                }
+                param.put("tableCode",tableCode);
                 list = tbPersonQualificationMapper.getCompanyPersonCate(param);
             }
         }
@@ -671,6 +687,10 @@ public class TbCompanyService {
         }
         // TODO: 18/5/7 存续状态写死
         tbCompany.setSubsist("存续");
+        if(tbCompany.getRegisAddress()!=null&&tbCompany.getRegisAddress().indexOf("湖南")>-1){
+            String url = tbCompanyMapper.getCompanyUrl(tbCompany.getComId());
+            tbCompany.setUrl(url);
+        }
         return tbCompany;
     }
 }
