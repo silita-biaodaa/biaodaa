@@ -303,7 +303,6 @@ public class ProjectService {
     public void analysisData(){
         List<Map<String,Object>> paramList = new ArrayList<>();
         List<Map<String,Object>> proList = tbProjectMapper.queryObject(null);
-        String regx = "[总建筑面积|建筑总面积|总面积|实际用地面积|改造面积|绿化面积|支护为|建筑面积|建筑面积|扩建面积|面积]?.*?(\\d*?\\.?\\d*[万|亩]?\\s*(平方米|M2|m2|㎡|万㎡|平米|万平|亩|平方))";
         for(Map<String,Object> map : proList){
             if(null != map.get("scope")){
                 String scope = map.get("scope").toString();

@@ -8,6 +8,7 @@ import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,8 @@ public class TbCompanyService {
     TbPersonMapper tbPersonMapper;
 
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
+
+    private ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
 
 
     public PageInfo queryCompanyList(Page page,String keyWord){
@@ -268,6 +271,13 @@ public class TbCompanyService {
     }
 
     public PageInfo filterCompany(Page page,Map<String,Object> param,String levelRank){
+        //判断是否*****级以上
+        param.put("zzLevel","default");
+        if(null != param.get("qualCode") && param.get("qualCode").toString().indexOf("/") > -1){
+            String qualCode = param.get("qualCode").toString();
+            String zzLevel = param.get("qualCode").toString().substring(analysisUtil.getIndex(qualCode,"/")+1,qualCode.length());
+            this.getQualCode(param,qualCode,zzLevel);
+        }
         List<TbCompany> list = new ArrayList<>();
         Map<String,CertBasic> certBasicMap = getCertBasicMap();
         Map<String,TbSafetyCertificate> safetyCertificateMap = getSafetyCertMap();
@@ -692,5 +702,36 @@ public class TbCompanyService {
             tbCompany.setUrl(url);
         }
         return tbCompany;
+    }
+
+    private static Map<String,Object> getQualCode(Map<String,Object> param,String qualCode,String zzLevel){
+        String superfineLevel = null;
+        String stairLevel = null;
+        String secondLevel = null;
+        switch (zzLevel){
+            case "11":
+                 superfineLevel = qualCode.replace("/11","/0");
+                 stairLevel = superfineLevel.replace("/0","/1");
+                param.put("superfineLevel",superfineLevel);
+                param.put("stairLevel",stairLevel);
+                param.put("zzLevel","stair");
+                break;
+            case "21":
+                superfineLevel = qualCode.replace("/21","/0");
+                stairLevel = superfineLevel.replace("/0","/1");
+                secondLevel = stairLevel.replace("/1","/2");
+                param.put("superfineLevel",superfineLevel);
+                param.put("stairLevel",stairLevel);
+                param.put("secondLevel",secondLevel);
+                param.put("zzLevel","second");
+                break;
+            case "31":
+                qualCode = qualCode.replace("/31","");
+                param.put("qualCode",qualCode);
+                param.put("zzLevel","three");
+                break;
+
+        }
+        return param;
     }
 }

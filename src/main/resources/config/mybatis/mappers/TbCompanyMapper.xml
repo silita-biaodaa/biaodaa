@@ -36,7 +36,16 @@
     <if test="maxCapital!=null">
       <![CDATA[ and c.regis_capital <= #{maxCapital} ]]>
     </if>
-    <if test="qualCode!=null and qualCode!=''">
+    <if test="zzLevel == 'default' and qualCode!=null and qualCode!=''">
+      and c.range like CONCAT('%',#{qualCode},'%')
+    </if>
+    <if test="zzLevel == 'stair'">
+      and (c.range like CONCAT('%',#{superfineLevel},'%') or c.range like CONCAT('%',#{stairLevel},'%'))
+    </if>
+    <if test="zzLevel == 'second'">
+      and (c.range like CONCAT('%',#{superfineLevel},'%') or c.range like CONCAT('%',#{stairLevel},'%') or c.range like CONCAT('%',#{secondLevel},'%') )
+    </if>
+    <if test="zzLevel == 'three'">
       and c.range like CONCAT('%',#{qualCode},'%')
     </if>
     order by c.px desc

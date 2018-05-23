@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class ProjectAnalysisUtil {
 
-    public static String regx = "[总建筑面积|建筑总面积|总面积|实际用地面积|改造面积|绿化面积|支护为|建筑面积|建筑面积|扩建面积|面积]?.*?(\\d*?\\.?\\d*[万|亩]?\\s*(平方米|平方公里|M2|m2|㎡|万㎡|平米|万平|亩|平方))";
+    public static String regx = "[总建筑面积|建筑总面积|总面积|实际用地面积|改造面积|占地面积|建筑面积|扩建面积|总计|面积]?.*?(\\d*?\\.?\\d*[万|亩]?\\s*(平方米|平方公里|M2|m2|㎡|万㎡|平米|万平|亩|平方))";
 
     /**
      * 解析面积
@@ -42,16 +42,8 @@ public class ProjectAnalysisUtil {
             startIndex = getIndex(scope,"改造面积");
             scope = scope.substring(startIndex,scope.length());
             return scope;
-        }else if(scope.contains("廉租住房")){
-            startIndex = getIndex(scope,"廉租住房");
-            scope = scope.substring(startIndex,scope.length());
-            return scope;
-        }else if (scope.contains("绿化面积")){
-            startIndex = getIndex(scope,"绿化面积");
-            scope = scope.substring(startIndex,scope.length());
-            return scope;
-        }else if (scope.contains("支护为")){
-            startIndex = getIndex(scope,"支护为");
+        }else if (scope.contains("占地面积")){
+            startIndex = getIndex(scope,"占地面积");
             scope = scope.substring(startIndex,scope.length());
             return scope;
         }else if (scope.contains("建筑面积")){
@@ -66,7 +58,14 @@ public class ProjectAnalysisUtil {
             startIndex = getIndex(scope,"扩建面积");
             scope = scope.substring(startIndex,scope.length());
             return scope;
+        }else if (scope.contains("总计")){
+            startIndex = getIndex(scope,"总计");
+            scope = scope.substring(startIndex,scope.length());
+            return scope;
         }else if (scope.contains("面积")){
+            if(charCount(scope,"面积") > 1){
+                return null;
+            }
             startIndex = getIndex(scope,"面积");
             scope = scope.substring(startIndex,scope.length());
             return scope;
