@@ -448,7 +448,7 @@ public class NoticeService {
         TbClickStatistics tbClickStatistics = new TbClickStatistics();
 
         String source = String.valueOf(params.get("source"));
-        if(StringUtils.isEmpty(source)) {
+        if(StringUtils.isEmpty(source) || "hunan".equals(source) || "null".equals(source)) {
             tbClickStatistics.setSource(HUNAN_SOURCE);
         } else {
             tbClickStatistics.setSource(String.valueOf(params.get("source")));
