@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class ProjectAnalysisUtil {
 
-    public static String regx = "[总建筑面积|建筑总面积|总面积|实际用地面积|改造面积|占地面积|建筑面积|扩建面积|总计|面积]?.*?(\\d*?\\.?\\d*[万|亩]?\\s*(平方米|平方公里|M2|m2|㎡|万㎡|平米|万平|亩|平方))";
+    public static String regx = "[总建筑面积|建筑总面积|总面积|实际用地面积|改造面积|占地面积|建筑面积|扩建面积|总计|面积]?.*?(\\d\\d*?\\.?\\d*[万|亩]?\\s*(平方米|平方公里|M2|m2|㎡|万㎡|平米|万平|亩|平方))";
 
     /**
      * 解析面积
@@ -47,7 +47,7 @@ public class ProjectAnalysisUtil {
             scope = scope.substring(startIndex,scope.length());
             return scope;
         }else if (scope.contains("建筑面积")){
-            if(charCount(scope,"建筑面积") > 1){
+            if(charCount(scope,"面积") > 1){
                 return null;
             }
             startIndex = getIndex(scope,"建筑面积");
@@ -168,7 +168,7 @@ public class ProjectAnalysisUtil {
         if(matcher.find()){
             return matcher.group(0);
         }
-        return null;
+        return str;
     }
 
     public static int charCount(String scope,String str){
@@ -223,26 +223,19 @@ public class ProjectAnalysisUtil {
     }
 
     public static String getNumber(String scope){
+        String unit = "平方米";
         if(MyStringUtils.isNull(scope)){
             return null;
         }else if("M2".equals(scope) || "m2".equals(scope)){
             return null;
-        }else if(scope.contains("万平")){
-            scope = scope.replace("万平","万平方米");
-        }else if (scope.contains("万㎡")){
-            scope = scope.replace("万㎡","万平方米");
-        }else if(scope.contains("㎡")){
-            scope = scope.replace("㎡","平方米");
-        }else if(scope.contains("m2")){
-            scope = scope.replace("m2","平方米");
-        }else if(scope.contains("M2")){
-            scope = scope.replace("m2","平方米");
-        }else if(scope.contains("平方") && !scope.contains("平方米")){
-            scope = scope.replace("平方","平方米");
-        }else if(scope.contains("平米")){
-            scope = scope.replace("平米","平方米");
+        }else if(scope.contains("万平") || scope.contains("万㎡")){
+            unit = "万平方米";
+        }else if(scope.contains("平方公里")){
+            unit = "平方公里";
+        }else if(scope.contains("亩")){
+            unit = "亩";
         }
-        return scope;
+        return getStrNumber(scope)+unit;
     }
 
     public static String getScope(String scope){
