@@ -191,6 +191,9 @@
                     <foreach collection="threeAptList" item="zzTypeThree" open="(" close=")" separator=" or ">
                       suc.certificateuuid like '%${zzTypeThree}%'
                     </foreach>
+                    <foreach collection="notThreeAptList" item="notThreeApt" >
+                      and  suc.certificateuuid not like '%${notThreeApt}%'
+                    </foreach>
                 </when>
                 <when test="zzTypeTwo !=null and zzTypeTwo !=''">
                     and suc.certificateuuid like '%${zzTypeTwo}%'

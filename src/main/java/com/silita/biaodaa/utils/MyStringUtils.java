@@ -12,17 +12,23 @@ import static com.silita.biaodaa.common.Constant.DEFAULT_STRING;
 
 public class MyStringUtils {
 
-	public static boolean isNotNull(String str){
-		if(str !=null && !str.trim().equals("")){
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	public static boolean isNotNull(List str){
-		if(str !=null && str.size()>0){
-			return true;
+	public static boolean isNotNull(Object str){
+		if(str !=null ){
+			if(str instanceof String ){
+				if(!((String)str).trim().equals("")) {
+					return true;
+				}else{
+					return false;
+				}
+			}else if(str instanceof List){
+				if(((List)str).size()>0){
+					return true;
+				}else{
+					return false;
+				}
+			}else{
+				return true;
+			}
 		}else{
 			return false;
 		}
@@ -42,24 +48,9 @@ public class MyStringUtils {
 		if(str==null){
 			return flag;
 		}
-		if(str instanceof String){
-			flag= !isNotNull((String)str);
-		}else if(str instanceof List){
-			flag= !isNotNull((List)str);
-		}
+		flag= !isNotNull(str);
 		return flag;
 	}
-
-	public static boolean isNotNull(Object str){
-		boolean flag=false;
-		if(str instanceof String){
-			flag= isNotNull((String)str);
-		}else if(str instanceof List){
-			flag= isNotNull((List)str);
-		}
-		return flag;
-	}
-
 
 	public static List<String> StringSplit(String str, int num) {
 		int length = str.length();

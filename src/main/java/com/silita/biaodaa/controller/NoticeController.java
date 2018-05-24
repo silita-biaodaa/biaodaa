@@ -142,8 +142,9 @@ public class NoticeController extends BaseController{
             }else if(zztypeList.length==2){
                 params.put("zzTypeTwo",zztypeList[1]);
             }else if(zztypeList.length==3){
-                List<String> aptList =AptitudeUtils.parseThreeAptCode(zztypeList[2]);
-                params.put("threeAptList",aptList);
+                Map resultMap =AptitudeUtils.parseThreeAptCode(zztypeList[2]);
+                params.put("threeAptList",resultMap.get("hasAptList"));
+                params.put("notThreeAptList",resultMap.get("notHasAptList"));
             }
         }
 
@@ -330,6 +331,7 @@ public class NoticeController extends BaseController{
 
             if(MyStringUtils.isNull(source) || source.equals(HUNAN_SOURCE)) {
                 Long relNoticeCount = noticeService.queryRelCount(id);
+
                 resultMap.put("relNoticeCount", relNoticeCount);//相关公告数量
                 //招标详情
                 String type = MapUtils.getString(params, "type");
