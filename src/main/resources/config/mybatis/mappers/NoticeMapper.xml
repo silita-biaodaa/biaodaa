@@ -5,13 +5,18 @@
     <sql id="selectCompanyInfo">
         SELECT DISTINCT c.*
         FROM mishu.tb_company c
-        WHERE
-        <foreach collection="zzList" item="zz" separator=" or " >
-            c.`range` like '%${zz}%'
-        </foreach>
+        WHERE 1=1
         <if test="area != null and area != ''">
             and c.`regis_address` like CONCAT(#{area},'%')
         </if>
+        <if test="zzList != null and zzList.size() > 0">
+            and
+            <foreach collection="zzList" item="zz" separator=" or " open="(" close=")">
+                c.`range` like '%${zz}%'
+            </foreach>
+        </if>
+
+
         order by length(c.`range`) desc
     </sql>
 
@@ -360,13 +365,19 @@
        <include refid="selectCompanyInfo"></include>
     </select>
 
-    <select id="queryCompanyCountByZZ" resultType="Integer" parameterType="java.util.List">
+    <select id="queryCompanyCountByZZ" resultType="Integer" parameterType="java.util.Map">
         SELECT count(c.com_id)
         from mishu.tb_company c
-        where
-        <foreach collection="list" item="zz" separator=" or " >
-            c.`range` like '%${zz}%'
-        </foreach>
+        where 1=1
+        <if test="area != null and area != ''">
+            and c.`regis_address` like CONCAT(#{area},'%')
+        </if>
+        <if test="list != null and list.size() > 0">
+            and
+            <foreach collection="list" item="zz" separator=" or " open="(" close=")">
+                c.`range` like '%${zz}%'
+            </foreach>
+        </if>
         order by length(c.`range`) desc
     </select>
 

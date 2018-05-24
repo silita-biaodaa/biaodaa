@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHONGBIAO;
 import static com.silita.biaodaa.utils.RouteUtils.HUNAN_SOURCE;
+import static com.silita.biaodaa.utils.RouteUtils.parseSourceToProv;
 
 /**
  * Created by dh on 2018/4/9.
@@ -253,6 +254,10 @@ public class NoticeService {
                     argMap.put("zzList",zzList);
                     PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
                     List<TbCompany> list = noticeMapper.queryComInfoByZZ(argMap);
+                    if(null == list || list.size() <= 0){
+                        PageInfo pageInfo = new PageInfo(list);
+                        return pageInfo;
+                    }
                     Map idsMap = new HashMap();
                     idsMap.put("comList",list);
                     List<TbCompany> companyCertList = noticeMapper.selectCompanyCert(idsMap);
@@ -315,7 +320,10 @@ public class NoticeService {
     public Integer queryCompanyCountById(Map argMap){
         List zzList = queryNoticeZZById(argMap);
         if(zzList!=null && zzList.size()>0) {
-            return noticeMapper.queryCompanyCountByZZ(zzList);
+            String source = MapUtils.getString(argMap,"source");
+            argMap.put("area",RouteUtils.parseSourceToProv(source));
+            argMap.put("list",zzList);
+            return noticeMapper.queryCompanyCountByZZ(argMap);
         }
         return null;
     }

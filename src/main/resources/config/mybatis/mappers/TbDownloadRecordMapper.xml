@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbDownloadRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbDownloadRecord" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="file_id" property="fileId" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="down_type" property="downType" jdbcType="VARCHAR" />
+    <result column="record" property="record" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="insertDownloadRecord" parameterType="com.silita.biaodaa.model.TbDownloadRecord">
+      INSERT INTO
+      `mishu`.`tb_download_record`
+        (
+        <if test="fileId != null and fileId != ''">
+          `file_id`,
+        </if>
+        <if test="url != null and url != ''">
+          `url`,
+        </if>
+        <if test="downType != null and downType != ''">
+          `down_type`,
+        </if>
+        <if test="record != null and record != ''">
+          `record`,
+        </if>
+        <if test="updated != null and updated != ''">
+          `updated`,
+        </if>
+        <if test="created != null and created != ''">
+          `created`
+        </if>
+       )
+        VALUES (
+        <if test="fileId != null and fileId != ''">
+          #{fileId},
+        </if>
+        <if test="url != null and url != ''">
+          #{url},
+        </if>
+        <if test="downType != null and downType != ''">
+          #{downType},
+        </if>
+        <if test="record != null and record != ''">
+          #{record},
+        </if>
+        <if test="updated != null and updated != ''">
+          #{updated},
+        </if>
+        <if test="created != null and created != ''">
+          #{created}
+        </if>
+        )
+  </insert>
+
+  <select id="queryDownloadRecord" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT t.*
+    FROM tb_download_record t
+    WHERE t.`file_id` = #{fileId}
+    AND t.`down_type` = #{downType}
+  </select>
+
+  <update id="updateDownloadRecord" parameterType="com.silita.biaodaa.model.TbDownloadRecord">
+      UPDATE `mishu`.`tb_download_record`
+      SET
+        <if test="fileId != null and fileId != ''">
+          file_id = #{fileId},
+        </if>
+        <if test="url != null and url != ''">
+          url = #{url},
+        </if>
+        <if test="downType != null and downType != ''">
+          down_type = #{downType},
+        </if>
+        <if test="record != null and record != ''">
+          record = #{record},
+        </if>
+        <if test="created != null and created != ''">
+          created = #{created},
+        </if>
+        <if test="updated != null and updated != ''">
+          updated = #{updated}
+        </if>
+      WHERE `pkid` = #{pkid};
+  </update>
+</mapper>

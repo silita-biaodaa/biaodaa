@@ -18,7 +18,7 @@ public interface NoticeMapper {
 
     String queryNoticeZZById(Map id);
 
-    Integer queryCompanyCountByZZ(Collection zzList);
+    Integer queryCompanyCountByZZ(Map map);
 
     List<TbCompany> queryComInfoByZZ(Map map);
 

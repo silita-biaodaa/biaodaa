@@ -228,7 +228,7 @@ public class ProjectAnalysisUtil {
             return null;
         }else if("M2".equals(scope) || "m2".equals(scope)){
             return null;
-        }else if(scope.contains("万平") || scope.contains("万㎡")){
+        }else if(scope.contains("万平") || scope.contains("万㎡") || scope.contains("万平方米")){
             unit = "万平方米";
         }else if(scope.contains("平方公里")){
             unit = "平方公里";
