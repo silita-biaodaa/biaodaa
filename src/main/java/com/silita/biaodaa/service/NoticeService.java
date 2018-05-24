@@ -11,6 +11,7 @@ import com.silita.biaodaa.model.TbClickStatistics;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
+import com.silita.biaodaa.utils.RouteUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -238,13 +239,8 @@ public class NoticeService {
     public PageInfo queryCompanyListById(Page page,Map argMap){
         String zzRes = noticeMapper.queryNoticeZZById(argMap);
         //获取公告省份
-        try{
-            this.buildNoticeDetilTable(argMap);
-            String area = noticeMapper.queryProvince(argMap);
-            argMap.put("area",area);
-        }catch (Exception e){
-            logger.error(e,e);
-        }
+        String scource = MapUtils.getString(argMap,"source");
+        argMap.put("area",RouteUtils.parseSourceToProv(scource));
 
         if(zzRes !=null && zzRes.trim().length()>1){
             String[] zzStr = zzRes.split(",");
