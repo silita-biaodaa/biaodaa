@@ -253,6 +253,10 @@ public class NoticeService {
                     argMap.put("zzList",zzList);
                     PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
                     List<TbCompany> list = noticeMapper.queryComInfoByZZ(argMap);
+                    if(null == list || list.size() <= 0){
+                        PageInfo pageInfo = new PageInfo(list);
+                        return pageInfo;
+                    }
                     Map idsMap = new HashMap();
                     idsMap.put("comList",list);
                     List<TbCompany> companyCertList = noticeMapper.selectCompanyCert(idsMap);
