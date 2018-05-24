@@ -22,13 +22,17 @@ public class AptitudeUtils {
         if(MyStringUtils.isNotNull(threeCode)){
             if(threeCode.split("/").length==2) {
                 hasAptList = new ArrayList(4);
-                notHasAptList = new ArrayList(2);
+                notHasAptList = new ArrayList(3);
                 String uuid = threeCode.split("/")[0];
                 String rank = threeCode.split("/")[1];
                 switch(rank){
                     case "11":hasAptList.add(uuid+"/0");hasAptList.add(uuid+"/1");notHasAptList.add(uuid+"/2");notHasAptList.add(uuid+"/3");break;
                     case "21":hasAptList.add(uuid+"/0");hasAptList.add(uuid+"/1");hasAptList.add(uuid+"/2");notHasAptList.add(uuid+"/3");break;
                     case "31":hasAptList.add(uuid+"/0");hasAptList.add(uuid+"/1");hasAptList.add(uuid+"/2");hasAptList.add(uuid+"/3");break;
+                    case "0":hasAptList.add(uuid+"/0");notHasAptList.add(uuid+"/1");notHasAptList.add(uuid+"/2");notHasAptList.add(uuid+"/3");break;
+                    case "1":notHasAptList.add(uuid+"/0");hasAptList.add(uuid+"/1");notHasAptList.add(uuid+"/2");notHasAptList.add(uuid+"/3");break;
+                    case "2":notHasAptList.add(uuid+"/0");notHasAptList.add(uuid+"/1");hasAptList.add(uuid+"/2");notHasAptList.add(uuid+"/3");break;
+                    case "3":notHasAptList.add(uuid+"/0");notHasAptList.add(uuid+"/1");notHasAptList.add(uuid+"/2");hasAptList.add(uuid+"/3");break;
                     default:hasAptList.add(threeCode);
                 }
             }else{
