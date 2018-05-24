@@ -10,7 +10,10 @@ import com.silita.biaodaa.dao.TbClickStatisticsMapper;
 import com.silita.biaodaa.model.TbClickStatistics;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.utils.MyStringUtils;
+import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,6 +31,8 @@ import static com.silita.biaodaa.utils.RouteUtils.HUNAN_SOURCE;
  */
 @Service
 public class NoticeService {
+
+    private Log logger = LogFactory.getLog(NoticeService.class);
 
     @Autowired
     private NoticeMapper noticeMapper;
@@ -232,6 +237,15 @@ public class NoticeService {
      */
     public PageInfo queryCompanyListById(Page page,Map argMap){
         String zzRes = noticeMapper.queryNoticeZZById(argMap);
+        //获取公告省份
+        try{
+            this.buildNoticeDetilTable(argMap);
+            String area = noticeMapper.queryProvince(argMap);
+            argMap.put("area",area);
+        }catch (Exception e){
+            logger.error(e,e);
+        }
+
         if(zzRes !=null && zzRes.trim().length()>1){
             String[] zzStr = zzRes.split(",");
             if(zzStr!=null && zzStr.length>0) {

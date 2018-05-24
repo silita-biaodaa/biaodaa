@@ -37,4 +37,6 @@ public interface NoticeMapper {
     List<Long> queryCompanyCollStatus(Map map);
 
     List<Long> queryNoticeCollStatus(Map map);
+
+    String queryProvince(Map<String,Object> param);
 }

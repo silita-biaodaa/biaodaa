@@ -9,6 +9,9 @@
         <foreach collection="zzList" item="zz" separator=" or " >
             c.`range` like '%${zz}%'
         </foreach>
+        <if test="area != null and area != ''">
+            and c.`regis_address` like CONCAT(#{area},'%')
+        </if>
         order by length(c.`range`) desc
     </sql>
 
@@ -370,5 +373,12 @@
         where snatchurlid=#{id}
     </select>
 
-
+    <select id="queryProvince" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+          (SELECT t2.display_name FROM mishu.`area` t2 WHERE t2.path = t1.`parent_id`) AS displayName
+        FROM ${detailTable} t
+        LEFT JOIN mishu.`area` t1 ON t.`projDq` = t1.`name`
+        WHERE t.`snatchUrlId` = #{id}
+        LIMIT 1
+    </select>
 </mapper>
