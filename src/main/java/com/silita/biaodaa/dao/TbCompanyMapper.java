@@ -46,4 +46,6 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     Integer getColleCount(Map<String,Object> param);
 
     String getCompanyUrl(Integer comId);
+
+    List<Map> matchName(Map argMap);
 }

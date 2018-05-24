@@ -181,4 +181,12 @@
   <select id="getCompanyUrl" parameterType="Integer" resultType="String">
     select  url from tb_company_qualification where com_id = #{comId} limit 1
   </select>
+
+  <select id="matchName" parameterType="Map" resultType="Map">
+  select com_name,com_code
+  from mishu.tb_company
+  where com_name like #{name}
+  order by px desc
+  limit #{count}
+  </select>
 </mapper>

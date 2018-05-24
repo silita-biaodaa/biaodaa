@@ -741,4 +741,9 @@ public class TbCompanyService {
         }
         return param;
     }
+
+    public List<Map> matchName(Map argMap){
+        return tbCompanyMapper.matchName(argMap);
+    }
+
 }

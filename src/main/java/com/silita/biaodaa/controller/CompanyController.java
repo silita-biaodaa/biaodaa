@@ -475,4 +475,21 @@ public class CompanyController extends BaseController {
         result.put("data",company);
         return result;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/matchName", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String,Object> matchName(@RequestBody Map<String, Object> params){
+        List<Map> nameList = null;
+        Map<String,Object> result = new HashMap<>();
+        String name = MapUtils.getString(params,"name");
+        if(MyStringUtils.isNotNull(name)) {
+            params.put("name","%"+name+"%");
+            params.put("count",5);
+            nameList = tbCompanyService.matchName(params);
+        }
+        result.put("data",nameList);
+        successMsg(result);
+        return result;
+    }
+
 }
