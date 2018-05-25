@@ -184,7 +184,7 @@
 
   <select id="queryCountyList" resultType="java.util.Map">
       SELECT t.`display_name` AS displayName,t.`parent_id` as parentId
-      FROM AREA t
+      FROM area t
       WHERE t.`grade` = 2
       ORDER BY t.name_abbr
   </select>
