@@ -210,7 +210,8 @@
                 </when>
             </choose>
         </if>
-            <if test=" (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')">
+            <if test=" (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')
+            or (county != null and county != '')">
                 join mishu.${detailTable} detail on s.id=detail.snatchurlid
                 <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
                 <!--and(-->
@@ -263,6 +264,13 @@
         </if>
         <if test="city !=null and city !=''" >
             AND s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
+        </if>
+        <if test="county != null and county != ''">
+            AND
+              (
+                 detail.projXs = #{county} or
+                 s.county = (select name_abbr from mishu.area where display_name = #{county})
+              )
         </if>
         <if test="title !=null and title !=''">
             AND s.title LIKE '%${title}%'

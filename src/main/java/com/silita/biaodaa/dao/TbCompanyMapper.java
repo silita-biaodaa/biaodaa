@@ -46,4 +46,12 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     Integer getColleCount(Map<String,Object> param);
 
     String getCompanyUrl(Integer comId);
+
+    /**
+     * 根据市名获取区县
+     * @return
+     */
+    List<Map<String,Object>> queryCountyList();
+
+    List<Map<String,Object>>  queryCityPathList(String parentId);
 }
