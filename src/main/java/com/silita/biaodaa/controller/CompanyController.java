@@ -3,6 +3,8 @@ package com.silita.biaodaa.controller;
 import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
 import com.silita.biaodaa.cache.GlobalCache;
+import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbCompany;

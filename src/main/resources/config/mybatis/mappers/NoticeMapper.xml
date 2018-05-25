@@ -218,7 +218,7 @@
                 </when>
             </choose>
         </if>
-            <if test=" ( oneName !=null and oneName !='') or (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='') or (county != null and county != '')"">
+            <if test=" ( oneName !=null and oneName !='') or (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='') or (county != null and county != '')">
                 join mishu.${detailTable} detail on s.id=detail.snatchurlid
                 <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
                 <!--and(-->
@@ -311,7 +311,7 @@
                 concat(#{provName},IFNULL(concat('-',IFNULL(dl.projdq,aa.name)),''),IFNULL(concat('-',dl.projXs),'')) as projDq,dl.pbMode,dl.projSum,
                 <if test="type == 0">
                     dl.bmSite,dl.kbSite,dl.kbStaffAsk,
-                    (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} AND (zz.block = dl.block OR dl.block = '' OR dl.block is null) GROUP BY zz.block)  zzRank,
+                    (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} AND (zz.block = dl.block OR dl.block = '' OR dl.block is null) )  zzRank,
                     dl.tbAssureEndDate,
                     dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
                     dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
