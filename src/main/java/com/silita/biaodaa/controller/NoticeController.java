@@ -18,9 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.silita.biaodaa.common.RedisConstantInterface.*;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
@@ -90,21 +88,9 @@ public class NoticeController extends BaseController{
     }
 
     private void parseViewParams(Map params){
-        //报名地址条件判断
-        String bmSite =  MapUtils.getString(params,"bmSite");
-        if(MyStringUtils.isNotNull(bmSite)) {
-            switch (bmSite) {
-                case "0"://全部
-                    break;
-                case "1"://网上报名
-                    params.put("bmSiteStr", "%网上%");
-                    break;
-                case "2"://现场报名
-                    params.put("bmSiteStr", "线下");
-                    break;
-                default:params.put("bmSiteStr", "%" + bmSite + "%");
-            }
-        }
+        String type = MapUtils.getString(params,"type");
+        //全国公告路由：从地区解析出source，设置表名
+        parseRouteSource(params);
 
         //地区条件获取
         String dqsStr =  MapUtils.getString(params,"regions");
@@ -128,8 +114,7 @@ public class NoticeController extends BaseController{
             }
         }
 
-        parseRouteSource(params);//从地区解析出source，设置表名
-
+        //评标办法
         String pbModes = MapUtils.getString(params,"pbModes");
         String[] pbModesList =MyStringUtils.splitParam(pbModes);
         if(pbModesList!=null && pbModesList.length>0){
@@ -140,28 +125,105 @@ public class NoticeController extends BaseController{
             modeStr.deleteCharAt(modeStr.length()-1);
             params.put("modeStr",modeStr.toString());
         }
-
-        //资质条件处理
-        String zztype = MapUtils.getString(params,"zzType");
-        String[] zztypeList =MyStringUtils.splitParam(zztype);
-        if(zztypeList!=null && zztypeList.length>0){
-            if(zztypeList.length==1){
-                params.put("zzTypeOne",zztypeList[0]);
-            }else if(zztypeList.length==2){
-                params.put("zzTypeTwo",zztypeList[1]);
-            }else if(zztypeList.length==3){
-                Map resultMap =AptitudeUtils.parseThreeAptCode(zztypeList[2]);
-                params.put("threeAptList",resultMap.get("hasAptList"));
-                params.put("notThreeAptList",resultMap.get("notHasAptList"));
-            }
-        }
-
         if(MyStringUtils.isNotNull(params.get("projSumStart"))){
             params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));
         }
         if(MyStringUtils.isNotNull(params.get("projSumEnd"))){
             params.put("projSumEnd",Integer.parseInt(params.get("projSumEnd").toString()));
         }
+
+        if(SnatchContent.SNATCHURL_ZHAOBIAO.equals(type)) {//招标
+            //报名地址条件判断
+            String bmSite =  MapUtils.getString(params,"bmSite");
+            if(MyStringUtils.isNotNull(bmSite)) {
+                switch (bmSite) {
+                    case "0"://全部
+                        break;
+                    case "1"://网上报名
+                        params.put("bmSiteStr", "%网上%");
+                        break;
+                    case "2"://现场报名
+                        params.put("bmSiteStr", "线下");
+                        break;
+                    default:params.put("bmSiteStr", "%" + bmSite + "%");
+                }
+            }
+
+            //资质条件处理
+            String zztype = MapUtils.getString(params, "zzType");
+            String[] zztypeList = MyStringUtils.splitParam(zztype);
+            Map<String, List> threeAptMap = null;
+            if (zztypeList != null && zztypeList.length > 0) {
+                if (zztypeList.length == 1) {
+                    params.put("zzTypeOne", zztypeList[0]);
+                } else if (zztypeList.length == 2) {
+                    params.put("zzTypeTwo", zztypeList[1]);
+                } else if (zztypeList.length == 3) {
+                    threeAptMap = AptitudeUtils.parseThreeAptCode(zztypeList[2]);
+                    params.put("threeAptList", threeAptMap.get("hasAptList"));
+                    params.put("notThreeAptList", threeAptMap.get("notHasAptList"));
+                }
+            }
+
+            //企业匹配的资质
+            List<String> aptList = queryComAptitudeByName(params);
+            if (MyStringUtils.isNotNull(aptList)) {
+                //企业资质合并进入筛选队列
+                Set threeAptSet = new HashSet(aptList);
+                params.put("comThreeAptList", new ArrayList(threeAptSet));
+            }
+        }else if(SnatchContent.SNATCHURL_ZHONGBIAO.equals(type)){//中标
+            //第一中标候选人
+            String comName = MapUtils.getString(params,"com_name");
+            if(MyStringUtils.isNotNull(comName)) {
+                params.put("oneName", comName);
+            }
+        }
+
+        //设置公告查询的范围，多少天内的公告
+        params.put("queryDays",100);
+    }
+
+    /**
+     * 查询企业具备的资质（同名企业，资质一并返回）
+     * @param params
+     * @return
+     */
+    private List<String>  queryComAptitudeByName(Map params){
+        List<String> aptList = null;
+        String comName = MapUtils.getString(params,"com_name");
+        if(MyStringUtils.isNotNull(comName)) {
+            Map argMap = new HashMap();
+            argMap.put("com_name", comName);
+
+            int paramHash = ObjectUtils.buildMapParamHash(argMap);
+            String listKey = RedisConstantInterface.COM_NAME_APTITUDE + paramHash;
+            List<Map>  resList = (List<Map>) myRedisTemplate.getObject(listKey);
+            if (resList == null) {
+                resList = this.noticeService.queryComAptitudeByName(argMap);
+                if (resList != null) {
+                    myRedisTemplate.setObject(listKey,resList,COM_OVER_TIME);
+                }
+            }
+            if(MyStringUtils.isNotNull(resList)){
+                aptList = new ArrayList<String>();
+                String range= null;
+                String tmp= null;
+                for(Map res : resList){
+                    range = (String)res.get("range");
+                    if(MyStringUtils.isNotNull(range)){
+                        String[] apts = range.split(",");
+                        for(String apt: apts){
+                            tmp = apt.substring(apt.indexOf("/")+1);//三级资质
+                            if(MyStringUtils.isNotNull(tmp)){
+                                aptList.add(tmp);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return aptList;
     }
 
     /**

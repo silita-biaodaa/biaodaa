@@ -106,7 +106,7 @@
     </sql>
 
     <sql id="noticeListTail">
-        and DATE_ADD(now(),INTERVAL -90 DAY) &lt; s.openDate
+        and DATE_ADD(now(),INTERVAL -${queryDays} DAY) &lt; s.openDate
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
     </sql>
 
@@ -188,8 +188,16 @@
         <include refid="noticeListBaseFrom"/>
         <if test="source==null or source=='' or source=='hunan'">
         <!--资质筛选 -->
-        <if test="(zzTypeOne !=null and zzTypeOne !='') or (zzTypeTwo !=null and zzTypeTwo !='') or (threeAptList !=null and threeAptList !='')">
+        <if test=" (comThreeAptList !=null and comThreeAptList !='') or (zzTypeOne !=null and zzTypeOne !='') or (zzTypeTwo !=null and zzTypeTwo !='') or (threeAptList !=null and threeAptList !='')">
             join mishu.snatch_url_cert suc on suc.contId=s.id
+            <!-- 企业匹配的三级资质 -->
+            <if test="comThreeAptList !=null and comThreeAptList !=''">
+                and
+                <foreach collection="comThreeAptList" item="comThreeApt" open="(" close=")" separator=" or ">
+                    suc.certificateuuid like '%${comThreeApt}%'
+                </foreach>
+            </if>
+            <!--筛选选择的资质 -->
             <choose>
                 <when test="threeAptList !=null and threeAptList !=''">
                     and
@@ -210,8 +218,7 @@
                 </when>
             </choose>
         </if>
-            <if test=" (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')
-            or (county != null and county != '')">
+            <if test=" ( oneName !=null and oneName !='') or (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='') or (county != null and county != '')"">
                 join mishu.${detailTable} detail on s.id=detail.snatchurlid
                 <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
                 <!--and(-->
@@ -252,6 +259,10 @@
                 </if>
                 <if test="( kbDateEnd !=null and kbDateEnd !='')">
                     AND detail.tbEndDate &lt;= #{kbDateEnd}
+                </if>
+                <!--中标第一候选人(企业名称)-->
+                <if test="( oneName !=null and oneName !='')">
+                    AND detail.oneName = #{oneName}
                 </if>
             </if>
         </if>
@@ -330,7 +341,7 @@
          left join mishu.${detailTable} dl on dl.snatchurlid=s.id
         </if>
         left join mishu.area aa on aa.name_abbr=s.city and aa.grade=1
-        where s.type = #{type} and s.isshow=0 and s.id=#{id}
+         where s.type = #{type} and s.isshow=0 and s.id=#{id}
     </select>
 
     <select id="queryRelCount" resultType="Long" parameterType="Long">

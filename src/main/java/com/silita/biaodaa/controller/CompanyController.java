@@ -10,6 +10,7 @@ import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.MyStringUtils;
+import com.silita.biaodaa.utils.ObjectUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.silita.biaodaa.common.RedisConstantInterface.COM_OVER_TIME;
 
 /**
  * Created by zhangxiahui on 18/4/4.
@@ -30,6 +32,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class CompanyController extends BaseController {
 
     private static final Logger logger = Logger.getLogger(CompanyController.class);
+
+    @Autowired
+    private MyRedisTemplate myRedisTemplate;
 
     @Autowired
     TbCompanyService tbCompanyService;
@@ -478,7 +483,15 @@ public class CompanyController extends BaseController {
         if(MyStringUtils.isNotNull(name)) {
             params.put("name","%"+name+"%");
             params.put("count",5);
-            nameList = tbCompanyService.matchName(params);
+            int paramHash = ObjectUtils.buildMapParamHash(params);
+            String listKey = RedisConstantInterface.COM_NAME_MATCH + paramHash;
+            nameList = (List<Map>)myRedisTemplate.getObject(listKey);
+            if (nameList == null ) {
+                nameList = tbCompanyService.matchName(params);
+                if(nameList!=null) {
+                    myRedisTemplate.setObject(listKey, nameList, COM_OVER_TIME);
+                }
+            }
         }
         result.put("data",nameList);
         successMsg(result);

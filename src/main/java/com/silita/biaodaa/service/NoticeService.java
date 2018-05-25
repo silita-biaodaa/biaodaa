@@ -10,7 +10,6 @@ import com.silita.biaodaa.dao.TbClickStatisticsMapper;
 import com.silita.biaodaa.model.TbClickStatistics;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.utils.MyStringUtils;
-import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import com.silita.biaodaa.utils.RouteUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -26,7 +25,6 @@ import java.util.regex.Pattern;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHONGBIAO;
 import static com.silita.biaodaa.utils.RouteUtils.HUNAN_SOURCE;
-import static com.silita.biaodaa.utils.RouteUtils.parseSourceToProv;
 
 /**
  * Created by dh on 2018/4/9.
@@ -506,4 +504,14 @@ public class NoticeService {
         }
         return content.trim();
     }
+
+    /**
+     * 根据企业名称查询资质
+     * @param argMap
+     * @return
+     */
+    public List<Map> queryComAptitudeByName(Map argMap){
+        return this.noticeMapper.queryComAptitudeByName(argMap);
+    }
+
 }

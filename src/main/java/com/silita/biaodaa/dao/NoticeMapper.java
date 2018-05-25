@@ -2,7 +2,6 @@ package com.silita.biaodaa.dao;
 
 import com.silita.biaodaa.model.TbCompany;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,4 +38,6 @@ public interface NoticeMapper {
     List<Long> queryNoticeCollStatus(Map map);
 
     String queryProvince(Map<String,Object> param);
+
+    List<Map> queryComAptitudeByName(Map argMap);
 }
