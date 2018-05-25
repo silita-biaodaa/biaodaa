@@ -2,6 +2,7 @@ package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
+import com.silita.biaodaa.cache.GlobalCache;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbCompany;
@@ -39,6 +40,7 @@ public class CompanyController extends BaseController {
     @Autowired
     NoticeService noticeService;
 
+    private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
     @ResponseBody
     @RequestMapping(value = "/query", method = RequestMethod.POST,produces = "application/json")
@@ -235,16 +237,7 @@ public class CompanyController extends BaseController {
         result.put("msg", "筛选条件查询失败!");
 
         try {
-            List<CompanyQual> companyQual = tbCompanyService.getCompanyQual();
-            List<Map<String,String>> indestry =tbCompanyService.getIndustry();
-            List<Map<String, Object>> pbMode = commonService.queryPbMode();
-            List<Map<String,Object>> area = tbCompanyService.getArea();
-            Map<String,Object> map = new HashMap<>();
-            map.put("companyQual",companyQual);
-            map.put("indestry",indestry);
-            map.put("pbMode",pbMode);
-            map.put("area",area);
-            result.put("data",map);
+            result.put("data",getResultMap());
             result.put("code", 1);
             result.put("msg", "筛选条件查询成功!");
         } catch (IllegalArgumentException e) {
@@ -492,4 +485,25 @@ public class CompanyController extends BaseController {
         return result;
     }
 
+
+    private Map<String,Object> getResultMap(){
+        Map<String,Object> map = globalCache.getResultMap();
+        if(MapUtils.isEmpty(map)){
+            map = new HashMap<>();
+            List<CompanyQual> companyQual = tbCompanyService.getCompanyQual();
+            List<Map<String,String>> indestry =tbCompanyService.getIndustry();
+            List<Map<String, Object>> pbMode = commonService.queryPbMode();
+            List<Map<String,Object>> area = tbCompanyService.getArea();
+            List<Map<String,Object>> proviceCityCounty = tbCompanyService.getProvinceCityCounty();
+            map.put("companyQual",companyQual);
+            map.put("indestry",indestry);
+            map.put("pbMode",pbMode);
+            map.put("area",area);
+            map.put("proviceCityCounty",proviceCityCounty);
+            if(null != map){
+                globalCache.setResultMap(map);
+            }
+        }
+        return map;
+    }
 }

@@ -117,6 +117,14 @@ public class NoticeController extends BaseController{
                 if(MyStringUtils.isNotNull(dqsStrList[1])) {
                     params.put("city", dqsStrList[1].replace("市",""));
                 }
+            }else if(dqsStrList.length == 3){
+                params.put("province",dqsStrList[0]);
+                if(MyStringUtils.isNotNull(dqsStrList[1])) {
+                    params.put("city", dqsStrList[1].replace("市",""));
+                }
+                if(MyStringUtils.isNotNull(dqsStrList[2])){
+                    params.put("county",dqsStrList[2]);
+                }
             }
         }
 

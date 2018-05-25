@@ -210,7 +210,8 @@
                 </when>
             </choose>
         </if>
-            <if test=" (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')">
+            <if test=" (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='')
+            or (county != null and county != '')">
                 join mishu.${detailTable} detail on s.id=detail.snatchurlid
                 <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
                 <!--and(-->
@@ -264,6 +265,13 @@
         <if test="city !=null and city !=''" >
             AND s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
         </if>
+        <if test="county != null and county != ''">
+            AND
+              (
+                 detail.projXs = #{county} or
+                 s.county = (select name_abbr from mishu.area where display_name = #{county})
+              )
+        </if>
         <if test="title !=null and title !=''">
             AND s.title LIKE '%${title}%'
         </if>
@@ -292,7 +300,7 @@
                 concat(#{provName},IFNULL(concat('-',IFNULL(dl.projdq,aa.name)),''),IFNULL(concat('-',dl.projXs),'')) as projDq,dl.pbMode,dl.projSum,
                 <if test="type == 0">
                     dl.bmSite,dl.kbSite,dl.kbStaffAsk,
-                    (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} ) zzRank,
+                    (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} AND (zz.block = dl.block OR dl.block = '' OR dl.block is null) GROUP BY zz.block)  zzRank,
                     dl.tbAssureEndDate,
                     dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
                     dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
@@ -322,7 +330,7 @@
          left join mishu.${detailTable} dl on dl.snatchurlid=s.id
         </if>
         left join mishu.area aa on aa.name_abbr=s.city and aa.grade=1
-         where s.type = #{type} and s.isshow=0 and s.id=#{id}
+        where s.type = #{type} and s.isshow=0 and s.id=#{id}
     </select>
 
     <select id="queryRelCount" resultType="Long" parameterType="Long">

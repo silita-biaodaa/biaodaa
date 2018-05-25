@@ -31,6 +31,8 @@ public class GlobalCache {
 
 	private Map<String,String> provinceMap;
 
+	private Map<String,Object> resultMap;
+
 	private GlobalCache() {
 		analyzeRangeByFieldMap = new ConcurrentHashMap<>();
 		certBasicMap = new ConcurrentHashMap<>();
@@ -38,6 +40,7 @@ public class GlobalCache {
 		personMap = new ConcurrentHashMap<>();
 		vaildTime = new ConcurrentHashMap<>();
 		provinceMap = new ConcurrentHashMap<>();
+		resultMap = new ConcurrentHashMap<>();
 	}
 
 
@@ -91,5 +94,14 @@ public class GlobalCache {
 
 	public void setProvinceMap(Map<String, String> provinceMap) {
 		this.provinceMap = provinceMap;
+	}
+
+
+	public Map<String, Object> getResultMap() {
+		return resultMap;
+	}
+
+	public void setResultMap(Map<String, Object> resultMap) {
+		this.resultMap = resultMap;
 	}
 }

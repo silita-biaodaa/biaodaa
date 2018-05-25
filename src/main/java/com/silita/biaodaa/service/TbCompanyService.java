@@ -10,6 +10,7 @@ import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import com.silita.biaodaa.utils.PropertiesUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -746,4 +747,54 @@ public class TbCompanyService {
         return tbCompanyMapper.matchName(argMap);
     }
 
+
+    public List<Map<String,Object>> getProvinceCityCounty(){
+        List<Map<String,Object>> areaList = new ArrayList<>();
+        List<Map<String,String>> list = tbCompanyMapper.queryProvinceList();
+        List<Map<String,Object>> countyList = tbCompanyMapper.queryCountyList();
+        Map<String,Object> cityMap = null;
+        for(Map<String,String> map : list){
+            Map<String,Object> area = new HashMap<>();
+            List<Map<String,Object>> cityListT = tbCompanyMapper.queryCityPathList(map.get("id"));
+            List<Map<String,Object>> cityList = new ArrayList<>();
+            for(Map<String,Object> city : cityListT){
+                cityMap = new HashMap<>();
+                cityMap.put("cityName",city.get("displayName").toString().replace(map.get("display_name"),""));
+                if("湖南省".equals(map.get("display_name"))){
+                    List<String> cityCountyList = new ArrayList<>();
+                    for(Map<String,Object> countyMap : countyList){
+                        if(city.get("path").toString().equals(countyMap.get("parentId").toString())){
+                            if(!city.get("displayName").toString().replace(map.get("display_name"),"").contains(countyMap.get("displayName").toString())
+                                    && !"长沙县".equals(countyMap.get("displayName").toString())){
+                                cityCountyList.add(MapUtils.getString(countyMap,"displayName"));
+                            }
+                        }
+                    }
+                    cityMap.put("countyList",cityCountyList);
+                }
+                cityList.add(cityMap);
+            }
+            if("北京市".equals(map.get("display_name"))){
+                cityList = new ArrayList<>();
+                for(Map<String,Object> city : cityListT){
+                    cityMap = new HashMap<>();
+                    cityMap.put("cityName",city.get("displayName").toString().replace("北京",""));
+                    cityList.add(cityMap);
+                }
+            }
+            if("天津市".equals(map.get("display_name"))){
+                cityList = new ArrayList<>();
+                for(Map<String,Object> city : cityListT){
+                    cityMap = new HashMap<>();
+                    cityMap.put("cityName",city.get("displayName").toString().replace("天津",""));
+                    cityList.add(cityMap);
+                }
+            }
+
+            area.put("name",map.get("display_name"));
+            area.put("list",cityList);
+            areaList.add(area);
+        }
+        return areaList;
+    }
 }

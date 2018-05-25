@@ -189,4 +189,20 @@
   order by px desc
   limit #{count}
   </select>
+
+  <select id="queryCountyList" resultType="java.util.Map">
+      SELECT t.`display_name` AS displayName,t.`parent_id` as parentId
+      FROM area t
+      WHERE t.`grade` = 2
+      ORDER BY t.name_abbr
+  </select>
+
+  <select id="queryCityPathList" resultType="java.util.Map" parameterType="String">
+    select
+      display_name as displayName,
+      SUBSTRING_INDEX(`path`, ',', -1) as path
+    from area
+    where parent_id=#{parentId}
+    order by name_abbr
+  </select>
 </mapper>
