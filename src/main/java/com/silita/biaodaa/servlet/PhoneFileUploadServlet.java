@@ -33,6 +33,7 @@ public class PhoneFileUploadServlet extends HttpServlet {
         String realSavePath = "";
         //得到文件的保存目录
         realSavePath = makePath(savePath);
+        JSONObject json = new JSONObject();
         try {
             DiskFileItemFactory factory = new DiskFileItemFactory();
             factory.setSizeThreshold(1024 * 100);
@@ -47,6 +48,12 @@ public class PhoneFileUploadServlet extends HttpServlet {
             for (FileItem item : list) {
                 if (item.isFormField()) {
                 } else {
+                    System.out.println("file.size====="+item.getSize());
+                    if(item.getSize() > (1024 * 2)){
+                        json.put("code",0);
+                        json.put("msg","文件过大，请重新上传！！！");
+                        return;
+                    }
                     String filename = item.getName();
                     if (filename == null || filename.trim().equals("")) {
                         continue;
@@ -55,7 +62,6 @@ public class PhoneFileUploadServlet extends HttpServlet {
                     InputStream in = item.getInputStream();
                     String fileName = realSavePath + filename;
                     //拼接json数据
-                    JSONObject json = new JSONObject();
                     json.put("msg", "文件上传成功");
                     json.put("code", 1);
                     json.put("imgPath", PropertiesUtils.getProperty("HEAD_PORTRAIT_URL") + filename);
