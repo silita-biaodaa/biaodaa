@@ -414,4 +414,10 @@
         WHERE t.`snatchUrlId` = #{id}
         LIMIT 1
     </select>
+
+    <select id="queryComAptitudeByName" parameterType="Map" resultType="Map">
+        select com_id,`range`
+        from mishu.tb_company
+        where com_name = #{com_name}
+    </select>
 </mapper>
