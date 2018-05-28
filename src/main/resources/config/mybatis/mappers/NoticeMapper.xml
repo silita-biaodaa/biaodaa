@@ -279,8 +279,8 @@
         <if test="county != null and county != ''">
             AND
               (
-                 detail.projXs = #{county} or
-                 s.county = (select name_abbr from mishu.area where display_name = #{county})
+                 detail.projXs like CONCAT(#{county},'%') or
+                 s.county = (select name_abbr from mishu.area where display_name like CONCAT(#{county},'%'))
               )
         </if>
         <if test="title !=null and title !=''">
