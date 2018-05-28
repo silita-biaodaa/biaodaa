@@ -89,8 +89,6 @@ public class NoticeController extends BaseController{
 
     private void parseViewParams(Map params){
         String type = MapUtils.getString(params,"type");
-        //全国公告路由：从地区解析出source，设置表名
-        parseRouteSource(params);
 
         //地区条件获取
         String dqsStr =  MapUtils.getString(params,"regions");
@@ -113,6 +111,9 @@ public class NoticeController extends BaseController{
                 }
             }
         }
+
+        //全国公告路由：从地区解析出source，设置表名
+        parseRouteSource(params);
 
         //评标办法
         String pbModes = MapUtils.getString(params,"pbModes");
