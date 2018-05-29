@@ -47,6 +47,7 @@
         ,t.`bid_remark`
         ,t.`b_org`
         ,'施工' AS bidType
+        ,t.`pro_id`
       FROM tb_project_build t
       WHERE t.`pro_id` = #{proId}
       GROUP BY t.`bdxh`

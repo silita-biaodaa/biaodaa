@@ -202,9 +202,9 @@ public class ProjectService {
                 zhaotoubiao = new TbProjectZhaotoubiao();
                 if(null != buid.getBidRemark() && !"未办理中标备案".equals(buid.getBidRemark())){
                     zhongbiaoDate = remark.substring(projectAnalysisUtil.getIndex(remark,"中标日期："),projectAnalysisUtil.getIndex(remark,","));
-                    zhaotoubiao.setProId(proId.toString());
                     zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(projectAnalysisUtil.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
                 }
+                zhaotoubiao.setProId(buid.getProId().toString());
                 zhaotoubiao.setZhongbiaoAmount(buid.getBidPrice());
                 zhaotoubiao.setZhaobiaoType(buid.getBidType());
                 zhaotoubiao.setZhongbiaoCompany(buid.getBOrg());
