@@ -34,7 +34,11 @@ public class PhoneFileUploadServlet extends HttpServlet {
         //得到文件的保存目录
         realSavePath = makePath(savePath);
         JSONObject json = new JSONObject();
+        //将数据写入流中
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("application/json; charset=utf-8");
         try {
+            PrintWriter print = response.getWriter();
             DiskFileItemFactory factory = new DiskFileItemFactory();
             factory.setSizeThreshold(1024 * 100);
             factory.setRepository(tmpFile);
@@ -46,12 +50,12 @@ public class PhoneFileUploadServlet extends HttpServlet {
             upload.setFileSizeMax(1024 * 1024);
             List<FileItem> list = upload.parseRequest(request);
             for (FileItem item : list) {
-                if (item.isFormField()) {
-                } else {
+                if (!item.isFormField()) {
                     System.out.println("file.size====="+item.getSize());
-                    if(item.getSize() > (1024 * 2)){
+                    if(item.getSize() > (1024 * 1024)){
                         json.put("code",0);
                         json.put("msg","文件过大，请重新上传！！！");
+                        print.print(json.toJSONString());
                         return;
                     }
                     String filename = item.getName();
@@ -65,10 +69,6 @@ public class PhoneFileUploadServlet extends HttpServlet {
                     json.put("msg", "文件上传成功");
                     json.put("code", 1);
                     json.put("imgPath", PropertiesUtils.getProperty("HEAD_PORTRAIT_URL") + filename);
-                    //将数据写入流中
-                    response.setCharacterEncoding("utf-8");
-                    response.setContentType("application/json; charset=utf-8");
-                    PrintWriter print = response.getWriter();
                     print.print(json.toJSONString());
                     FileOutputStream out = new FileOutputStream(fileName);
                     byte buffer[] = new byte[1024];
