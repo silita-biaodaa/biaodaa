@@ -92,22 +92,25 @@ public class NoticeController extends BaseController{
 
         //地区条件获取
         String dqsStr =  MapUtils.getString(params,"regions");
-        String[] dqsStrList =MyStringUtils.splitParam(dqsStr);
-        if(dqsStrList!=null && dqsStrList.length>0){
-            if(dqsStrList.length==1){
-                params.put("province",dqsStrList[0]);
-            }else if(dqsStrList.length==2){
-                params.put("province",dqsStrList[0]);
-                if(MyStringUtils.isNotNull(dqsStrList[1])) {
-                    params.put("city", dqsStrList[1].replace("市",""));
-                }
-            }else if(dqsStrList.length == 3){
-                params.put("province",dqsStrList[0]);
-                if(MyStringUtils.isNotNull(dqsStrList[1])) {
-                    params.put("city", dqsStrList[1].replace("市",""));
-                }
-                if(MyStringUtils.isNotNull(dqsStrList[2])){
-                    params.put("county",dqsStrList[2]);
+        if(MyStringUtils.isNotNull(dqsStr)) {
+            String[] dqsStrList = MyStringUtils.splitParam(dqsStr);
+            if (dqsStrList != null && dqsStrList.length > 0) {
+                String prov = dqsStrList[0].substring(0,2);
+                if (dqsStrList.length == 1) {
+                    params.put("province", prov);
+                } else if (dqsStrList.length == 2) {
+                    params.put("province", prov);
+                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
+                        params.put("city", dqsStrList[1].replace("市", ""));
+                    }
+                } else if (dqsStrList.length == 3) {
+                    params.put("province", prov);
+                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
+                        params.put("city", dqsStrList[1].replace("市", ""));
+                    }
+                    if (MyStringUtils.isNotNull(dqsStrList[2])) {
+                        params.put("county", dqsStrList[2]);
+                    }
                 }
             }
         }

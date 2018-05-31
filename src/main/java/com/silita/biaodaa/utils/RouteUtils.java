@@ -15,7 +15,6 @@ public class RouteUtils {
     public static String parseProvinceToSource(String province){
         String source =null;
         if(MyStringUtils.isNotNull(province)){
-            province = province.substring(0,2);
             switch (province){
                 case"北京":source="beij";break;
                 case"天津":source="tianj";break;
@@ -49,6 +48,8 @@ public class RouteUtils {
                 case"新疆":source="xinjiang";break;
                 case"西藏":source="xizang";break;
             }
+        }else{
+            source=HUNAN_SOURCE;
         }
         return source;
     }

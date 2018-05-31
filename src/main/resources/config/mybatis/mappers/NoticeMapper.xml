@@ -271,7 +271,7 @@
             AND s.biddingType =#{projectType}
         </if>
         <if test="province !=null and province !=''" >
-            and s.province =(select name_abbr from mishu.area ar where ar.name = #{province}  and grade=0)
+            and s.province =(select name_abbr from mishu.area ar where ar.name LIKE '${province}%'  and grade=0)
         </if>
         <if test="city !=null and city !=''" >
             AND s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
