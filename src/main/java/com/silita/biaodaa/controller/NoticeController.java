@@ -50,6 +50,11 @@ public class NoticeController extends BaseController{
         }
     }
 
+    /**
+     * 过滤查询条件，不满足条件的直接返回
+     * @param params
+     * @return
+     */
     private Map accessFilter(Map params){
         Map resultMap = new HashMap();
         Page page = buildPage(params);
@@ -87,56 +92,28 @@ public class NoticeController extends BaseController{
         }
     }
 
-    private void parseViewParams(Map params){
+    /**
+     * 解析/转换前端参数，返回是否执行
+     * @param params
+     * @return
+     */
+    private boolean parseViewParams(Map params){
         String type = MapUtils.getString(params,"type");
-
-        //地区条件获取
-        String dqsStr =  MapUtils.getString(params,"regions");
-        if(MyStringUtils.isNotNull(dqsStr)) {
-            String[] dqsStrList = MyStringUtils.splitParam(dqsStr);
-            if (dqsStrList != null && dqsStrList.length > 0) {
-                String prov = dqsStrList[0].substring(0,2);
-                if (dqsStrList.length == 1) {
-                    params.put("province", prov);
-                } else if (dqsStrList.length == 2) {
-                    params.put("province", prov);
-                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
-                        params.put("city", dqsStrList[1].replace("市", ""));
-                    }
-                } else if (dqsStrList.length == 3) {
-                    params.put("province", prov);
-                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
-                        params.put("city", dqsStrList[1].replace("市", ""));
-                    }
-                    if (MyStringUtils.isNotNull(dqsStrList[2])) {
-                        params.put("county", dqsStrList[2]);
-                    }
+        if(SnatchContent.SNATCHURL_ZHAOBIAO.equals(type)) {//招标
+            //企业名称匹配的资质
+            String comName = MapUtils.getString(params,"com_name");
+            if(MyStringUtils.isNotNull(comName)) {
+                List<String> aptList = queryComAptitudeByName(comName);
+                if (MyStringUtils.isNotNull(aptList)) {
+                    //企业资质合并进入筛选队列
+                    Set threeAptSet = new HashSet(aptList);
+                    params.put("comThreeAptList", new ArrayList(threeAptSet));
+                }else{
+                    //企业无匹配资质，返回空
+                    return false;
                 }
             }
-        }
 
-        //全国公告路由：从地区解析出source，设置表名
-        parseRouteSource(params);
-
-        //评标办法
-        String pbModes = MapUtils.getString(params,"pbModes");
-        String[] pbModesList =MyStringUtils.splitParam(pbModes);
-        if(pbModesList!=null && pbModesList.length>0){
-            StringBuffer modeStr = new StringBuffer();
-            for(String mode: pbModesList){
-                modeStr.append("'"+mode+"',");
-            }
-            modeStr.deleteCharAt(modeStr.length()-1);
-            params.put("modeStr",modeStr.toString());
-        }
-        if(MyStringUtils.isNotNull(params.get("projSumStart"))){
-            params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));
-        }
-        if(MyStringUtils.isNotNull(params.get("projSumEnd"))){
-            params.put("projSumEnd",Integer.parseInt(params.get("projSumEnd").toString()));
-        }
-
-        if(SnatchContent.SNATCHURL_ZHAOBIAO.equals(type)) {//招标
             //报名地址条件判断
             String bmSite =  MapUtils.getString(params,"bmSite");
             if(MyStringUtils.isNotNull(bmSite)) {
@@ -168,14 +145,6 @@ public class NoticeController extends BaseController{
                     params.put("notThreeAptList", threeAptMap.get("notHasAptList"));
                 }
             }
-
-            //企业匹配的资质
-            List<String> aptList = queryComAptitudeByName(params);
-            if (MyStringUtils.isNotNull(aptList)) {
-                //企业资质合并进入筛选队列
-                Set threeAptSet = new HashSet(aptList);
-                params.put("comThreeAptList", new ArrayList(threeAptSet));
-            }
         }else if(SnatchContent.SNATCHURL_ZHONGBIAO.equals(type)){//中标
             //第一中标候选人
             String comName = MapUtils.getString(params,"com_name");
@@ -184,18 +153,65 @@ public class NoticeController extends BaseController{
             }
         }
 
+
+        //地区条件获取
+        String dqsStr =  MapUtils.getString(params,"regions");
+        if(MyStringUtils.isNotNull(dqsStr)) {
+            String[] dqsStrList = MyStringUtils.splitParam(dqsStr);
+            if (dqsStrList != null && dqsStrList.length > 0) {
+                String prov = dqsStrList[0].substring(0,2);
+                if (dqsStrList.length == 1) {
+                    params.put("province", prov);
+                } else if (dqsStrList.length == 2) {
+                    params.put("province", prov);
+                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
+                        params.put("city", dqsStrList[1].replace("市", ""));
+                    }
+                } else if (dqsStrList.length == 3) {
+                    params.put("province", prov);
+                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
+                        params.put("city", dqsStrList[1].replace("市", ""));
+                    }
+                    if (MyStringUtils.isNotNull(dqsStrList[2])) {
+                        params.put("county", dqsStrList[2]);
+                    }
+                }
+            }
+        }
+        //全国公告路由：从地区解析出source，设置表名，必须在地区字段之后
+        parseRouteSource(params);
+
+        //评标办法
+        String pbModes = MapUtils.getString(params,"pbModes");
+        String[] pbModesList =MyStringUtils.splitParam(pbModes);
+        if(pbModesList!=null && pbModesList.length>0){
+            StringBuffer modeStr = new StringBuffer();
+            for(String mode: pbModesList){
+                modeStr.append("'"+mode+"',");
+            }
+            modeStr.deleteCharAt(modeStr.length()-1);
+            params.put("modeStr",modeStr.toString());
+        }
+        if(MyStringUtils.isNotNull(params.get("projSumStart"))){
+            params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));
+        }
+        if(MyStringUtils.isNotNull(params.get("projSumEnd"))){
+            params.put("projSumEnd",Integer.parseInt(params.get("projSumEnd").toString()));
+        }
+
         //设置公告查询的范围，多少天内的公告
         params.put("queryDays",100);
+
+        return true;
     }
 
     /**
      * 查询企业具备的资质（同名企业，资质一并返回）
-     * @param params
+     * @param
      * @return
      */
-    private List<String>  queryComAptitudeByName(Map params){
+    private List<String>  queryComAptitudeByName(String comName){
         List<String> aptList = null;
-        String comName = MapUtils.getString(params,"com_name");
         if(MyStringUtils.isNotNull(comName)) {
             Map argMap = new HashMap();
             argMap.put("com_name", comName);
@@ -268,9 +284,13 @@ public class NoticeController extends BaseController{
                 String listKey = RedisConstantInterface.GG_SEARCH_LIST + paramHash;
                 PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
                 if (pageInfo == null) {
-                    parseViewParams(params);
-                    pageInfo = noticeService.searchNoticeList(page, params);
-                    if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
+                    boolean isExecute = parseViewParams(params);
+                    if(isExecute) {
+                        pageInfo = noticeService.searchNoticeList(page, params);
+                    }else{
+                        pageInfo =  new PageInfo(new ArrayList());
+                    }
+                    if(pageInfo!=null &&  pageInfo.getList()!=null ) {
                         myRedisTemplate.setObject(listKey, pageInfo, LIST_OVER_TIME);
                     }
                 }
@@ -312,9 +332,13 @@ public class NoticeController extends BaseController{
                 String listKey = RedisConstantInterface.GG_LIST + paramHash;
                 PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
                 if (pageInfo == null) {
-                    parseViewParams(params);
-                    pageInfo = noticeService.queryNoticeList(page, params);
-                    if(pageInfo!=null &&  pageInfo.getList()!=null &&  pageInfo.getList().size()>0) {
+                    boolean isExecute = parseViewParams(params);
+                    if(isExecute) {
+                        pageInfo = noticeService.queryNoticeList(page, params);
+                    }else{
+                        pageInfo =  new PageInfo(new ArrayList());
+                    }
+                    if(pageInfo!=null &&  pageInfo.getList()!=null ) {
                         myRedisTemplate.setObject(listKey, pageInfo, LIST_OVER_TIME);
                     }
                 }
