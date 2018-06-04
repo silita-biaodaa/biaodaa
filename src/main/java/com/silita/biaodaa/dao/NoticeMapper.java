@@ -40,4 +40,8 @@ public interface NoticeMapper {
     String queryProvince(Map<String,Object> param);
 
     List<Map> queryComAptitudeByName(Map argMap);
+
+    List<Map> queryMatchComCount(Map argMap);
+
+    void inertMatchComCount(Map listMap);
 }

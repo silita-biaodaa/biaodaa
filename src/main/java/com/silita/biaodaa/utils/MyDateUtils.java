@@ -215,7 +215,7 @@ public class MyDateUtils {
 		int day1=calendar.get(Calendar.DAY_OF_YEAR);
 		calendar.setTime(dt2);
 		int day2=calendar.get(Calendar.DAY_OF_YEAR);
-		return Math.abs(day1-day2);
+		return day2-day1;
 
 	}
 	//同上面的方法，不取结果的绝对值
@@ -752,6 +752,14 @@ public class MyDateUtils {
 		} catch (ParseException e) {
 			return null;
 		}
+	}
+
+	public static String parseDateAddDay(String str,int addDay){
+		Date strDate = parseDate(str);
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(strDate);
+		ca.add(Calendar.DATE, addDay);// num为增加的天数，可以改变的
+		return getDate(ca.getTime(),"yyyy-MM-dd");
 	}
 
 }

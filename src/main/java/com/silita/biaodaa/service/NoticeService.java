@@ -9,12 +9,17 @@ import com.silita.biaodaa.dao.NoticeMapper;
 import com.silita.biaodaa.dao.TbClickStatisticsMapper;
 import com.silita.biaodaa.model.TbClickStatistics;
 import com.silita.biaodaa.model.TbCompany;
+import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.RouteUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,6 +30,7 @@ import java.util.regex.Pattern;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHONGBIAO;
 import static com.silita.biaodaa.utils.RouteUtils.HUNAN_SOURCE;
+import static org.apache.commons.collections.MapUtils.getString;
 
 /**
  * Created by dh on 2018/4/9.
@@ -238,7 +244,7 @@ public class NoticeService {
     public PageInfo queryCompanyListById(Page page,Map argMap){
         String zzRes = noticeMapper.queryNoticeZZById(argMap);
         //获取公告省份
-        String scource = MapUtils.getString(argMap,"source");
+        String scource = getString(argMap,"source");
         argMap.put("area",RouteUtils.parseSourceToProv(scource));
 
         if(zzRes !=null && zzRes.trim().length()>1){
@@ -318,7 +324,7 @@ public class NoticeService {
     public Integer queryCompanyCountById(Map argMap){
         List zzList = queryNoticeZZById(argMap);
         if(zzList!=null && zzList.size()>0) {
-            String source = MapUtils.getString(argMap,"source");
+            String source = getString(argMap,"source");
             argMap.put("area",RouteUtils.parseSourceToProv(source));
             argMap.put("list",zzList);
             return noticeMapper.queryCompanyCountByZZ(argMap);
@@ -344,7 +350,7 @@ public class NoticeService {
     }
 
     private void buildNoticeDetilTable(Map params)throws Exception{
-        String type= MapUtils.getString(params, "type");
+        String type= getString(params, "type");
         if(type==null){
             throw new Exception("prameter type is null![type+"+type+"]");
         }
@@ -514,4 +520,80 @@ public class NoticeService {
         return this.noticeMapper.queryComAptitudeByName(argMap);
     }
 
+    /**
+     * 统计招标公告匹配的企业数据
+     * @param argMap
+     */
+    public void bulidStatComCount(Map argMap){
+        String batchNum = MyDateUtils.getTime(null);
+        String comType = "0";//0:湖南本地 1：入湘
+        String orgStartDay = MapUtils.getString(argMap,"startDay");
+        String orgEndDay =MapUtils.getString(argMap,"endDay");
+        int stepBy = 2;//步长（天数）
+        int allDay = stepBy+1;
+        String startDay = orgStartDay;
+        String endDay =MyDateUtils.parseDateAddDay(orgStartDay,stepBy);
+        int queryTotal =0;
+        int intervalDay = MyDateUtils.compareTime(endDay,orgEndDay);
+        while (intervalDay>0){
+            if(allDay>stepBy+1 && intervalDay>stepBy){
+                startDay =  MyDateUtils.parseDateAddDay(endDay,1);
+                endDay = MyDateUtils.parseDateAddDay(startDay,stepBy);
+                allDay +=1;
+            }else if(intervalDay<=stepBy){
+                startDay =  MyDateUtils.parseDateAddDay(endDay,1);
+                endDay = orgEndDay;
+                allDay -= (stepBy- intervalDay);
+            }
+            HashMap map = new HashMap(2);
+            map.put("startDay",startDay);
+            map.put("endDay",endDay);
+            System.out.println("execute...[queryTotal:"+queryTotal+"][orgStartDay:"+orgStartDay+"][orgEndDay:"+orgEndDay+"][allDay:"+allDay+"]");
+            logger.info("execute...[queryTotal:"+queryTotal+"][orgStartDay:"+orgStartDay+"][orgEndDay:"+orgEndDay+"][allDay:"+allDay+"]");
+            List<Map> matchComList = this.noticeMapper.queryMatchComCount(map);
+            if(matchComList!=null && matchComList.size()>0) {
+                queryTotal+=matchComList.size();
+                batchInertMatchComCount(matchComList, batchNum,comType);
+            }
+
+            allDay +=(stepBy);
+            intervalDay = MyDateUtils.compareTime(endDay,orgEndDay);
+        }
+        logger.info("bulidStatComCount result: [queryTotal:"+queryTotal+"][orgStartDay:"+orgStartDay+"][orgEndDay:"+orgEndDay+"][allDay:"+allDay+"]");
+        System.out.println("bulidStatComCount result: [queryTotal:"+queryTotal+"][orgStartDay:"+orgStartDay+"][orgEndDay:"+orgEndDay+"][allDay:"+allDay+"]");
+    }
+
+    @Autowired
+    @Qualifier("mySqlSessionTemplate")
+    private SqlSessionTemplate mySqlSessionTemplate;
+
+    /**
+     * 批量插入统计记录
+     * @param matchComList
+     * @param batchNum
+     */
+    public void batchInertMatchComCount(List<Map> matchComList,String batchNum,String comType){
+        SqlSession session = mySqlSessionTemplate.getSqlSessionFactory().openSession(ExecutorType.BATCH,false);
+        NoticeMapper batchNoticeMapper = session.getMapper(NoticeMapper.class);
+        int batchCount = 100;
+        try {
+            for (int i = 0; i < matchComList.size(); i++){
+                Map oneMatchCom = matchComList.get(i);
+                oneMatchCom.put("batchNum",batchNum);
+                oneMatchCom.put("comType",comType);
+                batchNoticeMapper.inertMatchComCount(oneMatchCom);
+                if (i % batchCount == 0 || i == matchComList.size() - 1) {
+                    //手动提交，提交后无法回滚
+                    session.commit();
+                    //清理缓存，防止溢出
+                    session.clearCache();
+                }
+            }
+        }catch (Exception e){
+            logger.error(e,e);
+        }finally {
+            session.clearCache();
+            session.close();
+        }
+    }
 }

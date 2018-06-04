@@ -98,7 +98,36 @@ public class NoticeController extends BaseController{
      * @return
      */
     private boolean parseViewParams(Map params){
+        int defaultDay = 100;//查询公告的范围：默认为前100天
         String type = MapUtils.getString(params,"type");
+        //1.地区条件获取
+        String dqsStr =  MapUtils.getString(params,"regions");
+        if(MyStringUtils.isNotNull(dqsStr)) {
+            String[] dqsStrList = MyStringUtils.splitParam(dqsStr);
+            if (dqsStrList != null && dqsStrList.length > 0) {
+                String prov = dqsStrList[0].substring(0,2);
+                if (dqsStrList.length == 1) {
+                    params.put("province", prov);
+                } else if (dqsStrList.length == 2) {
+                    params.put("province", prov);
+                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
+                        params.put("city", dqsStrList[1].replace("市", ""));
+                    }
+                } else if (dqsStrList.length == 3) {
+                    params.put("province", prov);
+                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
+                        params.put("city", dqsStrList[1].replace("市", ""));
+                    }
+                    if (MyStringUtils.isNotNull(dqsStrList[2])) {
+                        params.put("county", dqsStrList[2]);
+                    }
+                }
+            }
+        }
+        //2.全国公告路由：从地区解析出source，设置表名，必须在地区字段之后
+        parseRouteSource(params);
+
+        //3.招、中标条件区分判断
         if(SnatchContent.SNATCHURL_ZHAOBIAO.equals(type)) {//招标
             //企业名称匹配的资质
             String comName = MapUtils.getString(params,"com_name");
@@ -150,37 +179,16 @@ public class NoticeController extends BaseController{
             String comName = MapUtils.getString(params,"com_name");
             if(MyStringUtils.isNotNull(comName)) {
                 params.put("oneName", comName);
+                defaultDay = 400;//中标查询候选人条件时，公告范围扩展到400天（约一年）
+            }
+            //中标全国公告（非湖南）暂无维度数据，不支持查询企业名称,直接返回空
+            String source =  MapUtils.getString(params,"source");
+            if(MyStringUtils.isNotNull(source) && !source.equals(HUNAN_SOURCE)){//湖南数据可查询中标候选人
+                return false;
             }
         }
 
-
-        //地区条件获取
-        String dqsStr =  MapUtils.getString(params,"regions");
-        if(MyStringUtils.isNotNull(dqsStr)) {
-            String[] dqsStrList = MyStringUtils.splitParam(dqsStr);
-            if (dqsStrList != null && dqsStrList.length > 0) {
-                String prov = dqsStrList[0].substring(0,2);
-                if (dqsStrList.length == 1) {
-                    params.put("province", prov);
-                } else if (dqsStrList.length == 2) {
-                    params.put("province", prov);
-                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
-                        params.put("city", dqsStrList[1].replace("市", ""));
-                    }
-                } else if (dqsStrList.length == 3) {
-                    params.put("province", prov);
-                    if (MyStringUtils.isNotNull(dqsStrList[1])) {
-                        params.put("city", dqsStrList[1].replace("市", ""));
-                    }
-                    if (MyStringUtils.isNotNull(dqsStrList[2])) {
-                        params.put("county", dqsStrList[2]);
-                    }
-                }
-            }
-        }
-        //全国公告路由：从地区解析出source，设置表名，必须在地区字段之后
-        parseRouteSource(params);
-
+        //4.其他公共条件判断
         //评标办法
         String pbModes = MapUtils.getString(params,"pbModes");
         String[] pbModesList =MyStringUtils.splitParam(pbModes);
@@ -200,7 +208,7 @@ public class NoticeController extends BaseController{
         }
 
         //设置公告查询的范围，多少天内的公告
-        params.put("queryDays",100);
+        params.put("queryDays",defaultDay);
 
         return true;
     }
