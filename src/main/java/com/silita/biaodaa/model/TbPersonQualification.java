@@ -78,6 +78,19 @@ public class TbPersonQualification {
      */
     private String url;
 
+    /**
+     * 身份证号
+     */
+    private String idCard;
+
+    /**
+     * 性别
+     */
+    private String sex;
+
     //人员姓名
     private String name;
+
+    //表明
+    private String tabCode;
 }

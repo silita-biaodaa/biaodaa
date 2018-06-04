@@ -41,4 +41,11 @@ public interface TbProjectSupervisionMapper extends MyMapper<TbProjectSupervisio
      * @return
      */
     Map<String,Object> querySuperDetail(Map<String,Object> param);
+
+    /**
+     * 获取监理详情
+     * @param pkid
+     * @return
+     */
+    TbProjectSupervision querySupervisionDetailById(Integer pkid);
 }
