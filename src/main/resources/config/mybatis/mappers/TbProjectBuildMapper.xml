@@ -63,10 +63,17 @@
         SELECT
           t.*
           ,t1.`acreage`
+          ,t1.pro_where as proWhere
+          ,t1.pro_type as proTypeMain
         FROM tb_project_build t
         LEFT JOIN tb_project t1 ON t.`pro_id` = t1.`pro_id`
-        WHERE t.`pro_id` = #{proId}
-        AND t.`pkid` = #{pkid}
+        WHERE 1=1
+        <if test="proId != null and proId != ''">
+          and t.`pro_id` = #{proId}
+        </if>
+        <if test="pkid != null and pkid != ''">
+            AND t.`pkid` = #{pkid}
+        </if>
     </select>
 
     <select id="queryProjectBuildCompany" parameterType="java.lang.Integer" resultType="java.util.Map">

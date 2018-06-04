@@ -15,7 +15,23 @@
 
   <!-- 获取企业注册人员-->
   <select id="queryCompanyPerson" parameterType="Map" resultType="com.silita.biaodaa.model.TbPersonQualification">
-    select q.* from tb_person_${tableCode} q where 1=1 and q.type=1
+    select q.`pkid`
+            ,q.`name`
+            ,q.`sex` AS sex
+            ,q.`id_card`
+            ,q.`innerid`
+            ,q.`category`
+            ,q.`cert_no`
+            ,q.`seal_no`
+            ,q.`cert_date`
+            ,q.`valid_date`
+            ,q.`url`
+            ,q.`com_id`
+            ,q.`com_name`
+            ,q.`type`
+            ,GROUP_CONCAT(q.major) AS major
+            ,#{tableCode} as tabCode
+    from tb_person_${tableCode} q where 1=1 and q.type=1
     <if test="comId!=null and comId!=''">
       and q.com_id = #{comId}
     </if>
@@ -28,6 +44,7 @@
     <if test="keyWord!=null and keyWord!=''">
       and q.name = #{keyWord}
     </if>
+    GROUP BY IF(q.`cert_no` !='',q.`cert_no`,q.`pkid`),q.`name`,q.`sex`,q.`id_card`,q.`com_id`
     ORDER BY q.px DESC
   </select>
 

@@ -79,4 +79,14 @@ public class TbProjectSupervision {
      */
     private String contractRemark;
 
+    /**
+     * 项目所在地
+     */
+    private String proWhere;
+
+    /**
+     * 主项目类别
+     */
+    private String proTypeMain;
+
 }

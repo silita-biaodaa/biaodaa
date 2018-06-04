@@ -105,4 +105,22 @@
     </if>
     ORDER BY t.`created` DESC
   </select>
+
+  <select id="queryPersonProjectByParam" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select t.*
+    from tb_person_project t
+    where 1=1
+    <if test="comName != null and comName != ''">
+      and t.com_name = #{comName}
+    </if>
+    <if test="name != null and name != ''">
+      and t.name = #{name}
+    </if>
+    <if test="certNo != null and certNo != ''">
+      and t.cert_no = #{certNo}
+      <if test="sealNo != null and sealNo != ''">
+        or t.cert_no = #{sealNo}
+      </if>
+    </if>
+  </select>
 </mapper>

@@ -73,4 +73,11 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @return
      */
     List<Integer> queryProIdByComId(Integer comId);
+
+    /**
+     * 根据主键id获取详情
+     * @param pkid
+     * @return
+     */
+    TbProjectDesign queryProjectDesignById(Integer pkid);
 }

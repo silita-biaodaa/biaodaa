@@ -134,4 +134,14 @@ public class TbProjectDesign {
      * 项目下的人
      */
     private List personList;
+
+    /**
+     * 项目所在地
+     */
+    private String proWhere;
+
+    /**
+     * 主项目类别
+     */
+    private String proTypeMain;
 }

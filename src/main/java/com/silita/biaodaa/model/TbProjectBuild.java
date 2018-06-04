@@ -170,4 +170,14 @@ public class TbProjectBuild {
      * 公司
      */
     private Map companyMap;
+
+    /**
+     * 项目所在地
+     */
+    private String proWhere;
+
+    /**
+     * 主项目类别
+     */
+    private String proTypeMain;
 }

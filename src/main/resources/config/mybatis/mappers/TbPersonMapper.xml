@@ -29,4 +29,28 @@
 		JOIN mishu.tb_person_project pro ON p.pkid=pro.pkid
 		WHERE p.pkid=#{pkid}
     </select>
+
+	<select id="queryPersonDetailByParam" resultType="com.silita.biaodaa.model.TbPersonQualification" parameterType="java.util.Map">
+		select t.*
+		from tb_person_${tabCode} t
+		where 1=1
+		<if test="name != null and name != ''">
+			and t.name = #{name}
+		</if>
+		<if test="sex != null and sex != ''">
+			and t.sex = #{sex}
+		</if>
+		<if test="idCard != null and idCard != ''">
+			and t.id_card = #{idCard}
+		</if>
+		<if test="certNo != null and certNo != ''">
+			and t.cert_no = #{certNo}
+		</if>
+		<if test="comId != null and comId != ''">
+			and t.com_id = #{comId}
+		</if>
+		<if test="type != null and type != ''">
+			and t.type = #{type}
+		</if>
+	</select>
 </mapper>

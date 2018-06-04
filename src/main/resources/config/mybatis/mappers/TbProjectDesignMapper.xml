@@ -27,6 +27,7 @@
     <result column="exploreOrgCode" property="exploreOrgCode" jdbcType="VARCHAR"/>
       <result column="regisAddressDesign" property="regisAddressDesign" jdbcType="VARCHAR"/>
       <result column="regisAddressExplore" property="regisAddressExplore" jdbcType="VARCHAR"/>
+      <result column="pro_where" property="proWhere" jdbcType="VARCHAR"/>
   </resultMap>
 
   <select id="queryProjectDesignByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
@@ -138,5 +139,15 @@
         from tb_project_design t
         WHERE t.`com_id` = #{comId}
         group by t.pro_id
+    </select>
+
+    <select id="queryProjectDesignById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select t.*
+                ,t1.pro_where
+                ,t1.pro_type as proTypeMain
+        from tb_project_design t
+        left join tb_project t1 on t.pro_id = t1.pro_id
+        where t.pkid = #{pkid}
+        limit 1
     </select>
 </mapper>
