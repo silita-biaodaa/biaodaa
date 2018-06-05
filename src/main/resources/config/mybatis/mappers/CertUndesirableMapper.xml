@@ -31,11 +31,8 @@
     <if test="name != null and name != ''">
       and t.persionName = #{name}
     </if>
-    <if test="certNo != null and certNo != ''">
-      and t.persionId = #{certNo}
-      <if test="sealNo != null and sealNo != ''">
-        or t.persionId = #{sealNo}
-      </if>
+    <if test="sealNo != null and sealNo != ''">
+      and t.persionId = #{sealNo}
     </if>
   </select>
 </mapper>

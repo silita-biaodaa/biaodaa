@@ -117,10 +117,11 @@
       and t.name = #{name}
     </if>
     <if test="certNo != null and certNo != ''">
-      and t.cert_no = #{certNo}
+      and (t.cert_no = #{certNo}
       <if test="sealNo != null and sealNo != ''">
         or t.cert_no = #{sealNo}
       </if>
+      )
     </if>
   </select>
 </mapper>
