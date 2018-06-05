@@ -49,6 +49,7 @@ public class PersonService {
         resultMap.put("person",person);
         if("registerCert".equals(tabType)){
             param.put("type",1);
+            param.remove("certNo");
             List<TbPersonQualification> tbPersonQualificationList = tbPersonMapper.queryPersonDetailByParam(param);
             resultMap.put("personQualificat",tbPersonQualificationList);
             return resultMap;
@@ -77,7 +78,15 @@ public class PersonService {
 
     public List<Map<String,Object>> getPersonProjectList(Map<String,Object> param){
         param.remove("comName");
-        List<TbPersonProject> personProjectList = tbPersonProjectMapper.queryPersonProjectByParam(param);
+        String innerId = null;
+        List<TbPersonProject> personProjectList = null;
+        if(null != param.get("innerid")){
+            innerId = MapUtils.getString(param,"innerid");
+            personProjectList = tbPersonProjectMapper.queryPersonProjectByInnerid(innerId);
+        }
+        if(null == personProjectList){
+            personProjectList = tbPersonProjectMapper.queryPersonProjectByParam(param);
+        }
         List<Map<String,Object>> persProjectList = new ArrayList<>();
         Map<String,Object> perProjectMap = null;
         if(null != personProjectList && personProjectList.size() > 0){

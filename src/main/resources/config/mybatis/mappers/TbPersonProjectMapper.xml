@@ -124,4 +124,11 @@
       )
     </if>
   </select>
+
+  <select id="queryPersonProjectByInnerid" resultMap="BaseResultMap" parameterType="java.lang.String">
+     select t.*
+     from tb_person_project t
+     where 1=1
+     and t.innerid = #{innerId}
+  </select>
 </mapper>
