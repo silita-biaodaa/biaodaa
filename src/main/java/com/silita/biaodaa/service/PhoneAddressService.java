@@ -33,7 +33,7 @@ public class PhoneAddressService {
         if(null != param.get("list")){
             list = (List<Map<String,Object>>) param.get("list");
         }
-        if(null == list){
+        if(null == list || list.size() == 0){
             return resultMap;
         }
         //登录手机号

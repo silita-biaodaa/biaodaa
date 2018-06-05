@@ -34,5 +34,6 @@
     <if test="sealNo != null and sealNo != ''">
       and t.persionId = #{sealNo}
     </if>
+    order by t.validityDate desc
   </select>
 </mapper>

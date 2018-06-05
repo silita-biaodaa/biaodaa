@@ -20,5 +20,6 @@
     select t.*
     from tb_person_change t
     where t.flag = #{flag}
+    order by t.change_date desc
   </select>
 </mapper>
