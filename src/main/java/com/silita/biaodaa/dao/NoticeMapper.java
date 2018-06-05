@@ -41,7 +41,19 @@ public interface NoticeMapper {
 
     List<Map> queryComAptitudeByName(Map argMap);
 
+    /**
+     * 查询湖南公告，湖南本地企业匹配数
+     * @param argMap
+     * @return
+     */
     List<Map> queryMatchComCount(Map argMap);
 
     void inertMatchComCount(Map listMap);
+
+    /**
+     * 查询湖南公告，“入湘企业”匹配数
+     * @param argMap
+     * @return
+     */
+    List<Map> queryMatchIntoComCount(Map argMap);
 }

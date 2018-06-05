@@ -523,44 +523,50 @@ public class NoticeService {
     /**
      * 统计招标公告匹配的企业数据
      * @param argMap
+     * @param comType 0:湖南本地 1：入湘
      */
-    public void bulidStatComCount(Map argMap){
+    public void bulidStatComCount(Map argMap,String comType){
         String batchNum = MyDateUtils.getTime(null);
-        String comType = "0";//0:湖南本地 1：入湘
         String orgStartDay = MapUtils.getString(argMap,"startDay");
         String orgEndDay =MapUtils.getString(argMap,"endDay");
         int stepBy = 2;//步长（天数）
-        int allDay = stepBy+1;
+        int allDay = 1;
         String startDay = orgStartDay;
         String endDay =MyDateUtils.parseDateAddDay(orgStartDay,stepBy);
         int queryTotal =0;
         int intervalDay = MyDateUtils.compareTime(endDay,orgEndDay);
         while (intervalDay>0){
-            if(allDay>stepBy+1 && intervalDay>stepBy){
-                startDay =  MyDateUtils.parseDateAddDay(endDay,1);
-                endDay = MyDateUtils.parseDateAddDay(startDay,stepBy);
-                allDay +=1;
-            }else if(intervalDay<=stepBy){
-                startDay =  MyDateUtils.parseDateAddDay(endDay,1);
-                endDay = orgEndDay;
-                allDay -= (stepBy- intervalDay);
+            if(allDay>1) {
+                if (intervalDay > stepBy) {
+                    startDay = MyDateUtils.parseDateAddDay(endDay, 1);
+                    endDay = MyDateUtils.parseDateAddDay(startDay, stepBy);
+                    allDay +=1;
+                } else if (intervalDay <= stepBy) {
+                    startDay = MyDateUtils.parseDateAddDay(endDay, 1);
+                    endDay = orgEndDay;
+                    allDay -= (stepBy - intervalDay);
+                }
             }
             HashMap map = new HashMap(2);
             map.put("startDay",startDay);
             map.put("endDay",endDay);
-            System.out.println("execute...[queryTotal:"+queryTotal+"][orgStartDay:"+orgStartDay+"][orgEndDay:"+orgEndDay+"][allDay:"+allDay+"]");
-            logger.info("execute...[queryTotal:"+queryTotal+"][orgStartDay:"+orgStartDay+"][orgEndDay:"+orgEndDay+"][allDay:"+allDay+"]");
-            List<Map> matchComList = this.noticeMapper.queryMatchComCount(map);
+
+            List<Map> matchComList = null;
+            if(comType.equals("0")) {//本地企业
+                matchComList = this.noticeMapper.queryMatchComCount(map);
+            }else if(comType.equals("1")){//入湘
+                matchComList = this.noticeMapper.queryMatchIntoComCount(map);
+            }
             if(matchComList!=null && matchComList.size()>0) {
                 queryTotal+=matchComList.size();
                 batchInertMatchComCount(matchComList, batchNum,comType);
             }
 
-            allDay +=(stepBy);
+            allDay +=stepBy;
+            logger.info("##execute...[comType:"+comType+"][queryTotal:"+queryTotal+"][startDay:"+startDay+"][endDay:"+endDay+"][allDay:"+allDay+"][batchNum:"+batchNum+"]");
             intervalDay = MyDateUtils.compareTime(endDay,orgEndDay);
         }
-        logger.info("bulidStatComCount result: [queryTotal:"+queryTotal+"][orgStartDay:"+orgStartDay+"][orgEndDay:"+orgEndDay+"][allDay:"+allDay+"]");
-        System.out.println("bulidStatComCount result: [queryTotal:"+queryTotal+"][orgStartDay:"+orgStartDay+"][orgEndDay:"+orgEndDay+"][allDay:"+allDay+"]");
+        logger.info("##bulidStatComCount success: [comType:"+comType+"][queryTotal:"+queryTotal+"][orgStartDay:"+orgStartDay+"][orgEndDay:"+orgEndDay+"][allDay:"+allDay+"][batchNum:"+batchNum+"]");
     }
 
     @Autowired

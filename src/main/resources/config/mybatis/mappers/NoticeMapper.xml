@@ -421,10 +421,39 @@
         where com_name = #{com_name}
     </select>
 
+    <select id="queryMatchIntoComCount"  parameterType="Map" resultType="Map">
+        SELECT zz.contid,aa.title,
+        (CASE aa.tbassureSum WHEN '' THEN 0 WHEN '/' THEN 0 ELSE IFNULL(aa.tbassureSum,0) END) as tbassureSum,
+        aa.opendate,aa.pbmode,concat(aa.tbAssureEndDate,' ',aa.tbAssureEndTime) as tbAssureEnd,
+        (select count(1)
+            from mishu.tb_company tc
+            join mishu.tb_company_into tci on tci.com_name=tc.com_name
+            where tc.`range` regexp group_concat(DISTINCT replace(zz.certificateuuid,',','|')  separator "|")
+        ) as companyCount,
+        aa.url,group_concat(DISTINCT replace(zz.certificateuuid,',','|') separator "|") as 'zzlist',
+        aa.projectType,aa.source
+        FROM mishu.snatch_url_cert zz,
+        (select dd.tbAssureSum,( case s.biddingType
+                when '0' then '施工'
+                when '2' then '监理'
+                when '3' then '采购'
+                when '1' then '设计'
+                when '4' then '勘察'
+                when '5' then '其他'
+                else '其他' end) as projectType,s.id,s.title,s.opendate,s.url,s.source,dd.pbmode,dd.tbAssureEndDate,dd.tbAssureEndTime
+            from mishu.snatchurl s
+            join mishu.zhaobiao_detail dd on dd.snatchurlid=s.id
+            where opendate >=#{startDay} and opendate &lt;=#{endDay} and s.type=0
+            order by opendate desc) aa
+        where zz.contid=aa.id
+        group by zz.contid
+    </select>
+
     <select id="queryMatchComCount"  parameterType="Map" resultType="Map">
         SELECT zz.contid,aa.title,
           (CASE aa.tbassureSum WHEN '' THEN 0 WHEN '/' THEN 0 ELSE IFNULL(aa.tbassureSum,0) END) as tbassureSum,
-          aa.opendate,(select count(1) from mishu.tb_company tc where tc.`range` regexp group_concat(DISTINCT replace(zz.certificateuuid,',','|')  separator "|") and tc.bak_id is null) as companyCount
+          aa.opendate,aa.pbmode,concat(aa.tbAssureEndDate,' ',aa.tbAssureEndTime) as tbAssureEnd,
+          (select count(1) from mishu.tb_company tc where tc.`range` regexp group_concat(DISTINCT replace(zz.certificateuuid,',','|')  separator "|") and tc.bak_id is null) as companyCount
           ,aa.url,group_concat(DISTINCT replace(zz.certificateuuid,',','|') separator "|") as 'zzlist'
           ,aa.projectType,aa.source
         FROM mishu.snatch_url_cert zz,
@@ -435,7 +464,7 @@
             when '1' then '设计'
             when '4' then '勘察'
             when '5' then '其他'
-            else '其他' end) as projectType,s.id,s.title,s.opendate,s.url,s.source
+            else '其他' end) as projectType,s.id,s.title,s.opendate,s.url,s.source,dd.pbmode,dd.tbAssureEndDate,dd.tbAssureEndTime
             from mishu.snatchurl s
             join mishu.zhaobiao_detail dd on dd.snatchurlid=s.id
             where opendate >=#{startDay} and opendate &lt;=#{endDay} and s.type=0
@@ -447,6 +476,7 @@
     <insert id="inertMatchComCount" parameterType="Map">
      insert INTO biaodaa_stat.notic_match_com_report(
          cont_id,title,tb_assure_sum,
+         tbAssureEnd,pb_mode,
          open_date,match_com_count,
          url,certificate_uuid,
          project_type,source,
@@ -455,6 +485,8 @@
       #{contid},
       #{title},
       #{tbassureSum},
+      #{tbAssureEnd},
+      #{pbmode},
       #{opendate},
       #{companyCount},
       #{url},
