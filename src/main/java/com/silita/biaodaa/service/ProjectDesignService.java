@@ -41,16 +41,16 @@ public class ProjectDesignService {
             return new TbProjectDesign();
         }
         //获取勘察和设计单位
-        if(MyStringUtils.isNotNull(projectDesign.getRegisAddressDesign())){
+        if(null != projectDesign.getRegisAddressDesign()){
             String desiginProvince = tbProjectDesignMapper.queryProvinceByName(projectDesign.getRegisAddressDesign());
-            if(MyStringUtils.isNull(desiginProvince)){
+            if(null == desiginProvince){
                 desiginProvince = "湖南省";
             }
             projectDesign.setDesignProvince(desiginProvince);
         }
-        if(MyStringUtils.isNotNull(projectDesign.getRegisAddressExplore())){
+        if(null != projectDesign.getRegisAddressExplore()){
             String exproloreProvince = tbProjectDesignMapper.queryProvinceByName(projectDesign.getRegisAddressExplore());
-            if(MyStringUtils.isNull(exproloreProvince)){
+            if(null == exproloreProvince){
                 exproloreProvince = "湖南省";
             }
             projectDesign.setExploreProvince(exproloreProvince);
