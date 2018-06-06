@@ -15,9 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 public class MyDateUtils {
 
@@ -762,4 +760,57 @@ public class MyDateUtils {
 		return getDate(ca.getTime(),"yyyy-MM-dd");
 	}
 
+	/**
+	 * 获取两个日期之间的每月第一天
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public static List<Date> getDateList(Date startDate, Date endDate){
+		List<Date> dateList = new ArrayList<>();
+		Calendar tempStart = Calendar.getInstance();
+		tempStart.setTime(startDate);
+		while(startDate.getTime()<=endDate.getTime()){
+			dateList.add(tempStart.getTime());
+			tempStart.add(Calendar.MONTH,1);
+			startDate = tempStart.getTime();
+		}
+		return dateList;
+	}
+
+	/**
+	 * 获取当月的第一天
+	 * @return
+	 */
+	public static Date getToday(){
+		Calendar ca = Calendar.getInstance();
+		ca.add(Calendar.MONTH,0);
+		ca.set(Calendar.DAY_OF_MONTH,1);
+		return ca.getTime();
+	}
+
+	/**
+	 * 获取当月的最后一天
+	 * @return
+	 */
+	public static Date getLastDate(Date date){
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(date);
+		ca.add(Calendar.MONTH,1);
+		ca.set(Calendar.DAY_OF_MONTH,0);
+		return ca.getTime();
+	}
+
+	/**
+	 * 获取当前月的前几年
+	 * @param full
+	 * @return
+	 */
+	public static Date getDayBefore(int full){
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(new Date());
+		ca.add(Calendar.YEAR,-full);
+		ca.set(Calendar.DAY_OF_MONTH,1);
+		return ca.getTime();
+	}
 }

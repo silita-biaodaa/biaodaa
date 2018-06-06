@@ -44,7 +44,7 @@
     <if test="keyWord!=null and keyWord!=''">
       and q.name = #{keyWord}
     </if>
-    GROUP BY IF(q.`cert_no` !='',q.`cert_no`,q.`pkid`),q.`name`,q.`sex`,q.`id_card`,q.`com_id`
+    GROUP BY IF(q.`cert_no` !='',q.`cert_no`,q.`category`),q.`com_id`,q.`name`,q.`sex`,q.`id_card`
     ORDER BY q.px DESC
   </select>
 

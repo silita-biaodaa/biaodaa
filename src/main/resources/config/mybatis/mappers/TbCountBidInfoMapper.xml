@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbCountBidInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbCountBidInfo" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="com_name" property="comName" jdbcType="VARCHAR" />
+    <result column="stat_date" property="statDate" jdbcType="VARCHAR" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="BIT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <select id="queryZhongbiaoCount" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT
+      t.oneName as comName,
+      DATE_FORMAT(t.gsDate, '%Y-%m-01')  AS statDate,
+      ifnull(SUM(num),0) AS num,
+      1 as type
+    FROM
+      (SELECT
+        zbd.`oneName`,
+        zbd.`gsDate`,
+        COUNT(1) AS num
+      FROM
+        `zhongbiao_detail` zbd
+      WHERE zbd.gsDate &gt;= #{startDate}
+        AND zbd.gsDate &lt;= #{endDate}
+        AND zbd.`oneName` IS NOT NULL
+        AND zbd.`oneName` != ''
+      GROUP BY zbd.`oneName`,
+        zbd.`gsDate`) t
+    GROUP BY t.oneName;
+  </select>
+
+  <delete id="delZhongBiaoCountByDate" parameterType="java.lang.String">
+    DELETE
+    FROM `mishu`.`tb_count_bid_info`
+    WHERE `stat_date` = #{statDate}
+  </delete>
+
+  <insert id="batchInsertCountBinInfo" parameterType="java.util.List">
+      INSERT INTO `mishu`.`tb_count_bid_info`
+            (
+             `com_name`,
+             `stat_date`,
+             `num`,
+             `type`
+             )
+      VALUES
+      <foreach collection="list" item="list" separator=",">
+        (
+          #{list.comName},#{list.statDate},#{list.num},#{list.type}
+        )
+      </foreach>
+  </insert>
+
+    <select id="queryCountBidList" parameterType="java.util.Map" resultType="java.util.Map">
+        select
+          t.com_name as comName,
+          t.num as num
+        from tb_count_bid_info t
+        where t.stat_date = #{statDate}
+        and t.num &gt;= 3
+        order by t.num desc
+    </select>
+
+    <select id="queryCountBidNum" parameterType="java.util.Map" resultType="java.util.Map">
+        select ifnull(count(t.com_name),0) as comNameCount,
+                ifnull(sum(t.num),0) as sumNum
+        from tb_count_bid_info t
+        where t.stat_date = #{statDate}
+         and t.num &gt;= #{count}
+    </select>
+
+</mapper>
