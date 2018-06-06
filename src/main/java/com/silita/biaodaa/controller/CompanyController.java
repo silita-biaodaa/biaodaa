@@ -188,6 +188,24 @@ public class CompanyController extends BaseController {
             String province = MapUtils.getString(params, "province");
             Map<String,Object> param = new HashMap<>();
             String tableCode = "hunan";
+
+
+            if(keyWord!=null&&!"".equals(keyWord)){
+                // TODO: 18/5/21 更新排序移到打开人员处理
+                //tbCompanyService.updatePersonPX(tableCode,keyWord);
+            }
+            param.put("keyWord",keyWord);
+            if(comId!=null&&!"".equals(comId)){
+                TbCompany company = tbCompanyService.getCompany(Integer.parseInt(comId));
+                if(company!=null){
+                    param.put("comId",comId);
+                    param.put("comName",company.getComName());
+                    province = company.getRegisAddress();
+                    if(province.indexOf("湖南省")>-1){
+                        province = "湖南省";
+                    }
+                }
+            }
             if(province!=null&&!"".equals(province)){
                 tableCode = tbCompanyService.getProvinceCode(province);
                 if(tableCode==null){
@@ -200,18 +218,6 @@ public class CompanyController extends BaseController {
             param.put("tableCode",tableCode);
             param.put("category",category);
 
-            if(keyWord!=null&&!"".equals(keyWord)){
-                // TODO: 18/5/21 更新排序移到打开人员处理
-                //tbCompanyService.updatePersonPX(tableCode,keyWord);
-            }
-            param.put("keyWord",keyWord);
-            if(comId!=null&&!"".equals(comId)){
-                TbCompany company = tbCompanyService.getCompany(Integer.parseInt(comId));
-                if(company!=null){
-                    param.put("comId",comId);
-                    param.put("comName",company.getComName());
-                }
-            }
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
