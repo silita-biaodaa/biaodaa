@@ -95,6 +95,13 @@ public class TbCompanyService {
 
                     }
                     String [] range = qual.getRange().split("；");
+                    if(range.length<2){
+                        range = qual.getRange().split(";");
+                    }
+                    if(range.length<2){
+                        range = qual.getRange().split("\\|");
+                    }
+
                     if(range.length>=2){
                         for(int i = 0;i<range.length;i++){
                             TbCompanyQualification qualT = qual.clon();
