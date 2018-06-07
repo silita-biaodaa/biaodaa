@@ -22,7 +22,7 @@
         SELECT n.userId, n.type, s.id, s.title, s.openDate,
         d.projDq, d.projXs, GROUP_CONCAT(d.pbMode) AS pbMode, <include refid="com.silita.biaodaa.dao.NoticeMapper.noticeTypeConvert"/>, temp.certificate
         FROM mishu_write.collec_notice n
-        LEFT JOIN mishu.snatchurl s ON s.id = n.noticeId
+        INNER JOIN mishu.snatchurl s ON s.id = n.noticeId
         LEFT JOIN mishu.zhaobiao_detail d ON s.id = d.snatchUrlId
         LEFT JOIN (SELECT GROUP_CONCAT(c.certificate) AS certificate, c.contId as contId
           FROM mishu.snatch_url_cert c
@@ -41,7 +41,7 @@
         (SELECT outdd.pbMode  from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id )) AS pbMode ,
         d.projType, d.projDq, d.projXs, <include refid="com.silita.biaodaa.dao.NoticeMapper.noticeTypeConvert"/>
         FROM  mishu.snatchurl s
-        LEFT JOIN mishu_write.collec_notice n ON s.id = n.noticeId
+        INNER JOIN mishu_write.collec_notice n ON s.id = n.noticeId
         LEFT JOIN mishu.zhongbiao_detail d ON n.noticeId = d.snatchUrlId
         WHERE n.userId = #{userid} AND n.type = #{type}
         GROUP BY s.id

@@ -45,7 +45,7 @@
       c.regis_address AS regisAddress, c.com_address AS comAddress, c.legal_person AS legalPerson, c.economic_type AS economicType, c.regis_capital AS regisCapital,
       c.skill_leader AS skillLeader, c.range AS comRange, c.logo AS logo ,c2.tableName
       FROM mishu_write.colle_company_new c2
-      LEFT JOIN mishu.tb_company c ON c.com_id = c2.companyId
+      INNER JOIN mishu.tb_company c ON c.com_id = c2.companyId
       WHERE c2.`userId` = #{userid}
   </select>
 
