@@ -22,7 +22,7 @@ public class CountBidInfoController extends BaseController{
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("code",this.SUCCESS_CODE);
         resultMap.put("msg",this.SUCCESS_MSG);
-//        countBidInfoService.timerCount();
+        countBidInfoService.timerCount();
         return resultMap;
     }
 
