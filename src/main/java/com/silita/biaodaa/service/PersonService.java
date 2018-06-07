@@ -112,7 +112,7 @@ public class PersonService {
                         perProjectMap.put("proId",projectBuild.getProId());
                     }
                 }else if ("design".equals(per.getType())){
-                    TbProjectDesign projectDesign = tbProjectDesignMapper.queryProjectDesignDetailByPkid(per.getPid());
+                    TbProjectDesign projectDesign = tbProjectDesignMapper.queryProjectDesignById(per.getPid());
                     if(null != projectDesign){
                         perProjectMap.put("proType",projectDesign.getProTypeMain());
                         perProjectMap.put("proName",projectDesign.getProName());
