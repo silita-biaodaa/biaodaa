@@ -66,7 +66,7 @@
             ,t1.pro_where as proWhere
             ,t1.pro_type as proTypeMain
     from tb_project_supervision t
-    left join t_project t1 on t1.pro_id = t.pro_id
+    left join tb_project t1 on t1.pro_id = t.pro_id
     where t.pkid = #{pkid}
   </select>
 </mapper>

@@ -57,6 +57,18 @@
       </foreach>
   </insert>
 
+
+    <insert id="insertCountBinInfo" parameterType="java.util.Map">
+        INSERT INTO `mishu`.`tb_count_bid_info`
+        (
+        `com_name`,
+        `stat_date`,
+        `num`,
+        `type`
+        )
+        VALUES(#{comName},#{statDate},#{num},#{type})
+    </insert>
+
     <select id="queryCountBidList" parameterType="java.util.Map" resultType="java.util.Map">
         select
           t.com_name as comName,
@@ -73,6 +85,12 @@
         from tb_count_bid_info t
         where t.stat_date = #{statDate}
          and t.num &gt;= #{count}
+    </select>
+
+    <select id="queryCountBidByStat" parameterType="java.lang.String" resultType="int">
+        select count(1)
+        from tb_count_bid_info t
+        where t.stat_date = #{statDate}
     </select>
 
 </mapper>

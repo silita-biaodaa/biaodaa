@@ -30,6 +30,13 @@ public interface TbCountBidInfoMapper extends MyMapper<TbCountBidInfo> {
     int batchInsertCountBinInfo(List<Map<String,Object>> list);
 
     /**
+     * 添加
+     * @param param
+     * @return
+     */
+    int insertCountBinInfo(Map<String,Object> param);
+
+    /**
      * 获取详情列表
      * @param map
      * @return
@@ -42,4 +49,11 @@ public interface TbCountBidInfoMapper extends MyMapper<TbCountBidInfo> {
      * @return
      */
     Map<String,Object> queryCountBidNum(Map<String,Object> map);
+
+    /**
+     * 获取当月统计数
+     * @param statDate
+     * @return
+     */
+    int queryCountBidByStat(String statDate);
 }
