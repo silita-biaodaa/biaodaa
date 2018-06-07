@@ -59,7 +59,7 @@ public class ProjectDesignService {
         TbProject project = tbProjectMapper.queryProjectDetail(proId);
         String province = "湖南省";
         if(null != project){
-            if(null != project.getProWhere() && project.getProWhere().equals("省")){
+            if(null != project.getProWhere() && project.getProWhere().contains("省")){
                 province = project.getProWhere().substring(0,analysisUtil.getIndex(project.getProWhere(),"省")+1);
             }
         }

@@ -84,7 +84,7 @@ public class PersonService {
             innerId = MapUtils.getString(param,"innerid");
             personProjectList = tbPersonProjectMapper.queryPersonProjectByInnerid(innerId);
         }
-        if(null == personProjectList){
+        if(null == personProjectList || personProjectList.size() == 0){
             personProjectList = tbPersonProjectMapper.queryPersonProjectByParam(param);
         }
         List<Map<String,Object>> persProjectList = new ArrayList<>();
