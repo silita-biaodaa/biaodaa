@@ -69,6 +69,9 @@ public class CountBidInfoService {
         param.put("statDate",statDate);
         List<Map<String,Object>> countList = tbCountBidInfoMapper.queryCountBidList(param);
         resultMap = tbPlatformNoticeMapper.queryPlatformInfoByStatDate(statDate);
+        if(MapUtils.isEmpty(resultMap)){
+            resultMap = new HashMap<>();
+        }
         resultMap.put("list",countList);
         return resultMap;
     }
