@@ -107,7 +107,9 @@
 
     <sql id="noticeListTail">
         and DATE_ADD(now(),INTERVAL -${queryDays} DAY) &lt; s.openDate
+        <if test="threeAptList ==null or threeAptList ==''">
         order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
+        </if>
     </sql>
 
     <sql id="zhongbidaoDetailField">
@@ -192,21 +194,29 @@
             join mishu.snatch_url_cert suc on suc.contId=s.id
             <!-- 企业匹配的三级资质 -->
             <if test="comThreeAptList !=null and comThreeAptList !=''">
-                and
-                <foreach collection="comThreeAptList" item="comThreeApt" open="(" close=")" separator=" or ">
+                and (
+                <foreach collection="comThreeAptList" item="comThreeApt" separator=" or ">
                     suc.certificateuuid like '%${comThreeApt}%'
                 </foreach>
+                )
             </if>
             <!--筛选选择的资质 -->
             <choose>
                 <when test="threeAptList !=null and threeAptList !=''">
-                    and
-                    <foreach collection="threeAptList" item="zzTypeThree" open="(" close=")" separator=" or ">
-                      suc.certificateuuid like '%${zzTypeThree}%'
+                    and (
+                    <!--**及以上 -->
+                    <foreach collection="threeAptList" item="zzTypeThree" open="(" close=")" separator=" and ">
+                        suc.certificateuuid like '%${zzTypeThree}%'
                     </foreach>
+                    <!--**及以上 排除下级资质-->
                     <foreach collection="notThreeAptList" item="notThreeApt" >
-                      and  suc.certificateuuid not like '%${notThreeApt}%'
+                        and suc.certificateuuid not like '%${notThreeApt}%'
                     </foreach>
+                    <!--**及以上 加入同大级别的精确资质-->
+                    <foreach collection="threeOrAptList" item="zzTypeThreeOr" >
+                      or suc.certificateuuid like '%${zzTypeThreeOr}%'
+                    </foreach>
+                    )
                 </when>
                 <when test="zzTypeTwo !=null and zzTypeTwo !=''">
                     and suc.certificateuuid like '%${zzTypeTwo}%'
