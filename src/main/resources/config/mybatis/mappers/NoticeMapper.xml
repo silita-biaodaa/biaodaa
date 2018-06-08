@@ -205,7 +205,7 @@
                 <when test="threeAptList !=null and threeAptList !=''">
                     and (
                     <!--**及以上 -->
-                    <foreach collection="threeAptList" item="zzTypeThree" open="(" close=")" separator=" and ">
+                    <foreach collection="threeAptList" item="zzTypeThree" open="(" close=")" separator=" or ">
                         suc.certificateuuid like '%${zzTypeThree}%'
                     </foreach>
                     <!--**及以上 排除下级资质-->

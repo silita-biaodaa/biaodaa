@@ -84,7 +84,7 @@ public class NoticeServiceTest extends ConfigTest {
      */
     @Test  //,"zzType":"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||4c7f85db-2934-11e5-a311-63b86f04c8dd/2"  "com_name":"湖南省联能电力建设有限公司",16577027-2939-11e5-a311-63b86f04c8dd/3
     public void testqueryList()throws Exception{//,"projectType":"0","regions":"北京市||","regions":"湖南省||长沙市","projectType":"0","title":"小东","projSumStart":"0","projSumEnd":"1000","regions":"湖南省||长沙市","pbModes":"合理定价评审抽取法||综合评估法Ⅰ" ,,"pbModes":"合理定价评审抽取法||综合评估法Ⅰ","projSumStart":"500","projSumEnd":"1000" projSumEnd 2018-04-01  2018-05-30 "pbModes":"合理定价评审抽取法||综合评估法Ⅰ",,"kbDateStart":"2018-01-30","kbDateEnd":"2018-03-13", ,"projSumStart":"100","projSumEnd":"500","zzType":"main_type||4c7d025c-2934-11e5-a311-63b86f04c8dd||4c7d025c-2934-11e5-a311-63b86f04c8dd/3"
-        String requestBody = "{\"pageNo\":1,\"pageSize\":20,\"type\":0,\"com_name\":\"湖南东方红建设集团有限公司\",\"regions\":\"湖南省||\",\"zzType\":\"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||16577027-2939-11e5-a311-63b86f04c8dd/21\"}";
+        String requestBody = "{\"pageNo\":1,\"pageSize\":20,\"type\":0,\"regions\":\"湖南省||\",\"zzType\":\"main_type||4c7f85db-2934-11e5-a311-63b86f04c8dd||16573c34-2939-11e5-a311-63b86f04c8dd/11\"}";
 //        requestBody ="{\"regions\":\"\",\"type\":\"2\",\"com_name\":\"湖南耀邦建设有限公司\"} ";
         String responseString = mockMvc.perform(post("/notice/queryList").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
