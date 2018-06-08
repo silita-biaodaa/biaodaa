@@ -212,10 +212,6 @@
                     <foreach collection="notThreeAptList" item="notThreeApt" >
                         and suc.certificateuuid not like '%${notThreeApt}%'
                     </foreach>
-                    <!--**及以上 加入同大级别的精确资质-->
-                    <foreach collection="threeOrAptList" item="zzTypeThreeOr" >
-                      or suc.certificateuuid like '%${zzTypeThreeOr}%'
-                    </foreach>
                     )
                 </when>
                 <when test="zzTypeTwo !=null and zzTypeTwo !=''">
@@ -280,9 +276,10 @@
         <if test="projectType !=null and projectType!=''">
             AND s.biddingType =#{projectType}
         </if>
-        <if test="province !=null and province !=''" >
-            and s.province =(select name_abbr from mishu.area ar where ar.name LIKE '${province}%'  and grade=0)
-        </if>
+        <!--省份判断祛除，不同省按不同表区分 -->
+        <!--<if test="province !=null and province !=''" >-->
+            <!--and s.province =(select name_abbr from mishu.area ar where ar.name LIKE '${province}%'  and grade=0)-->
+        <!--</if>-->
         <if test="city !=null and city !=''" >
             AND s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
         </if>

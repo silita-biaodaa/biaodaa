@@ -170,7 +170,7 @@ public class NoticeController extends BaseController{
                     params.put("zzTypeTwo", zztypeList[1]);
                 } else if (zztypeList.length == 3) {
                     threeAptMap = AptitudeUtils.parseThreeAptCode(zztypeList[2]);
-                    params.put("threeOrAptList", threeAptMap.get("hasOrAptList"));
+//                    params.put("threeOrAptList", threeAptMap.get("hasOrAptList"));
                     params.put("threeAptList", threeAptMap.get("hasAptList"));
                     params.put("notThreeAptList", threeAptMap.get("notHasAptList"));
                 }
