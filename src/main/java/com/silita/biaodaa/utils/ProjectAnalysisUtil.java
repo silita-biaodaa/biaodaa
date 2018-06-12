@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 业绩业务类
+ */
 public class ProjectAnalysisUtil {
 
     public static String regx = "[总建筑面积|建筑总面积|总面积|实际用地面积|改造面积|占地面积|建筑面积|扩建面积|总计|面积]?.*?(\\d\\d*?\\.?\\d*[万|亩]?\\s*(平方米|平方公里|M2|m2|㎡|万㎡|平米|万平|亩|平方))";
@@ -262,5 +265,29 @@ public class ProjectAnalysisUtil {
         }else{
             return scope;
         }
+    }
+
+
+    /**
+     * 获取省份包括直辖市
+     * @param proWhere
+     * @return
+     */
+    public static String getProvince(String proWhere){
+        String province = "湖南省";
+        if(null != proWhere){
+            if(proWhere.contains("省")){
+                province = proWhere.substring(0,getIndex(proWhere,"省")+1);
+            }else if (proWhere.contains("北京市")){
+                province = "北京市";
+            }else if (proWhere.contains("上海市")){
+                province = "上海市";
+            }else if (proWhere.contains("天津市")){
+                province = "天津市";
+            }else if (proWhere.contains("重庆市")){
+                province = "重庆市";
+            }
+        }
+        return province;
     }
 }

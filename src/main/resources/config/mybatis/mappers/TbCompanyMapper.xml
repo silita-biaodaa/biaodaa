@@ -205,4 +205,13 @@
     where parent_id=#{parentId}
     order by name_abbr
   </select>
+
+  <select id="queryHostCompanyList" resultType="com.silita.biaodaa.model.TbCompany" parameterType="java.util.Map">
+    select t.*
+    from tb_company t
+    where 1=1
+    and t.regis_address like CONCAT(#{regisAddress},'%')
+    order by t.px desc
+    limit #{limit}
+  </select>
 </mapper>

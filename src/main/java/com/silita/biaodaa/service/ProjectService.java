@@ -7,15 +7,10 @@ import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class ProjectService {
@@ -115,6 +110,9 @@ public class ProjectService {
             if(null != project.getProScope()){
                 project.setAcreage(projectAnalysisUtil.analysisData(projectAnalysisUtil.regx,project.getProScope()));
             }
+        }
+        if(null != project.getInvestAmount() && project.getInvestAmount().contains("（万元）")){
+            project.setInvestAmount(project.getInvestAmount().substring(0,projectAnalysisUtil.getIndex(project.getInvestAmount(),"（")));
         }
         project.setAcreage(projectAnalysisUtil.getNumber(project.getAcreage()));
         result.put("data",project);
@@ -227,7 +225,7 @@ public class ProjectService {
                     zhongbiaoDate = remark.substring(projectAnalysisUtil.getIndex(remark,"中标日期："),projectAnalysisUtil.getIndex(remark,","));
                     zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null:zhongbiaoDate.substring(projectAnalysisUtil.getIndex(zhongbiaoDate,"：")+1,zhongbiaoDate.length()));
                     amount = remark.substring(projectAnalysisUtil.getIndex(remark,"中标价格："),projectAnalysisUtil.getIndex(remark,"万元"));
-                    zhaotoubiao.setZhongbiaoAmount(isNumeric(amount) == true ? amount.substring(amount.lastIndexOf("中标价格：")+"中标价格：".length(),amount.length()) : null);
+                    zhaotoubiao.setZhongbiaoAmount(projectAnalysisUtil.isNumeric(amount) == true ? amount.substring(amount.lastIndexOf("中标价格：")+"中标价格：".length(),amount.length()) : null);
                 }
                 zhaotoubiao.setZhaobiaoType("监理");
                 zhaotoubiao.setZhongbiaoCompany(proSup.getSuperOrg());
@@ -262,8 +260,7 @@ public class ProjectService {
     private void putProvince(Map<String,Object> param){
         if(null != param.get("proWhere")){
             String proWhere = param.get("proWhere").toString();
-            String province = proWhere.substring(0,projectAnalysisUtil.getIndex(proWhere,"省")+1);
-            param.put("province",province == null ? null : province);
+            param.put("province",projectAnalysisUtil.getProvince(proWhere));
         }
     }
 
@@ -289,16 +286,6 @@ public class ProjectService {
         }
         return resultMap;
     }
-
-    public static boolean isNumeric(String str){
-        for (int i =  str.length(); --i>=0;) {
-            if(Character.isDigit(str.charAt(i))){
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     public void analysisData(){
         List<Map<String,Object>> paramList = new ArrayList<>();

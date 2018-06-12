@@ -527,4 +527,24 @@ public class CompanyController extends BaseController {
         }
         return map;
     }
+
+
+    /**
+     * 热门企业
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/host", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String,Object> hostCompanyList(@RequestBody Map<String,Object> param){
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("code",this.SUCCESS_CODE);
+        resultMap.put("msg",this.SUCCESS_MSG);
+        List<TbCompany> companyList = tbCompanyService.getHostCompanyList(param);
+        Map<String,String> typeMap = new HashMap<>();
+        typeMap.put("collType","company");
+        noticeService.addCollStatus(companyList, typeMap);
+        resultMap.put("data", companyList);
+        return resultMap;
+    }
 }

@@ -804,4 +804,13 @@ public class TbCompanyService {
         }
         return areaList;
     }
+
+    /**
+     * 获取热门企业
+     * @param param
+     * @return
+     */
+    public List<TbCompany> getHostCompanyList(Map<String,Object> param){
+        return tbCompanyMapper.queryHostCompanyList(param);
+    }
 }

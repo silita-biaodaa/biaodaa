@@ -56,4 +56,11 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     List<Map<String,Object>> queryCountyList();
 
     List<Map<String,Object>>  queryCityPathList(String parentId);
+
+    /**
+     * 获取热门公司
+     * @param param
+     * @return
+     */
+    List<TbCompany> queryHostCompanyList(Map<String,Object> param);
 }
