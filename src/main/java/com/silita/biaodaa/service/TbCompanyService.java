@@ -837,7 +837,7 @@ public class TbCompanyService {
                 }
             }
         }
-        param.put("provice", province);
+        param.put("province", province);
         param.put("cityList", cityList);
         return param;
     }
