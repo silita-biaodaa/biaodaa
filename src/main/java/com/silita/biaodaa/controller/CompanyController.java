@@ -14,6 +14,7 @@ import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -279,12 +280,12 @@ public class CompanyController extends BaseController {
 
         try {
             checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
-            String regisAddress = MapUtils.getString(params, "regisAddress");
-            String areaName = null;
-            String [] areaNames = MyStringUtils.splitParam(regisAddress);
-            if(areaNames!=null&&areaNames.length>0){
-                areaName = areaNames[areaNames.length-1];
-            }
+//            String regisAddress = MapUtils.getString(params, "regisAddress");
+//            String areaName = null;
+//            String [] areaNames = MyStringUtils.splitParam(regisAddress);
+//            if(areaNames!=null&&areaNames.length>0){
+//                areaName = areaNames[areaNames.length-1];
+//            }
             String indestry = MapUtils.getString(params, "indestry");
             Integer minCapital = MapUtils.getInteger(params, "minCapital");
             if(minCapital!=null&&minCapital==0){
@@ -299,16 +300,24 @@ public class CompanyController extends BaseController {
 
 
             String code = "";
-            String [] qualCodes = MyStringUtils.splitParam(qualCode);
-            if(qualCodes!=null&&qualCodes.length>0){
-                code = qualCodes[qualCodes.length-1];
+            if(null != qualCode){
+                String [] qualCodes = qualCode.split(",");
+                String[] qual = null;
+                if(qualCodes!=null&&qualCodes.length>0){
+                    for(String str : qualCodes){
+                        qual = MyStringUtils.splitParam(str);
+                        if(null != qual && qual.length > 0){
+                            code = code + qual[qual.length-1] + ",";
+                        }
+                    }
+                }
             }
             Map<String,Object> param = new HashMap<>();
-            param.put("areaName",areaName);
+            param.put("regisAddress",params.get("regisAddress"));
             param.put("indestry",indestry);
             param.put("minCapital",minCapital);
             param.put("maxCapital",maxCapital);
-            param.put("qualCode",code);
+            param.put("qualCode",StringUtils.strip(code,","));
             param.put("keyWord",keyWord);
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");

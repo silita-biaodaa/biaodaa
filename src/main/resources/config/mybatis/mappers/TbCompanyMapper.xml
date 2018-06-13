@@ -27,8 +27,14 @@
     <if test="keyWord!=null and keyWord!=''">
       and c.com_name like CONCAT('%',#{keyWord},'%')
     </if>
-    <if test="areaName!=null and areaName!=''">
-      and c.regis_address like CONCAT('%',#{areaName},'%')
+    <if test="province!=null and province!=''">
+      and c.regis_address like CONCAT('%',#{province},'%')
+    </if>
+    <if test="cityList != null and cityList.size() > 0">
+      and
+      <foreach collection="cityList" item="list" open="(" close=")" separator="or">
+        c.regis_address like CONCAT(#{list},'%')
+      </foreach>
     </if>
     <if test="minCapital!=null">
       <![CDATA[ and c.regis_capital >= #{minCapital} ]]>
@@ -39,14 +45,11 @@
     <if test="zzLevel == 'default' and qualCode!=null and qualCode!=''">
       and c.range like CONCAT('%',#{qualCode},'%')
     </if>
-    <if test="zzLevel == 'stair'">
-      and (c.range like CONCAT('%',#{superfineLevel},'%') or c.range like CONCAT('%',#{stairLevel},'%'))
-    </if>
-    <if test="zzLevel == 'second'">
-      and (c.range like CONCAT('%',#{superfineLevel},'%') or c.range like CONCAT('%',#{stairLevel},'%') or c.range like CONCAT('%',#{secondLevel},'%') )
-    </if>
-    <if test="zzLevel == 'three'">
-      and c.range like CONCAT('%',#{qualCode},'%')
+    <if test="zzLevel == 'level'">
+      and
+      <foreach collection="range" item="zzList" close=")" separator="or" open="(">
+        c.range like CONCAT('%',#{zzList},'%')
+      </foreach>
     </if>
     order by c.px desc
   </select>
@@ -148,8 +151,14 @@
     <if test="keyWord!=null and keyWord!=''">
       and c.com_name like CONCAT('%',#{keyWord},'%')
     </if>
-    <if test="areaName!=null and areaName!=''">
-      and c.regis_address like CONCAT('%',#{areaName},'%')
+    <if test="province!=null and province!=''">
+      and c.regis_address like CONCAT('%',#{province},'%')
+    </if>
+    <if test="cityList != null and cityList.size() > 0">
+      and
+        <foreach collection="cityList" item="list" open="(" close=")" separator="or">
+          c.regis_address like CONCAT(#{list},'%')
+        </foreach>
     </if>
     <if test="minCapital!=null">
       <![CDATA[ and c.regis_capital >= #{minCapital} ]]>
@@ -160,14 +169,11 @@
     <if test="zzLevel == 'default' and qualCode!=null and qualCode!=''">
       and c.range like CONCAT('%',#{qualCode},'%')
     </if>
-    <if test="zzLevel == 'stair'">
-      and (c.range like CONCAT('%',#{superfineLevel},'%') or c.range like CONCAT('%',#{stairLevel},'%'))
-    </if>
-    <if test="zzLevel == 'second'">
-      and (c.range like CONCAT('%',#{superfineLevel},'%') or c.range like CONCAT('%',#{stairLevel},'%') or c.range like CONCAT('%',#{secondLevel},'%') )
-    </if>
-    <if test="zzLevel == 'three'">
-      and c.range like CONCAT('%',#{qualCode},'%')
+    <if test="zzLevel == 'level'">
+      and
+      <foreach collection="range" item="zzList" close=")" separator="or" open="(">
+        c.range like CONCAT('%',#{zzList},'%')
+      </foreach>
     </if>
     <if test="level!=null and level!=''">
       and a.secureLevel=#{level}

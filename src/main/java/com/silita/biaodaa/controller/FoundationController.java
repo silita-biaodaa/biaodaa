@@ -181,7 +181,7 @@ public class FoundationController extends BaseController {
                     if (key.contains("湘西")) {
                         key = "湘西土家族苗族自治州";
                     }
-                    params.put("region", Lists.newArrayList(key));
+                    params.put("region", Lists.newArrayList(key.split(",")));
                 } else {
                     String key = regions[0];
                     boolean has = false;
