@@ -194,12 +194,13 @@ public class NoticeController extends BaseController{
         String pbModes = MapUtils.getString(params,"pbModes");
         String[] pbModesList =MyStringUtils.splitParam(pbModes);
         if(pbModesList!=null && pbModesList.length>0){
-            StringBuffer modeStr = new StringBuffer();
-            for(String mode: pbModesList){
-                modeStr.append("'"+mode+"',");
-            }
-            modeStr.deleteCharAt(modeStr.length()-1);
-            params.put("modeStr",modeStr.toString());
+//            StringBuffer modeStr = new StringBuffer();
+//            for(String mode: pbModesList){
+//                modeStr.append("'"+mode+"',");
+//            }
+//            modeStr.deleteCharAt(modeStr.length()-1);
+//            params.put("modeStr",modeStr.toString());
+            params.put("modeStr",Arrays.asList(pbModesList));
         }
         if(MyStringUtils.isNotNull(params.get("projSumStart"))){
             params.put("projSumStart",Integer.parseInt(params.get("projSumStart").toString()));

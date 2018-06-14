@@ -251,8 +251,24 @@
                 </if>
 
                 <!--评标办法 -->
-                <if test="modeStr != null">
-                    AND detail.pbMode in(${modeStr})
+                <if test="modeStr != null and modeStr.size() > 0">
+                    AND
+                    <foreach collection="modeStr" item="list" close=")" separator="or" open="(">
+                        <!--<if test="list == '其他'">-->
+                            <!--(detail.pbMode is null or detail.pbMode = '') and s.edit = 1-->
+                        <!--</if>-->
+                        <!--<if test="list != '其他'">-->
+                            <!--detail.pbMode = #{list}-->
+                        <!--</if>-->
+                        <choose>
+                            <when test="list == '其他'">
+                                (detail.pbMode is null or detail.pbMode = '') and s.edit = 1
+                            </when>
+                            <otherwise>
+                                detail.pbMode = #{list}
+                            </otherwise>
+                        </choose>
+                    </foreach>
                 </if>
                 <if test="(projSumStart !=null and projSumStart!='')" >
                     AND detail.projSum &gt;= #{projSumStart}
@@ -284,7 +300,7 @@
             AND s.city in(
               select name_abbr from mishu.area where 1=1 and
               <foreach collection="city" item="list" open="(" separator="or" close=")">
-                  display_name like '%${list}%'
+                  name like CONCAT(#{list},'%')
               </foreach>
             )
         </if>
