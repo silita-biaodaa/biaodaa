@@ -83,7 +83,7 @@
                     ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
                 </when>
                 <otherwise>
-                    ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ) pbMode
+                    ,IFNULL((SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ),'其他') pbMode
                 </otherwise>
             </choose>
             ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
@@ -262,7 +262,9 @@
                         <!--</if>-->
                         <choose>
                             <when test="list == '其他'">
-                                (detail.pbMode is null or detail.pbMode = '') and s.edit = 1
+                                  detail.pbMode is null or detail.pbMode = ''
+                                  or detail.pbMode = '平江县土石方工程评标定标办法'
+                                  or detail.pbMode = '/'
                             </when>
                             <otherwise>
                                 detail.pbMode = #{list}
