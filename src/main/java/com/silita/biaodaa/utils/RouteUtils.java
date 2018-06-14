@@ -47,6 +47,9 @@ public class RouteUtils {
                 case"湖南":source=HUNAN_SOURCE;break;
                 case"新疆":source="xinjiang";break;
                 case"西藏":source="xizang";break;
+                case"香港":source="hk";break;
+                case"澳门":source="macau";break;
+                case"台湾":source="taiwan";break;
             }
         }else{
             source=HUNAN_SOURCE;
@@ -89,6 +92,9 @@ public class RouteUtils {
                 case HUNAN_SOURCE:province="湖南";break;
                 case"xinjiang":province="新疆";break;
                 case"xizang":province="西藏";break;
+                case"hk":province="香港";break;
+                case"macau":province="澳门";break;
+                case"taiwan":province="台湾";break;
             }
         }else{
             province="湖南";
