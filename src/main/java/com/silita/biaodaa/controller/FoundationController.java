@@ -177,11 +177,13 @@ public class FoundationController extends BaseController {
                 String[] regions = StringUtils.split(region, "|");
                 Preconditions.checkArgument(null != regions && regions.length > 0 && regions.length <= 2, "地区格式传入不正确！正确格式为：湖南省||长沙市");
                 if (regions.length == 2) {
-                    String key = regions[1];
-                    if (key.contains("湘西")) {
-                        key = "湘西土家族苗族自治州";
+                    String[] keys = regions[1].split(",");
+                    for(int i = 0;i<keys.length;i++){
+                        if (keys[i].contains("湘西")) {
+                            keys[i] = "湘西土家族苗族自治州";
+                        }
                     }
-                    params.put("region", Lists.newArrayList(key.split(",")));
+                    params.put("region", Lists.newArrayList(keys));
                 } else {
                     String key = regions[0];
                     boolean has = false;
