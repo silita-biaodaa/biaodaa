@@ -19,37 +19,36 @@ public class AptitudeUtils {
         Map<String ,List> resultMap = new HashMap<String ,List>(2);
         List hasAptList = null;
         List notHasAptList = null;
-//        List hasOrAptList = null;
         if(MyStringUtils.isNotNull(threeCode)){
-            if(threeCode.split("/").length==2) {
+            if(threeCode.split("/").length==2){
                 hasAptList = new ArrayList(4);
                 notHasAptList = new ArrayList(3);
-//                hasOrAptList = new ArrayList(1);
                 String uuid = threeCode.split("/")[0];
                 String rank = threeCode.split("/")[1];
                 switch(rank){
                     case "11":hasAptList.add(uuid+"/1");
                         notHasAptList.add(uuid+"/2");notHasAptList.add(uuid+"/3");
-//                        hasOrAptList.add(uuid+"/1");
                         break;
                     case "21":hasAptList.add(uuid+"/2");
                         notHasAptList.add(uuid+"/3");
-//                        hasOrAptList.add(uuid+"/2");
                         break;
                     case "31":hasAptList.add(uuid+"/3");
-//                        hasOrAptList.add(uuid+"/3");
                         break;
                     case "0":hasAptList.add(uuid+"/0");notHasAptList.add(uuid+"/1");notHasAptList.add(uuid+"/2");notHasAptList.add(uuid+"/3");break;
                     case "1":notHasAptList.add(uuid+"/0");hasAptList.add(uuid+"/1");notHasAptList.add(uuid+"/2");notHasAptList.add(uuid+"/3");break;
                     case "2":notHasAptList.add(uuid+"/0");notHasAptList.add(uuid+"/1");hasAptList.add(uuid+"/2");notHasAptList.add(uuid+"/3");break;
                     case "3":notHasAptList.add(uuid+"/0");notHasAptList.add(uuid+"/1");notHasAptList.add(uuid+"/2");hasAptList.add(uuid+"/3");break;
+                    case "-21":hasAptList.add(uuid+"/-1");hasAptList.add(uuid+"/-2");notHasAptList.add(uuid+"/-3");break;
+                    case "-31":hasAptList.add(uuid+"/-1");hasAptList.add(uuid+"/-2");hasAptList.add(uuid+"/-3");break;
+                    case "-1":hasAptList.add(uuid+"/-1");notHasAptList.add(uuid+"/-2");notHasAptList.add(uuid+"/-3");break;
+                    case "-2":notHasAptList.add(uuid+"/-1");hasAptList.add(uuid+"/-2");notHasAptList.add(uuid+"/-3");break;
+                    case "-3":notHasAptList.add(uuid+"/-1");notHasAptList.add(uuid+"/-2");hasAptList.add(uuid+"/-3");break;
                     default:hasAptList.add(threeCode);
                 }
             }else{
                 hasAptList.add(threeCode);
             }
         }
-//        resultMap.put("hasOrAptList",hasOrAptList);
         resultMap.put("hasAptList",hasAptList);
         resultMap.put("notHasAptList",notHasAptList);
         return resultMap;

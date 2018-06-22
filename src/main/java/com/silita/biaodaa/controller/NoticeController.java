@@ -159,21 +159,10 @@ public class NoticeController extends BaseController{
                 }
             }
 
-            //资质条件处理
+            //资质条件处理，支持多选(用半角逗号分隔)
             String zztype = MapUtils.getString(params, "zzType");
-            String[] zztypeList = MyStringUtils.splitParam(zztype);
-            Map<String, List> threeAptMap = null;
-            if (zztypeList != null && zztypeList.length > 0) {
-                if (zztypeList.length == 1) {
-                    params.put("zzTypeOne", zztypeList[0]);
-                } else if (zztypeList.length == 2) {
-                    params.put("zzTypeTwo", zztypeList[1]);
-                } else if (zztypeList.length == 3) {
-                    threeAptMap = AptitudeUtils.parseThreeAptCode(zztypeList[2]);
-//                    params.put("threeOrAptList", threeAptMap.get("hasOrAptList"));
-                    params.put("threeAptList", threeAptMap.get("hasAptList"));
-                    params.put("notThreeAptList", threeAptMap.get("notHasAptList"));
-                }
+            if(MyStringUtils.isNotNull(zztype)) {
+                parseZzType(params,",");
             }
         }else if(SnatchContent.SNATCHURL_ZHONGBIAO.equals(type)){//中标
             //第一中标候选人
@@ -213,6 +202,41 @@ public class NoticeController extends BaseController{
         params.put("queryDays",defaultDay);
 
         return true;
+    }
+
+    /**
+     * 解析资质多选条件
+     * @param params
+     * @param zzSplit
+     */
+    private void parseZzType(Map params,String zzSplit){
+        String zztype = MapUtils.getString(params, "zzType");
+        String[] multiType = zztype.split(zzSplit);
+        List<Map> aptMapList = new ArrayList<Map>();
+        List<String> zzTypeOneList = new ArrayList<String>();
+        for(String zType : multiType) {
+            Map zzTypeMap = new HashMap();
+            String[] zztypeList = MyStringUtils.splitParam(zType);
+            Map<String, List> threeAptMap = null;
+            if (zztypeList != null && zztypeList.length > 0) {
+                if (zztypeList.length == 1) {
+                    zzTypeOneList.add(zztypeList[0]);
+                } else if (zztypeList.length == 2) {
+                    zzTypeMap.put("zzTypeTwo", zztypeList[1]);
+                } else if (zztypeList.length == 3) {
+                    threeAptMap = AptitudeUtils.parseThreeAptCode(zztypeList[2]);
+                    zzTypeMap.put("threeAptList", threeAptMap.get("hasAptList"));
+                    zzTypeMap.put("notThreeAptList", threeAptMap.get("notHasAptList"));
+                }
+                if(zzTypeMap.size()>0) {
+                    aptMapList.add(zzTypeMap);
+                }
+            }
+        }
+        params.put("zzTypeOneList",zzTypeOneList);
+        if(aptMapList.size()>0) {
+            params.put("aptMapList", aptMapList);
+        }
     }
 
     /**
