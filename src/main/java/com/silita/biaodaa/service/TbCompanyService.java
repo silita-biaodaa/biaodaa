@@ -11,6 +11,7 @@ import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -281,7 +282,7 @@ public class TbCompanyService {
     public PageInfo filterCompany(Page page, Map<String, Object> param, String levelRank) {
         //判断是否*****级以上
         param.put("zzLevel", "default");
-        if (null != param.get("qualCode") && param.get("qualCode").toString().indexOf("/") > -1) {
+        if (null != param.get("qualCode") && StringUtils.isNotEmpty(param.get("qualCode").toString())) {
             String qualCode = param.get("qualCode").toString();
             String[] qualCodes = qualCode.split(",");
             List<String> rangeList = new ArrayList<>();
