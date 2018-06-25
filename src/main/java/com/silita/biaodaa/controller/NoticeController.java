@@ -127,6 +127,12 @@ public class NoticeController extends BaseController{
         //2.全国公告路由：从地区解析出source，设置表名，必须在地区字段之后
         parseRouteSource(params);
 
+        //TODO:全国公告关联到维度信息之后，此处需要放开
+        //全国公告暂无维度信息，涉及维度筛选条件时，直接返回空
+        if(!countryNoticeFilter(params)){
+            return false;
+        }
+
         //3.招、中标条件区分判断
         if(SnatchContent.SNATCHURL_ZHAOBIAO.equals(type)) {//招标
             //企业名称匹配的资质
@@ -171,11 +177,6 @@ public class NoticeController extends BaseController{
                 params.put("oneName", comName);
                 defaultDay = 400;//中标查询候选人条件时，公告范围扩展到400天（约一年）
             }
-            //中标全国公告（非湖南）暂无维度数据，不支持查询企业名称,直接返回空
-            String source =  MapUtils.getString(params,"source");
-            if(MyStringUtils.isNotNull(source) && !source.equals(HUNAN_SOURCE)){//湖南数据可查询中标候选人
-                return false;
-            }
         }
 
         //4.其他公共条件判断
@@ -197,11 +198,41 @@ public class NoticeController extends BaseController{
         if(MyStringUtils.isNotNull(params.get("projSumEnd"))){
             params.put("projSumEnd",Integer.parseInt(params.get("projSumEnd").toString()));
         }
-
         //设置公告查询的范围，多少天内的公告
         params.put("queryDays",defaultDay);
-
         return true;
+    }
+
+    /**
+     * 全国公告，筛选条件判断过滤
+     * @param params
+     * @return
+     */
+    private boolean countryNoticeFilter(Map params){
+        boolean flag = true;
+        String source =  MapUtils.getString(params,"source");
+        String pbModes = MapUtils.getString(params,"pbModes");
+        String kbDateStart = MapUtils.getString(params,"kbDateStart");
+        String projSumStart = MapUtils.getString(params,"projSumStart");
+        String projSumEnd = MapUtils.getString(params,"projSumEnd");
+        String kbDateEnd = MapUtils.getString(params,"kbDateEnd");
+        String zzType = MapUtils.getString(params,"zzType");
+        String bmSite = MapUtils.getString(params,"bmSite");
+        String com_name = MapUtils.getString(params,"com_name");
+        if(MyStringUtils.isNotNull(source) && !source.equals(HUNAN_SOURCE)){//非湖南公告
+            if(MyStringUtils.isNotNull(pbModes)
+                    || MyStringUtils.isNotNull(kbDateStart)
+                    || MyStringUtils.isNotNull(projSumStart)
+                    || MyStringUtils.isNotNull(projSumEnd)
+                    || MyStringUtils.isNotNull(kbDateEnd)
+                    || MyStringUtils.isNotNull(zzType)
+                    || MyStringUtils.isNotNull(bmSite)
+                    || MyStringUtils.isNotNull(com_name)){
+                flag = false;
+            }
+        }
+
+        return flag;
     }
 
     /**
