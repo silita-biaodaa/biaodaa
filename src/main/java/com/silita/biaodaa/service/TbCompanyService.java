@@ -285,8 +285,13 @@ public class TbCompanyService {
             String qualCode = param.get("qualCode").toString();
             String[] qualCodes = qualCode.split(",");
             List<String> rangeList = new ArrayList<>();
+            String zzLevel = null;
             for (String str : qualCodes) {
-                String zzLevel = str.substring(analysisUtil.getIndex(qualCode, "/") + 1, str.length());
+                if(str.contains("/")){
+                    zzLevel = str.substring(analysisUtil.getIndex(str, "/") + 1, str.length());
+                }else{
+                    zzLevel = "default";
+                }
                 rangeList.addAll(this.getQualCode(str, zzLevel));
             }
             param.put("zzLevel", "level");
