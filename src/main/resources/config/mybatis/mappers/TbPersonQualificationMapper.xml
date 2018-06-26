@@ -46,7 +46,14 @@
     <if test="keyWord!=null and keyWord!=''">
       and q.name = #{keyWord}
     </if>
-    GROUP BY IF(q.`cert_no` !='',q.`cert_no`,q.`category`),q.`com_id`,q.`name`,q.`sex`,q.`id_card`
+      <choose>
+          <when test="tableCode=='hunan'">
+              GROUP BY IF(q.`cert_no` !='',q.`cert_no`,q.`category`),q.`com_id`,q.`name`,q.`sex`,q.`id_card`
+          </when>
+          <otherwise>
+              GROUP BY IF(q.`cert_no` !='',q.`cert_no`,q.`category`),q.`id_card`
+          </otherwise>
+      </choose>
     ORDER BY q.px DESC
   </select>
 
