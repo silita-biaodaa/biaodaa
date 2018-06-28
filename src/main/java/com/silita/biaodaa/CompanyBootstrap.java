@@ -47,7 +47,7 @@ public class CompanyBootstrap implements ApplicationListener<ApplicationEvent> {
                     scheduler.scheduleAtFixedRate(countBidTask, lockTimes,24 * 60, TimeUnit.MINUTES);
                     logger.info("----------当前时间【"+start+"】，任务执行时间【"+endLock+"】，中间间隔【"+lockTimes+"】分");
                     logger.info("---------------省份人员数据缓存begin---------------------------------");
-                    scheduler.scheduleAtFixedRate(personTask, 0, 60, TimeUnit.MINUTES);
+                    scheduler.scheduleAtFixedRate(personTask, 0, 61, TimeUnit.MINUTES);
                     logger.info("---------------省份人员数据缓存end---------------------------------");
                     logger.info("===========任务启动完成=========");
                 } catch (Exception e) {
