@@ -790,6 +790,17 @@ public class MyDateUtils {
 	}
 
 	/**
+	 * 获取上一月的第一天
+	 * @return
+	 */
+	public static Date getBeforeToday(){
+		Calendar ca = Calendar.getInstance();
+		ca.add(Calendar.MONTH,-1);
+		ca.set(Calendar.DAY_OF_MONTH,1);
+		return ca.getTime();
+	}
+
+	/**
 	 * 获取当月的最后一天
 	 * @return
 	 */
@@ -806,9 +817,9 @@ public class MyDateUtils {
 	 * @param full
 	 * @return
 	 */
-	public static Date getDayBefore(int full){
+	public static Date getDayBefore(Date date,int full){
 		Calendar ca = Calendar.getInstance();
-		ca.setTime(new Date());
+		ca.setTime(date);
 		ca.add(Calendar.YEAR,-full);
 		ca.set(Calendar.DAY_OF_MONTH,1);
 		return ca.getTime();

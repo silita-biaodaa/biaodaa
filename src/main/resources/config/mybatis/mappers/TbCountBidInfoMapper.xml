@@ -27,7 +27,7 @@
       FROM
         `zhongbiao_detail` zbd
       WHERE zbd.gsDate &gt;= #{startDate}
-        AND zbd.gsDate &lt; #{endDate}
+        AND zbd.gsDate &lt;= #{endDate}
         AND zbd.`oneName` IS NOT NULL
         AND zbd.`oneName` != ''
       GROUP BY zbd.`oneName`,

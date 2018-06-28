@@ -35,8 +35,8 @@ public class CountBidInfoService {
 
     public void timerCount(){
         //获取当前日期
-        Date endDate = dateUtils.getToday();
-        Date startDate  = dateUtils.getDayBefore(1);
+        Date endDate = dateUtils.getBeforeToday();
+        Date startDate  = dateUtils.getDayBefore(endDate,1);
         List<Date> dateList =  dateUtils.getDateList(startDate,endDate);
         if(null != dateList && dateList.size() > 0){
             for (Date de : dateList){
