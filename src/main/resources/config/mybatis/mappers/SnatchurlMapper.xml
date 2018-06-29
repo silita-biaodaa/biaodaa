@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.SnatchurlMapper" >
+  <!--<resultMap id="BaseResultMap" type="com.silita.biaodaa.model.Snatchurl" >-->
+    <!--&lt;!&ndash;-->
+      <!--WARNING - @mbg.generated-->
+    <!--&ndash;&gt;-->
+    <!--<result column="id" property="id" jdbcType="INTEGER" />-->
+    <!--<result column="url" property="url" jdbcType="VARCHAR" />-->
+    <!--<result column="urlPage" property="urlpage" jdbcType="INTEGER" />-->
+    <!--<result column="snatchDateTime" property="snatchdatetime" jdbcType="TIMESTAMP" />-->
+    <!--<result column="snatchPlanId" property="snatchplanid" jdbcType="INTEGER" />-->
+    <!--<result column="type" property="type" jdbcType="INTEGER" />-->
+    <!--<result column="otherType" property="othertype" jdbcType="INTEGER" />-->
+    <!--<result column="biddingType" property="biddingtype" jdbcType="INTEGER" />-->
+    <!--<result column="uuid" property="uuid" jdbcType="VARCHAR" />-->
+    <!--<result column="title" property="title" jdbcType="VARCHAR" />-->
+    <!--<result column="status" property="status" jdbcType="INTEGER" />-->
+    <!--<result column="openDate" property="opendate" jdbcType="DATE" />-->
+    <!--<result column="range" property="range" jdbcType="INTEGER" />-->
+    <!--<result column="keysWords" property="keyswords" jdbcType="VARCHAR" />-->
+    <!--<result column="edit" property="edit" jdbcType="INTEGER" />-->
+    <!--<result column="block" property="block" jdbcType="VARCHAR" />-->
+    <!--<result column="tableName" property="tablename" jdbcType="VARCHAR" />-->
+    <!--<result column="randomNum" property="randomnum" jdbcType="INTEGER" />-->
+    <!--<result column="suuid" property="suuid" jdbcType="VARCHAR" />-->
+    <!--<result column="changeNum" property="changenum" jdbcType="INTEGER" />-->
+    <!--<result column="isShow" property="isshow" jdbcType="INTEGER" />-->
+    <!--<result column="province" property="province" jdbcType="VARCHAR" />-->
+    <!--<result column="city" property="city" jdbcType="VARCHAR" />-->
+    <!--<result column="county" property="county" jdbcType="VARCHAR" />-->
+    <!--<result column="rank" property="rank" jdbcType="INTEGER" />-->
+    <!--<result column="redisId" property="redisid" jdbcType="INTEGER" />-->
+    <!--<result column="websitePlanId" property="websiteplanid" jdbcType="INTEGER" />-->
+    <!--<result column="businessType" property="businesstype" jdbcType="VARCHAR" />-->
+    <!--<result column="source" property="source" jdbcType="VARCHAR" />-->
+  <!--</resultMap>-->
+
+  <select id="querySnatchurlList" parameterType="java.util.Map" resultType="java.util.Map">
+    select
+      id as id
+      ,title as title
+    from snatchurl t
+    where t.isShow = 0
+    and t.type = 0 and t.otherType = 0 and t.biddingType = 0
+    <if test="projName != null and projName != ''">
+      and t.title like CONCAT('%',#{projName},'%')
+    </if>
+    order by t.openDate desc
+    limit #{limit}
+  </select>
+
+  <select id="queryNoticeDetailBySnatchurlId" resultType="java.util.Map" parameterType="java.util.Map">
+    select
+      t.projName as projName
+      ,t.pbMode as pbMode
+      ,t.tbEndDate as endDate
+      ,t.`block` as  block
+    from zhaobiao_detail t
+    where t.snatchUrlId = #{id}
+  </select>
+</mapper>
