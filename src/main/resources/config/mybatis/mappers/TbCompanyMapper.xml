@@ -191,7 +191,7 @@
   <select id="matchName" parameterType="Map" resultType="Map">
   select com_name,com_code
   from mishu.tb_company
-  where com_name like #{name}
+  where com_name like #{name} or com_name_py like #{name}
   order by px desc
   limit #{count}
   </select>
