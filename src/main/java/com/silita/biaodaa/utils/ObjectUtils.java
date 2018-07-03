@@ -3,6 +3,7 @@ package com.silita.biaodaa.utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.*;
@@ -125,6 +126,73 @@ public class ObjectUtils {
         //再次将字符数组转换为字符串，也可以直接利用String.valueOf(s1)转换
         String st = new String(s1);
         return st;
+    }
+
+    /**
+     * 判断一个对象是否为null或empty对象
+     * empty对象包括空字符串(包括空格串)，空数组,字集合等
+     */
+    public static <T> boolean isEmpty(T t) {
+        //null对象
+        if(t == null)
+            return true;
+        //序列串
+        if(t instanceof CharSequence) {
+            CharSequence cs = (CharSequence) t;
+            for(int i = 0; i < cs.length(); i++) {
+                if(!Character.isWhitespace(cs.charAt(i)))
+                    return false;
+            }
+            return true;
+        }
+        //数组
+        if(t.getClass().isArray())
+            return Array.getLength(t) == 0;
+        //集合
+        if(t instanceof Collection)
+            return ((Collection) t).isEmpty();
+        //map
+        if(t instanceof Map)
+            return ((Map) t).isEmpty();
+        //默认为false,即非null
+        return false;
+    }
+
+    /**
+     * 判断一个对象在业务逻辑上是否是null
+     * 包括 isNullOrEmpty判断，以及数字0, 空值数组，空值集合等
+     */
+    public static <T> boolean isEmptyOrZero(T t) {
+        if(isEmpty(t))
+            return true;
+
+        //数字
+        if(t instanceof Number) {
+            return Double.doubleToRawLongBits(((Number) t).doubleValue()) == 0;
+        }
+
+        //数组
+        if(t.getClass().isArray()) {
+            for(int i = 0, j = Array.getLength(t); i < j; i++) {
+                Object object = Array.get(t, i);
+                if(!isEmptyOrZero(object))
+                    return false;
+            }
+
+            return true;
+        }
+
+        //空值集合
+        if(t instanceof Collection) {
+            for(Object obj : (Collection) t) {
+                if(!isEmptyOrZero(obj))
+                    return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
 }
