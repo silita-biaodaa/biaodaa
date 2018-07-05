@@ -97,7 +97,7 @@ public class BidEvaluationMethodService {
 
     // TODO: 综合评价计算
     private void computeSy(Map<String, Object> param) throws Exception {
-        //有效企业
+        // 有效企业
         List<Map<String, Object>> validList = new ArrayList<>();
         //作废企业
         List<Map<String, Object>> aboList = new ArrayList<>();
@@ -118,80 +118,80 @@ public class BidEvaluationMethodService {
                 }
             }
             param.remove("company");
-
             //保存废标企业
             this.saveAboComList(param,aboList);
-
-            //计算有效标的企业
-            Double comTotal = 0D;
-            for (Map<String, Object> validMap : validList) {
-                comTotal = DoubleUtils.add(comTotal, MapUtils.getDouble(validMap, "comPrice"), 0D);
-            }
-
-            //报价分权数值
-            Double bidRates = MapUtils.getDouble(param, "bidCount");
-            Double repCount = MapUtils.getDouble(param,"repCount");
-            //下浮系数
-            Double bidRate = MapUtils.getDouble(param, "bidRate");
-            Double rate = DoubleUtils.div(bidRate, 100, 4);
-            //算出基准价
-            Double standPrice = DoubleUtils.mul(DoubleUtils.div(comTotal, validList.size(), 4), DoubleUtils.subtract(1, rate));
-            Double x = 0D;
-            Double bidCount = 0D;
-            Double lowerRate = 0D;
-            Map<String,Object> comMap = null;
-            TbCompany tbCompany = null;
-            TbBidResult bidResult = null;
-            for (Map<String, Object> map : validList) {
-                comMap = new HashMap<>();
-                comPrice = MapUtils.getDouble(map, "comPrice");
-                x = DoubleUtils.mul(DoubleUtils.subtract(1, DoubleUtils.div(comPrice, standPrice, 4)), 100);
-                x = Math.abs(x);
-                if (comPrice.compareTo(standPrice) > 0) {
-                    bidCount = DoubleUtils.subtract(100, DoubleUtils.mul(x, 2));
-                } else {
-                    //是否有下浮系数
-                    if (bidRate.compareTo(0D) > 0) {
-                        bidCount = DoubleUtils.subtract(100, DoubleUtils.mul(x, 1));
-                    } else {
-                        if (x.compareTo(3D) > 0) {
-                            x = 3D;
-                        }
-                        bidCount = DoubleUtils.add(100, DoubleUtils.mul(x, 2), 0D);
-                    }
+            if(null != validList && validList.size() >  0){
+                //计算有效标的企业
+                Double comTotal = 0D;
+                for (Map<String, Object> validMap : validList) {
+                    comTotal = DoubleUtils.add(comTotal, MapUtils.getDouble(validMap, "comPrice"), 0D);
                 }
 
-                //报价总得分
-                bidCount = DoubleUtils.round(DoubleUtils.mul(bidCount,bidRates),2);
+                //报价分权数值
+                Double bidRates = MapUtils.getDouble(param, "bidCount");
+                Double repCount = MapUtils.getDouble(param,"repCount");
+                //下浮系数
+                Double bidRate = MapUtils.getDouble(param, "bidRate");
+                Double rate = DoubleUtils.div(bidRate, 100, 4);
+                //算出基准价
+                Double standPrice = DoubleUtils.mul(DoubleUtils.div(comTotal, validList.size(), 4), DoubleUtils.subtract(1, rate));
+                Double x = 0D;
+                Double bidCount = 0D;
+                Double lowerRate = 0D;
+                Map<String,Object> comMap = null;
+                TbCompany tbCompany = null;
+                TbBidResult bidResult = null;
+                for (Map<String, Object> map : validList) {
+                    comMap = new HashMap<>();
+                    comPrice = MapUtils.getDouble(map, "comPrice");
+                    x = DoubleUtils.mul(DoubleUtils.subtract(1, DoubleUtils.div(comPrice, standPrice, 4)), 100);
+                    x = Math.abs(x);
+                    if (comPrice.compareTo(standPrice) > 0) {
+                        bidCount = DoubleUtils.subtract(100, DoubleUtils.mul(x, 2));
+                    } else {
+                        //是否有下浮系数
+                        if (bidRate.compareTo(0D) > 0) {
+                            bidCount = DoubleUtils.subtract(100, DoubleUtils.mul(x, 1));
+                        } else {
+                            if (x.compareTo(3D) > 0) {
+                                x = 3D;
+                            }
+                            bidCount = DoubleUtils.add(100, DoubleUtils.mul(x, 2), 0D);
+                        }
+                    }
 
-                //计算下浮率
-                lowerRate = DoubleUtils.div(comPrice,bidPrice,4);
+                    //报价总得分
+                    bidCount = DoubleUtils.round(DoubleUtils.mul(bidCount,bidRates),2);
 
-                comMap.put("lowerRate",lowerRate);
-                //计算信誉分值
-                tbCompany = companyMapper.queryCompanyDetail(MapUtils.getString(map,"comName"));
-                if(null == tbCompany){
-                    bidResult = new TbBidResult();
-                    bidResult.setBidPkid(MapUtils.getInteger(param, "pkid"));
-                    bidResult.setComName(MapUtils.getString(map,"comName"));
-                    bidResult.setBidPrice(comPrice);
-                    bidResult.setBidRate(DoubleUtils.round(DoubleUtils.mul(lowerRate,100),2)+"%");
-                    bidResult.setOfferScore(bidCount);
-                    bidResult.setCreditScore(0D);
-                    bidResult.setTotal(bidCount);
-                    bidResult.setBidStatus(1);
-                    bidResultMapper.insertBidResult(bidResult);
-                }else {
-                    List<String> srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());
-                    comMap.put("srcUuidList",srcUid);
-                    comMap.put("projType",MapUtils.getString(param,"projType"));
-                    comMap.put("comName",MapUtils.getString(map,"comName"));
-                    comMap.put("comPrice",comPrice);
-                    comMap.put("bidCount",bidCount);
-                    comMap.put("yearList",param.get("yearList"));
-                    comMap.put("pkid",param.get("pkid"));
-                    comMap.put("repCount",repCount);
-                    bidComputeService.computeHandler(comMap, (List<Map<String, Object>>) param.get("conditionList"));
+                    //计算下浮率
+                    lowerRate = DoubleUtils.div(comPrice,bidPrice,4);
+
+                    comMap.put("lowerRate",lowerRate);
+                    //计算信誉分值
+                    tbCompany = companyMapper.queryCompanyDetail(MapUtils.getString(map,"comName"));
+                    if(null == tbCompany){
+                        bidResult = new TbBidResult();
+                        bidResult.setBidPkid(MapUtils.getInteger(param, "pkid"));
+                        bidResult.setComName(MapUtils.getString(map,"comName"));
+                        bidResult.setBidPrice(comPrice);
+                        bidResult.setBidRate(DoubleUtils.round(DoubleUtils.mul(lowerRate,100),2)+"%");
+                        bidResult.setOfferScore(bidCount);
+                        bidResult.setCreditScore(0D);
+                        bidResult.setTotal(bidCount);
+                        bidResult.setBidStatus(1);
+                        bidResultMapper.insertBidResult(bidResult);
+                    }else {
+                        List<String> srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());
+                        comMap.put("srcUuidList",srcUid);
+                        comMap.put("projType",MapUtils.getString(param,"projType"));
+                        comMap.put("comName",MapUtils.getString(map,"comName"));
+                        comMap.put("comPrice",comPrice);
+                        comMap.put("bidCount",bidCount);
+                        comMap.put("yearList",param.get("yearList"));
+                        comMap.put("pkid",param.get("pkid"));
+                        comMap.put("repCount",repCount);
+                        bidComputeService.computeHandler(comMap, (List<Map<String, Object>>) param.get("conditionList"));
+                    }
                 }
             }
         }
