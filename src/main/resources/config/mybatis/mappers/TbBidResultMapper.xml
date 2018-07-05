@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbBidResultMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbBidResult" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="bid_pkid" property="bidPkid" jdbcType="INTEGER" />
+    <result column="com_name" property="comName" jdbcType="VARCHAR" />
+    <result column="bid_price" property="bidPrice" jdbcType="DOUBLE" />
+    <result column="bid_rate" property="bidRate" jdbcType="VARCHAR" />
+    <result column="offer_score" property="offerScore" jdbcType="DOUBLE" />
+    <result column="credit_score" property="creditScore" jdbcType="DOUBLE" />
+    <result column="total" property="total" jdbcType="DOUBLE" />
+    <result column="bid_status" property="bidStatus" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="insertBidResult" parameterType="com.silita.biaodaa.model.TbBidResult" keyProperty="pkid" useGeneratedKeys="true">
+      insert into `tb_bid_result`(`bid_pkid`,`com_name`,`bid_price`,`bid_rate`,`offer_score`,`credit_score`,`total`,`bid_status`)
+      values (#{bidPkid},#{comName},#{bidPrice},#{bidRate},#{offerScore},#{creditScore},#{total},#{bidStatus})
+  </insert>
+
+  <select id="queryBidResultList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select t.*
+    from tb_bid_result t
+    where t.bid_pkid = #{pkid} and t.bid_status = #{bStatus}
+    order by t.total desc
+  </select>
+</mapper>

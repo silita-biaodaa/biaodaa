@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbBidComputeMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbBidCompute" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+    <result column="sec_name" property="secName" jdbcType="VARCHAR" />
+    <result column="pro_type" property="proType" jdbcType="VARCHAR" />
+    <result column="bid_way" property="bidWay" jdbcType="VARCHAR" />
+    <result column="bid_date" property="bidDate" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="cred_tmp" property="credTmp" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <insert id="insertBidCompute" parameterType="com.silita.biaodaa.model.TbBidCompute" keyProperty="pkid" useGeneratedKeys="true">
+        insert into `tb_bid_compute`(`user_id`,`pro_name`,`sec_name`,`pro_type`,`bid_way`,`bid_date`,`cred_tmp`)
+        values (#{userId},#{proName},#{secName},#{proType},#{bidWay},#{bidDate},#{credTmp})
+  </insert>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbBidDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbBidDetail" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="fore_pkid" property="forePkid" jdbcType="INTEGER" />
+    <result column="cert_id" property="certId" jdbcType="VARCHAR" />
+    <result column="cert_type" property="certType" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="batchInsertBidDetail" parameterType="java.util.List">
+    insert into `tb_bid_detail`(`fore_pkid`,`cert_id`,`cert_type`)
+    values
+    <foreach collection="list" separator="," item="list">
+      (
+        #{list.forePkid},#{list.certId},#{list.certType}
+      )
+    </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.biaodaa.dao.BidEvaluationMethodMapper">
+    <select id="queryCertYears" resultType="java.util.Map">
+        SELECT * FROM(
+        SELECT t.`years`,t1.`mateName`
+        FROM  cert_qyhj  t
+        INNER JOIN prize_zh t1 ON t.`zhUuid` = t.`zhUuid`
+        WHERE t.`projType` = '建筑工程' AND t.`joinType` = '承建单位'
+        AND (t1.`mateName` = '全国建筑工程装饰奖'
+                OR t1.`mateName` = '鲁班奖'
+                OR t1.`mateName` = '省优工程'
+                OR t1.`mateName` = '全国建设工程项目施工安全生产标准化工地'
+                OR t1.`mateName` = '芙蓉奖'
+            )
+        ORDER BY t.`years` DESC
+        ) b
+        GROUP BY b.mateName
+    </select>
+
+    <select id="queryCertPrizeList" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT t.* ,t1.`mateName`,t1.`type` as prizeType
+        FROM cert_qyhj t
+        LEFT JOIN prize_zh t1 ON t.`zhUuid` = t.`zhUuid`
+        WHERE t.`projType` = #{projType} AND t.`joinType` = #{joinType} and t.`projName` is not null
+        AND
+        <foreach collection="years" item="years" close=")" open="(" separator="or">
+            t.`years` = #{years}
+        </foreach>
+        AND t1.`type` = #{prizeType}
+        AND t.`srcUuid` in
+        <foreach collection="list" item="list" open="(" separator="," close=")">
+            #{list}
+        </foreach>
+        AND t1.`mateName` = #{mateName}
+    </select>
+
+    <select id="quaryCertAqrz" parameterType="java.util.Map" resultType="java.util.Map">
+        select a.* ,zh.`mateName`
+        from cert_aqrz a
+        left join prize_zh zh on a.zhUuid=zh.uuid
+        where a.zhUuid is not null and a.yxqTime > date(now()) and srcUuid in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by zh.score desc
+    </select>
+
+    <select id="queryCertGrade" resultType="java.util.Map" parameterType="java.util.Map">
+        select *
+        from cert_grade t
+        where t.`srcUuid` in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and t.`near` = #{years}
+        and t.`grade` != 'D'
+    </select>
+
+    <select id="queryGradeYear" resultType="java.lang.String">
+        select t.`near`
+        from cert_grade t
+        order by t.`near` desc
+        limit 1
+    </select>
+
+</mapper>

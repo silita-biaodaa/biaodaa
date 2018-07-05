@@ -2,6 +2,7 @@ package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.bidCompute.BlockConfig;
 import com.silita.biaodaa.bidCompute.Handler;
+import com.silita.biaodaa.dao.BidEvaluationMethodMapper;
 import com.silita.biaodaa.utils.ApplicationContextHolder;
 import com.silita.biaodaa.utils.ClassUtils;
 import com.silita.biaodaa.utils.NameClassFinder;
@@ -9,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,23 +24,19 @@ import java.util.Map;
 @Service
 public class BidComputeService {
 
+    @Autowired
+    BidEvaluationMethodMapper bidEvaluationMethodMapper;
+
     private static final Logger logger = LoggerFactory.getLogger(BidComputeService.class);
 
-    public <C extends BlockConfig, T extends Handler<C>> Map<String, Object> computeHandler(Integer comId, List<Map<String, Object>> conditionBeans) throws Exception {
+    public <C extends BlockConfig, T extends Handler<C>> Map<String, Object> computeHandler(Map<String,Object> comMap, List<Map<String, Object>> conditionBeans) throws Exception {
 
-        // TODO: 18/7/3 通过企业ID获取所有该企业的获奖情况、安全认证、不良记录
         Map<String, Object> inResourceMap = new HashMap<>();
 
-
+        inResourceMap.put("comInfo",comMap);
 
         Map<String, Object> resultMap = new HashMap<>();
-        Integer re_code = 0;
-
-
-
-
-
-
+//        Integer re_code = 0;
 
         List<T> filterList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(conditionBeans)) {
@@ -53,11 +51,7 @@ public class BidComputeService {
                 filterList.get(i - 1).setSuccessor(filterList.get(i));
             }
             resultMap = beginFilter.handlerRequest(inResourceMap);
-            re_code = MapUtils.getInteger(resultMap, "code");
-            if (re_code != null && re_code == 0) {
-                //outResourceMap.put("msg", MapUtils.getString(resultMap, "msg"));
-                //return outResourceMap;
-            }
+            return resultMap;
         }
         return null;
 

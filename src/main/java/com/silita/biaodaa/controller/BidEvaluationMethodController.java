@@ -47,4 +47,35 @@ public class BidEvaluationMethodController extends BaseController{
         resultMap.put("msg",this.SUCCESS_MSG);
         return resultMap;
     }
+
+    /**
+     * 获取信用等级最新年份
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/ration", method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> getRation(){
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("data",bidEvaluationMethodService.getReaYear());
+        return successMap(resultMap);
+    }
+
+    /**
+     * 评标计算
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/bidCompute", method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> bidCompute(@RequestBody Map<String, Object> param){
+        Map<String,Object> resultMap = new HashMap<>();
+        try {
+            Map<String,Object> dataMap = bidEvaluationMethodService.bidCompute(param);
+            resultMap.put("data",dataMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return successMap(resultMap);
+    }
+
 }

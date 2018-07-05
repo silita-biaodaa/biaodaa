@@ -4,10 +4,19 @@ package com.silita.biaodaa.bidCompute.filter;/**
 
 import com.silita.biaodaa.bidCompute.BlockConfig;
 import com.silita.biaodaa.bidCompute.Handler;
+import com.silita.biaodaa.dao.TbBidDetailMapper;
+import com.silita.biaodaa.dao.TbBidResultMapper;
+import com.silita.biaodaa.model.TbBidDetail;
+import com.silita.biaodaa.model.TbBidResult;
+import com.silita.biaodaa.utils.DoubleUtils;
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,7 +32,10 @@ public abstract class BaseFilterHandler<T extends BlockConfig> implements Handle
 
     protected Handler successor;
 
-
+    @Autowired
+    TbBidResultMapper  tbBidResultMapper;
+    @Autowired
+    TbBidDetailMapper tbBidDetailMapper;
 
     @Override
     public void init(T config) {
@@ -41,11 +53,12 @@ public abstract class BaseFilterHandler<T extends BlockConfig> implements Handle
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("code",0);
         resultMap.put("msg","["+getFilterName()+"]过滤器,不满足条件.");
-        //Double score = resourceMap.get("score");
-        Double score = doHandler(resourceMap);
-
+        doHandler(resourceMap);
         if(successor==null){
+            //入库
+            this.saveDatas(resourceMap);
             resultMap.put("code",1);
+            resultMap.put("msg","操作成功");
             return resultMap;
         }else{
             return successor.handlerRequest(resourceMap);
@@ -56,4 +69,62 @@ public abstract class BaseFilterHandler<T extends BlockConfig> implements Handle
     abstract String getFilterName();
 
     abstract Double doHandler(Map resourceMap);
+
+    // TODO: 保存
+    private void saveDatas(Map resourceMap){
+        //获取公司基本信息
+        Map<String,Object> comMap = MapUtils.getMap(resourceMap,"comInfo");
+        //保存公司
+        Double lowerRate = MapUtils.getDouble(comMap,"lowerRate");
+        TbBidResult bidResult = new TbBidResult();
+        bidResult.setBidPkid(MapUtils.getInteger(comMap, "pkid"));
+        bidResult.setComName(MapUtils.getString(comMap,"comName"));
+        bidResult.setBidPrice(MapUtils.getDouble(comMap,"comPrice"));
+        bidResult.setBidRate(DoubleUtils.round(DoubleUtils.mul(lowerRate,100),2)+"%");
+        bidResult.setOfferScore(MapUtils.getDouble(comMap,"bidCount"));
+        bidResult.setCreditScore(MapUtils.getDouble(resourceMap,"total"));
+        bidResult.setTotal(
+                DoubleUtils.round(DoubleUtils.add(MapUtils.getDouble(comMap,"bidCount"),MapUtils.getDouble(resourceMap,"total"),0D),2));
+        bidResult.setBidStatus(1);
+        tbBidResultMapper.insertBidResult(bidResult);
+
+        //保存获奖
+        List<TbBidDetail> detailList = new ArrayList<>();
+        TbBidDetail tbBidDetail = null;
+        if(null != resourceMap.get("saveList")){
+            List<Integer> prizeList = (List<Integer>) resourceMap.get("saveList");
+            for (Integer id :prizeList ){
+                tbBidDetail = new TbBidDetail();
+                tbBidDetail.setCertId(id.toString());
+                tbBidDetail.setCertType(1);
+                tbBidDetail.setForePkid(bidResult.getPkid());
+                detailList.add(tbBidDetail);
+            }
+        }
+        //不良行为
+        if(null != resourceMap.get("undesList")){
+            List<Map<String,Object>> undesList = (List<Map<String, Object>>) resourceMap.get("undesList");
+            for (Map map : undesList){
+                tbBidDetail = new TbBidDetail();
+                tbBidDetail.setCertId(MapUtils.getString(map,"id"));
+                tbBidDetail.setCertType(2);
+                tbBidDetail.setForePkid(bidResult.getPkid());
+                detailList.add(tbBidDetail);
+            }
+        }
+        //安全认证
+        if(null != resourceMap.get("safety")){
+            Map<String,Object> safety = MapUtils.getMap(resourceMap,"safety");
+            tbBidDetail = new TbBidDetail();
+            tbBidDetail.setCertId(MapUtils.getString(safety,"srcUuid"));
+            tbBidDetail.setCertType(3);
+            tbBidDetail.setForePkid(bidResult.getPkid());
+            detailList.add(tbBidDetail);
+        }
+
+        //保存
+        if(null != detailList && detailList.size() > 0){
+            tbBidDetailMapper.batchInsertBidDetail(detailList);
+        }
+    }
 }
