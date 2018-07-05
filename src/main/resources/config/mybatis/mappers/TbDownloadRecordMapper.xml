@@ -16,7 +16,7 @@
 
   <insert id="insertDownloadRecord" parameterType="com.silita.biaodaa.model.TbDownloadRecord">
       INSERT INTO
-      `mishu`.`tb_download_record`
+      `tb_download_record`
         (
         <if test="fileId != null and fileId != ''">
           `file_id`,
@@ -67,7 +67,7 @@
   </select>
 
   <update id="updateDownloadRecord" parameterType="com.silita.biaodaa.model.TbDownloadRecord">
-      UPDATE `mishu`.`tb_download_record`
+      UPDATE `tb_download_record`
       SET
         <if test="fileId != null and fileId != ''">
           file_id = #{fileId},

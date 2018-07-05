@@ -37,12 +37,12 @@
 
   <delete id="delZhongBiaoCountByDate" parameterType="java.lang.String">
     DELETE
-    FROM `mishu`.`tb_count_bid_info`
+    FROM `tb_count_bid_info`
     WHERE `stat_date` = #{statDate}
   </delete>
 
   <insert id="batchInsertCountBinInfo" parameterType="java.util.List">
-      INSERT INTO `mishu`.`tb_count_bid_info`
+      INSERT INTO `tb_count_bid_info`
             (
              `com_name`,
              `stat_date`,
@@ -59,7 +59,7 @@
 
 
     <insert id="insertCountBinInfo" parameterType="java.util.Map">
-        INSERT INTO `mishu`.`tb_count_bid_info`
+        INSERT INTO `tb_count_bid_info`
         (
         `com_name`,
         `stat_date`,

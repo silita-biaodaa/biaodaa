@@ -38,7 +38,7 @@
     </update>
 
     <insert id="insertPlatformNotice" parameterType="com.silita.biaodaa.model.TbPlatformNotice">
-        insert into `mishu`.`tb_platform_notice`
+        insert into tb_platform_notice`
             (
              `title`,
              `remark`,

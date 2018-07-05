@@ -120,17 +120,7 @@ public class BidEvaluationMethodService {
             param.remove("company");
 
             //保存废标企业
-            if (null != aboList && aboList.size() > 0) {
-                TbBidResult bidResult = null;
-                for (Map ab : aboList) {
-                    bidResult = new TbBidResult();
-                    bidResult.setBidPkid(MapUtils.getInteger(param, "pkid"));
-                    bidResult.setComName(MapUtils.getString(ab, "comName"));
-                    bidResult.setBidPrice(MapUtils.getDouble(ab, "comPrice"));
-                    bidResult.setBidStatus(0);
-                    bidResultMapper.insertBidResult(bidResult);
-                }
-            }
+            this.saveAboComList(param,aboList);
 
             //计算有效标的企业
             Double comTotal = 0D;
@@ -157,9 +147,6 @@ public class BidEvaluationMethodService {
                 comPrice = MapUtils.getDouble(map, "comPrice");
                 x = DoubleUtils.mul(DoubleUtils.subtract(1, DoubleUtils.div(comPrice, standPrice, 4)), 100);
                 x = Math.abs(x);
-                if (x.compareTo(3D) > 0) {
-                    x = 3D;
-                }
                 if (comPrice.compareTo(standPrice) > 0) {
                     bidCount = DoubleUtils.subtract(100, DoubleUtils.mul(x, 2));
                 } else {
@@ -167,6 +154,9 @@ public class BidEvaluationMethodService {
                     if (bidRate.compareTo(0D) > 0) {
                         bidCount = DoubleUtils.subtract(100, DoubleUtils.mul(x, 1));
                     } else {
+                        if (x.compareTo(3D) > 0) {
+                            x = 3D;
+                        }
                         bidCount = DoubleUtils.add(100, DoubleUtils.mul(x, 2), 0D);
                     }
                 }
@@ -238,5 +228,62 @@ public class BidEvaluationMethodService {
         param.put("projType",projType);
         List<Map<String,Object>> yearList = bidEvaluationMethodMapper.queryCertYears();
         param.put("yearList",yearList);
+    }
+
+    //TODO: 合理计算
+    private void computeRea(Map param){
+        if(null != param.get("company")){
+            List<Map<String,Object>> company = (List<Map<String, Object>>) param.get("company");
+            //总价
+            Double comTotal = 0d;
+            for(Map<String,Object> com : company){
+                comTotal = DoubleUtils.add(comTotal,MapUtils.getDouble(com,"comPrice"),0);
+            }
+
+            //最高限价
+            Double bidPrice = MapUtils.getDouble(param,"bidPrice");
+            //理论成本价
+            Double costPrice = DoubleUtils.mul(0.88,DoubleUtils.add(DoubleUtils.mul(bidPrice,0.6),
+                    DoubleUtils.mul(DoubleUtils.div(comTotal,company.size(),4),0.4),0));
+
+            //有效企业
+            List<Map<String,Object>> validList = new ArrayList<>();
+            //无效企业
+            List<Map<String,Object>> aboList = new ArrayList<>();
+            for(Map<String,Object> com : company){
+                if(MapUtils.getDouble(com,"comPrice").compareTo(costPrice) < 0){
+                    aboList.add(com);
+                }else {
+                    validList.add(com);
+                }
+            }
+
+            //保存废标企业
+            this.saveAboComList(param,aboList);
+
+            //计算有效企业值
+            if(null != validList && validList.size() > 0){
+                if(validList.size() > 5){
+                    //排序并去掉最高价企业和最低价企业
+//                    CompanyMapper
+                }
+            }
+
+        }
+    }
+
+    //TODO: 保存无效企业
+    private void saveAboComList(Map param,List<Map<String,Object>> aboList){
+        if (null != aboList && aboList.size() > 0) {
+            TbBidResult bidResult = null;
+            for (Map ab : aboList) {
+                bidResult = new TbBidResult();
+                bidResult.setBidPkid(MapUtils.getInteger(param, "pkid"));
+                bidResult.setComName(MapUtils.getString(ab, "comName"));
+                bidResult.setBidPrice(MapUtils.getDouble(ab, "comPrice"));
+                bidResult.setBidStatus(0);
+                bidResultMapper.insertBidResult(bidResult);
+            }
+        }
     }
 }

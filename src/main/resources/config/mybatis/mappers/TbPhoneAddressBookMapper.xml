@@ -21,7 +21,7 @@
   </select>
   
   <insert id="batchInsertPhoneAddress" parameterType="java.util.List">
-    INSERT INTO `mishu`.`tb_phone_address_book`
+    INSERT INTO `tb_phone_address_book`
             (
              `device_id`,
              `phone_name`,
