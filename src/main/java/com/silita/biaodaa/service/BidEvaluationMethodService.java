@@ -140,6 +140,7 @@ public class BidEvaluationMethodService {
 
             //报价分权数值
             Double bidRates = MapUtils.getDouble(param, "bidCount");
+            Double repCount = MapUtils.getDouble(param,"repCount");
             //下浮系数
             Double bidRate = MapUtils.getDouble(param, "bidRate");
             Double rate = DoubleUtils.div(bidRate, 100, 4);
@@ -199,6 +200,7 @@ public class BidEvaluationMethodService {
                     comMap.put("bidCount",bidCount);
                     comMap.put("yearList",param.get("yearList"));
                     comMap.put("pkid",param.get("pkid"));
+                    comMap.put("repCount",repCount);
                     bidComputeService.computeHandler(comMap, (List<Map<String, Object>>) param.get("conditionList"));
                 }
             }

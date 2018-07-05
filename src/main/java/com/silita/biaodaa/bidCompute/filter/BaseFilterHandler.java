@@ -76,15 +76,18 @@ public abstract class BaseFilterHandler<T extends BlockConfig> implements Handle
         Map<String,Object> comMap = MapUtils.getMap(resourceMap,"comInfo");
         //保存公司
         Double lowerRate = MapUtils.getDouble(comMap,"lowerRate");
+        Double total = MapUtils.getDouble(resourceMap,"total");
+        Double repCount = MapUtils.getDouble(comMap,"repCount");
+        total = DoubleUtils.mul(total,repCount);
         TbBidResult bidResult = new TbBidResult();
         bidResult.setBidPkid(MapUtils.getInteger(comMap, "pkid"));
         bidResult.setComName(MapUtils.getString(comMap,"comName"));
         bidResult.setBidPrice(MapUtils.getDouble(comMap,"comPrice"));
         bidResult.setBidRate(DoubleUtils.round(DoubleUtils.mul(lowerRate,100),2)+"%");
         bidResult.setOfferScore(MapUtils.getDouble(comMap,"bidCount"));
-        bidResult.setCreditScore(MapUtils.getDouble(resourceMap,"total"));
+        bidResult.setCreditScore(total);
         bidResult.setTotal(
-                DoubleUtils.round(DoubleUtils.add(MapUtils.getDouble(comMap,"bidCount"),MapUtils.getDouble(resourceMap,"total"),0D),2));
+                DoubleUtils.round(DoubleUtils.add(MapUtils.getDouble(comMap,"bidCount"),total,0D),2));
         bidResult.setBidStatus(1);
         tbBidResultMapper.insertBidResult(bidResult);
 
