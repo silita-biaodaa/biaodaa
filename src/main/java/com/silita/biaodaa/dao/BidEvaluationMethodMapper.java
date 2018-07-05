@@ -44,4 +44,11 @@ public interface BidEvaluationMethodMapper {
      * @return
      */
     String queryGradeYear();
+
+    /**
+     * 获取奖项个数
+     * @param param
+     * @return
+     */
+    Integer queryCertPrizeCount(Map<String,Object> param);
 }

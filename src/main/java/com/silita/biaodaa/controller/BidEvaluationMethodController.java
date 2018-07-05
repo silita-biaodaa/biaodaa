@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,4 +79,43 @@ public class BidEvaluationMethodController extends BaseController{
         return successMap(resultMap);
     }
 
+    /**
+     * 评标历史列表
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/record/list", method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> list(){
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("data",bidEvaluationMethodService.getBidComputerList());
+        return successMap(resultMap);
+    }
+
+    /**
+     * 删除评标历史
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/del", method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> delBidComputer(@RequestBody Map<String, Object> param){
+        Map<String,Object> resultMap = new HashMap<>();
+        bidEvaluationMethodService.delBidComputer(param);
+        return successMap(resultMap);
+    }
+
+    /**
+     * 结果详情
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/detail", method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> detail(@RequestBody Map<String, Object> param){
+        Map<String,Object> resultMap = new HashMap<>();
+        try {
+            resultMap.put("data",bidEvaluationMethodService.getBidCoDetail(param));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return successMap(resultMap);
+    }
 }

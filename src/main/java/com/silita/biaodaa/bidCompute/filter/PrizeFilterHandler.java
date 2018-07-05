@@ -191,69 +191,6 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         return resultMap;
     }
 
-    // TODO: 分值排序
-//    private List<Map<String, Object>> getSortCert(Integer type) {
-//        List<Map<String, Object>> sortList = new ArrayList<>();
-//        if (type == 1) {
-//            //国家奖项
-//            Map<String, Object> nationMap = new HashMap<>();
-//            nationMap.put("count", this.config.getLubanPrize());
-//            nationMap.put("name", "鲁班奖");
-//            sortList.add(nationMap);
-//            nationMap = new HashMap<>();
-//            nationMap.put("count", this.config.getBuildPrize());
-//            nationMap.put("name", "全国建设工程项目施工安全生产标准化工地");
-//            sortList.add(nationMap);
-//            nationMap = new HashMap<>();
-//            nationMap.put("count", this.config.getDecoratePrize());
-//            nationMap.put("name", "全国建筑工程装饰奖");
-//            sortList.add(nationMap);
-//        } else if (type == 2) {
-//            //省级奖项
-//            Map<String, Object> provinceMap = new HashMap<>();
-//            provinceMap.put("count", this.config.getLotusPrize());
-//            provinceMap.put("name", "芙蓉奖");
-//            sortList.add(provinceMap);
-//            provinceMap = new HashMap<>();
-//            provinceMap.put("count", this.config.getSuperPrize());
-//            provinceMap.put("name", "省优工程");
-//            sortList.add(provinceMap);
-//        } else {
-//            //国家奖项
-//            Map<String, Object> nationMap = new HashMap<>();
-//            nationMap.put("count", this.config.getLubanPrize());
-//            nationMap.put("name", "鲁班奖");
-//            sortList.add(nationMap);
-//            nationMap = new HashMap<>();
-//            nationMap.put("count", this.config.getBuildPrize());
-//            nationMap.put("name", "全国建设工程项目施工安全生产标准化工地");
-//            sortList.add(nationMap);
-//            nationMap = new HashMap<>();
-//            nationMap.put("count", this.config.getDecoratePrize());
-//            nationMap.put("name", "全国建筑工程装饰奖");
-//            sortList.add(nationMap);
-//            //省级奖项
-//            Map<String, Object> provinceMap = new HashMap<>();
-//            provinceMap.put("count", this.config.getLotusPrize());
-//            provinceMap.put("name", "芙蓉奖");
-//            sortList.add(provinceMap);
-//            provinceMap = new HashMap<>();
-//            provinceMap.put("count", this.config.getSuperPrize());
-//            provinceMap.put("name", "省优工程");
-//            sortList.add(provinceMap);
-//        }
-//        //排序
-//        Collections.sort(sortList, new Comparator<Map<String, Object>>() {
-//            @Override
-//            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-//                Double d1 = Double.valueOf(o1.get("dou1").toString());
-//                Double d2 = Double.valueOf(o2.get("dou1").toString());
-//                return d2.compareTo(d1);
-//            }
-//        });
-//        return sortList;
-//    }
-
     // TODO: 存奖项分值
     private Map<String, Object> getPrizeScoreMap() {
         Map<String, Object> scoreMap = new HashMap<>();

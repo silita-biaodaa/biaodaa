@@ -65,4 +65,19 @@
         limit 1
     </select>
 
+    <select id="queryCertPrizeCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT count(1)
+        FROM cert_qyhj t
+        LEFT JOIN prize_zh t1 ON t.`zhUuid` = t.`zhUuid`
+        WHERE t.`projType` = #{projType} AND t.`joinType` = #{joinType} and t.`projName` is not null
+        AND
+        <foreach collection="years" item="years" close=")" open="(" separator="or">
+            t.`years` = #{years}
+        </foreach>
+        AND t.`srcUuid` in
+        <foreach collection="list" item="list" open="(" separator="," close=")">
+            #{list}
+        </foreach>
+        AND t1.`mateName` = #{mateName}
+    </select>
 </mapper>

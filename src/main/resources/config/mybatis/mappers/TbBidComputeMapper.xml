@@ -21,4 +21,26 @@
         insert into `tb_bid_compute`(`user_id`,`pro_name`,`sec_name`,`pro_type`,`bid_way`,`bid_date`,`cred_tmp`)
         values (#{userId},#{proName},#{secName},#{proType},#{bidWay},#{bidDate},#{credTmp})
   </insert>
+
+  <select id="queryBidComputeList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select t.pro_name,t.sec_name,pro_type,bid_way,bid_date,t.pkid
+    from tb_bid_compute t
+    where t.status = 1 and t.user_id = #{userId}
+    order by t.created desc
+  </select>
+
+  <update id="delBidComput" parameterType="java.util.Map">
+      update tb_bid_compute t set t.status = 0 where t.pkid = #{pkid}
+  </update>
+
+  <select id="queryProType" parameterType="java.lang.Integer" resultType="String">
+    select
+      case when pro_type = '房建' then '建筑工程'
+      when pro_type = '市政' then '市政公用工程'
+      else pro_type
+      end as proType
+    from
+      tb_bid_compute
+    where pkid = #{pkid} and `status`=1
+  </select>
 </mapper>
