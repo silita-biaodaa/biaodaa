@@ -29,7 +29,7 @@ public class BidComputeServiceTest extends ConfigTest {
         projectMap.put("provinceOuter",3);
         conditionBeans.add(projectMap);
         try {
-            Map<String,Object> result = bidComputeService.computeHandler(1,conditionBeans);
+            Map<String,Object> result = bidComputeService.computeHandler(new HashMap<>(),conditionBeans);
         } catch (Exception e) {
             e.printStackTrace();
         }
