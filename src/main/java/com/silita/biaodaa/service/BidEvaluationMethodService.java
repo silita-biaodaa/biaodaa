@@ -13,6 +13,7 @@ import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +24,7 @@ import java.util.function.DoubleUnaryOperator;
  * 评标办法service
  */
 @Service
+@Transactional
 public class BidEvaluationMethodService {
 
     @Autowired
@@ -97,7 +99,7 @@ public class BidEvaluationMethodService {
         }
 
         //返回数据
-        param.put("pkid",bidCompute.getPkid());
+        param.put("pkid", bidCompute.getPkid());
         return this.getBidResult(param);
     }
 
@@ -153,6 +155,9 @@ public class BidEvaluationMethodService {
                     x = DoubleUtils.mul(DoubleUtils.subtract(1, DoubleUtils.div(comPrice, standPrice, 4)), 100);
                     x = Math.abs(x);
                     if (comPrice.compareTo(standPrice) > 0) {
+                        if (bidRate.compareTo(0D) <= 0 && x.compareTo(3D) > 0) {
+                            x = 3D;
+                        }
                         bidCount = DoubleUtils.subtract(100, DoubleUtils.mul(x, 2));
                     } else {
                         //是否有下浮系数
@@ -162,7 +167,7 @@ public class BidEvaluationMethodService {
                             if (x.compareTo(3D) > 0) {
                                 x = 3D;
                             }
-                            bidCount = DoubleUtils.add(100, DoubleUtils.mul(x, 2), 0D);
+                            bidCount = DoubleUtils.add(100, DoubleUtils.mul(x, 1), 0D);
                         }
                     }
 
@@ -464,11 +469,11 @@ public class BidEvaluationMethodService {
         }
     }
 
-    public Map<String,Object> getBidResult(Map<String,Object> param){
+    public Map<String, Object> getBidResult(Map<String, Object> param) {
         //返回数据
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> qParam = new HashMap<>();
-        qParam.put("pkid",param.get("pkid"));
+        qParam.put("pkid", param.get("pkid"));
         qParam.put("bStatus", 1);
         List<TbBidResult> valiList = bidResultMapper.queryBidResultList(qParam);
         resultMap.put("validList", valiList);
