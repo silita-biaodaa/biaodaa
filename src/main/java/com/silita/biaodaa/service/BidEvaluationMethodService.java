@@ -327,6 +327,7 @@ public class BidEvaluationMethodService {
                 TbCompany tbCompany = null;
                 TbBidResult bidResult = null;
                 for (Map<String, Object> vildMap : validList) {
+                    comMap = new HashMap<>();
                     comPrice = MapUtils.getDouble(vildMap, "comPrice");
                     devRate = DoubleUtils.div(Math.abs(DoubleUtils.subtract(comPrice, jizhunPrice)), jizhunPrice, 4);
                     if (MapUtils.getBoolean(param, "isRep")) {

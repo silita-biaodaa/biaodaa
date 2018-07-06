@@ -77,7 +77,9 @@ public abstract class BaseFilterHandler<T extends BlockConfig> implements Handle
         //保存公司
         Double lowerRate = MapUtils.getDouble(comMap,"lowerRate");
         Double total = MapUtils.getDouble(resourceMap,"total");
+        total = total == null ? 0 : total;
         Double repCount = MapUtils.getDouble(comMap,"repCount");
+        repCount = repCount == null ? 0 : repCount;
         total = DoubleUtils.mul(total,repCount);
         TbBidResult bidResult = new TbBidResult();
         bidResult.setBidPkid(MapUtils.getInteger(comMap, "pkid"));
