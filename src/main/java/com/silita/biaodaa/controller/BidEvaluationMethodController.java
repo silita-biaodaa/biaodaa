@@ -118,4 +118,17 @@ public class BidEvaluationMethodController extends BaseController{
         }
         return successMap(resultMap);
     }
+
+    /**
+     * 评标结果
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/result", method = RequestMethod.POST,produces = "application/json")
+    public Map<String,Object> result(@RequestBody Map<String, Object> param){
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("data",bidEvaluationMethodService.getBidResult(param));
+        return successMap(resultMap);
+    }
 }

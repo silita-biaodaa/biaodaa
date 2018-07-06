@@ -58,7 +58,15 @@ public class BidEvaluationMethodService {
     }
 
     public String getReaYear() {
-        return bidEvaluationMethodMapper.queryGradeYear();
+        String date = bidEvaluationMethodMapper.queryGradeYear();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        try {
+            Date d = sdf.parse(date);
+            return sdf.format(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return sdf.format(new Date());
     }
 
 
@@ -89,17 +97,8 @@ public class BidEvaluationMethodService {
         }
 
         //返回数据
-        Map<String, Object> resultMap = new HashMap<>();
-        Map<String, Object> qParam = new HashMap<>();
-        qParam.put("pkid", bidCompute.getPkid());
-        qParam.put("bStatus", 1);
-        List<TbBidResult> valiList = bidResultMapper.queryBidResultList(qParam);
-        resultMap.put("validList", valiList);
-        qParam.put("bStatus", 0);
-        List<TbBidResult> aboList = bidResultMapper.queryBidResultList(qParam);
-        resultMap.put("aboList", aboList);
-        resultMap.put("bidWay", bidWay);
-        return resultMap;
+        param.put("pkid",bidCompute.getPkid());
+        return this.getBidResult(param);
     }
 
     // TODO: 综合评价计算
@@ -463,5 +462,20 @@ public class BidEvaluationMethodService {
             years.add(endStr + "～" + date);
             years.add(endStr + "-" + dateN + "年度");
         }
+    }
+
+    public Map<String,Object> getBidResult(Map<String,Object> param){
+        //返回数据
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> qParam = new HashMap<>();
+        qParam.put("pkid",param.get("pkid"));
+        qParam.put("bStatus", 1);
+        List<TbBidResult> valiList = bidResultMapper.queryBidResultList(qParam);
+        resultMap.put("validList", valiList);
+        qParam.put("bStatus", 0);
+        List<TbBidResult> aboList = bidResultMapper.queryBidResultList(qParam);
+        resultMap.put("aboList", aboList);
+        resultMap.put("bidWay", param.get("bidWay"));
+        return resultMap;
     }
 }
