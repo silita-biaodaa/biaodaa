@@ -126,30 +126,36 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         List<Map<String, Object>> nationList = new ArrayList<>();
         Integer lupanCount = 0;
         //鲁班奖
-        param.put("years", yearMap.get("鲁班奖"));
-        param.put("mateName", "鲁班奖");
-        List<Map<String, Object>> lubanList = bidEvaluationMethodMapper.queryCertPrizeList(param);
-        if (null != lubanList && lubanList.size() > 0) {
-            lupanCount = lubanList.size();
-            nationList.addAll(lubanList);
+        if(null != yearMap.get("鲁班奖")){
+            param.put("years", yearMap.get("鲁班奖"));
+            param.put("mateName", "鲁班奖");
+            List<Map<String, Object>> lubanList = bidEvaluationMethodMapper.queryCertPrizeList(param);
+            if (null != lubanList && lubanList.size() > 0) {
+                lupanCount = lubanList.size();
+                nationList.addAll(lubanList);
+            }
         }
         //全国建设工程项目施工安全生产标准化工地
         Integer buildCount = 0;
-        param.put("years", yearMap.get("全国建设工程项目施工安全生产标准化工地"));
-        param.put("mateName", "全国建设工程项目施工安全生产标准化工地");
-        List<Map<String, Object>> buildList = bidEvaluationMethodMapper.queryCertPrizeList(param);
-        if (null != buildList && buildList.size() > 0) {
-            buildCount = buildList.size();
-            nationList.addAll(buildList);
+        if(null != yearMap.get("全国建设工程项目施工安全生产标准化工地")){
+            param.put("years", yearMap.get("全国建设工程项目施工安全生产标准化工地"));
+            param.put("mateName", "全国建设工程项目施工安全生产标准化工地");
+            List<Map<String, Object>> buildList = bidEvaluationMethodMapper.queryCertPrizeList(param);
+            if (null != buildList && buildList.size() > 0) {
+                buildCount = buildList.size();
+                nationList.addAll(buildList);
+            }
         }
         //全国装饰奖
         Integer decorateCount = 0;
-        param.put("years", yearMap.get("全国建筑工程装饰奖"));
-        param.put("mateName", "全国建筑工程装饰奖");
-        List<Map<String, Object>> decoList = bidEvaluationMethodMapper.queryCertPrizeList(param);
-        if (null != decoList && decoList.size() > 0) {
-            decorateCount = decoList.size();
-            nationList.addAll(decoList);
+        if(null != yearMap.get("全国建筑工程装饰奖")){
+            param.put("years", yearMap.get("全国建筑工程装饰奖"));
+            param.put("mateName", "全国建筑工程装饰奖");
+            List<Map<String, Object>> decoList = bidEvaluationMethodMapper.queryCertPrizeList(param);
+            if (null != decoList && decoList.size() > 0) {
+                decorateCount = decoList.size();
+                nationList.addAll(decoList);
+            }
         }
         resultMap.put("全国建筑工程装饰奖", decorateCount);
         resultMap.put("certList", nationList);
@@ -169,21 +175,25 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         List<Map<String, Object>> provinceList = new ArrayList<>();
         //芙蓉奖
         Integer lurotCount = 0;
-        param.put("years", yearMap.get("芙蓉奖"));
-        param.put("mateName", "芙蓉奖");
-        List<Map<String, Object>> lurotList = bidEvaluationMethodMapper.queryCertPrizeList(param);
-        if (null != lurotCount && lurotList.size() > 0) {
-            lurotCount = lurotList.size();
-            provinceList.addAll(lurotList);
+        if(null != yearMap.get("芙蓉奖")){
+            param.put("years", yearMap.get("芙蓉奖"));
+            param.put("mateName", "芙蓉奖");
+            List<Map<String, Object>> lurotList = bidEvaluationMethodMapper.queryCertPrizeList(param);
+            if (null != lurotCount && lurotList.size() > 0) {
+                lurotCount = lurotList.size();
+                provinceList.addAll(lurotList);
+            }
         }
         //省优工程
         Integer superCount = 0;
-        param.put("years", yearMap.get("省优工程"));
-        param.put("mateName", "省优工程");
-        List<Map<String, Object>> superList = bidEvaluationMethodMapper.queryCertPrizeList(param);
-        if (null != superList && superList.size() > 0) {
-            superCount = superList.size();
-            provinceList.addAll(superList);
+        if(null != yearMap.get("省优工程")){
+            param.put("years", yearMap.get("省优工程"));
+            param.put("mateName", "省优工程");
+            List<Map<String, Object>> superList = bidEvaluationMethodMapper.queryCertPrizeList(param);
+            if (null != superList && superList.size() > 0) {
+                superCount = superList.size();
+                provinceList.addAll(superList);
+            }
         }
         resultMap.put("芙蓉奖", lurotCount);
         resultMap.put("省优工程", superCount);

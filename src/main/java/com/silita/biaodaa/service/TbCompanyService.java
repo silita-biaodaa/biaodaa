@@ -288,15 +288,15 @@ public class TbCompanyService {
             List<String> rangeList = new ArrayList<>();
             String zzLevel = null;
             for (String str : qualCodes) {
-                if(str.contains("/")){
+                if (str.contains("/")) {
                     zzLevel = str.substring(analysisUtil.getIndex(str, "/") + 1, str.length());
-                }else{
+                } else {
                     zzLevel = "default";
                 }
                 rangeList.addAll(this.getQualCode(str, zzLevel));
             }
             param.put("zzLevel", "level");
-            param.put("range",rangeList);
+            param.put("range", rangeList);
         }
         //地区
         if (null != param.get("regisAddress")) {
@@ -425,6 +425,27 @@ public class TbCompanyService {
 
 
                     resultMap.put("allNum", qyhjList.size());
+
+                    //将奖项去重
+                    for (int i = 0; i < qyhjList.size() - 1; i++) {
+                        for (int j = qyhjList.size() - 1; j > i; j--) {
+                            if (qyhjList.get(j).get("projName").toString().equals(qyhjList.get(i).get("projName").toString())) {
+                                if (Double.valueOf(qyhjList.get(j).get("score").toString()).compareTo(
+                                        Double.valueOf(qyhjList.get(i).get("score").toString())) > 0) {
+                                    qyhjList.remove(i);
+                                } else if (Double.valueOf(qyhjList.get(j).get("score").toString()).compareTo(
+                                        Double.valueOf(qyhjList.get(i).get("score").toString())) < 0) {
+                                    qyhjList.remove(j);
+                                } else {
+                                    if (!"gjjhj".equals(qyhjList.get(j).get("type").toString())) {
+                                        qyhjList.remove(j);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
                     //分组-----------
                     Map<String, Map<String, List<Map<String, Object>>>> map = new HashMap<>();
                     //分值
@@ -758,9 +779,9 @@ public class TbCompanyService {
                 qualCode = qualCode.replace("/31", "");
                 rangeList.add(qualCode);
                 break;
-                default:
-                    rangeList.add(qualCode);
-                    break;
+            default:
+                rangeList.add(qualCode);
+                break;
         }
         return rangeList;
     }
