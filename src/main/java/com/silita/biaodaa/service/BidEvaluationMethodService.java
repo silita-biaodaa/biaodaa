@@ -352,7 +352,7 @@ public class BidEvaluationMethodService {
                     comMap.put("lowerRate", lowerRate);
                     //计算信誉分值
                     tbCompany = companyMapper.queryCompanyDetail(MapUtils.getString(vildMap, "comName"));
-                    if (null == tbCompany) {
+                    if (null == tbCompany || !MapUtils.getBoolean(param, "isRep")) {
                         bidResult = new TbBidResult();
                         bidResult.setComName(MapUtils.getString(vildMap, "comName"));
                         bidResult.setBidPkid(MapUtils.getInteger(param, "pkid"));
