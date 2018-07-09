@@ -282,6 +282,9 @@ public class BidEvaluationMethodService {
 
             //计算有效企业值
             if (null != validList && validList.size() > 0) {
+                //存储
+                List<Map<String,Object>> valdList = new ArrayList<>();
+                valdList.addAll(validList);
                 //初始化
                 this.getReaMap(param);
                 if (validList.size() > 5) {
@@ -326,7 +329,7 @@ public class BidEvaluationMethodService {
                 Map<String, Object> comMap = null;
                 TbCompany tbCompany = null;
                 TbBidResult bidResult = null;
-                for (Map<String, Object> vildMap : validList) {
+                for (Map<String, Object> vildMap : valdList) {
                     comMap = new HashMap<>();
                     comPrice = MapUtils.getDouble(vildMap, "comPrice");
                     devRate = DoubleUtils.div(Math.abs(DoubleUtils.subtract(comPrice, jizhunPrice)), jizhunPrice, 4);
@@ -338,9 +341,9 @@ public class BidEvaluationMethodService {
 
                     //投标报价是否大于基准价
                     if (comPrice.compareTo(jizhunPrice) > 0) {
-                        total = DoubleUtils.subtract(touPrice, DoubleUtils.mul(devRate, 2));
+                        total = DoubleUtils.subtract(touPrice, DoubleUtils.mul(2,DoubleUtils.mul(devRate, 100)));
                     } else {
-                        total = DoubleUtils.subtract(touPrice, DoubleUtils.mul(devRate, 1));
+                        total = DoubleUtils.subtract(touPrice, DoubleUtils.mul(1,DoubleUtils.mul(devRate, 100)));
                     }
                     //TODO: 计算信用等级分
                     //计算下浮率

@@ -6,7 +6,7 @@
         SELECT * FROM(
         SELECT t.`years`,t1.`mateName`
         FROM  cert_qyhj  t
-        INNER JOIN prize_zh t1 ON t.`zhUuid` = t.`zhUuid`
+        INNER JOIN prize_zh t1 ON t.`zhUuid` = t1.`uuid`
         WHERE t.`projType` = '建筑工程' AND t.`joinType` = '承建单位'
         AND (t1.`mateName` = '全国建筑工程装饰奖'
                 OR t1.`mateName` = '鲁班奖'
@@ -22,7 +22,7 @@
     <select id="queryCertPrizeList" resultType="java.util.Map" parameterType="java.util.Map">
         SELECT t.* ,t1.`mateName`,t1.`type` as prizeType
         FROM cert_qyhj t
-        LEFT JOIN prize_zh t1 ON t.`zhUuid` = t.`zhUuid`
+        LEFT JOIN prize_zh t1 ON t.`zhUuid` = t1.`uuid`
         WHERE t.`projType` = #{projType} AND t.`joinType` = #{joinType} and t.`projName` is not null
         AND
         <foreach collection="years" item="years" close=")" open="(" separator="or">
