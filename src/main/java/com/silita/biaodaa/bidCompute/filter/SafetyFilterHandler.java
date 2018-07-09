@@ -64,9 +64,9 @@ public class SafetyFilterHandler extends BaseFilterHandler<SafetyBean> {
     private Map<String,Object> getSafetyScore(){
         Map<String,Object> scoreMap = new HashMap<>();
         scoreMap.put("省级优秀",this.config.getProvinceExcell());
-        scoreMap.put("省级合格",this.config.getProvinceExcell());
-        scoreMap.put("市级优秀",this.config.getProvinceExcell());
-        scoreMap.put("市级合格",this.config.getProvinceExcell());
+        scoreMap.put("省级合格",this.config.getProvinceQual());
+        scoreMap.put("市级优秀",this.config.getCityExcell());
+        scoreMap.put("市级合格",this.config.getCityQual());
         return  scoreMap;
     }
 
