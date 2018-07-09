@@ -54,7 +54,7 @@
         <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
             #{item}
         </foreach>
-        and t.`near` = #{years}
+        and t.`near` = #{near}
         and t.`grade` != 'D'
     </select>
 
