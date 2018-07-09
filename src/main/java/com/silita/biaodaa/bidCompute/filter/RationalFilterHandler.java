@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,28 +51,43 @@ public class RationalFilterHandler extends BaseFilterHandler<RationalBean> {
         param.put("near", ProjectAnalysisUtil.getStrNumber(this.config.getYear()));
         reaMap = bidEvaluationMethodMapper.queryCertGrade(param);
         if (null != reaMap) {
-            yearTotal = this.getTotal(reaMap);
+            try {
+                yearTotal = this.getTotal(reaMap);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         //获取前一年
         param.put("near", ProjectAnalysisUtil.getStrNumber(this.config.getLastOneYear()));
         reaMap = bidEvaluationMethodMapper.queryCertGrade(param);
         if (null != reaMap) {
-            oneYearTotal = this.getTotal(reaMap);
+            try {
+                oneYearTotal = this.getTotal(reaMap);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         //获取前两年
         param.put("near", ProjectAnalysisUtil.getStrNumber(this.config.getLastTwoYear()));
         reaMap = bidEvaluationMethodMapper.queryCertGrade(param);
         if (null != reaMap) {
-            twoYearTotal = this.getTotal(reaMap);
+            try {
+                twoYearTotal = this.getTotal(reaMap);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         Double total = DoubleUtils.add(yearTotal,oneYearTotal,twoYearTotal);
+        resourceMap.put("total",total);
         return total;
     }
 
     // TODO:获取分值
-    private Double getTotal(Map<String, Object> reaMap) {
+    private Double getTotal(Map<String, Object> reaMap) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        Date d = sdf.parse(reaMap.get("near").toString());
         Map<String,Object> scoreMap = getScoreMap();
-        Map<String,Object> socMap = (Map<String, Object>) scoreMap.get(reaMap.get("near"));
+        Map<String,Object> socMap = (Map<String, Object>) scoreMap.get(sdf.format(d));
         Double total = (Double) socMap.get(reaMap.get("grade").toString());
         return total;
     }

@@ -360,7 +360,7 @@ public class BidEvaluationMethodService {
                         bidResult.setBidRate(DoubleUtils.round(DoubleUtils.mul(lowerRate, 100), 2) + "%");
                         bidResult.setOfferScore(total);
                         bidResult.setCreditScore(0D);
-                        bidResult.setTotal(total);
+                        bidResult.setTotal(DoubleUtils.round(total,2));
                         bidResult.setBidStatus(1);
                         bidResultMapper.insertBidResult(bidResult);
                     } else {
@@ -369,7 +369,7 @@ public class BidEvaluationMethodService {
                         comMap.put("projType", MapUtils.getString(param, "projType"));
                         comMap.put("comName", MapUtils.getString(vildMap, "comName"));
                         comMap.put("comPrice", comPrice);
-                        comMap.put("bidCount", total);
+                        comMap.put("bidCount", DoubleUtils.round(total,2));
                         comMap.put("yearList", param.get("yearList"));
                         comMap.put("pkid", param.get("pkid"));
                         bidComputeService.computeHandler(comMap, (List<Map<String, Object>>) param.get("conditionList"));

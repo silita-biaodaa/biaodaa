@@ -78,9 +78,10 @@ public abstract class BaseFilterHandler<T extends BlockConfig> implements Handle
         Double lowerRate = MapUtils.getDouble(comMap,"lowerRate");
         Double total = MapUtils.getDouble(resourceMap,"total");
         total = total == null ? 0 : total;
-        Double repCount = MapUtils.getDouble(comMap,"repCount");
-        repCount = repCount == null ? 0 : repCount;
-        total = DoubleUtils.mul(total,repCount);
+        if(null != comMap.get("repCount")){
+            Double repCount = MapUtils.getDouble(comMap,"repCount");
+            total = DoubleUtils.mul(total,repCount);
+        }
         TbBidResult bidResult = new TbBidResult();
         bidResult.setBidPkid(MapUtils.getInteger(comMap, "pkid"));
         bidResult.setComName(MapUtils.getString(comMap,"comName"));
