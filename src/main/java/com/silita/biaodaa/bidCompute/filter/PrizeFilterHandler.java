@@ -398,34 +398,38 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
             }
 
             Integer count = 0;
-            if (null != lotusList && lotusList.size() > 0) {
-                count = (Integer) proMap.get("芙蓉奖");
-                if (count > this.config.getProvinceCount()) {
-                    Integer cou = count - this.config.getProvinceCount();
-                    lotusCount = DoubleUtils.add(
-                            DoubleUtils.mul(Double.valueOf(this.config.getProvinceCount().toString()), this.config.getLotusPrize()),
-                            DoubleUtils.mul(DoubleUtils.mul(Double.valueOf(cou.toString()), this.config.getLotusPrize()),
-                                    DoubleUtils.div(this.config.getOverPercent(), 100D, 4)), 0D);
-                } else {
-                    lotusCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getLotusPrize());
-                }
-                for (Map<String, Object> loMap : lotusList) {
-                    saveTable.add((Integer) loMap.get("id"));
+            if (this.config.getLotusPrize() > 0) {
+                if (null != lotusList && lotusList.size() > 0) {
+                    count = (Integer) proMap.get("芙蓉奖");
+                    if (count > this.config.getProvinceCount()) {
+                        Integer cou = count - this.config.getProvinceCount();
+                        lotusCount = DoubleUtils.add(
+                                DoubleUtils.mul(Double.valueOf(this.config.getProvinceCount().toString()), this.config.getLotusPrize()),
+                                DoubleUtils.mul(DoubleUtils.mul(Double.valueOf(cou.toString()), this.config.getLotusPrize()),
+                                        DoubleUtils.div(this.config.getOverPercent(), 100D, 4)), 0D);
+                    } else {
+                        lotusCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getLotusPrize());
+                    }
+                    for (Map<String, Object> loMap : lotusList) {
+                        saveTable.add((Integer) loMap.get("id"));
+                    }
                 }
             }
-            if (null != superList && superList.size() > 0) {
-                count = (Integer) proMap.get("省优工程");
-                if (count > this.config.getProvinceCount()) {
-                    Integer cou = count - this.config.getProvinceCount();
-                    superCount = DoubleUtils.add(
-                            DoubleUtils.mul(Double.valueOf(this.config.getProvinceCount().toString()), this.config.getSuperPrize()),
-                            DoubleUtils.mul(DoubleUtils.mul(Double.valueOf(cou.toString()), this.config.getSuperPrize()),
-                                    DoubleUtils.div(this.config.getOverPercent(), 100D, 4)), 0D);
-                } else {
-                    superCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getSuperPrize());
-                }
-                for (Map<String, Object> sup : superList) {
-                    saveTable.add((Integer) sup.get("id"));
+            if (this.config.getSuperPrize() > 0) {
+                if (null != superList && superList.size() > 0) {
+                    count = (Integer) proMap.get("省优工程");
+                    if (count > this.config.getProvinceCount()) {
+                        Integer cou = count - this.config.getProvinceCount();
+                        superCount = DoubleUtils.add(
+                                DoubleUtils.mul(Double.valueOf(this.config.getProvinceCount().toString()), this.config.getSuperPrize()),
+                                DoubleUtils.mul(DoubleUtils.mul(Double.valueOf(cou.toString()), this.config.getSuperPrize()),
+                                        DoubleUtils.div(this.config.getOverPercent(), 100D, 4)), 0D);
+                    } else {
+                        superCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getSuperPrize());
+                    }
+                    for (Map<String, Object> sup : superList) {
+                        saveTable.add((Integer) sup.get("id"));
+                    }
                 }
             }
         }

@@ -437,7 +437,7 @@ public class BidEvaluationMethodService {
                     years.add(map.get("years").toString());
                 }
                 param.put("years", years);
-                resultMap.put("prizeCount", bidEvaluationMethodMapper.queryCertPrizeCount(param));
+//                resultMap.put("prizeCount", bidEvaluationMethodMapper.queryCertPrizeCount(param));
                 resultMapList.add(resultMap);
             }
         }
