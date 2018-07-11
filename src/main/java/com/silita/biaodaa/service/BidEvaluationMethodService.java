@@ -367,7 +367,9 @@ public class BidEvaluationMethodService {
                         bidResultMapper.insertBidResult(bidResult);
                     } else {
                         List<String> srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());
-                        comMap.put("srcUuidList", srcUid);
+                        if (null != srcUid && srcUid.size() > 0) {
+                            comMap.put("srcUuidList", srcUid);
+                        }
                         comMap.put("projType", MapUtils.getString(param, "projType"));
                         comMap.put("comName", MapUtils.getString(vildMap, "comName"));
                         comMap.put("comPrice", comPrice);
