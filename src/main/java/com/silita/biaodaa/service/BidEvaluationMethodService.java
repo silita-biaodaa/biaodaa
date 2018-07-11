@@ -193,7 +193,9 @@ public class BidEvaluationMethodService {
                         bidResultMapper.insertBidResult(bidResult);
                     } else {
                         List<String> srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());
-                        comMap.put("srcUuidList", srcUid);
+                        if (null != srcUid && srcUid.size() > 0) {
+                            comMap.put("srcUuidList", srcUid);
+                        }
                         comMap.put("projType", MapUtils.getString(param, "projType"));
                         comMap.put("comName", MapUtils.getString(map, "comName"));
                         comMap.put("comPrice", comPrice);
@@ -283,7 +285,7 @@ public class BidEvaluationMethodService {
             //计算有效企业值
             if (null != validList && validList.size() > 0) {
                 //存储
-                List<Map<String,Object>> valdList = new ArrayList<>();
+                List<Map<String, Object>> valdList = new ArrayList<>();
                 valdList.addAll(validList);
                 //初始化
                 this.getReaMap(param);
@@ -341,9 +343,9 @@ public class BidEvaluationMethodService {
 
                     //投标报价是否大于基准价
                     if (comPrice.compareTo(jizhunPrice) > 0) {
-                        total = DoubleUtils.subtract(touPrice, DoubleUtils.mul(2,DoubleUtils.mul(devRate, 100)));
+                        total = DoubleUtils.subtract(touPrice, DoubleUtils.mul(2, DoubleUtils.mul(devRate, 100)));
                     } else {
-                        total = DoubleUtils.subtract(touPrice, DoubleUtils.mul(1,DoubleUtils.mul(devRate, 100)));
+                        total = DoubleUtils.subtract(touPrice, DoubleUtils.mul(1, DoubleUtils.mul(devRate, 100)));
                     }
                     //TODO: 计算信用等级分
                     //计算下浮率
@@ -360,7 +362,7 @@ public class BidEvaluationMethodService {
                         bidResult.setBidRate(DoubleUtils.round(DoubleUtils.mul(lowerRate, 100), 2) + "%");
                         bidResult.setOfferScore(total);
                         bidResult.setCreditScore(0D);
-                        bidResult.setTotal(DoubleUtils.round(total,2));
+                        bidResult.setTotal(DoubleUtils.round(total, 2));
                         bidResult.setBidStatus(1);
                         bidResultMapper.insertBidResult(bidResult);
                     } else {
@@ -369,7 +371,7 @@ public class BidEvaluationMethodService {
                         comMap.put("projType", MapUtils.getString(param, "projType"));
                         comMap.put("comName", MapUtils.getString(vildMap, "comName"));
                         comMap.put("comPrice", comPrice);
-                        comMap.put("bidCount", DoubleUtils.round(total,2));
+                        comMap.put("bidCount", DoubleUtils.round(total, 2));
                         comMap.put("yearList", param.get("yearList"));
                         comMap.put("pkid", param.get("pkid"));
                         bidComputeService.computeHandler(comMap, (List<Map<String, Object>>) param.get("conditionList"));

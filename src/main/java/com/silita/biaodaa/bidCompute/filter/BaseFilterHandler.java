@@ -53,7 +53,10 @@ public abstract class BaseFilterHandler<T extends BlockConfig> implements Handle
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("code",0);
         resultMap.put("msg","["+getFilterName()+"]过滤器,不满足条件.");
-        doHandler(resourceMap);
+        Map<String,Object> comMap = MapUtils.getMap(resourceMap,"comInfo");
+        if(null != comMap.get("srcUuidList")) {
+            doHandler(resourceMap);
+        }
         if(successor==null){
             //入库
             this.saveDatas(resourceMap);
