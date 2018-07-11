@@ -180,7 +180,7 @@ public class FoundationController extends BaseController {
                     String[] keys = regions[1].split(",");
                     for(int i = 0;i<keys.length;i++){
                         if (keys[i].contains("湘西")) {
-                            keys[i] = "湘西土家族苗族自治州";
+                            keys[i] = "湘西自治州";
                         }
                     }
                     params.put("region", Lists.newArrayList(keys));

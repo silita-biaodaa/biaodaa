@@ -402,7 +402,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
                             DoubleUtils.mul(DoubleUtils.mul(Double.valueOf(cou.toString()), this.config.getLotusPrize()),
                                     DoubleUtils.div(this.config.getOverPercent(), 100D, 4)), 0D);
                 } else {
-                    DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getLotusPrize());
+                    lotusCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getLotusPrize());
                 }
                 for (Map<String, Object> loMap : lotusList) {
                     saveTable.add((Integer) loMap.get("id"));

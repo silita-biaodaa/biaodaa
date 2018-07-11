@@ -34,7 +34,7 @@
   <select id="queryMateNameList" resultType="java.util.Map" parameterType="java.util.Map">
     SELECT t2.`mateName`,t1.years
     FROM tb_bid_detail t
-    LEFT JOIN cert_qyhj t1 ON t.`cert_id` = t1.`id`
+    INNER JOIN cert_qyhj t1 ON t.`cert_id` = t1.`id`
     LEFT JOIN prize_zh t2 ON t1.`zhUuid` = t2.`uuid`
     WHERE t.`fore_pkid` = #{pkid} AND t.`cert_type` =1
     GROUP BY t2.`mateName`
