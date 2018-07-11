@@ -37,12 +37,26 @@ public class UndesirableFilterHandler extends BaseFilterHandler<UndesirableBean>
         Double total = 0D;
         List<Map<String,Object>> undesList = tbCompanyMapper.getUndesirable(param);
         if(null != undesList && undesList.size() > 0){
+            List<Map<String,Object>> undes = new ArrayList<>();
+            for(Map<String,Object> map : undesList){
+                if("一般".equals(map.get("nature").toString())){
+                    if(this.config.getCommScore() > 0){
+                        undes.add(map);
+                    }
+                }else if ("严重".equals(map.get("nature").toString())){
+                    if(this.config.getSevScore() > 0){
+                        undes.add(map);
+                    }
+                }
+            }
             if(null != resourceMap.get("total")){
                 total = (Double) resourceMap.get("total");
             }
-            total = DoubleUtils.add(total,this.getTotal(undesList),0D);
+            if(null != undes && undes.size() > 0){
+                total = DoubleUtils.add(total,this.getTotal(undes),0D);
+            }
             resourceMap.put("total",total);
-            resourceMap.put("undesList",undesList);
+            resourceMap.put("undesList",undes);
         }
         return total;
     }

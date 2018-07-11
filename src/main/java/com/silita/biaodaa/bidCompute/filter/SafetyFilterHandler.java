@@ -48,14 +48,16 @@ public class SafetyFilterHandler extends BaseFilterHandler<SafetyBean> {
             if(safetyList.size() > 1){
                 this.getDeWeight(safetyList,scoreMap);
             }
-            Map<String,Object> safetyMap = safetyList.get(0);
             if(null != resourceMap.get("total")){
                 total = (Double) resourceMap.get("total");
             }
+            Map<String,Object> safetyMap = safetyList.get(0);
             Double d = (Double) scoreMap.get(safetyMap.get("mateName").toString());
+            if(d > 0){
+                resourceMap.put("safety",safetyMap);
+            }
             total = DoubleUtils.add(total,d,0D);
             resourceMap.put("total",total);
-            resourceMap.put("safety",safetyMap);
         }
         return total;
     }

@@ -328,46 +328,51 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
             }
 
             Integer count = 0;
-            if (null != lubanList && lubanList.size() > 0) {
-                count = (Integer) nationMap.get("鲁班奖");
-                if (count > this.config.getNationPrizeCon()) {
-                    luCount = DoubleUtils.mul(Double.valueOf(this.config.getNationPrizeCon().toString()), this.config.getLubanPrize());
-                    for (int i = 0; i < this.config.getNationPrizeCon(); i++) {
-                        saveTable.add((Integer) lubanList.get(i).get("id"));
-                    }
-                } else {
-                    luCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getLubanPrize());
-                    for (int i = 0; i < count; i++) {
-                        saveTable.add((Integer) lubanList.get(i).get("id"));
-                    }
-                }
-
-            }
-            if (null != buildList && buildList.size() > 0) {
-                count = (Integer) nationMap.get("全国建设工程项目施工安全生产标准化工地");
-                if (count > this.config.getNationPrizeCon()) {
-                    buCount = DoubleUtils.mul(Double.valueOf(this.config.getNationPrizeCon().toString()), this.config.getBuildPrize());
-                    for (int i = 0; i < this.config.getNationPrizeCon(); i++) {
-                        saveTable.add((Integer) buildList.get(i).get("id"));
-                    }
-                } else {
-                    buCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getBuildPrize());
-                    for (int i = 0; i < count; i++) {
-                        saveTable.add((Integer) buildList.get(i).get("id"));
+            if(this.config.getLubanPrize() > 0){
+                if (null != lubanList && lubanList.size() > 0) {
+                    count = (Integer) nationMap.get("鲁班奖");
+                    if (count > this.config.getNationPrizeCon()) {
+                        luCount = DoubleUtils.mul(Double.valueOf(this.config.getNationPrizeCon().toString()), this.config.getLubanPrize());
+                        for (int i = 0; i < this.config.getNationPrizeCon(); i++) {
+                            saveTable.add((Integer) lubanList.get(i).get("id"));
+                        }
+                    } else {
+                        luCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getLubanPrize());
+                        for (int i = 0; i < count; i++) {
+                            saveTable.add((Integer) lubanList.get(i).get("id"));
+                        }
                     }
                 }
             }
-            if (null != desList && desList.size() > 0) {
-                count = (Integer) nationMap.get("全国建筑工程装饰奖");
-                if (count > this.config.getNationPrizeCon()) {
-                    buCount = DoubleUtils.mul(Double.valueOf(this.config.getNationPrizeCon().toString()), this.config.getDecoratePrize());
-                    for (int i = 0; i < this.config.getNationPrizeCon(); i++) {
-                        saveTable.add((Integer) desList.get(i).get("id"));
+            if(this.config.getBuildPrize() > 0){
+                if (null != buildList && buildList.size() > 0) {
+                    count = (Integer) nationMap.get("全国建设工程项目施工安全生产标准化工地");
+                    if (count > this.config.getNationPrizeCon()) {
+                        buCount = DoubleUtils.mul(Double.valueOf(this.config.getNationPrizeCon().toString()), this.config.getBuildPrize());
+                        for (int i = 0; i < this.config.getNationPrizeCon(); i++) {
+                            saveTable.add((Integer) buildList.get(i).get("id"));
+                        }
+                    } else {
+                        buCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getBuildPrize());
+                        for (int i = 0; i < count; i++) {
+                            saveTable.add((Integer) buildList.get(i).get("id"));
+                        }
                     }
-                } else {
-                    buCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getDecoratePrize());
-                    for (int i = 0; i < count; i++) {
-                        saveTable.add((Integer) desList.get(i).get("id"));
+                }
+            }
+            if(this.config.getDecoratePrize() > 0){
+                if (null != desList && desList.size() > 0) {
+                    count = (Integer) nationMap.get("全国建筑工程装饰奖");
+                    if (count > this.config.getNationPrizeCon()) {
+                        buCount = DoubleUtils.mul(Double.valueOf(this.config.getNationPrizeCon().toString()), this.config.getDecoratePrize());
+                        for (int i = 0; i < this.config.getNationPrizeCon(); i++) {
+                            saveTable.add((Integer) desList.get(i).get("id"));
+                        }
+                    } else {
+                        buCount = DoubleUtils.mul(Double.valueOf(count.toString()), this.config.getDecoratePrize());
+                        for (int i = 0; i < count; i++) {
+                            saveTable.add((Integer) desList.get(i).get("id"));
+                        }
                     }
                 }
             }
