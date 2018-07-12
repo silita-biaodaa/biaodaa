@@ -88,7 +88,7 @@ public class ElasticseachService {
         if (total % pageSize == 0) {
             pages = total / pageSize;
         } else {
-            pages = total % pageSize + 1;
+            pages = (total/pageSize) + 1;
         }
         return pages;
     }
