@@ -53,7 +53,7 @@ public class ElasticseachService {
             //获取pages
             Integer pages = this.getPage(count, 3000);
             for (int i = 1; i <= pages; i++) {
-                param.put("page", (i - 1) * 1000);
+                param.put("page", (i - 1) * 3000);
                 comList = tbCompanyMapper.queryCompanyEsList(param);
                 if (null != comList && comList.size() > 0) {
                     nativeElasticSearchUtils.batchInsertDate(transportClient, "company", "comes", comList);
