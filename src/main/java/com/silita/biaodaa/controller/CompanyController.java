@@ -7,6 +7,8 @@ import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.es.ElasticseachService;
+import com.silita.biaodaa.model.CompanyEs;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
@@ -47,6 +49,9 @@ public class CompanyController extends BaseController {
 
     @Autowired
     NoticeService noticeService;
+
+    @Autowired
+    ElasticseachService elasticseachService;
 
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
@@ -494,17 +499,17 @@ public class CompanyController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/matchName", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String,Object> matchName(@RequestBody Map<String, Object> params){
-        List<Map> nameList = null;
+        List<Map<String,Object>> nameList = null;
         Map<String,Object> result = new HashMap<>();
         String name = MapUtils.getString(params,"name");
         if(MyStringUtils.isNotNull(name)) {
-            params.put("name","%"+name+"%");
+            params.put("name","*"+name+"*");
             params.put("count",5);
             int paramHash = ObjectUtils.buildMapParamHash(params);
             String listKey = RedisConstantInterface.COM_NAME_MATCH + paramHash;
-            nameList = (List<Map>)myRedisTemplate.getObject(listKey);
+            nameList = (List<Map<String,Object>>)myRedisTemplate.getObject(listKey);
             if (nameList == null ) {
-                nameList = tbCompanyService.matchName(params);
+                nameList = elasticseachService.quary(params);
                 if(nameList!=null) {
                     myRedisTemplate.setObject(listKey, nameList, COM_OVER_TIME);
                 }
@@ -554,6 +559,17 @@ public class CompanyController extends BaseController {
         typeMap.put("collType","company");
         noticeService.addCollStatus(companyList, typeMap);
         resultMap.put("data", companyList);
+        return resultMap;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/esCompany", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String,Object> esCompany(){
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("code",this.SUCCESS_CODE);
+        resultMap.put("msg",this.SUCCESS_MSG);
+        elasticseachService.bastchAddCompany();
         return resultMap;
     }
 }

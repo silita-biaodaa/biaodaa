@@ -220,4 +220,15 @@
     order by t.px desc
     limit #{limit}
   </select>
+
+  <select id="queryCompanyEsList" resultType="com.silita.biaodaa.model.CompanyEs">
+      select t.com_id
+              ,t.com_name
+              ,t.com_name_py
+              ,t.px
+      from tb_company t
+      where 1=1
+      AND t.`com_name` IS NOT NULL
+--       limit 400
+  </select>
 </mapper>

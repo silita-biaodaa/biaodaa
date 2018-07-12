@@ -1,5 +1,6 @@
 package com.silita.biaodaa.dao;
 
+import com.silita.biaodaa.model.CompanyEs;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.utils.MyMapper;
 
@@ -63,4 +64,10 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
      * @return
      */
     List<TbCompany> queryHostCompanyList(Map<String,Object> param);
+
+    /**
+     * 获取公司信息
+     * @return
+     */
+    List<CompanyEs> queryCompanyEsList();
 }
