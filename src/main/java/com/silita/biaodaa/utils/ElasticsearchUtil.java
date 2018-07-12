@@ -2,7 +2,9 @@ package com.silita.biaodaa.utils;
 
 import com.silita.biaodaa.elastic.common.NativeElasticSearchUtils;
 import org.elasticsearch.client.transport.TransportClient;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ElasticsearchUtil {
 
     public static TransportClient transportClient = null;
@@ -20,4 +22,5 @@ public class ElasticsearchUtil {
         transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
     }
 
+    private ElasticsearchUtil(){}
 }
