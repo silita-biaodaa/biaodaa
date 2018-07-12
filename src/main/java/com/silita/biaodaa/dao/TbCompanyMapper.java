@@ -69,5 +69,7 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
      * 获取公司信息
      * @return
      */
-    List<CompanyEs> queryCompanyEsList();
+    List<CompanyEs> queryCompanyEsList(Map<String,Object> param);
+
+    Integer queryCompanyCount();
 }

@@ -1,6 +1,9 @@
 package com.silita.biaodaa.es;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.elastic.common.ConstantUtil;
 import com.silita.biaodaa.elastic.common.NativeElasticSearchUtils;
@@ -41,30 +44,53 @@ public class ElasticseachService {
 
     public void bastchAddCompany() {
         transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
-        List<CompanyEs> comList = tbCompanyMapper.queryCompanyEsList();
-        nativeElasticSearchUtils.createIndexAndCreateMapping(transportClient,CompanyEs.class);
-        nativeElasticSearchUtils.batchInsertDate(transportClient, "company", "comes", comList);
+        nativeElasticSearchUtils.createIndexAndCreateMapping(transportClient, CompanyEs.class);
+        Integer count = tbCompanyMapper.queryCompanyCount();
+        List<CompanyEs> comList = new ArrayList<>();
+        if (count > 0) {
+            Map<String, Object> param = new HashMap<>();
+            param.put("pageSize", 3000);
+            //获取pages
+            Integer pages = this.getPage(count, 3000);
+            for (int i = 1; i <= pages; i++) {
+                param.put("page", (i - 1) * 1000);
+                comList = tbCompanyMapper.queryCompanyEsList(param);
+                if (null != comList && comList.size() > 0) {
+                    nativeElasticSearchUtils.batchInsertDate(transportClient, "company", "comes", comList);
+                }
+            }
+        }
     }
 
-    public List<Map<String,Object>> quary(Map<String,Object> param) {
+    public List<Map<String, Object>> quary(Map<String, Object> param) {
         transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
         Map sort = new HashMap<String, String>();
         sort.put("px", SortOrder.DESC);
-        String comName = MapUtils.getString(param,"name");
-        PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param,"count"), sort);
+        String comName = MapUtils.getString(param, "name");
+        PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "count"), sort);
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "comName", comName));
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "comNamePy", comName));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "company", "comes", querys, pageSort);
-        List<Map<String,Object>> list = new ArrayList<>();
-        Map<String,Object> map = null;
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map = null;
         for (SearchHit hit : response.getHits()) {
             map = new HashMap<>();
             map = (Map<String, Object>) JSON.parse(hit.getSourceAsString());
-            map.put("com_name",map.get("comName"));
+            map.put("com_name", map.get("comName"));
             list.add(map);
         }
-        return  list;
+        return list;
+    }
+
+    private Integer getPage(Integer total, Integer pageSize) {
+        Integer pages = 0;
+        if (total % pageSize == 0) {
+            pages = total / pageSize;
+        } else {
+            pages = total % pageSize + 1;
+        }
+        return pages;
     }
 
 }

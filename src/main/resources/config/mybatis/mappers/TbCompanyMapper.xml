@@ -221,7 +221,7 @@
     limit #{limit}
   </select>
 
-  <select id="queryCompanyEsList" resultType="com.silita.biaodaa.model.CompanyEs">
+  <select id="queryCompanyEsList" resultType="com.silita.biaodaa.model.CompanyEs" parameterType="java.util.Map">
       SELECT t.com_id
               ,t.com_name
               ,t.com_name_py
@@ -229,6 +229,13 @@
       FROM tb_company t
       WHERE 1=1
       AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
---       limit 400
+      limit #{page},#{pageSize}
+  </select>
+
+  <select id="queryCompanyCount" resultType="java.lang.Integer">
+    SELECT count(1)
+      FROM tb_company t
+      WHERE 1=1
+      AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
   </select>
 </mapper>
