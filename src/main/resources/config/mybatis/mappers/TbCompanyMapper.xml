@@ -222,13 +222,13 @@
   </select>
 
   <select id="queryCompanyEsList" resultType="com.silita.biaodaa.model.CompanyEs">
-      select t.com_id
+      SELECT t.com_id
               ,t.com_name
               ,t.com_name_py
-              ,t.px
-      from tb_company t
-      where 1=1
-      AND t.`com_name` IS NOT NULL
+              ,IFNULL(t.px,0) AS px
+      FROM tb_company t
+      WHERE 1=1
+      AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
 --       limit 400
   </select>
 </mapper>
