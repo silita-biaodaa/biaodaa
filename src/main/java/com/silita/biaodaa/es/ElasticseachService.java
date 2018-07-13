@@ -119,7 +119,7 @@ public class ElasticseachService {
 
     public List<Map<String,Object>> querySnatchUrl(Map<String,Object> param){
         transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
-        String title = MapUtils.getString(param, "title");
+        String title = MapUtils.getString(param, "projName");
         Map sort = new HashMap<String, String>();
         sort.put("openDate", SortOrder.DESC);
         PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "limit"),sort);
