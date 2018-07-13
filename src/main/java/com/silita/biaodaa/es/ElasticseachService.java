@@ -124,7 +124,8 @@ public class ElasticseachService {
         sort.put("openDate", SortOrder.DESC);
         PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "limit"),sort);
         List<QuerysModel> querys = new ArrayList();
-        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_MATCH_PHRASE, "title", title));
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_MATCH, "title", title));
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_MATCH_PHRASE, "title", title));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "snatchurl", "snatchurl_zhaobiao", querys, pageSort);
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> snatMap = null;
