@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.dao.SnatchurlMapper;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.elastic.common.ConstantUtil;
 import com.silita.biaodaa.elastic.common.NativeElasticSearchUtils;
 import com.silita.biaodaa.elastic.model.PaginationAndSort;
 import com.silita.biaodaa.elastic.model.QuerysModel;
 import com.silita.biaodaa.model.CompanyEs;
+import com.silita.biaodaa.model.SnatchurlEs;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.elasticsearch.action.search.SearchResponse;
@@ -36,6 +38,8 @@ public class ElasticseachService {
 
     @Autowired
     TbCompanyMapper tbCompanyMapper;
+    @Autowired
+    SnatchurlMapper snatchurlMapper;
 
     @Autowired
     NativeElasticSearchUtils nativeElasticSearchUtils;
@@ -93,4 +97,41 @@ public class ElasticseachService {
         return pages;
     }
 
+    public void batchAddSnatchUrl(){
+        transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
+        nativeElasticSearchUtils.createIndexAndCreateMapping(transportClient, SnatchurlEs.class);
+        Integer count = snatchurlMapper.querySnatchurlCount();
+        List<SnatchurlEs> snaList = new ArrayList<>();
+        if (count > 0) {
+            Map<String, Object> param = new HashMap<>();
+            param.put("pageSize", 3000);
+            //获取pages
+            Integer pages = this.getPage(count, 3000);
+            for (int i = 1; i <= pages; i++) {
+                param.put("page", (i - 1) * 3000);
+                snaList = snatchurlMapper.querySnatchurlList(param);
+                if (null != snaList && snaList.size() > 0) {
+                    nativeElasticSearchUtils.batchInsertDate(transportClient, "snatchurl", "snatchurl_zhaobiao", snaList);
+                }
+            }
+        }
+    }
+
+    public List<Map<String,Object>> querySnatchUrl(Map<String,Object> param){
+        transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
+        String title = MapUtils.getString(param, "title");
+        PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "limit"),null);
+        List<QuerysModel> querys = new ArrayList();
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_MATCH_PHRASE, "title", title));
+        SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "snatchurl", "snatchurl_zhaobiao", querys, pageSort);
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> snatMap = null;
+        for (SearchHit hit : response.getHits()) {
+            snatMap = new HashMap<>();
+            snatMap = (Map<String, Object>) JSON.parse(hit.getSourceAsString());
+            snatMap.put("id", snatMap.get("snatchId"));
+            list.add(snatMap);
+        }
+        return list;
+    }
 }

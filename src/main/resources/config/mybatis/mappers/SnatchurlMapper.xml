@@ -36,18 +36,24 @@
     <!--<result column="source" property="source" jdbcType="VARCHAR" />-->
   <!--</resultMap>-->
 
-  <select id="querySnatchurlList" parameterType="java.util.Map" resultType="java.util.Map">
+  <select id="querySnatchurlList" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.SnatchurlEs">
     select
-      id as id
+      id as snatchId
       ,title as title
     from snatchurl t
     where t.isShow = 0
-    and t.type = 0 and t.otherType = 0 and t.biddingType = 0
-    <if test="projName != null and projName != ''">
-      and t.title like CONCAT('%',#{projName},'%')
-    </if>
+    and t.type = 0 and t.otherType = 0 and t.biddingType = 0 and t.id &gt;0
     order by t.openDate desc
-    limit #{limit}
+    limit #{page},#{pageSize}
+  </select>
+
+  <select id="querySnatchurlCount" resultType="java.lang.Integer">
+    select
+      COUNT(1)
+    from snatchurl t
+    where t.isShow = 0
+    and t.type = 0 and t.otherType = 0 and t.biddingType = 0
+    order by t.openDate desc
   </select>
 
   <select id="queryNoticeDetailBySnatchurlId" resultType="java.util.Map" parameterType="java.util.Map">

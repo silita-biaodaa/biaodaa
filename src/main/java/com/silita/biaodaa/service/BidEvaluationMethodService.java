@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.crm.dao.mapper.CompanyMapper;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.*;
+import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.TbBidCompute;
 import com.silita.biaodaa.model.TbBidResult;
 import com.silita.biaodaa.model.TbCompany;
@@ -41,6 +42,8 @@ public class BidEvaluationMethodService {
     BidComputeService bidComputeService;
     @Autowired
     TbBidDetailMapper bidDetailMapper;
+    @Autowired
+    ElasticseachService elasticseachService;
 
     /**
      * 获取项目名称
@@ -52,7 +55,7 @@ public class BidEvaluationMethodService {
         if (null == param.get("limit")) {
             param.put("limit", 5);
         }
-        return snatchurlMapper.querySnatchurlList(param);
+        return elasticseachService.querySnatchUrl(param);
     }
 
     public List<Map<String, Object>> getNoticeDetailList(Map<String, Object> param) {
@@ -405,7 +408,11 @@ public class BidEvaluationMethodService {
     }
 
     public void delBidComputer(Map<String, Object> param) {
-        bidComputeMapper.delBidComput(param);
+        List<Integer> listId = (List<Integer>) param.get("list");
+        for(Integer pkid : listId){
+            param.put("pkid",pkid);
+            bidComputeMapper.delBidComput(param);
+        }
     }
 
     public Map<String, Object> getBidCoDetail(Map<String, Object> param) throws ParseException {
@@ -431,12 +438,12 @@ public class BidEvaluationMethodService {
                 resultMap.put("mateName", map.get("mateName"));
                 resultMap.put("list", bidDetailMapper.queryPrizeBidDetail(param));
                 //获取总数
-                if ("鲁班奖".equals(map.get("mateName").toString())) {
-                    getLubanYears(years, map.get("years").toString());
-                } else {
-                    years.add(map.get("years").toString());
-                }
-                param.put("years", years);
+//                if ("鲁班奖".equals(map.get("mateName").toString())) {
+//                    getLubanYears(years, map.get("years").toString());
+//                } else {
+//                    years.add(map.get("years").toString());
+//                }
+//                param.put("years", years);
 //                resultMap.put("prizeCount", bidEvaluationMethodMapper.queryCertPrizeCount(param));
                 resultMapList.add(resultMap);
             }
@@ -450,32 +457,32 @@ public class BidEvaluationMethodService {
         return result;
     }
 
-    private void getLubanYears(List<String> years, String year) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年");
-        String date = null;
-        if (year.contains("～")) {
-            date = year.split("～")[1];
-        } else if (year.contains("-")) {
-            date = year.split("-")[1];
-        } else {
-            date = year;
-        }
-        String dateN = ProjectAnalysisUtil.getStrNumber(date);
-        Date lastDate = sdf.parse(date);
-        Date endDate = null;
-        String endStr = null;
-        if (Integer.valueOf(dateN) % 2 == 0) {
-            endDate = MyDateUtils.getDayBefore(lastDate, -1);
-            endStr = sdf.format(endDate);
-            years.add(endStr + "～" + date);
-            years.add(date + "-" + endStr + "度");
-        } else {
-            endDate = MyDateUtils.getDayBefore(lastDate, 1);
-            endStr = sdf.format(endDate);
-            years.add(endStr + "～" + date);
-            years.add(endStr + "-" + dateN + "年度");
-        }
-    }
+//    private void getLubanYears(List<String> years, String year) throws ParseException {
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年");
+//        String date = null;
+//        if (year.contains("～")) {
+//            date = year.split("～")[1];
+//        } else if (year.contains("-")) {
+//            date = year.split("-")[1];
+//        } else {
+//            date = year;
+//        }
+//        String dateNum = ProjectAnalysisUtil.getStrNumber(date);
+//        Date lastDate = sdf.parse(date);
+//        Date endDate = null;
+//        String endStr = null;
+//        if (Integer.valueOf(dateNum) % 2 == 0) {
+//            endDate = MyDateUtils.getDayBefore(lastDate, -1);
+//            endStr = sdf.format(endDate);
+//            years.add(endStr + "～" + date);
+//            years.add(date + "-" + endStr + "度");
+//        } else {
+//            endDate = MyDateUtils.getDayBefore(lastDate, 1);
+//            endStr = sdf.format(endDate);
+//            years.add(endStr + "～" + date);
+//            years.add(endStr + "-" + dateNum + "年度");
+//        }
+//    }
 
     public Map<String, Object> getBidResult(Map<String, Object> param) {
         //返回数据

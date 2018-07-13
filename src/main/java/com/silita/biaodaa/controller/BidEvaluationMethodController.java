@@ -1,5 +1,6 @@
 package com.silita.biaodaa.controller;
 
+import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.service.BidEvaluationMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,8 @@ public class BidEvaluationMethodController extends BaseController{
 
     @Autowired
     BidEvaluationMethodService bidEvaluationMethodService;
+    @Autowired
+    ElasticseachService elasticseachService;
 
     /**
      * 项目名称检索
@@ -130,5 +133,15 @@ public class BidEvaluationMethodController extends BaseController{
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("data",bidEvaluationMethodService.getBidResult(param));
         return successMap(resultMap);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/esSnatchurl", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String,Object> esSnatchurl(){
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("code",this.SUCCESS_CODE);
+        resultMap.put("msg",this.SUCCESS_MSG);
+        elasticseachService.batchAddSnatchUrl();
+        return resultMap;
     }
 }
