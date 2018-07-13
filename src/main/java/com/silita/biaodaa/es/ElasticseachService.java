@@ -120,7 +120,9 @@ public class ElasticseachService {
     public List<Map<String,Object>> querySnatchUrl(Map<String,Object> param){
         transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
         String title = MapUtils.getString(param, "title");
-        PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "limit"),null);
+        Map sort = new HashMap<String, String>();
+        sort.put("openDate", SortOrder.DESC);
+        PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "limit"),sort);
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_MATCH_PHRASE, "title", title));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "snatchurl", "snatchurl_zhaobiao", querys, pageSort);

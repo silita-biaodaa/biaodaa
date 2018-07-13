@@ -15,8 +15,11 @@ public class SnatchurlEs extends ElasticEntity {
     @Filed(type = FieldType.integer,store = true)
     private Integer snatchId;
 
-    @Filed(type = FieldType.keyword)
+    @Filed(type = FieldType.text,analyzer = "ik_max_word",searchAnalyzer = "ik_smart")
     private String title;
+
+    @Filed(type =  FieldType.keyword)
+    private String openDate;
 
     public String getId() {
         return this.snatchId.toString();

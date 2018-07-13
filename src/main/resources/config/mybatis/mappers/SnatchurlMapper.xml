@@ -38,12 +38,13 @@
 
   <select id="querySnatchurlList" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.SnatchurlEs">
     select
-      id as snatchId
-      ,title as title
+      t.id as snatchId
+      ,t.title as title
+      ,t.openDate as openDate
     from snatchurl t
     where t.isShow = 0
     and t.type = 0 and t.otherType = 0 and t.biddingType = 0 and t.id &gt;0
-    order by t.openDate desc
+    order by t.id asc
     limit #{page},#{pageSize}
   </select>
 
@@ -52,8 +53,8 @@
       COUNT(1)
     from snatchurl t
     where t.isShow = 0
-    and t.type = 0 and t.otherType = 0 and t.biddingType = 0
-    order by t.openDate desc
+    and t.type = 0 and t.otherType = 0 and t.biddingType = 0 and t.id &gt;0
+    order by t.id asc
   </select>
 
   <select id="queryNoticeDetailBySnatchurlId" resultType="java.util.Map" parameterType="java.util.Map">
