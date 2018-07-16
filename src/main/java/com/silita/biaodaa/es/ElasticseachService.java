@@ -44,10 +44,9 @@ public class ElasticseachService {
     @Autowired
     NativeElasticSearchUtils nativeElasticSearchUtils;
 
-    private TransportClient transportClient;
+    private TransportClient transportClient = InitElasticseach.initClient();
 
     public void bastchAddCompany() {
-        transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
         nativeElasticSearchUtils.createIndexAndCreateMapping(transportClient, CompanyEs.class);
         Integer count = tbCompanyMapper.queryCompanyCount();
         List<CompanyEs> comList = new ArrayList<>();
@@ -67,7 +66,6 @@ public class ElasticseachService {
     }
 
     public List<Map<String, Object>> quary(Map<String, Object> param) {
-        transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
         Map sort = new HashMap<String, String>();
         sort.put("px", SortOrder.DESC);
         String comName = MapUtils.getString(param, "name");
@@ -98,7 +96,6 @@ public class ElasticseachService {
     }
 
     public void batchAddSnatchUrl(){
-        transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
         nativeElasticSearchUtils.createIndexAndCreateMapping(transportClient, SnatchurlEs.class);
         Integer count = snatchurlMapper.querySnatchurlCount();
         List<SnatchurlEs> snaList = new ArrayList<>();
@@ -118,7 +115,6 @@ public class ElasticseachService {
     }
 
     public List<Map<String,Object>> querySnatchUrl(Map<String,Object> param){
-        transportClient = nativeElasticSearchUtils.initClient(ip, cluster, Integer.parseInt(host));
         String title = MapUtils.getString(param, "projName");
         Map sort = new HashMap<String, String>();
         sort.put("openDate", SortOrder.DESC);
@@ -127,6 +123,7 @@ public class ElasticseachService {
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_MATCH, "title", title));
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_MATCH_PHRASE, "title", title));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "snatchurl", "snatchurl_zhaobiao", querys, pageSort);
+//        nativeElasticSearchUtils.close(transportClient);
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> snatMap = null;
         for (SearchHit hit : response.getHits()) {
