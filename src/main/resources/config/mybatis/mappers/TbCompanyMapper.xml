@@ -47,7 +47,7 @@
     </if>
     <if test="zzLevel == 'level'">
       and
-      <foreach collection="range" item="zzList" close=")" separator="and" open="(">
+      <foreach collection="range" item="zzList" close=")" separator="or" open="(">
         c.range like CONCAT('%',#{zzList},'%')
       </foreach>
     </if>
@@ -156,7 +156,7 @@
     </if>
     <if test="cityList != null and cityList.size() > 0">
       and
-        <foreach collection="cityList" item="list" open="(" close=")" separator="and">
+        <foreach collection="cityList" item="list" open="(" close=")" separator="or">
           c.regis_address like CONCAT(#{list},'%')
         </foreach>
     </if>
