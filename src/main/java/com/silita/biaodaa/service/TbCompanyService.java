@@ -423,9 +423,6 @@ public class TbCompanyService {
                     }
                     //--------------------
 
-
-                    resultMap.put("allNum", qyhjList.size());
-
                     //将奖项去重
                     for (int i = 0; i < qyhjList.size() - 1; i++) {
                         for (int j = qyhjList.size() - 1; j > i; j--) {
@@ -445,6 +442,7 @@ public class TbCompanyService {
                         }
                     }
 
+                    resultMap.put("allNum", qyhjList.size());
 
                     //分组-----------
                     Map<String, Map<String, List<Map<String, Object>>>> map = new HashMap<>();
