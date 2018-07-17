@@ -26,7 +26,7 @@
   <name>biaodaa</name>
   <groupId>com.biaodaa</groupId>
   <artifactId>biaodaa</artifactId>
-  <version>2.2.33</version>
+  <version>2.2.34</version>
 
   <properties>
     <spring.version>4.1.6.RELEASE</spring.version>
@@ -360,6 +360,11 @@
       <artifactId>poi</artifactId>
       <version>3.10.1</version>
     </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.apache.poi</groupId>-->
+      <!--<artifactId>poi-ooxml</artifactId>-->
+      <!--<version>3.10.1</version>-->
+    <!--</dependency>-->
     <!-- 阿里云 -->
     <dependency>
       <groupId>com.aliyun</groupId>
