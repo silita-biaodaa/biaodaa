@@ -67,45 +67,4 @@
     where t.snatchUrlId = #{id}
   </select>
 
-  <select id="queryCompany" resultType="java.util.Map">
-    SELECT
-    t2.`oneName` AS oneName
-    ,COUNT(1) AS num
-    ,t3.`regis_address` AS regisAddress
-    ,t3.`legal_person` AS legalPerson
-    ,GROUP_CONCAT(DISTINCT t4.`range`) AS ranges
-    FROM snatchurl t1
-    INNER JOIN zhongbiao_detail t2 ON t1.`id` = t2.`snatchUrlId`
-    LEFT JOIN tb_company t3 ON t2.`oneName` = t3.`com_name`
-    LEFT JOIN tb_company_qualification t4 ON t3.`com_id` = t4.`com_id`
-    WHERE t1.`province` = 'huns'  AND t1.`edit` = 1 AND t1.`isShow` = 0
-    AND t2.`gsDate` &lt;= DATE_FORMAT(NOW(),'%Y-%m-%d')
-    AND t2.`gsDate` &gt;= DATE_SUB(CURDATE(),INTERVAL 4 YEAR)
-    AND t2.`oneName` != '' AND  t2.`oneName` IS NOT NULL
-    AND t2.`oneUUid` IS NOT NULL
-    GROUP BY t2.`oneName`
-    ORDER BY COUNT(1) DESC
-  </select>
-
-  <select id="queryCompanyHong" resultType="java.lang.String" parameterType="java.lang.String">
-    SELECT
-    GROUP_CONCAT(DISTINCT t6.`awardName`)
-    from cert_src t5
-    LEFT JOIN cert_qyhj t6 ON t5.`uuid` = t6.`srcUuid`
-    WHERE
-      t5.companyName = #{comName}
-    GROUP BY t5.companyName
-  </select>
-
-  <select id="queryCompanyHei" resultType="java.lang.String" parameterType="java.lang.String">
-    SELECT
-    	GROUP_CONCAT(DISTINCT t7.`projectName`)
-    FROM cert_src t5
-    LEFT JOIN cert_undesirable t7 ON t5.`uuid` = t7.`srcUUid`
-    WHERE
-      t5.companyName = #{comName}
-    GROUP BY t5.companyName
-    order by t7.publishDate desc
-  </select>
-
 </mapper>
