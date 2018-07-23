@@ -37,7 +37,16 @@
                 wx_unionId = #{wxUnionid},
             </if>
             <if test="userpass!=null and userpass!=''">
-                userPass = #{userpass}
+                userPass = #{userpass},
+            </if>
+            <if test="birthday!=null and birthday!=''">
+                birthday = #{birthday},
+            </if>
+            <if test="post!=null and post!=''">
+                post = #{post},
+            </if>
+            <if test="city!=null and city!=''">
+                city = #{city}
             </if>
         </set>
         WHERE userPhone = #{userphone}
@@ -45,7 +54,15 @@
 
     <update id="updateUserTempByQQBind" parameterType="com.silita.biaodaa.model.UserTempBdd">
         UPDATE mishu_write.user_temp_bdd
-        SET nickName = #{nickname}, imgUrl = #{imgurl}, gender = #{gender}, qqopenId = #{qqopenid} ,userPass = #{userpass}
+        SET
+          nickName = #{nickname},
+          imgUrl = #{imgurl},
+          gender = #{gender},
+          qqopenId = #{qqopenid} ,
+          userPass = #{userpass},
+          birthday = #{birthday},
+          post = #{post},
+          city = #{city}
         WHERE userPhone = #{userphone}
     </update>
 
@@ -88,6 +105,15 @@
             </if>
             <if test="companyname!=null and companyname!=''">
                 companyName = #{companyname}
+            </if>
+            <if test="birthday!=null and birthday!=''">
+                birthday = #{birthday},
+            </if>
+            <if test="post!=null and post!=''">
+                post = #{post},
+            </if>
+            <if test="city!=null and city!=''">
+                city = #{city}
             </if>
         </set>
         WHERE userId = #{userid}

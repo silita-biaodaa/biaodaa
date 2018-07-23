@@ -60,4 +60,10 @@ public class UserTempBdd {
     //用于微信，qq第三方绑定
     private Integer type;
 
+    private String birthday;
+
+    private String post;
+
+    private String city;
+
 }
