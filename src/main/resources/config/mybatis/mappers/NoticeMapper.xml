@@ -341,7 +341,14 @@
                 and s.type = #{type}
             </otherwise>
         </choose>
-        <include refid="noticeListTail"/>
+        <choose>
+            <when test="detailType == null or detailType == ''">
+                <include refid="noticeListTail"/>
+            </when>
+            <otherwise>
+                order by opendate desc
+            </otherwise>
+        </choose>
     </select>
 
     <select id="queryNoticeDetail" resultType="Map" parameterType="Map">
