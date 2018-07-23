@@ -46,7 +46,10 @@
                 post = #{post},
             </if>
             <if test="city!=null and city!=''">
-                city = #{city}
+                city = #{city},
+            </if>
+            <if test="name!=null and name!=''">
+                `name` = #{name}
             </if>
         </set>
         WHERE userPhone = #{userphone}
@@ -62,7 +65,8 @@
           userPass = #{userpass},
           birthday = #{birthday},
           post = #{post},
-          city = #{city}
+          city = #{city},
+          `name` = #{name}
         WHERE userPhone = #{userphone}
     </update>
 
@@ -113,7 +117,10 @@
                 post = #{post},
             </if>
             <if test="city!=null and city!=''">
-                city = #{city}
+                city = #{city},
+            </if>
+            <if test="name!=null and name!=''">
+                `name` = #{name}
             </if>
         </set>
         WHERE userId = #{userid}

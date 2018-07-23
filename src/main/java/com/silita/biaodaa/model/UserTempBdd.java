@@ -66,4 +66,6 @@ public class UserTempBdd {
 
     private String city;
 
+    private String name;
+
 }
