@@ -503,7 +503,7 @@ public class CompanyController extends BaseController {
         Map<String,Object> result = new HashMap<>();
         String name = MapUtils.getString(params,"name");
         if(MyStringUtils.isNotNull(name)) {
-            params.put("name","*"+name+"*");
+            params.put("name","*"+name.toLowerCase()+"*");
             params.put("count",5);
             int paramHash = ObjectUtils.buildMapParamHash(params);
             String listKey = RedisConstantInterface.COM_NAME_MATCH + paramHash;
