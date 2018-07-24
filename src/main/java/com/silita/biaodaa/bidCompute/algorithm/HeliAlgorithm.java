@@ -224,6 +224,8 @@ public class HeliAlgorithm implements BidComputeHandler {
             bidEvaluationMethodService.saveAboComList(param, aboList);
 
             if (validList.size() > 0) {
+                List<Map<String,Object>> vald = new ArrayList<>();
+                vald.addAll(validList);
                 if (validList.size() > 5) {
                     this.sort(validList);
                 }
@@ -234,7 +236,7 @@ public class HeliAlgorithm implements BidComputeHandler {
                 Double devRate = 0d;
                 Double total = 0d;
                 Double lowerRate = 0d;
-                for (Map<String, Object> val : validList) {
+                for (Map<String, Object> val : vald) {
                     comPrice = MapUtils.getDouble(val, "comPrice");
                     devRate = DoubleUtils.div(Math.abs(DoubleUtils.subtract(comPrice, jizhunPrice)), jizhunPrice, 4);
                     if (comPrice.compareTo(jizhunPrice) > 0) {
