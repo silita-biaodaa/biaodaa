@@ -39,6 +39,9 @@
             <if test="userpass!=null and userpass!=''">
                 userPass = #{userpass},
             </if>
+            <if test="companyname!=null and companyname!=''">
+                companyName = #{companyname},
+            </if>
             <if test="birthday!=null and birthday!=''">
                 birthday = #{birthday},
             </if>
@@ -64,6 +67,7 @@
           qqopenId = #{qqopenid} ,
           userPass = #{userpass},
           birthday = #{birthday},
+          companyName = #{companyname},
           post = #{post},
           city = #{city},
           `name` = #{name}
@@ -108,7 +112,7 @@
                 mailBox = #{mailbox},
             </if>
             <if test="companyname!=null and companyname!=''">
-                companyName = #{companyname}
+                companyName = #{companyname},
             </if>
             <if test="birthday!=null and birthday!=''">
                 birthday = #{birthday},
