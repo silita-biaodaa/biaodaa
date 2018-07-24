@@ -240,9 +240,9 @@ public class HeliAlgorithm implements BidComputeHandler {
                     comPrice = MapUtils.getDouble(val, "comPrice");
                     devRate = DoubleUtils.div(Math.abs(DoubleUtils.subtract(comPrice, jizhunPrice)), jizhunPrice, 4);
                     if (comPrice.compareTo(jizhunPrice) > 0) {
-                        total = DoubleUtils.subtract(100, DoubleUtils.mul(devRate, 2));
+                        total = DoubleUtils.subtract(100, DoubleUtils.mul(2,DoubleUtils.mul(devRate, 100)));
                     } else {
-                        total = DoubleUtils.add(100, DoubleUtils.mul(devRate, 1), 0);
+                        total = DoubleUtils.add(100, DoubleUtils.mul(1,DoubleUtils.mul(devRate, 100)), 0);
                     }
                     //计算下浮率
                     lowerRate = DoubleUtils.div(comPrice, bidPrice, 4);
