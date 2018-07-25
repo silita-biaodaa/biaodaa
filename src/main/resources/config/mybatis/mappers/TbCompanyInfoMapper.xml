@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbCompanyInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbCompanyInfo" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="VARCHAR" />
+    <result column="com_name" property="comName" jdbcType="VARCHAR" />
+    <result column="credit_code" property="creditCode" jdbcType="VARCHAR" />
+    <result column="business_num" property="businessNum" jdbcType="VARCHAR" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="com_type" property="comType" jdbcType="VARCHAR" />
+    <result column="trade" property="trade" jdbcType="VARCHAR" />
+    <result column="legal_person" property="legalPerson" jdbcType="VARCHAR" />
+    <result column="regis_capital" property="regisCapital" jdbcType="VARCHAR" />
+    <result column="regis_date" property="regisDate" jdbcType="VARCHAR" />
+    <result column="start_date" property="startDate" jdbcType="VARCHAR" />
+    <result column="end_date" property="endDate" jdbcType="VARCHAR" />
+    <result column="check_org" property="checkOrg" jdbcType="VARCHAR" />
+    <result column="check_date" property="checkDate" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="com_url" property="comUrl" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="scope" property="scope" jdbcType="LONGVARCHAR" />
+    <result column="com_address" property="comAddress" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <insert id="batchInsertCompanyInfo" parameterType="java.util.List">
+    INSERT INTO `tb_company_info`(
+              `pkid`,`com_name`,`credit_code`,`business_num`,`org_code`,`province`,`city`,
+             `com_type`,`trade`,`legal_person`,`regis_capital`,`regis_date`,`start_date`,
+             `end_date`,`check_org`,`check_date`,`scope`,`com_address`,`phone`,`email`,`com_url`,
+             `status`)
+    VALUES
+    <foreach collection="list" item="list" separator=",">
+      (
+        #{list.pkid},#{list.comName},#{list.creditCode},#{list.businessNum},#{list.orgCode},#{list.province},#{list.city},
+        #{list.comType},#{list.trade},#{list.legalPerson},#{list.regisCapital},#{list.regisDate},#{list.startDate},
+        #{list.endDate},#{list.checkOrg},#{list.checkDate},#{list.scope},#{list.comAddress},#{list.phone},#{list.email},#{list.comUrl},
+        #{list.status}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="insertCompanyInfo" parameterType="com.silita.biaodaa.model.TbCompanyInfo">
+    INSERT INTO `tb_company_info`(
+    `pkid`,`com_name`,`credit_code`,`business_num`,`org_code`,`province`,`city`,
+    `com_type`,`trade`,`legal_person`,`regis_capital`,`regis_date`,`start_date`,
+    `end_date`,`check_org`,`check_date`,`scope`,`com_address`,`phone`,`email`,`com_url`,
+    `status`)
+    VALUES
+    (
+    #{pkid},#{comName},#{creditCode},#{businessNum},#{orgCode},#{province},#{city},
+    #{comType},#{trade},#{legalPerson},#{regisCapital},#{regisDate},#{startDate},
+    #{endDate},#{checkOrg},#{checkDate},#{scope},#{comAddress},#{phone},#{email},#{comUrl},
+    #{status}
+    )
+  </insert>
+</mapper>

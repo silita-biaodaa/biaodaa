@@ -242,7 +242,7 @@ public class HeliAlgorithm implements BidComputeHandler {
                     if (comPrice.compareTo(jizhunPrice) > 0) {
                         total = DoubleUtils.subtract(100, DoubleUtils.mul(2,DoubleUtils.mul(devRate, 100)));
                     } else {
-                        total = DoubleUtils.add(100, DoubleUtils.mul(1,DoubleUtils.mul(devRate, 100)), 0);
+                        total = DoubleUtils.subtract(100, DoubleUtils.mul(1,DoubleUtils.mul(devRate, 100)));
                     }
                     //计算下浮率
                     lowerRate = DoubleUtils.div(comPrice, bidPrice, 4);
