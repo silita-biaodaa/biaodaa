@@ -35,8 +35,8 @@ public class ProjectBuildService {
     private static ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
 
     public TbProjectBuild getProjectDetail(Map<String,Object> param){
-        Integer pkid = MapUtils.getInteger(param,"pkid");
-        Integer proId = MapUtils.getInteger(param,"proId");
+        String pkid = MapUtils.getString(param,"pkid");
+        String proId = MapUtils.getString(param,"proId");
         TbProject project = tbProjectMapper.queryProjectDetail(proId);
         String province = "湖南省";
         if(null != project){

@@ -12,12 +12,12 @@ public class TbProjectContract {
     /**
      * 项目下的合同备案自增id
      */
-    private Integer pkid;
+    private String pkid;
 
     /**
      * 项目id
      */
-    private Integer proId;
+    private String proId;
 
     /**
      * 合同备案编号

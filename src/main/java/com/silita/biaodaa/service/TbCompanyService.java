@@ -62,7 +62,7 @@ public class TbCompanyService {
         return pageInfo;
     }
 
-    public TbCompany getCompany(Integer comId) {
+    public TbCompany getCompany(String comId) {
         TbCompany tbCompany = tbCompanyMapper.getCompany(comId);
         Map<String, Object> param = new HashMap<>();
         param.put("comId", comId);
@@ -80,7 +80,7 @@ public class TbCompanyService {
         return tbCompany;
     }
 
-    public Map<String, List<TbCompanyQualification>> queryCompanyQualification(Integer comId) {
+    public Map<String, List<TbCompanyQualification>> queryCompanyQualification(String comId) {
         Map<String, List<TbCompanyQualification>> qualMap = new HashMap<>();
         if (comId != null) {
             // TODO: 18/4/10 需要关联标准资质表
@@ -121,7 +121,7 @@ public class TbCompanyService {
         return qualMap;
     }
 
-    public List<Map<String, Object>> queryQualList(Integer comId) {
+    public List<Map<String, Object>> queryQualList(String comId) {
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, List<TbCompanyQualification>> qualMap = queryCompanyQualification(comId);
         Set<String> set = qualMap.keySet();
@@ -134,11 +134,11 @@ public class TbCompanyService {
         return list;
     }
 
-    public List<Map<String, Object>> getCompanyPersonCate(Integer comId) {
+    public List<Map<String, Object>> getCompanyPersonCate(String comId) {
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> param = new HashMap<>();
         if (comId != null) {
-            if (comId == 0) {
+            if ("0".equals(comId)) {
                 List<Map<String, Object>> categoryList = new ArrayList<>();
                 String[] str = {"一级注册建筑师", "一级临时注册建造师", "一级注册建造师", "一级注册结构工程师",
                         "二级注册建筑师", "二级临时注册建造师", "二级注册建造师", "二级注册结构工程师",
@@ -376,7 +376,7 @@ public class TbCompanyService {
         return areaList;
     }
 
-    public Map<String, Object> getCompanyReputation(Integer comId) {
+    public Map<String, Object> getCompanyReputation(String comId) {
         Map<String, Object> resultMap = new HashMap<>();
         Double score = 0d;
         Double secur = 0d;
@@ -553,7 +553,7 @@ public class TbCompanyService {
         return resultMap;
     }
 
-    public Map<String, Object> getUndesirable(Integer comId) {
+    public Map<String, Object> getUndesirable(String comId) {
         Map<String, Object> resultMap = new HashMap<>();
 
         TbCompany company = tbCompanyMapper.getCompanyOrgCode(comId);
@@ -654,7 +654,7 @@ public class TbCompanyService {
      * @param comId
      * @return
      */
-    public String getLogo(Integer comId) {
+    public String getLogo(String comId) {
         return tbCompanyMapper.getLogo(comId);
     }
 

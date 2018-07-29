@@ -198,7 +198,7 @@ public class NoticeService {
             Map argMap = new HashMap();
             argMap.put("userId",userId);
             argMap.put("idSet",idSet);
-            List<Long> collIds = null;
+            List collIds = null;
             if("notice".equals(params.get("collType"))) {
                 collIds = this.queryNoticeCollStatus(argMap);
             }else if("company".equals(params.get("collType"))){
@@ -209,7 +209,7 @@ public class NoticeService {
                 if (collIds != null && collIds.size() > 0) {
                     for (Object obj : list) {
                         TbCompany comObj = ((TbCompany)obj);
-                        if (collIds.contains(Long.parseLong(comObj.getComId().toString()))) {
+                        if (collIds.contains(comObj.getComId())) {
                             comObj.setCollected(true);
                         } else {
                             comObj.setCollected(false);
@@ -267,9 +267,9 @@ public class NoticeService {
                     List<TbCompany> companyCertList = noticeMapper.selectCompanyCert(idsMap);
                     List<TbCompany> companyCertBasicList = noticeMapper.selectCompanyCertBasic(idsMap);
                     for(TbCompany company: list){
-                        int comid = company.getComId().intValue();
+                        String comid = company.getComId();
                         for(TbCompany cert:companyCertList){
-                                if(cert.getComId().intValue()==comid){
+                                if(cert.getComId().equals(comid)){
                                     company.setCertNo(cert.getCertNo());
                                     company.setCertDate(cert.getCertDate());
                                     company.setValidDate(cert.getValidDate());
@@ -278,7 +278,7 @@ public class NoticeService {
                                 }
                         }
                         for(TbCompany certBase:companyCertBasicList){
-                            if(certBase.getComId().intValue()==comid){
+                            if(certBase.getComId().equals(comid)){
                                 company.setComRange(certBase.getComRange());
                                 company.setSubsist("存续");//根据要求统一修改
                                 companyCertBasicList.remove(certBase);
@@ -453,7 +453,7 @@ public class NoticeService {
         return articlesMapper.queryArticleDetail(id);
     }
 
-    public List<Long> queryCompanyCollStatus(Map map){
+    public List<String> queryCompanyCollStatus(Map map){
         return noticeMapper.queryCompanyCollStatus(map);
     }
 

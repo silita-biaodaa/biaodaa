@@ -16,5 +16,5 @@ public interface TbProjectContractMapper extends MyMapper<TbProjectContract> {
      * @param proId
      * @return
      */
-    List<TbProjectContract> queryProjectContractListByProId(Integer proId);
+    List<TbProjectContract> queryProjectContractListByProId(String proId);
 }

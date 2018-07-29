@@ -5,7 +5,7 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <id column="pkid" property="pkid" jdbcType="VARCHAR" />
     <result column="pro_id" property="proId" jdbcType="VARCHAR" />
     <result column="zhongbiao_code" property="zhongbiaoCode" jdbcType="VARCHAR" />
     <result column="prov_zhongbiao_code" property="provZhongbiaoCode" jdbcType="VARCHAR" />
@@ -24,7 +24,7 @@
   </resultMap>
 
   <!--获取项目下的招投标列表-->
-  <select id="queryZhaotoubiaoListByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  <select id="queryZhaotoubiaoListByProId" resultMap="BaseResultMap" parameterType="java.lang.String">
      select t.`pkid`
             ,t.`pro_id`
             ,t.`zhongbiao_code`
@@ -66,5 +66,9 @@
         LEFT JOIN tb_company t3 ON t1.`com_id` = t3.`com_id`
         WHERE t1.`b_org` = #{company}
         AND t1.`pkid` = #{pkid}
+    </select>
+
+    <select id="queryZhaotouDetailByPkid" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select t.*
     </select>
 </mapper>

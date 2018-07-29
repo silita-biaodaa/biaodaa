@@ -8,6 +8,7 @@
     <id column="pkid" property="pkid" jdbcType="INTEGER" />
     <result column="innerid" property="innerid" jdbcType="VARCHAR" />
     <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="pro_id" property="proId" jdbcType="INTEGER" />
     <result column="com_name" property="comName" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="category" property="category" jdbcType="VARCHAR" />

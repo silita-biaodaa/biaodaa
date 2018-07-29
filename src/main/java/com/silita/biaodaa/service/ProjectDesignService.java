@@ -34,8 +34,8 @@ public class ProjectDesignService {
     private static ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
 
     public TbProjectDesign getProjectDesignDetail(Map<String,Object> param){
-        Integer pkid = MapUtils.getInteger(param,"pkid");
-        Integer proId = MapUtils.getInteger(param,"proId");
+        String pkid = MapUtils.getString(param,"pkid");
+        String proId = MapUtils.getString(param,"proId");
         TbProjectDesign projectDesign = tbProjectDesignMapper.queryProjectDesignDetailByPkid(pkid);
         if(null == projectDesign){
             return new TbProjectDesign();

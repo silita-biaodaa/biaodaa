@@ -12,7 +12,7 @@ public class TbPersonProject {
     /**
      * 项目部人员ID
      */
-    private Integer pkid;
+    private String pkid;
 
     /**
      * 网站内部ID
@@ -22,7 +22,12 @@ public class TbPersonProject {
     /**
      * 关联项目ID
      */
-    private Integer pid;
+    private String pid;
+
+    /**
+     * 主项目Id
+     */
+    private String proId;
 
     /**
      * 企业名称

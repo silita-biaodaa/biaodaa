@@ -35,13 +35,13 @@ public class TbCompanyServiceTest extends ConfigTest {
 
     @Test
     public void queryCompanyQualification(){
-        Map<String,List<TbCompanyQualification>> map = tbCompanyService.queryCompanyQualification(31);
+        Map<String,List<TbCompanyQualification>> map = tbCompanyService.queryCompanyQualification("31");
         System.out.println("-----");
     }
 
     @Test
     public void getCompanyReputation(){
-        Map<String,Object> map = tbCompanyService.getCompanyReputation(3875);
+        Map<String,Object> map = tbCompanyService.getCompanyReputation("3875");
         System.out.println("-------");
     }
 }

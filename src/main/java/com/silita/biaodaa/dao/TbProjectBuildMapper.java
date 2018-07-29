@@ -20,21 +20,21 @@ public interface TbProjectBuildMapper extends MyMapper<TbProjectBuild> {
      * @param proId
      * @return
      */
-    List<TbProjectBuild> queryConstartProBuildByProId(Integer proId);
+    List<TbProjectBuild> queryConstartProBuildByProId(String proId);
 
     /**
      * 获取项目下的招投标解析字段
      * @param proId
      * @return
      */
-    List<TbProjectBuild> queryZhaobiaoProByProId(Integer proId);
+    List<TbProjectBuild> queryZhaobiaoProByProId(String proId);
 
     /**
      * 获取项目下的所有施工许可
      * @param proId
      * @return
      */
-    List<TbProjectBuild> queryProjectBuildByProId(Integer proId);
+    List<TbProjectBuild> queryProjectBuildByProId(String proId);
 
     /**
      * 获取施工许可详情
@@ -42,19 +42,19 @@ public interface TbProjectBuildMapper extends MyMapper<TbProjectBuild> {
      * @param pkid
      * @return
      */
-    TbProjectBuild queryProjectBuildDetail(@Param("proId") Integer proId,@Param("pkid") Integer pkid);
+    TbProjectBuild queryProjectBuildDetail(@Param("proId") String proId,@Param("pkid") String pkid);
 
     /**
      * 获取该项目下的施工单位
      * @param proId
      * @return
      */
-    List<Map<String,Object>> queryProjectBuildCompany(Integer proId);
+    List<Map<String,Object>> queryProjectBuildCompany(String proId);
 
     /**
      * 公司下的主项目Id
      * @param comId
      * @return
      */
-    List<Integer> queryProIdByComId(Integer comId);
+    List<String> queryProIdByComId(String comId);
 }

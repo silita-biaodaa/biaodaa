@@ -5,9 +5,9 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <id column="pkid" property="pkid" jdbcType="VARCHAR" />
     <result column="bdxh" property="bdxh" jdbcType="VARCHAR" />
-    <result column="pro_id" property="proId" jdbcType="INTEGER" />
+    <result column="pro_id" property="proId" jdbcType="VARCHAR" />
     <result column="pro_name" property="proName" jdbcType="VARCHAR" />
     <result column="pro_type" property="proType" jdbcType="VARCHAR" />
     <result column="com_id" property="comId" jdbcType="INTEGER" />
@@ -33,14 +33,14 @@
     <result column="record_date" property="recordDate" jdbcType="VARCHAR"/>
   </resultMap>
 
-  <select id="queryConstartProBuildByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="queryConstartProBuildByProId" parameterType="java.lang.String" resultMap="BaseResultMap">
       SELECT t.`contract_remark`
        ,t.`contract_category`
       FROM tb_project_build t
       WHERE t.`pro_id` = #{proId}
   </select>
 
-  <select id="queryZhaobiaoProByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  <select id="queryZhaobiaoProByProId" resultMap="BaseResultMap" parameterType="java.lang.String">
       SELECT
         t.`pkid`
         ,t.`bid_price`
@@ -53,13 +53,13 @@
       GROUP BY t.`bdxh`
   </select>
 
-  <select id="queryProjectBuildByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  <select id="queryProjectBuildByProId" resultMap="BaseResultMap" parameterType="java.lang.String">
       SELECT t.*
       FROM tb_project_build t
       WHERE t.`pro_id` = #{proId}
   </select>
 
-    <select id="queryProjectBuildDetail" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="queryProjectBuildDetail" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT
           t.*
           ,t1.`acreage`
@@ -76,7 +76,7 @@
         </if>
     </select>
 
-    <select id="queryProjectBuildCompany" parameterType="java.lang.Integer" resultType="java.util.Map">
+    <select id="queryProjectBuildCompany" parameterType="java.lang.String" resultType="java.util.Map">
         SELECT t.`b_org` AS comName
             ,t1.`org_code` AS orgCode
             ,(SELECT t3.display_name FROM mishu.`area` t3 WHERE t3.path = SUBSTRING_INDEX(t2.`path`,',',1)) AS province
@@ -88,7 +88,7 @@
         GROUP BY t1.`com_id`
     </select>
 
-    <select id="queryProIdByComId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    <select id="queryProIdByComId" resultType="java.lang.String" parameterType="java.lang.String">
         select
           t.pro_id
         from tb_project_build t

@@ -12,7 +12,7 @@ public class TbCompanyQualification {
     /**
      * 企业资质ID
      */
-    private Integer pkid;
+    private String pkid;
 
     /**
      * 网站内部ID
@@ -52,7 +52,7 @@ public class TbCompanyQualification {
     /**
      * 企业ID
      */
-    private Integer comId;
+    private String comId;
 
     /**
      * 企业名称

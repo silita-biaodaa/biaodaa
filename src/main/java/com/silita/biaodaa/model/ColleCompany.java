@@ -13,7 +13,7 @@ public class ColleCompany {
     /**
      * 公司Id
      */
-    private Integer companyid;
+    private String companyid;
 
     /**
      * 公司名称

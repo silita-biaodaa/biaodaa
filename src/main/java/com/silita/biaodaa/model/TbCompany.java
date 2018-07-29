@@ -13,7 +13,7 @@ public class TbCompany  implements Serializable{
     /**
      * 企业ID
      */
-    private Integer comId;
+    private String comId;
 
     /**
      * 企业名称
@@ -88,4 +88,10 @@ public class TbCompany  implements Serializable{
     private boolean collected=false;//关注状态（默认值显示没关注）
 
     private String url;
+
+    private String  phone;
+
+    private String email;
+
+    private String comUrl;
 }

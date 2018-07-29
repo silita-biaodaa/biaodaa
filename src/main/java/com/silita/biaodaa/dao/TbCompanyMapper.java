@@ -11,7 +11,7 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
 
     List<TbCompany> queryCompanyList(String keyWord);
 
-    TbCompany getCompany(Integer comId);
+    TbCompany getCompany(String comId);
 
     /**
      * 根据名称获取公司详情
@@ -30,7 +30,7 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
 
     List<String> queryCityList(String parentId);
 
-    TbCompany getCompanyOrgCode(Integer comId);
+    TbCompany getCompanyOrgCode(String comId);
 
     List<String> getCertSrcUuid(String companyCode);
 
@@ -42,11 +42,11 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
 
     Double getUndesirableScore(Map<String,Object> param);
 
-    String getLogo(Integer comId);
+    String getLogo(String comId);
 
     Integer getColleCount(Map<String,Object> param);
 
-    String getCompanyUrl(Integer comId);
+    String getCompanyUrl(String comId);
 
     List<Map> matchName(Map argMap);
 

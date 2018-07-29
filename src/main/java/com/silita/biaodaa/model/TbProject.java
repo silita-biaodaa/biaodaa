@@ -11,7 +11,7 @@ public class TbProject {
     /**
      * 项目ID
      */
-    private Integer proId;
+    private String proId;
 
     /**
      * 网站内部ID

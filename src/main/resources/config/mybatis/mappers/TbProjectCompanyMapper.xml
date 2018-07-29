@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbProjectCompanyMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectCompany">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="VARCHAR"/>
+        <result column="md5" property="md5" jdbcType="VARCHAR"/>
+        <result column="innerId" property="innerid" jdbcType="VARCHAR"/>
+        <result column="pro_id" property="proId" jdbcType="VARCHAR"/>
+        <result column="pid" property="pid" jdbcType="VARCHAR"/>
+        <result column="role" property="role" jdbcType="VARCHAR"/>
+        <result column="com_name" property="comName" jdbcType="VARCHAR"/>
+        <result column="org_code" property="orgCode" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="queryProIdForCom" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT t.`pro_id` AS proId
+        FROM
+        tb_project_company t
+        WHERE 1=1
+        <if test="comName != null and comName != ''">
+            AND t.`com_name` = #{comName}
+        </if>
+        <if test="orgCode != null and orgCode != ''">
+            AND t.`org_code` = #{orgCode}
+        </if>
+    </select>
+</mapper>

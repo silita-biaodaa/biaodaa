@@ -11,7 +11,7 @@ public class TbPersonQualification {
     /**
      * 人员资质主键
      */
-    private Integer pkid;
+    private String pkid;
 
     /**
      * 网站内部ID
@@ -56,7 +56,7 @@ public class TbPersonQualification {
     /**
      * 企业ID
      */
-    private Integer comId;
+    private String comId;
 
     /**
      * 单位名称

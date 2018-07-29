@@ -5,8 +5,8 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="pkid" property="pkid" jdbcType="INTEGER" />
-    <result column="pro_id" property="proId" jdbcType="INTEGER" />
+    <id column="pkid" property="pkid" jdbcType="VARCHAR" />
+    <result column="pro_id" property="proId" jdbcType="VARCHAR" />
     <result column="record_code" property="recordCode" jdbcType="VARCHAR" />
     <result column="prov_record_code" property="provRecordCode" jdbcType="VARCHAR" />
     <result column="code" property="code" jdbcType="VARCHAR" />
@@ -19,7 +19,7 @@
     <result column="created" property="created" jdbcType="TIMESTAMP" />
   </resultMap>
 
-  <select id="queryProjectContractListByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  <select id="queryProjectContractListByProId" resultMap="BaseResultMap" parameterType="java.lang.String">
     SELECT t.*
 	  ,GROUP_CONCAT(t2.`com_name`)
     FROM tb_project_contract t

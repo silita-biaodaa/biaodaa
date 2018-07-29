@@ -5,9 +5,9 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <id column="pkid" property="pkid" jdbcType="VARCHAR" />
     <result column="jlbdxh" property="jlbdxh" jdbcType="VARCHAR" />
-    <result column="pro_id" property="proId" jdbcType="INTEGER" />
+    <result column="pro_id" property="proId" jdbcType="VARCHAR" />
     <result column="pro_name" property="proName" jdbcType="VARCHAR" />
     <result column="pro_type" property="proType" jdbcType="VARCHAR" />
     <result column="com_id" property="comId" jdbcType="INTEGER" />
@@ -21,14 +21,14 @@
     <result column="contract_remark" property="contractRemark" jdbcType="LONGVARCHAR" />
   </resultMap>
 
-  <select id="queryProjectSupervisionListByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  <select id="queryProjectSupervisionListByProId" resultMap="BaseResultMap" parameterType="java.lang.String">
     SELECT
       t.*
     FROM tb_project_supervision t
     WHERE t.`pro_id` =#{proId};
   </select>
 
-  <select id="queryProjectSupCompany" parameterType="java.lang.Integer" resultType="java.util.Map">
+  <select id="queryProjectSupCompany" parameterType="java.lang.String" resultType="java.util.Map">
     SELECT
       t1.`com_name` AS comName
       ,t1.`org_code` AS orgCode
@@ -41,7 +41,7 @@
     GROUP BY t1.`com_id`
   </select>
 
-  <select id="queryProIdByComId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  <select id="queryProIdByComId" parameterType="java.lang.Integer" resultType="java.lang.String">
     select
       t.pro_id
     from tb_project_supervision t
@@ -61,7 +61,7 @@
       AND t1.`pkid` = #{pkid}
   </select>
 
-  <select id="querySupervisionDetailById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="querySupervisionDetailById" parameterType="java.lang.String" resultMap="BaseResultMap">
     select t.*
             ,t1.pro_where as proWhere
             ,t1.pro_type as proTypeMain

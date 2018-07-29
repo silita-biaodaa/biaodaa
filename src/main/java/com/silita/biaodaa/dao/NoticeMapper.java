@@ -33,7 +33,7 @@ public interface NoticeMapper {
 
     List<Map> queryRelations(Map map);
 
-    List<Long> queryCompanyCollStatus(Map map);
+    List<String> queryCompanyCollStatus(Map map);
 
     List<Long> queryNoticeCollStatus(Map map);
 

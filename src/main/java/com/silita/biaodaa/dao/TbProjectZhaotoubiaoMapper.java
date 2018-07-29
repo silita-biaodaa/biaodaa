@@ -13,7 +13,7 @@ public interface TbProjectZhaotoubiaoMapper extends MyMapper<TbProjectZhaotoubia
      * @param proId
      * @return
      */
-    List<TbProjectZhaotoubiao> queryZhaotoubiaoListByProId(Integer proId);
+    List<TbProjectZhaotoubiao> queryZhaotoubiaoListByProId(String proId);
 
     /**
      * 获取招投标列表详情
@@ -28,4 +28,11 @@ public interface TbProjectZhaotoubiaoMapper extends MyMapper<TbProjectZhaotoubia
      * @return
      */
     Map<String,Object> queryZhaobiaoDetailByBuild(Map<String,Object> param);
+
+    /**
+     * 获取详情
+     * @param pkid
+     * @return
+     */
+    TbProjectZhaotoubiao queryZhaotouDetailByPkid(String pkid);
 }

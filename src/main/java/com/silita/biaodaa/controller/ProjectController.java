@@ -57,7 +57,7 @@ public class ProjectController extends BaseController{
         Map<String,Object> result = new HashMap<String, Object>();
         result.put("code",this.SUCCESS_CODE);
         result.put("msg",this.SUCCESS_MSG);
-        projectService.getProjectDetail(MapUtils.getInteger(param,"id"),result);
+        projectService.getProjectDetail(MapUtils.getString(param,"id"),result);
         return result;
     }
 
@@ -108,7 +108,7 @@ public class ProjectController extends BaseController{
         Map<String,Object> result = new HashMap<String,Object>();
         result.put("code",this.SUCCESS_CODE);
         result.put("msg",this.SUCCESS_MSG);
-        result.put("data",projectService.getProjectCompanyList(MapUtils.getInteger(param,"comId")));
+        result.put("data",projectService.getProjectCompanyList(MapUtils.getString(param,"comId")));
         return result;
     }
 

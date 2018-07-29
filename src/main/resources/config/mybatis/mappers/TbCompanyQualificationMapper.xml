@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.biaodaa.dao.TbCompanyQualificationMapper" >
 
-  <select id="queryCompanyQualification" parameterType="Integer" resultType="com.silita.biaodaa.model.TbCompanyQualification">
+  <select id="queryCompanyQualification" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbCompanyQualification">
     select * from tb_company_qualification where com_id = #{comId}
   </select>
 

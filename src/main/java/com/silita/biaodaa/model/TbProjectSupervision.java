@@ -12,7 +12,7 @@ public class TbProjectSupervision {
     /**
      * 监理自增主键
      */
-    private Integer pkid;
+    private String pkid;
 
     /**
      * 监理项目内部ID
@@ -22,7 +22,7 @@ public class TbProjectSupervision {
     /**
      * 项目ID
      */
-    private Integer proId;
+    private String proId;
 
     /**
      * 项目名称

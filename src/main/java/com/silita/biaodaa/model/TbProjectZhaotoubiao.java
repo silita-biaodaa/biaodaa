@@ -13,7 +13,7 @@ public class TbProjectZhaotoubiao {
     /**
      * 项目下的招投标详情自增id
      */
-    private Integer pkid;
+    private String pkid;
 
     /**
      * 项目id

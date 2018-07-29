@@ -37,7 +37,7 @@ public interface TbProjectMapper extends MyMapper {
      * @param proId 项目Id
      * @return
      */
-    TbProject queryProjectDetail(Integer proId);
+    TbProject queryProjectDetail(String proId);
 
     /**
      * 根据Id获取详情

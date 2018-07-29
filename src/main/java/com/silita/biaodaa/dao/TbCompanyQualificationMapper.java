@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TbCompanyQualificationMapper extends MyMapper<TbCompanyQualification> {
 
-    List<TbCompanyQualification> queryCompanyQualification(Integer comId);
+    List<TbCompanyQualification> queryCompanyQualification(String comId);
 }

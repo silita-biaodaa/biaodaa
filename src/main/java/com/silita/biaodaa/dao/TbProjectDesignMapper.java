@@ -18,7 +18,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @param id
      * @return
      */
-    List<TbProjectDesign> queryProjectDesignByProId(Integer id);
+    List<TbProjectDesign> queryProjectDesignByProId(String id);
 
     /**
      * 获取详情
@@ -26,7 +26,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @param proId
      * @return
      */
-    List<TbProjectDesign> queryProjectDesignDetailByProId(Integer proId);
+    List<TbProjectDesign> queryProjectDesignDetailByProId(String proId);
 
     /**
      * 根据市获取省
@@ -41,7 +41,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @param proId
      * @return
      */
-    TbProjectDesign queryProjectDesignDetailLimitOneByProId(Integer proId);
+    TbProjectDesign queryProjectDesignDetailLimitOneByProId(String proId);
 
     /**
      * 根据主键id获取详情
@@ -49,7 +49,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @param pkid
      * @return
      */
-    TbProjectDesign queryProjectDesignDetailByPkid(Integer pkid);
+    TbProjectDesign queryProjectDesignDetailByPkid(String pkid);
 
     /**
      * 获取勘察公司名称
@@ -57,7 +57,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @param proId
      * @return
      */
-    List<Map<String,Object>> queryExProjectDesignCompany(Integer proId);
+    List<Map<String,Object>> queryExProjectDesignCompany(String proId);
 
     /**
      * 获取设计公司名称
@@ -65,19 +65,19 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @param proId
      * @return
      */
-    List<Map<String,Object>> queryDeProjectDesignCompany(Integer proId);
+    List<Map<String,Object>> queryDeProjectDesignCompany(String proId);
 
     /**
      * 获取勘察设计下的主项目Id
      * @param comId
      * @return
      */
-    List<Integer> queryProIdByComId(Integer comId);
+    List<String> queryProIdByComId(String comId);
 
     /**
      * 根据主键id获取详情
      * @param pkid
      * @return
      */
-    TbProjectDesign queryProjectDesignById(Integer pkid);
+    TbProjectDesign queryProjectDesignById(String pkid);
 }

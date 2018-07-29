@@ -8,7 +8,6 @@ import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.es.ElasticseachService;
-import com.silita.biaodaa.model.CompanyEs;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.silita.biaodaa.common.RedisConstantInterface.COM_OVER_TIME;
@@ -103,13 +103,15 @@ public class CompanyController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/{comId}", method = RequestMethod.POST,produces = "application/json")
-    public Map<String, Object> getCompany(@PathVariable Integer comId) {
-        Map<String,Object> result = new HashMap<>();
+    public Map<String, Object> getCompany(@PathVariable Object comId) {
+         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业查询失败!");
-
         try {
-            TbCompany tbCompany = tbCompanyService.getCompany(comId);
+            TbCompany tbCompany = tbCompanyService.getCompany(comId.toString());
+            //生成随机数
+            Integer id = this.code();
+            tbCompany.setComId(id.toString());
             result.put("data",tbCompany);
             result.put("code", 1);
             result.put("msg", "查询成功!");
@@ -127,11 +129,10 @@ public class CompanyController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/qual/{comId}", method = RequestMethod.POST,produces = "application/json")
-    public Map<String, Object> queryCompanyQualification(@PathVariable Integer comId) {
+    public Map<String, Object> queryCompanyQualification(@PathVariable String comId) {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业资质失败!");
-
         try {
             List<Map<String,Object>> queryQualList = tbCompanyService.queryQualList(comId);
             result.put("data",queryQualList);
@@ -151,7 +152,7 @@ public class CompanyController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/personCategory/{comId}", method = RequestMethod.POST,produces = "application/json")
-    public Map<String, Object> getPersonCategory(@PathVariable Integer comId) {
+    public Map<String, Object> getPersonCategory(@PathVariable String comId) {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "获取企业注册人员类别失败!");
@@ -202,7 +203,7 @@ public class CompanyController extends BaseController {
             }
             param.put("keyWord",keyWord);
             if(comId!=null&&!"".equals(comId)){
-                TbCompany company = tbCompanyService.getCompany(Integer.parseInt(comId));
+                TbCompany company = tbCompanyService.getCompany(comId);
                 if(company!=null){
                     param.put("comId",comId);
                     param.put("comName",company.getComName());
@@ -354,7 +355,7 @@ public class CompanyController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/reputation/{comId}", method = RequestMethod.POST,produces = "application/json")
-    public Map<String, Object> getCompanyReputation(@PathVariable Integer comId) {
+    public Map<String, Object> getCompanyReputation(@PathVariable String comId) {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业信誉查询失败!");
@@ -378,7 +379,7 @@ public class CompanyController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/undesirable/{comId}", method = RequestMethod.POST,produces = "application/json")
-    public Map<String, Object> getUndesirable(@PathVariable Integer comId) {
+    public Map<String, Object> getUndesirable(@PathVariable String comId) {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业不良记录查询失败!");
@@ -412,8 +413,8 @@ public class CompanyController extends BaseController {
         result.put("code", 1);
         result.put("msg", "获得企业logo成功！");
         try {
-            Integer comId = (Integer) params.get("comId");
-            Preconditions.checkArgument(null != comId && comId > 0, "comId不能为空且要大于0");
+            String comId = params.get("comId").toString();
+            Preconditions.checkArgument(null != comId && "" != comId, "comId不能为空");
             String logo = tbCompanyService.getLogo(comId);
             result.put("data", logo);
             result.put("code", 1);
@@ -571,5 +572,12 @@ public class CompanyController extends BaseController {
         resultMap.put("msg",this.SUCCESS_MSG);
         elasticseachService.bastchAddCompany();
         return resultMap;
+    }
+
+
+    private int code(){
+        Random random = new Random();
+        int code = random.nextInt(1000000000);
+        return code;
     }
 }

@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.biaodaa.dao.TbProjectDesignMapper" >
-  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectDesign" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="pkid" property="pkid" jdbcType="INTEGER" />
-    <result column="sgtxh" property="sgtxh" jdbcType="VARCHAR" />
-    <result column="pro_id" property="proId" jdbcType="INTEGER" />
-    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
-    <result column="pro_type" property="proType" jdbcType="VARCHAR" />
-    <result column="com_id" property="comId" jdbcType="INTEGER" />
-    <result column="explore_org" property="exploreOrg" jdbcType="VARCHAR" />
-    <result column="design_org" property="designOrg" jdbcType="VARCHAR" />
-    <result column="check_org" property="checkOrg" jdbcType="VARCHAR" />
-    <result column="check_no" property="checkNo" jdbcType="VARCHAR" />
-    <result column="check_number" property="checkNumber" jdbcType="VARCHAR" />
-    <result column="check_finish_date" property="checkFinishDate" jdbcType="VARCHAR" />
-    <result column="check_person" property="checkPerson" jdbcType="VARCHAR" />
-    <result column="type" property="type" jdbcType="VARCHAR" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
-    <result column="pro_scope" property="proScope" jdbcType="LONGVARCHAR" />
-    <result column="checkOrgCode" property="checkOrgCode" jdbcType="VARCHAR"/>
-    <result column="designOrgCode" property="designOrgCode" jdbcType="VARCHAR"/>
-    <result column="exploreOrgCode" property="exploreOrgCode" jdbcType="VARCHAR"/>
-      <result column="regisAddressDesign" property="regisAddressDesign" jdbcType="VARCHAR"/>
-      <result column="regisAddressExplore" property="regisAddressExplore" jdbcType="VARCHAR"/>
-      <result column="pro_where" property="proWhere" jdbcType="VARCHAR"/>
-  </resultMap>
+<mapper namespace="com.silita.biaodaa.dao.TbProjectDesignMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectDesign">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="VARCHAR"/>
+        <result column="sgtxh" property="sgtxh" jdbcType="VARCHAR"/>
+        <result column="pro_id" property="proId" jdbcType="VARCHAR"/>
+        <result column="pro_name" property="proName" jdbcType="VARCHAR"/>
+        <result column="pro_type" property="proType" jdbcType="VARCHAR"/>
+        <result column="com_id" property="comId" jdbcType="VARCHAR"/>
+        <result column="explore_org" property="exploreOrg" jdbcType="VARCHAR"/>
+        <result column="design_org" property="designOrg" jdbcType="VARCHAR"/>
+        <result column="check_org" property="checkOrg" jdbcType="VARCHAR"/>
+        <result column="check_no" property="checkNo" jdbcType="VARCHAR"/>
+        <result column="check_number" property="checkNumber" jdbcType="VARCHAR"/>
+        <result column="check_finish_date" property="checkFinishDate" jdbcType="VARCHAR"/>
+        <result column="check_person" property="checkPerson" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+        <result column="pro_scope" property="proScope" jdbcType="LONGVARCHAR"/>
+        <result column="checkOrgCode" property="checkOrgCode" jdbcType="VARCHAR"/>
+        <result column="designOrgCode" property="designOrgCode" jdbcType="VARCHAR"/>
+        <result column="exploreOrgCode" property="exploreOrgCode" jdbcType="VARCHAR"/>
+        <result column="regisAddressDesign" property="regisAddressDesign" jdbcType="VARCHAR"/>
+        <result column="regisAddressExplore" property="regisAddressExplore" jdbcType="VARCHAR"/>
+        <result column="pro_where" property="proWhere" jdbcType="VARCHAR"/>
+    </resultMap>
 
-  <select id="queryProjectDesignByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    <select id="queryProjectDesignByProId" resultMap="BaseResultMap" parameterType="java.lang.String">
     SELECT t.`pkid`
        ,t.`pro_id`
        ,t.`pro_name`
@@ -45,7 +45,7 @@
     GROUP BY t.`sgtxh`
   </select>
 
-    <select id="queryProjectDesignDetailLimitOneByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="queryProjectDesignDetailLimitOneByProId" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT
          t.*
         ,t1.`pro_scope`
@@ -55,7 +55,7 @@
     limit 1
     </select>
 
-  <select id="queryProjectDesignDetailByProId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="queryProjectDesignDetailByProId" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
          t.`pkid`
         ,t.`check_org`
@@ -91,7 +91,7 @@
     </select>
 
 
-    <select id="queryProjectDesignDetailByPkid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="queryProjectDesignDetailByPkid" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT
               t.*
             ,t2.`org_code` AS checkOrgCode
@@ -107,7 +107,7 @@
         GROUP BY t.`pkid`
     </select>
 
-    <select id="queryExProjectDesignCompany" resultType="java.util.Map" parameterType="java.lang.Integer">
+    <select id="queryExProjectDesignCompany" resultType="java.util.Map" parameterType="java.lang.String">
         SELECT t.`explore_org` AS comName
             ,t1.`org_code` AS orgCode
             ,(SELECT t3.display_name FROM mishu.`area` t3 WHERE t3.path = SUBSTRING_INDEX(t2.`path`,',',1)) AS province
@@ -120,7 +120,7 @@
         GROUP BY t1.`com_id`
     </select>
 
-    <select id="queryDeProjectDesignCompany" resultType="java.util.Map" parameterType="java.lang.Integer">
+    <select id="queryDeProjectDesignCompany" resultType="java.util.Map" parameterType="java.lang.String">
         SELECT t.`design_org` AS comName
             ,t1.`org_code` AS orgCode
             ,(SELECT t3.display_name FROM mishu.`area` t3 WHERE t3.path = SUBSTRING_INDEX(t2.`path`,',',1)) AS province
@@ -133,7 +133,7 @@
         GROUP BY t1.`com_id`
     </select>
 
-    <select id="queryProIdByComId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    <select id="queryProIdByComId" resultType="java.lang.Integer" parameterType="java.lang.String">
         select
           t.pro_id
         from tb_project_design t
@@ -141,7 +141,7 @@
         group by t.pro_id
     </select>
 
-    <select id="queryProjectDesignById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    <select id="queryProjectDesignById" resultMap="BaseResultMap" parameterType="java.lang.String">
         select t.*
                 ,t1.pro_where
                 ,t1.pro_type as proTypeMain

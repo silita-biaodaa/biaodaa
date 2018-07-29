@@ -4,25 +4,62 @@
 
   <!-- 查询企业列表 -->
   <select id="queryCompanyList" resultType="com.silita.biaodaa.model.TbCompany" parameterType="String">
-    select c.*,s.cert_no,s.cert_date,s.valid_date,b.runScope as comRange,b.registerStatus as subsist from tb_company c
-    left join tb_safety_certificate s on c.com_name = s.com_name
-    left join mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
-    where 1=1
+    SELECT
+      c.*,
+      s.cert_no,
+      s.cert_date,
+      s.valid_date,
+      b.runScope AS comRange,
+      b.registerStatus AS subsist,
+      t.`com_url` AS comUrl,
+      t.`email` AS email,
+      SUBSTRING_INDEX(t.`phone`,';',1) AS phone
+    FROM
+      tb_company c
+      LEFT JOIN tb_safety_certificate s
+        ON c.com_name = s.com_name
+      LEFT JOIN mishu_next.cert_basic b
+        ON b.registerNo = c.org_code
+        AND b.companyName = c.com_name
+      LEFT JOIN tb_company_info t
+        ON c.`com_name` = t.`com_name`
+    WHERE 1 = 1
     and c.com_name like CONCAT('%',#{keyWord},'%')
   </select>
 
-  <select id="getCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Integer">
-    select c.*,s.cert_no,s.cert_date,s.valid_date,b.runScope as comRange,b.registerStatus as subsist from tb_company c
-    left join tb_safety_certificate s on c.com_name = s.com_name
-    left join mishu_next.cert_basic b on b.registerNo = c.org_code and b.companyName = c.com_name
-    where 1=1
+  <select id="getCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="java.lang.String">
+    SELECT
+      c.*,
+      s.cert_no,
+      s.cert_date,
+      s.valid_date,
+      b.runScope AS comRange,
+      b.registerStatus AS subsist,
+      SUBSTRING_INDEX(t.`phone`,';',1) AS phone,
+      t.`com_url` AS comUrl,
+      t.`email` AS email
+    FROM
+      tb_company c
+      LEFT JOIN tb_safety_certificate s
+        ON c.com_name = s.com_name
+      LEFT JOIN mishu_next.cert_basic b
+        ON b.registerNo = c.org_code
+        AND b.companyName = c.com_name
+      LEFT JOIN tb_company_info t ON t.`com_name` = c.`com_name`
+    WHERE 1 = 1
     and c.com_id = #{comId}
     limit 1
   </select>
 
   <select id="filterCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
-    select c.*
-    from tb_company c
+    SELECT
+      c.*
+      ,t.`com_url` AS comUrl
+      ,t.`email` AS email
+      ,SUBSTRING_INDEX(t.`phone`,';',1) AS phone
+    FROM
+    tb_company c
+    LEFT JOIN tb_company_info t ON t.`com_name` = c.`com_name`
     where 1=1
     <if test="keyWord!=null and keyWord!=''">
       and c.com_name like CONCAT('%',#{keyWord},'%')
@@ -66,7 +103,7 @@
     select display_name from area where parent_id=#{parentId}  order by name_abbr
   </select>
 
-  <select id="getCompanyOrgCode" parameterType="Integer" resultType="com.silita.biaodaa.model.TbCompany">
+  <select id="getCompanyOrgCode" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbCompany">
     select * from tb_company where com_id=#{comId} limit 1
   </select>
 
@@ -75,15 +112,15 @@
   </select>
 
   <select id="getCertAqrz" parameterType="Map" resultType="Map">
-    select zh.mateName,zh.score from cert_aqrz a 
-    left join prize_zh zh on a.zhUuid=zh.uuid 
+    select zh.mateName,zh.score from cert_aqrz a
+    left join prize_zh zh on a.zhUuid=zh.uuid
     where a.zhUuid is not null and a.yxqTime > date(now()) and srcUuid in
     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
       #{item}
     </foreach>
     order by zh.score desc limit 1;
   </select>
-  
+
   <select id="getCertQyhj" parameterType="Map" resultType="Map">
     select q.projName,q.projType,q.joinType,q.years,zh.type,zh.code,zh.mateName,zh.score,zh.shortName,zh.shortRemark
     from cert_qyhj q
@@ -114,7 +151,7 @@
     </foreach>
   </select>
 
-  <select id="getLogo" parameterType="Integer" resultType="String">
+  <select id="getLogo" parameterType="java.lang.String" resultType="String">
       select logo from mishu.tb_company where com_id=#{com_id}
   </select>
 
@@ -144,10 +181,20 @@
   </select>
 
   <select id="filterSecureCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
-    select c.* from cert_aqrz a
-    left join cert_src s on a.srcUuid=s.`uuid`
-    left join tb_company c on c.com_name = s.companyName
-    where c.com_id is not null
+    SELECT
+      c.*
+      ,t.`com_url` AS comUrl
+      ,t.`email` AS email
+      ,SUBSTRING_INDEX(t.`phone`,';',1) AS phone
+    FROM
+    cert_aqrz a
+    LEFT JOIN cert_src s
+    ON a.srcUuid = s.`uuid`
+    LEFT JOIN tb_company c
+    ON c.com_name = s.companyName
+    LEFT JOIN tb_company_info t
+    ON t.`com_name` = c.`com_name`
+    WHERE c.com_id IS NOT NULL
     <if test="keyWord!=null and keyWord!=''">
       and c.com_name like CONCAT('%',#{keyWord},'%')
     </if>
@@ -156,9 +203,9 @@
     </if>
     <if test="cityList != null and cityList.size() > 0">
       and
-        <foreach collection="cityList" item="list" open="(" close=")" separator="or">
-          c.regis_address like CONCAT(#{list},'%')
-        </foreach>
+      <foreach collection="cityList" item="list" open="(" close=")" separator="or">
+        c.regis_address like CONCAT(#{list},'%')
+      </foreach>
     </if>
     <if test="minCapital!=null">
       <![CDATA[ and c.regis_capital >= #{minCapital} ]]>
@@ -184,7 +231,7 @@
     order by c.px desc
   </select>
 
-  <select id="getCompanyUrl" parameterType="Integer" resultType="String">
+  <select id="getCompanyUrl" parameterType="java.lang.String" resultType="String">
     select  url from tb_company_qualification where com_id = #{comId} limit 1
   </select>
 

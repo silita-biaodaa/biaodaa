@@ -13,7 +13,7 @@ public class TbProjectDesign {
     /**
      * 勘查设计项目自增ID
      */
-    private Integer pkid;
+    private String pkid;
 
     /**
      * 网站内部ID
@@ -23,7 +23,7 @@ public class TbProjectDesign {
     /**
      * 项目ID
      */
-    private Integer proId;
+    private String proId;
 
     /**
      * 项目名称

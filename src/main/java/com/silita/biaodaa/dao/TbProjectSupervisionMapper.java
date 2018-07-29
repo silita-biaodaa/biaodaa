@@ -18,7 +18,7 @@ public interface TbProjectSupervisionMapper extends MyMapper<TbProjectSupervisio
      * @param proId
      * @return
      */
-    List<TbProjectSupervision> queryProjectSupervisionListByProId(Integer proId);
+    List<TbProjectSupervision> queryProjectSupervisionListByProId(String proId);
 
     /**
      * 获取监理单位
@@ -26,14 +26,14 @@ public interface TbProjectSupervisionMapper extends MyMapper<TbProjectSupervisio
      * @param proId
      * @return
      */
-    List<Map<String,Object>> queryProjectSupCompany(Integer proId);
+    List<Map<String,Object>> queryProjectSupCompany(String proId);
 
     /**
      * 获取监理下的主项目Id
      * @param comId
      * @return
      */
-    List<Integer> queryProIdByComId(Integer comId);
+    List<String> queryProIdByComId(String comId);
 
     /**
      * 获取中标下的监理
@@ -47,5 +47,5 @@ public interface TbProjectSupervisionMapper extends MyMapper<TbProjectSupervisio
      * @param pkid
      * @return
      */
-    TbProjectSupervision querySupervisionDetailById(Integer pkid);
+    TbProjectSupervision querySupervisionDetailById(String pkid);
 }

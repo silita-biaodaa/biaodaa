@@ -33,7 +33,7 @@ public class ProjectZhaotoubiaoService {
     private static ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
 
     public TbProjectZhaotoubiao getProjectZhaotoubiaoDetail(Map<String,Object> param){
-        TbProject project = tbProjectMapper.queryProjectDetail(Integer.valueOf(param.get("proId").toString()));
+        TbProject project = tbProjectMapper.queryProjectDetail(param.get("proId").toString());
         String province = "湖南省";
         if(null != project){
             if(null != project.getProWhere()){
@@ -42,21 +42,21 @@ public class ProjectZhaotoubiaoService {
         }
         String tabCode = tbCompanyService.getProvinceCode(province);
         TbProjectZhaotoubiao zhaotoubiao = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByProId(param);
-        if (null == zhaotoubiao || null == zhaotoubiao.getPkid()){
-            if("监理".equals(param.get("zhaobiaoType").toString())){
-                Map<String,Object> zhaoSuMap = tbProjectSupervisionMapper.querySuperDetail(param);
-                if(null != zhaoSuMap){
-                    zhaoSuMap.put("bidType","监理");
-                    zhaotoubiao = this.getProjectZhao(zhaoSuMap);
-                }
-            }else{
-                Map<String,Object> zhaoMap = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByBuild(param);
-                if(null != zhaoMap){
-                    zhaoMap.put("bidType","施工");
-                    zhaotoubiao = this.getProjectZhao(zhaoMap);
-                }
-            }
-        }
+//        if (null == zhaotoubiao || null == zhaotoubiao.getPkid()){
+//            if("监理".equals(param.get("zhaobiaoType").toString())){
+//                Map<String,Object> zhaoSuMap = tbProjectSupervisionMapper.querySuperDetail(param);
+//                if(null != zhaoSuMap){
+//                    zhaoSuMap.put("bidType","监理");
+//                    zhaotoubiao = this.getProjectZhao(zhaoSuMap);
+//                }
+//            }else{
+//                Map<String,Object> zhaoMap = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByBuild(param);
+//                if(null != zhaoMap){
+//                    zhaoMap.put("bidType","施工");
+//                    zhaotoubiao = this.getProjectZhao(zhaoMap);
+//                }
+//            }
+//        }
         if(null == zhaotoubiao){
             zhaotoubiao = new TbProjectZhaotoubiao();
         }

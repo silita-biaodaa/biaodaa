@@ -85,7 +85,7 @@
     </select>
 
     <!--获取项目详情-->
-    <select id="queryProjectDetail" parameterType="java.lang.Integer" resultType="com.silita.biaodaa.model.TbProject">
+    <select id="queryProjectDetail" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbProject">
        SELECT t.pro_id AS proId
        ,t.`xmid` AS xmlid
        ,t.`pro_name` AS proName

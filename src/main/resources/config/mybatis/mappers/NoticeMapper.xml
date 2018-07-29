@@ -132,7 +132,7 @@
     </select>
 
 
-    <select id="queryCompanyCollStatus" parameterType="Map" resultType="Long">
+    <select id="queryCompanyCollStatus" parameterType="Map" resultType="java.lang.String">
         SELECT  cc.companyId
         FROM mishu_write.colle_company_new cc
         WHERE cc.companyId IN
