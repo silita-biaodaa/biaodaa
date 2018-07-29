@@ -66,8 +66,8 @@
   <select id="queryPhoneByComName" parameterType="java.lang.String" resultType="java.lang.String">
     select
       SUBSTRING_INDEX(t.`phone`,';',1) AS phone
-    from tb_company_info
-    where com_name = #{name}
+    from tb_company_info t
+    where t.com_name = #{name}
     limit 1
   </select>
 </mapper>
