@@ -47,6 +47,9 @@ public class TbCompanyService {
     @Autowired
     TbPersonMapper tbPersonMapper;
 
+    @Autowired
+    TbCompanyInfoMapper tbCompanyInfoMapper;
+
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
     private ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
@@ -317,6 +320,7 @@ public class TbCompanyService {
         }
 
         for (TbCompany company : list) {
+            company.setPhone(tbCompanyInfoMapper.queryPhoneByComName(company.getComName()));
             if (company.getComName() != null && company.getBusinessNum() != null) {
                 CertBasic certBasic = certBasicMap.get(company.getComName() + "|" + company.getBusinessNum());
                 if (certBasic != null) {
