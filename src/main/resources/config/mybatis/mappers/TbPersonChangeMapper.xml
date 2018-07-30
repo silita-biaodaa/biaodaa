@@ -5,7 +5,7 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <id column="pkid" property="pkid" jdbcType="VARCHAR" />
     <result column="com_name" property="comName" jdbcType="VARCHAR" />
     <result column="major" property="major" jdbcType="VARCHAR" />
     <result column="change_date" property="changeDate" jdbcType="VARCHAR" />

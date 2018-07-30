@@ -12,7 +12,7 @@ public class TbPersonChange {
     /**
      * 自增主键
      */
-    private Integer pkid;
+    private String pkid;
 
     /**
      * 单位名称
