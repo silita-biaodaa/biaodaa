@@ -80,13 +80,13 @@ public class TbCompanyService {
             String url = tbCompanyMapper.getCompanyUrl(tbCompany.getComId());
             tbCompany.setUrl(url);
         }
-        if(null != tbCompany.getPhone()){
+        if (null != tbCompany.getPhone()) {
             tbCompany.setPhone(tbCompany.getPhone().trim());
         }
-        if(null != tbCompany.getComUrl()){
+        if (null != tbCompany.getComUrl()) {
             tbCompany.setComUrl(tbCompany.getComUrl().trim());
         }
-        if(null != tbCompany.getEmail()){
+        if (null != tbCompany.getEmail()) {
             tbCompany.setEmail(tbCompany.getEmail().trim());
         }
         return tbCompany;
@@ -331,11 +331,11 @@ public class TbCompanyService {
         TbCompanyInfo companyInfo = null;
         for (TbCompany company : list) {
             companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName());
-            if(null != companyInfo){
-                if(null != companyInfo.getPhone()){
+            if (null != companyInfo) {
+                if (null != companyInfo.getPhone()) {
                     company.setPhone(companyInfo.getPhone().split(";")[0].trim());
                 }
-                if(null == company.getRegisCapital() && null != companyInfo.getRegisCapital()){
+                if (null == company.getRegisCapital() && null != companyInfo.getRegisCapital()) {
                     company.setRegisCapital(companyInfo.getRegisCapital());
                 }
             }
@@ -404,8 +404,11 @@ public class TbCompanyService {
         Double secur = 0d;
 
         TbCompany company = tbCompanyMapper.getCompanyOrgCode(comId);
-        if (company != null && company.getOrgCode() != null) {
-            List<String> srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
+        if (company != null) {
+            List<String> srcUuids = tbCompanyMapper.getCertSrcUuidByName(company.getComName());
+            if ((null == srcUuids || srcUuids.size() <= 0) && null != company.getOrgCode()) {
+                srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
+            }
             if (srcUuids != null && srcUuids.size() > 0) {
                 Map<String, Object> param = new HashMap<>();
                 param.put("list", srcUuids);
@@ -797,6 +800,24 @@ public class TbCompanyService {
                 break;
             case "31":
                 qualCode = qualCode.replace("/31", "");
+                rangeList.add(qualCode);
+                break;
+            case "-11":
+                superfineLevel = qualCode.replace("/-11", "/0");
+                stairLevel = superfineLevel.replace("/0", "/-1");
+                rangeList.add(superfineLevel);
+                rangeList.add(stairLevel);
+                break;
+            case "-21":
+                superfineLevel = qualCode.replace("/-21", "/0");
+                stairLevel = superfineLevel.replace("/0", "/-1");
+                secondLevel = stairLevel.replace("/-1", "/-2");
+                rangeList.add(superfineLevel);
+                rangeList.add(stairLevel);
+                rangeList.add(secondLevel);
+                break;
+            case "-31":
+                qualCode = qualCode.replace("/-31", "");
                 rangeList.add(qualCode);
                 break;
             default:

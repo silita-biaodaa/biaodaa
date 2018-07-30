@@ -1,0 +1,82 @@
+package com.silita.biaodaa.service;
+
+import com.silita.biaodaa.controller.vo.CompanyQual;
+import com.silita.biaodaa.dao.AptitudeDictionaryMapper;
+import com.silita.biaodaa.dao.TbZzGradeMapper;
+import com.silita.biaodaa.model.AptitudeDictionary;
+import com.silita.biaodaa.model.TbZzGrade;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Service
+@Transactional
+public class GradeService {
+
+    @Autowired
+    TbZzGradeMapper tbZzGradeMapper;
+    @Autowired
+    AptitudeDictionaryMapper aptitudeDictionaryMapper;
+
+    public void getZzTpyeList(List<TbZzGrade> list) {
+        TbZzGrade tbZzGrade = null;
+        Map<String, Object> param = new HashMap<>();
+        for (TbZzGrade grade : list) {
+            param.put("gradeName", grade.getGradeName());
+            param.put("zzId", grade.getZzId());
+            tbZzGrade = tbZzGradeMapper.selectDate(param);
+            if (null != tbZzGrade) {
+                tbZzGradeMapper.updateDate(tbZzGrade.getPkid());
+            } else {
+                tbZzGradeMapper.insertDate(grade);
+            }
+        }
+    }
+
+    public List<CompanyQual> getQual(Integer type) {
+        List<AptitudeDictionary> list = aptitudeDictionaryMapper.queryAptitude();
+        Map<String, CompanyQual> map = new HashMap<>();
+        List<CompanyQual> companyQualList = new ArrayList<>();
+        List<CompanyQual> qualList = null;
+        CompanyQual comQual = null;
+        for (AptitudeDictionary ap : list) {
+            CompanyQual qual = new CompanyQual();
+            qual.setName(ap.getMajorname());
+            qual.setCode(ap.getMajoruuid());
+            qualList = tbZzGradeMapper.quaryList(ap.getId(), type);
+            if (null != qualList && qualList.size() > 0) {
+                qual.setList(qualList);
+            } else {
+                qualList = new ArrayList<>();
+                comQual = new CompanyQual();
+                comQual.setCode(ap.getMajoruuid());
+                comQual.setName("全部");
+            }
+            if (map.get(ap.getAptitudename()) != null) {
+                CompanyQual pany = map.get(ap.getAptitudename());
+                List<CompanyQual> panyList = pany.getList();
+                if (panyList == null) {
+                    panyList = new ArrayList<>();
+                }
+                panyList.add(qual);
+            } else {
+                CompanyQual pany = new CompanyQual();
+                List<CompanyQual> panyList = new ArrayList<>();
+                panyList.add(qual);
+                pany.setName(ap.getAptitudename());
+                pany.setCode(ap.getAptitudecode());
+                pany.setList(panyList);
+                map.put(ap.getAptitudename(), pany);
+            }
+        }
+        for (CompanyQual companyQual : map.values()) {
+            companyQualList.add(companyQual);
+        }
+        return companyQualList;
+    }
+}

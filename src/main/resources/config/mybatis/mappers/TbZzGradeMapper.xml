@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbZzGradeMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbZzGrade" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="grade_name" property="gradeName" jdbcType="VARCHAR" />
+    <result column="grade_uuid" property="gradeUuid" jdbcType="VARCHAR" />
+    <result column="zz_id" property="zzId" jdbcType="INTEGER" />
+    <result column="grade_type" property="gradeType" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <select id="queryApti" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.AptitudeDictionary">
+    SELECT * FROM `aptitude_dictionary` t
+    WHERE
+    t.`majorName` = #{name}
+    <if test="aptitudeName != null and aptitudeName != ''">
+      and t.`aptitudeName` = #{aptitudeName}
+    </if>
+    ORDER BY id DESC LIMIT 1
+  </select>
+
+  <insert id="insertDate" parameterType="com.silita.biaodaa.model.TbZzGrade">
+    INSERT INTO `tb_zz_grade`
+            (
+             `grade_name`,
+             `grade_uuid`,
+             `zz_id`,
+             `grade_type`
+             )
+    VALUES (
+            #{gradeName},
+            #{gradeUuid},
+            #{zzId},
+            #{gradeType}
+           );
+  </insert>
+
+  <update id="updateDate" parameterType="java.lang.Integer">
+    update tb_zz_grade set grade_type = 0 where pkid = #{pkid}
+  </update>
+
+  <select id="selectDate" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.TbZzGrade">
+      select *
+      from tb_zz_grade t
+      where t.grade_name = #{gradeName}
+      and t.zz_id = #{zzId}
+  </select>
+
+    <select id="quaryList" resultType="com.silita.biaodaa.controller.vo.CompanyQual">
+        select t.grade_name as name
+               ,t.grade_uuid as code
+        from tb_zz_grade t
+        where t.zz_id = #{zzId} and (t.grade_type = 0 or t.grade_type=#{type})
+    </select>
+</mapper>

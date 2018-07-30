@@ -72,4 +72,6 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     List<CompanyEs> queryCompanyEsList(Map<String,Object> param);
 
     Integer queryCompanyCount();
+
+    List<String> getCertSrcUuidByName(String companyName);
 }
