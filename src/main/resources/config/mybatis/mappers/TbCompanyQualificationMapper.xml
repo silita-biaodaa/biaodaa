@@ -3,7 +3,7 @@
 <mapper namespace="com.silita.biaodaa.dao.TbCompanyQualificationMapper" >
 
   <select id="queryCompanyQualification" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbCompanyQualification">
-    select * from tb_company_qualification where com_id = #{comId}
+    select * from tb_company_qualification where com_id = #{comId} GROUP BY qual_name ORDER BY valid_date DESC
   </select>
 
 </mapper>

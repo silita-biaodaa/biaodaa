@@ -70,4 +70,12 @@
     where t.com_name = #{name}
     limit 1
   </select>
+
+  <select id="queryDetailByComName" resultType="com.silita.biaodaa.model.TbCompanyInfo" parameterType="java.lang.String">
+    select
+      t.*
+    from tb_company_info t
+    where t.com_name = #{name}
+    limit 1
+  </select>
 </mapper>

@@ -12,4 +12,6 @@ public interface TbCompanyInfoMapper extends MyMapper<TbCompanyInfo> {
     int insertCompanyInfo(TbCompanyInfo list);
 
     String queryPhoneByComName(String name);
+
+    TbCompanyInfo queryDetailByComName(String name);
 }

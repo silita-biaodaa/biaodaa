@@ -9,6 +9,7 @@ import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import com.silita.biaodaa.utils.SignConvertUtil;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,8 @@ public class UserCenterService {
     private ColleCompanyMapper colleCompanyMapper;
     @Autowired
     private ReadedRecordMapper readedRecordMapper;
-
+    @Autowired
+    private TbCompanyInfoMapper tbCompanyInfoMapper;
     @Autowired
     private TbCompanyService tbCompanyService;
 
@@ -134,7 +136,19 @@ public class UserCenterService {
         Map<String,TbSafetyCertificate> safetyCertificateMap = tbCompanyService.getSafetyCertMap();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         companys = colleCompanyMapper.listCollectionCompany(params);
+        TbCompanyInfo companyInfo = null;
         for (Map<String, Object> map : companys) {
+            if(null != map.get("comName")){
+                companyInfo = tbCompanyInfoMapper.queryDetailByComName(MapUtils.getString(map,"comName"));
+                if(null != companyInfo){
+                    if(null != companyInfo.getPhone()){
+                        map.put("phone",companyInfo.getPhone().split(";")[0].trim());
+                    }
+                    if(null == map.get("regisCapital") && null != companyInfo.getRegisCapital()){
+                        map.put("regisCapital",companyInfo.getRegisCapital());
+                    }
+                }
+            }
             if(!StringUtils.isEmpty(map.get("comName")) && !StringUtils.isEmpty(map.get("businessNum"))) {
                 CertBasic certBasic = certBasicMap.get(map.get("comName") + "|" + map.get("businessNum"));
                 if(certBasic != null) {

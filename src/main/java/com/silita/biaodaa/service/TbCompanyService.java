@@ -80,6 +80,15 @@ public class TbCompanyService {
             String url = tbCompanyMapper.getCompanyUrl(tbCompany.getComId());
             tbCompany.setUrl(url);
         }
+        if(null != tbCompany.getPhone()){
+            tbCompany.setPhone(tbCompany.getPhone().trim());
+        }
+        if(null != tbCompany.getComUrl()){
+            tbCompany.setComUrl(tbCompany.getComUrl().trim());
+        }
+        if(null != tbCompany.getEmail()){
+            tbCompany.setEmail(tbCompany.getEmail().trim());
+        }
         return tbCompany;
     }
 
@@ -319,8 +328,17 @@ public class TbCompanyService {
             list = tbCompanyMapper.filterCompany(param);
         }
 
+        TbCompanyInfo companyInfo = null;
         for (TbCompany company : list) {
-            company.setPhone(tbCompanyInfoMapper.queryPhoneByComName(company.getComName()));
+            companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName());
+            if(null != companyInfo){
+                if(null != companyInfo.getPhone()){
+                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
+                }
+                if(null == company.getRegisCapital() && null != companyInfo.getRegisCapital()){
+                    company.setRegisCapital(companyInfo.getRegisCapital());
+                }
+            }
             if (company.getComName() != null && company.getBusinessNum() != null) {
                 CertBasic certBasic = certBasicMap.get(company.getComName() + "|" + company.getBusinessNum());
                 if (certBasic != null) {
@@ -850,7 +868,22 @@ public class TbCompanyService {
      * @return
      */
     public List<TbCompany> getHostCompanyList(Map<String, Object> param) {
-        return tbCompanyMapper.queryHostCompanyList(param);
+        List<TbCompany> companyList = tbCompanyMapper.queryHostCompanyList(param);
+        TbCompanyInfo companyInfo = null;
+        if (null != companyList && companyList.size() > 0) {
+            for (TbCompany company : companyList) {
+                companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName());
+                if (null != companyInfo) {
+                    if (null != companyInfo.getPhone()) {
+                        company.setPhone(companyInfo.getPhone().split(";")[0].trim());
+                    }
+                    if (null != companyInfo.getRegisCapital()) {
+                        company.setRegisCapital(companyInfo.getRegisCapital());
+                    }
+                }
+            }
+        }
+        return companyList;
     }
 
     private Map<String, Object> getRegisAddress(Map<String, Object> param) {

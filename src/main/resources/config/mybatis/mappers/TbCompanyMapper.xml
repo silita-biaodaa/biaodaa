@@ -27,14 +27,21 @@
   <select id="getCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="java.lang.String">
     SELECT
       c.*,
+      (
+        CASE WHEN c.`regis_capital`  IS NOT NULL
+        THEN c.`regis_capital`
+        ELSE
+        t.`regis_capital`
+        END
+      ) AS regisCapital,
       s.cert_no,
       s.cert_date,
       s.valid_date,
       b.runScope AS comRange,
       b.registerStatus AS subsist,
-      SUBSTRING_INDEX(t.`phone`,';',1) AS phone,
-      t.`com_url` AS comUrl,
-      t.`email` AS email
+      TRIM(SUBSTRING_INDEX(t.`phone`, ';', 1)) AS phone,
+      TRIM(SUBSTRING_INDEX(t.`com_url`, ';', 1))  AS comUrl,
+      TRIM(SUBSTRING_INDEX(t.`email`, ';', 1)) AS email
     FROM
       tb_company c
       LEFT JOIN tb_safety_certificate s
