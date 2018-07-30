@@ -27,6 +27,13 @@
   <select id="getCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="java.lang.String">
     SELECT
       c.*,
+      (
+        CASE WHEN c.`regis_capital`  IS NOT NULL
+        THEN c.`regis_capital`
+        ELSE
+        t.`regis_capital`
+        END
+      ) AS regisCapital,
       c.credit_code as creditCode,
       c.credit_code as businessNum,
       s.cert_no,
