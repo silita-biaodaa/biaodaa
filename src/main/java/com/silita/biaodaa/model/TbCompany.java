@@ -94,4 +94,8 @@ public class TbCompany  implements Serializable{
     private String email;
 
     private String comUrl;
+
+    private String regisDate;
+
+    private String creditCode;
 }

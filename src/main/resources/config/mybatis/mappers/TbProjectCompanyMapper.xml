@@ -28,8 +28,8 @@
         <if test="comName != null and comName != ''">
             AND t.`com_name` = #{comName}
         </if>
-        <if test="orgCode != null and orgCode != ''">
-            AND t.`org_code` = #{orgCode}
-        </if>
+        <!--<if test="orgCode != null and orgCode != ''">-->
+            <!--AND t.`org_code` = #{orgCode}-->
+        <!--</if>-->
     </select>
 </mapper>

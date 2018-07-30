@@ -111,6 +111,9 @@ public class CompanyController extends BaseController {
             TbCompany tbCompany = tbCompanyService.getCompany(comId.toString());
             //生成随机数
             Integer id = this.code();
+            Map<String,Object> valueId = new HashMap<>();
+            valueId.put("comId",tbCompany.getComId());
+            myRedisTemplate.setObject(id.toString(),valueId,COM_OVER_TIME);
             tbCompany.setComId(id.toString());
             result.put("data",tbCompany);
             result.put("code", 1);
@@ -133,8 +136,9 @@ public class CompanyController extends BaseController {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业资质失败!");
+        String id = getComId(comId);
         try {
-            List<Map<String,Object>> queryQualList = tbCompanyService.queryQualList(comId);
+            List<Map<String,Object>> queryQualList = tbCompanyService.queryQualList(id);
             result.put("data",queryQualList);
             result.put("code", 1);
             result.put("msg", "查询成功!");
@@ -156,9 +160,9 @@ public class CompanyController extends BaseController {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "获取企业注册人员类别失败!");
-
+        String id = getComId(comId);
         try {
-            List<Map<String,Object>> list = tbCompanyService.getCompanyPersonCate(comId);
+            List<Map<String,Object>> list = tbCompanyService.getCompanyPersonCate(id);
             result.put("data",list);
             result.put("code", 1);
             result.put("msg", "查询成功!");
@@ -190,6 +194,7 @@ public class CompanyController extends BaseController {
         try {
             checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
             String comId = MapUtils.getString(params, "comId");
+            comId = getComId(comId);
             String category = MapUtils.getString(params, "category");
             String keyWord = MapUtils.getString(params, "keyWord");
             String province = MapUtils.getString(params, "province");
@@ -359,7 +364,7 @@ public class CompanyController extends BaseController {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业信誉查询失败!");
-
+        comId = getComId(comId);
         try {
             Map<String,Object> map = tbCompanyService.getCompanyReputation(comId);
             result.put("data",map);
@@ -383,7 +388,7 @@ public class CompanyController extends BaseController {
         Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业不良记录查询失败!");
-
+        comId = getComId(comId);
         try {
             Map<String,Object> map = tbCompanyService.getUndesirable(comId);
             result.put("data",map);
@@ -415,6 +420,7 @@ public class CompanyController extends BaseController {
         try {
             String comId = params.get("comId").toString();
             Preconditions.checkArgument(null != comId && "" != comId, "comId不能为空");
+            comId = getComId(comId);
             String logo = tbCompanyService.getLogo(comId);
             result.put("data", logo);
             result.put("code", 1);
@@ -579,5 +585,13 @@ public class CompanyController extends BaseController {
         Random random = new Random();
         int code = random.nextInt(1000000000);
         return code;
+    }
+
+    private String getComId(String id){
+        Map<String,Object> comIdMap = (Map<String, Object>) myRedisTemplate.getObject(id);
+        if(null == comIdMap){
+            return id;
+        }
+        return MapUtils.getString(comIdMap,"comId");
     }
 }

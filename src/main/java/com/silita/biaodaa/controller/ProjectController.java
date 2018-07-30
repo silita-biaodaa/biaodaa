@@ -1,5 +1,6 @@
 package com.silita.biaodaa.controller;
 
+import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.service.ProjectBuildService;
 import com.silita.biaodaa.service.ProjectDesignService;
 import com.silita.biaodaa.service.ProjectService;
@@ -26,6 +27,8 @@ public class ProjectController extends BaseController{
     ProjectDesignService projectDesignService;
     @Autowired
     ProjectBuildService projectBuildService;
+    @Autowired
+    MyRedisTemplate myRedisTemplate;
 
     /**
      * 业绩筛选
@@ -108,7 +111,11 @@ public class ProjectController extends BaseController{
         Map<String,Object> result = new HashMap<String,Object>();
         result.put("code",this.SUCCESS_CODE);
         result.put("msg",this.SUCCESS_MSG);
-        result.put("data",projectService.getProjectCompanyList(MapUtils.getString(param,"comId")));
+        String companyId = MapUtils.getString(param,"comId");
+        if(null != myRedisTemplate.getObject(companyId)){
+            companyId = ((Map<String,Object>)myRedisTemplate.getObject(companyId)).get("comId").toString();
+        }
+        result.put("data",projectService.getProjectCompanyList(companyId));
         return result;
     }
 
