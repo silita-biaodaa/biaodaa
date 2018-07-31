@@ -66,11 +66,12 @@ public class ProjectZhaotoubiaoService {
 //        zhaoParam.put("company",param.get("company"));
         zhaoParam.put("role","项目经理");
         zhaoParam.put("roleOne","总监理工程师");
-        if("监理".equals(param.get("zhaobiaoType").toString())){
-            zhaoParam.put("type","supervision");
-        }else {
-            zhaoParam.put("type","build");
-        }
+//        if("监理".equals(param.get("zhaobiaoType").toString())){
+//            zhaoParam.put("type","supervision");
+//        }else {
+//            zhaoParam.put("type","build");
+//        }
+        zhaoParam.put("type","zhaotoubiao");
         zhaoParam.put("pkid",param.get("pkid"));
         List<TbPersonProject> personProjectList = tbPersonProjectMapper.queryPersonProject(zhaoParam);
         List<TbPersonProject> paramPersonList = new ArrayList<>();

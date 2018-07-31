@@ -286,6 +286,8 @@ public class ProjectAnalysisUtil {
                 province = "天津市";
             }else if (proWhere.contains("重庆市")){
                 province = "重庆市";
+            }else {
+                province = proWhere.substring(0,getIndex(proWhere,"自治区")+3);
             }
         }
         return province;
