@@ -919,7 +919,7 @@ public class TbCompanyService {
             String[] citys = regis[1].split(",");
             if (citys.length <= 3) {
                 for (String str : citys) {
-                    cityList.add(province + str);
+                    cityList.add(str.replace("市",""));
                 }
             }
         }

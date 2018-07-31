@@ -85,7 +85,7 @@ public class ElasticseachService {
         return list;
     }
 
-    private Integer getPage(Integer total, Integer pageSize) {
+    public Integer getPage(Integer total, Integer pageSize) {
         Integer pages = 0;
         if (total % pageSize == 0) {
             pages = total / pageSize;

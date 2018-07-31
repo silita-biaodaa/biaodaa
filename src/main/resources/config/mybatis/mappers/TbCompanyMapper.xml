@@ -74,7 +74,7 @@
         <if test="cityList != null and cityList.size() > 0">
             and
             <foreach collection="cityList" item="list" open="(" close=")" separator="or">
-                c.regis_address like CONCAT(#{list},'%')
+                c.city like CONCAT(#{list},'%')
             </foreach>
         </if>
         <if test="minCapital!=null">
@@ -226,7 +226,7 @@
         <if test="cityList != null and cityList.size() > 0">
             and
             <foreach collection="cityList" item="list" open="(" close=")" separator="or">
-                c.regis_address like CONCAT(#{list},'%')
+                c.city like CONCAT(#{list},'%')
             </foreach>
         </if>
         <if test="minCapital!=null">

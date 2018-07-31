@@ -78,4 +78,22 @@
     where t.com_name = #{name}
     limit 1
   </select>
+
+  <select id="queryComCount" resultType="java.lang.Integer">
+    SELECT COUNT(1)
+    FROM tb_company t
+    WHERE t.regis_capital IS NULL AND  t.com_name IS NOT NULL
+  </select>
+
+  <select id="queryCompanyList" resultType="com.silita.biaodaa.model.TbCompany">
+    select t.*
+    from tb_company t
+    where t.regis_capital is null and  t.com_name is not null
+    limit #{page},#{pageSize}
+  </select>
+
+  <update id="updateCompany" parameterType="com.silita.biaodaa.model.TbCompany">
+    update tb_company t set t.regis_capital = #{regisCapital},t.city = #{city} where t.com_id = #{comId}
+  </update>
+
 </mapper>

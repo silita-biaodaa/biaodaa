@@ -2,8 +2,12 @@ package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.dao.AptitudeDictionaryMapper;
+import com.silita.biaodaa.dao.TbCompanyInfoMapper;
 import com.silita.biaodaa.dao.TbZzGradeMapper;
+import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.AptitudeDictionary;
+import com.silita.biaodaa.model.TbCompany;
+import com.silita.biaodaa.model.TbCompanyInfo;
 import com.silita.biaodaa.model.TbZzGrade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,10 @@ public class GradeService {
     TbZzGradeMapper tbZzGradeMapper;
     @Autowired
     AptitudeDictionaryMapper aptitudeDictionaryMapper;
+    @Autowired
+    TbCompanyInfoMapper tbCompanyInfoMapper;
+    @Autowired
+    ElasticseachService elasticseachService;
 
     public void getZzTpyeList(List<TbZzGrade> list) {
         TbZzGrade tbZzGrade = null;
@@ -78,5 +86,34 @@ public class GradeService {
             companyQualList.add(companyQual);
         }
         return companyQualList;
+    }
+
+    public void updateCompany() {
+        Integer count = tbCompanyInfoMapper.queryComCount();
+        if (count > 0) {
+            Integer pages = elasticseachService.getPage(count, 3000);
+            Integer pageSize = 3000;
+            Integer page = 0;
+            List<TbCompany> companyList = null;
+            TbCompanyInfo companyInfo = null;
+            for (int i = 1; i <= pages; i++) {
+                page = (i - 1) * 3000;
+                companyList = tbCompanyInfoMapper.queryCompanyList(page,pageSize);
+                if(null != companyList && companyList.size() > 0){
+                    for(TbCompany company : companyList){
+                        companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName());
+                        if(null != companyInfo){
+                            if(null != companyInfo.getCity()){
+                                company.setCity(companyInfo.getCity());
+                            }
+                            if(null != companyInfo.getRegisCapital()){
+                                company.setRegisCapital(companyInfo.getRegisCapital());
+                            }
+                            tbCompanyInfoMapper.updateCompany(company);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

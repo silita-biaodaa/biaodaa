@@ -39,4 +39,19 @@ public class GradeController {
         }
         return result;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateCompany", method = RequestMethod.GET,produces = "application/json")
+    public Map<String,Object> updateCompany(){
+        Map<String,Object> result = new HashMap<>();
+        result.put("code", 1);
+        result.put("msg", "操作成功!");
+        try {
+            gradeService.updateCompany();
+        }  catch (Exception e) {
+            result.put("code",0);
+            result.put("msg",e.getMessage());
+        }
+        return result;
+    }
 }

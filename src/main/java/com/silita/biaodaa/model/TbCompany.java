@@ -98,4 +98,6 @@ public class TbCompany  implements Serializable{
     private String regisDate;
 
     private String creditCode;
+
+    private String city;
 }
