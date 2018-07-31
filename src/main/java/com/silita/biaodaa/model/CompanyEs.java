@@ -21,14 +21,14 @@ public class CompanyEs extends ElasticEntity {
     @Filed(type = FieldType.keyword)
     private String comNamePy;
 
-    @Filed(type = FieldType.integer)
-    private String px;
+    @Filed(type = FieldType.integer, fileddata=true)
+    private Integer px;
 
     public String getId() {
-        return this.comId.toString();
+        return this.comId;
     }
 
     public void setId(String id) {
-        id = comId.toString();
+        id = comId;
     }
 }
