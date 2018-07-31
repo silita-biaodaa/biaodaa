@@ -173,22 +173,36 @@
   </select>
 
     <select id="queryCompanyDetail" resultType="com.silita.biaodaa.model.TbCompany" parameterType="java.lang.String">
-      SELECT
-        c.*,
-        s.cert_no,
-        s.cert_date,
-        s.valid_date,
-        b.runScope AS comRange,
-        b.registerStatus AS subsist
-      FROM
-        tb_company c
-        LEFT JOIN tb_safety_certificate s
-          ON c.com_name = s.com_name
-        LEFT JOIN mishu_next.cert_basic b
-          ON b.registerNo = c.org_code
-          AND b.companyName = c.com_name
-      WHERE 1 = 1
-        AND c.`com_name` = #{comName}
+      select c.*,
+      (
+        CASE WHEN c.`regis_capital`  IS NOT NULL
+        THEN c.`regis_capital`
+        ELSE
+        t.`regis_capital`
+        END
+      ) AS regisCapital,
+      c.credit_code as creditCode,
+      c.credit_code as businessNum,
+      s.cert_no,
+      s.cert_date,
+      s.valid_date,
+      b.runScope AS comRange,
+      b.registerStatus AS subsist,
+--       TRIM(SUBSTRING_INDEX(t.`phone`, ';', 1)) AS phone,
+      TRIM(t.`phone`) AS phone,
+      TRIM(SUBSTRING_INDEX(t.`com_url`, ';', 1))  AS comUrl,
+      TRIM(SUBSTRING_INDEX(t.`email`, ';', 1)) AS email,
+      t.`regis_date` as regisDate
+    FROM
+      tb_company c
+      LEFT JOIN tb_safety_certificate s
+        ON c.com_name = s.com_name
+      LEFT JOIN mishu_next.cert_basic b
+        ON b.registerNo = c.org_code
+        AND b.companyName = c.com_name
+      LEFT JOIN tb_company_info t ON t.`com_name` = c.`com_name`
+    WHERE 1 = 1
+     AND c.`com_name` = #{comName}
       ORDER BY c.`created` DESC
       LIMIT 1
   </select>

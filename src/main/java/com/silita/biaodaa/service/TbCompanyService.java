@@ -139,7 +139,7 @@ public class TbCompanyService {
         Set<String> set = qualMap.keySet();
         for (String key : set) {
             Map<String, Object> map = new HashMap<>();
-            map.put("qualType", key);
+            map.put("qualType", getQualType(key));
             map.put("list", qualMap.get(key));
             list.add(map);
         }
@@ -582,8 +582,11 @@ public class TbCompanyService {
         Map<String, Object> resultMap = new HashMap<>();
 
         TbCompany company = tbCompanyMapper.getCompanyOrgCode(comId);
-        if (company != null && company.getOrgCode() != null) {
-            List<String> srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
+        if (company != null) {
+            List<String> srcUuids = tbCompanyMapper.getCertSrcUuidByName(company.getComName());
+            if ((null == srcUuids || srcUuids.size() <= 0) && null != company.getOrgCode()) {
+                srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
+            }
             if (srcUuids != null && srcUuids.size() > 0) {
                 Map<String, Object> param = new HashMap<>();
                 param.put("list", srcUuids);
@@ -923,5 +926,33 @@ public class TbCompanyService {
         param.put("province", province);
         param.put("cityList", cityList);
         return param;
+    }
+
+    private String getQualType(String key){
+        String qualType = null;
+        switch (key){
+            case "勘察资质":
+                qualType = "勘察";
+                break;
+            case "建筑业企业资质":
+                qualType = "建筑业";
+                break;
+            case "招标代理资格":
+                qualType = "招标代理";
+                break;
+            case "监理资质":
+                qualType = "监理";
+                break;
+            case "设计与施工一体化资质":
+                qualType = "设计与施工";
+                break;
+            case "设计资质":
+                qualType = "设计";
+                break;
+            case "造价资询资质":
+                qualType = "造价资询";
+                break;
+        }
+        return qualType;
     }
 }
