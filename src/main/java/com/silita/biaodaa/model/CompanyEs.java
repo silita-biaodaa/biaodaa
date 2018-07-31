@@ -12,8 +12,8 @@ import lombok.Setter;
 @Document(indexName = "company", type = "comes")
 public class CompanyEs extends ElasticEntity {
 
-    @Filed(type = FieldType.integer, store = true)
-    private Integer comId;
+    @Filed(type = FieldType.text, store = true)
+    private String comId;
 
     @Filed(type = FieldType.keyword)
     private String comName;
