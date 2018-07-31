@@ -103,12 +103,13 @@ public class CompanyController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/{comId}", method = RequestMethod.POST,produces = "application/json")
-    public Map<String, Object> getCompany(@PathVariable Object comId) {
+    public Map<String, Object> getCompany(@PathVariable String comId) {
          Map<String,Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业查询失败!");
+        comId = this.getComId(comId);
         try {
-            TbCompany tbCompany = tbCompanyService.getCompany(comId.toString());
+            TbCompany tbCompany = tbCompanyService.getCompany(comId);
             //生成随机数
             Integer id = this.code();
             Map<String,Object> valueId = new HashMap<>();
@@ -587,7 +588,7 @@ public class CompanyController extends BaseController {
         return code;
     }
 
-    private String getComId(String id){
+    public String getComId(String id){
         Map<String,Object> comIdMap = (Map<String, Object>) myRedisTemplate.getObject(id);
         if(null == comIdMap){
             return id;

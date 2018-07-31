@@ -5,6 +5,7 @@ package com.silita.biaodaa.controller;
  */
 
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.ColleCompany;
@@ -41,6 +42,8 @@ public class UserCenterController {
     private static final Logger logger = Logger.getLogger(CompanyController.class);
     @Autowired
     private UserCenterService userCenterService;
+    @Autowired
+    private CompanyController companyController;
 
 
     @ResponseBody
@@ -219,6 +222,7 @@ public class UserCenterController {
 
         try{
             colleCompany.setUserid(VisitInfoHolder.getUid());
+            colleCompany.setCompanyid(companyController.getComId(colleCompany.getCompanyid()));
             String msg = userCenterService.insertCollectionCompany(colleCompany);
             if("".equals(msg)) {
                 result.put("msg", "关注企业成功！");
@@ -242,6 +246,7 @@ public class UserCenterController {
 
         try{
             colleCompany.setUserid(VisitInfoHolder.getUid());
+            colleCompany.setCompanyid(companyController.getComId(colleCompany.getCompanyid()));
             userCenterService.deleteCollectionCompany(colleCompany);
             result.put("msg", "取消关注成功！");
         } catch (Exception e) {
