@@ -919,7 +919,11 @@ public class TbCompanyService {
             String[] citys = regis[1].split(",");
             if (citys.length <= 3) {
                 for (String str : citys) {
-                    cityList.add(str.replace("市",""));
+                    if(str.contains("湘西")){
+                        cityList.add("湘西");
+                    }else {
+                        cityList.add(str.replace("市",""));
+                    }
                 }
             }
         }
