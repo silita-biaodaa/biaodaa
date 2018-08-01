@@ -333,7 +333,8 @@ public class TbCompanyService {
             companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName());
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
-                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
+//                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
+                    company.setPhone(companyInfo.getPhone());
                 }
                 if (null == company.getRegisCapital() && null != companyInfo.getRegisCapital()) {
                     company.setRegisCapital(companyInfo.getRegisCapital());
@@ -900,6 +901,7 @@ public class TbCompanyService {
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
                         company.setPhone(companyInfo.getPhone().split(";")[0].trim());
+                        company.setPhone(companyInfo.getPhone());
                     }
                     if (null != companyInfo.getRegisCapital()) {
                         company.setRegisCapital(companyInfo.getRegisCapital());
