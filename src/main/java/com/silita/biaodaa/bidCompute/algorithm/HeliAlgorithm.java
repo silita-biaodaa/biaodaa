@@ -80,7 +80,10 @@ public class HeliAlgorithm implements BidComputeHandler {
         } else {
             //初始化
             this.getReaMap(param);
-            List<String> srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());
+            List<String> srcUid = companyMapper.getCertSrcUuidByName(tbCompany.getComName());
+            if ((null == srcUid || srcUid.size() <= 0) && null != tbCompany.getOrgCode()) {
+                srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());
+            }
             if (null != srcUid && srcUid.size() > 0) {
                 comMap.put("srcUuidList", srcUid);
             }
@@ -224,7 +227,7 @@ public class HeliAlgorithm implements BidComputeHandler {
             bidEvaluationMethodService.saveAboComList(param, aboList);
 
             if (validList.size() > 0) {
-                List<Map<String,Object>> vald = new ArrayList<>();
+                List<Map<String, Object>> vald = new ArrayList<>();
                 vald.addAll(validList);
                 if (validList.size() > 5) {
                     this.sort(validList);
@@ -240,9 +243,9 @@ public class HeliAlgorithm implements BidComputeHandler {
                     comPrice = MapUtils.getDouble(val, "comPrice");
                     devRate = DoubleUtils.div(Math.abs(DoubleUtils.subtract(comPrice, jizhunPrice)), jizhunPrice, 4);
                     if (comPrice.compareTo(jizhunPrice) > 0) {
-                        total = DoubleUtils.subtract(100, DoubleUtils.mul(2,DoubleUtils.mul(devRate, 100)));
+                        total = DoubleUtils.subtract(100, DoubleUtils.mul(2, DoubleUtils.mul(devRate, 100)));
                     } else {
-                        total = DoubleUtils.subtract(100, DoubleUtils.mul(1,DoubleUtils.mul(devRate, 100)));
+                        total = DoubleUtils.subtract(100, DoubleUtils.mul(1, DoubleUtils.mul(devRate, 100)));
                     }
                     //计算下浮率
                     lowerRate = DoubleUtils.div(comPrice, bidPrice, 4);

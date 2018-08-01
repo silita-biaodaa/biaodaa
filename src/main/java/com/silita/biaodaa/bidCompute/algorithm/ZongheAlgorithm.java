@@ -98,7 +98,10 @@ public class ZongheAlgorithm implements BidComputeHandler {
                     bidResult.setBidStatus(1);
                     bidResultMapper.insertBidResult(bidResult);
                 } else {
-                    List<String> srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());
+                    List<String> srcUid = companyMapper.getCertSrcUuidByName(tbCompany.getComName());
+                    if(null == srcUid && null != tbCompany.getOrgCode()){
+                        srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());
+                    }
                     if (null != srcUid && srcUid.size() > 0) {
                         comMap.put("srcUuidList", srcUid);
                     }
