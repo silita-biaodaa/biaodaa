@@ -12,5 +12,5 @@ public interface CustomUrlMapper {
      * @param params
      * @return
      */
-    public List<Map> queryCustomUrls(Map params);
+     List<Map> queryCustomUrls(Map params);
 }

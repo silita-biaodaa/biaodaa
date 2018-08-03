@@ -6,10 +6,14 @@ import com.silita.biaodaa.utils.MyMapper;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * tb_bid_result Mapper
+ */
 public interface TbBidResultMapper extends MyMapper<TbBidResult> {
 
     /**
      * 保存
+     *
      * @param bidResult
      * @return
      */
@@ -17,8 +21,9 @@ public interface TbBidResultMapper extends MyMapper<TbBidResult> {
 
     /**
      * 查询列表
+     *
      * @param param
      * @return
      */
-    List<TbBidResult> queryBidResultList(Map<String,Object> param);
+    List<TbBidResult> queryBidResultList(Map<String, Object> param);
 }

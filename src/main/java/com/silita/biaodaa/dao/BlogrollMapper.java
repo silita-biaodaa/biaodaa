@@ -9,7 +9,8 @@ import java.util.Map;
 public interface BlogrollMapper {
     /**
      * 筛选第三方链接
+     *
      * @param params
      */
-    public List<Map> queryLinks(Map params);
+    List<Map> queryLinks(Map params);
 }

@@ -15,6 +15,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
     /**
      * 根据项目id获取施工图审查
      * created by zhushuai
+     *
      * @param id
      * @return
      */
@@ -23,6 +24,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
     /**
      * 获取详情
      * created by zhushuai
+     *
      * @param proId
      * @return
      */
@@ -30,6 +32,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
 
     /**
      * 根据市获取省
+     *
      * @param name
      * @return
      */
@@ -38,6 +41,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
     /**
      * 查询基本信息
      * created by zhushuai
+     *
      * @param proId
      * @return
      */
@@ -46,6 +50,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
     /**
      * 根据主键id获取详情
      * created by zhushuai
+     *
      * @param pkid
      * @return
      */
@@ -54,21 +59,24 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
     /**
      * 获取勘察公司名称
      * created by zhushuai
+     *
      * @param proId
      * @return
      */
-    List<Map<String,Object>> queryExProjectDesignCompany(String proId);
+    List<Map<String, Object>> queryExProjectDesignCompany(String proId);
 
     /**
      * 获取设计公司名称
      * created by zhushuai
+     *
      * @param proId
      * @return
      */
-    List<Map<String,Object>> queryDeProjectDesignCompany(String proId);
+    List<Map<String, Object>> queryDeProjectDesignCompany(String proId);
 
     /**
      * 获取勘察设计下的主项目Id
+     *
      * @param comId
      * @return
      */
@@ -76,6 +84,7 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
 
     /**
      * 根据主键id获取详情
+     *
      * @param pkid
      * @return
      */

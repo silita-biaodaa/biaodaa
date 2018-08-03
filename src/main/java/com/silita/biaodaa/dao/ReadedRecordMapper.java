@@ -6,8 +6,12 @@ import com.silita.biaodaa.utils.MyMapper;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * readed_record Mapper
+ */
 public interface ReadedRecordMapper extends MyMapper<ReadedRecord> {
     /**
+     * 获取读取记录
      *
      * @param params
      * @return
@@ -15,12 +19,14 @@ public interface ReadedRecordMapper extends MyMapper<ReadedRecord> {
     Integer getTotalByMsgId(Map<String, Object> params);
 
     /**
+     * 添加
      *
      * @param readedRecord
      */
     void insertReadedRecord(ReadedRecord readedRecord);
 
     /**
+     * 批量添加
      *
      * @param
      */
@@ -28,6 +34,7 @@ public interface ReadedRecordMapper extends MyMapper<ReadedRecord> {
 
 
     /**
+     * 修改
      *
      * @param params
      */

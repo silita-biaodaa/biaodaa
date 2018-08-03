@@ -12,6 +12,7 @@ public interface TbPhoneAddressBookMapper extends MyMapper<TbPhoneAddressBook> {
 
     /**
      * 获取设备下手机通讯录条数
+     *
      * @param deviceId
      * @return
      */
@@ -19,6 +20,7 @@ public interface TbPhoneAddressBookMapper extends MyMapper<TbPhoneAddressBook> {
 
     /**
      * 批量插入手机通讯录
+     *
      * @param list
      * @return
      */
@@ -26,6 +28,7 @@ public interface TbPhoneAddressBookMapper extends MyMapper<TbPhoneAddressBook> {
 
     /**
      * 删除记录
+     *
      * @param deviceId
      * @return
      */

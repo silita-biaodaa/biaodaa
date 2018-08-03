@@ -41,14 +41,16 @@ public interface BidEvaluationMethodMapper {
 
     /**
      * 获取企业信用等级最新年份
+     *
      * @return
      */
     String queryGradeYear();
 
     /**
      * 获取奖项个数
+     *
      * @param param
      * @return
      */
-    Integer queryCertPrizeCount(Map<String,Object> param);
+    Integer queryCertPrizeCount(Map<String, Object> param);
 }

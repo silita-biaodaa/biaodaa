@@ -9,15 +9,49 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * tb_zz_grade Mapper
+ */
 public interface TbZzGradeMapper extends MyMapper<TbZzGrade> {
 
-    AptitudeDictionary queryApti(Map<String,Object> param);
+    /**
+     * 获取资质
+     *
+     * @param param
+     * @return
+     */
+    AptitudeDictionary queryApti(Map<String, Object> param);
 
+    /**
+     * 添加
+     *
+     * @param grade
+     * @return
+     */
     int insertDate(TbZzGrade grade);
 
-    TbZzGrade selectDate(Map<String,Object> param);
+    /**
+     * 查询
+     *
+     * @param param
+     * @return
+     */
+    TbZzGrade selectDate(Map<String, Object> param);
 
+    /**
+     * 修改
+     *
+     * @param pkid
+     * @return
+     */
     int updateDate(Integer pkid);
 
-    List<CompanyQual> quaryList(@Param("zzId") Integer zzId,@Param("type") Integer type);
+    /**
+     * 获取资质等级
+     *
+     * @param zzId
+     * @param type
+     * @return
+     */
+    List<CompanyQual> quaryList(@Param("zzId") Integer zzId, @Param("type") Integer type);
 }

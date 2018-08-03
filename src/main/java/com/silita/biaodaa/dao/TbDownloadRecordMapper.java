@@ -13,13 +13,15 @@ public interface TbDownloadRecordMapper extends MyMapper<TbDownloadRecord> {
 
     /**
      * 获取文件的下载次数
+     *
      * @param param
      * @return
      */
-    TbDownloadRecord queryDownloadRecord(Map<String,Object> param);
+    TbDownloadRecord queryDownloadRecord(Map<String, Object> param);
 
     /**
      * 新增
+     *
      * @param downloadRecord
      * @return
      */
@@ -27,6 +29,7 @@ public interface TbDownloadRecordMapper extends MyMapper<TbDownloadRecord> {
 
     /**
      * 修改
+     *
      * @param downloadRecord
      * @return
      */

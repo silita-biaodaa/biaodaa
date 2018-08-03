@@ -6,9 +6,24 @@ import com.silita.biaodaa.utils.MyMapper;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 资质
+ */
 public interface AptitudeDictionaryMapper extends MyMapper<AptitudeDictionary> {
 
+    /**
+     * 获取所有资质字典信息
+     * created by zhushuai
+     *
+     * @return
+     */
     List<AptitudeDictionary> queryAptitude();
 
-    List<Map<String,String>> getIndustry();
+    /**
+     * 获取筛选条件
+     * created by zhushuai
+     *
+     * @return
+     */
+    List<Map<String, String>> getIndustry();
 }

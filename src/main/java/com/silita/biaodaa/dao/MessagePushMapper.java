@@ -6,9 +6,13 @@ import com.silita.biaodaa.utils.MyMapper;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ */
 public interface MessagePushMapper extends MyMapper<MessagePush> {
+
     /**
-     *
+     * 获取消息
      * @param params
      * @return
      */

@@ -44,7 +44,7 @@ public interface TbProjectMapper extends MyMapper {
      * @param list
      * @return
      */
-    List<Map<String,Object>> queryProjectListByIds(List<Integer> list);
+    List<Map<String,Object>> queryProjectListByIds(List<String> list);
 
 
     void update(Map<String,Object> param);

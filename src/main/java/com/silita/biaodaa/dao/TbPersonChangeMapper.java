@@ -12,6 +12,7 @@ public interface TbPersonChangeMapper extends MyMapper<TbPersonChange> {
 
     /**
      * 获取人员变更记录
+     *
      * @param flag
      * @return
      */

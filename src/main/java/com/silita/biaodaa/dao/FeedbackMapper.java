@@ -10,5 +10,5 @@ public interface FeedbackMapper {
      * 添加意见反馈
      * @param params
      */
-    public void insertFeedback(Map<String, Object> params);
+     void insertFeedback(Map<String, Object> params);
 }

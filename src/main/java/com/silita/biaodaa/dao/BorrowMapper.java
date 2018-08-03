@@ -9,7 +9,8 @@ import java.util.Map;
 public interface BorrowMapper {
     /**
      * 申请保证金借款
+     *
      * @param params
      */
-    public void insertBorrow(Map params);
+    void insertBorrow(Map params);
 }

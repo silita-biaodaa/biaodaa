@@ -9,13 +9,15 @@ import java.util.Map;
 public interface ArticlesMapper {
     /**
      * 查询列表
+     *
      * @param params
      * @return
      */
-    List<Map<String,Object>> queryArticleList(Map params);
+    List<Map<String, Object>> queryArticleList(Map params);
 
     /**
      * 查询详细
+     *
      * @param id
      * @return
      */

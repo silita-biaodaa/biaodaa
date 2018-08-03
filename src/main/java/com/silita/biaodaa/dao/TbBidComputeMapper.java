@@ -6,10 +6,14 @@ import com.silita.biaodaa.utils.MyMapper;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * tb_bid_compute Mapper
+ */
 public interface TbBidComputeMapper extends MyMapper<TbBidCompute> {
 
     /**
      * 保存
+     *
      * @param bid
      * @return
      */
@@ -17,20 +21,23 @@ public interface TbBidComputeMapper extends MyMapper<TbBidCompute> {
 
     /**
      * 获取评标历史记录
+     *
      * @param param
      * @return
      */
-    List<TbBidCompute> queryBidComputeList(Map<String,Object> param);
+    List<TbBidCompute> queryBidComputeList(Map<String, Object> param);
 
     /**
      * 删除
+     *
      * @param param
      * @return
      */
-    int delBidComput(Map<String,Object> param);
+    int delBidComput(Map<String, Object> param);
 
     /**
      * 获取项目类型
+     *
      * @param pkid
      * @return
      */

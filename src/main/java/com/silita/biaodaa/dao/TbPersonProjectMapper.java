@@ -7,24 +7,30 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * tb_person_project Mapper
+ */
 public interface TbPersonProjectMapper extends MyMapper<TbPersonProject> {
 
     /**
      * 获取项目人
+     *
      * @param param
      * @return
      */
-    List<TbPersonProject> queryPersonProject(Map<String,Object> param);
+    List<TbPersonProject> queryPersonProject(Map<String, Object> param);
 
     /**
      * 根据innerid查询人员详细信息
+     *
      * @param list
      * @return
      */
-    List<Map<String,Object>> queryPersonByInnerId(@Param("list") List list,@Param("tabCode") String tabCode);
+    List<Map<String, Object>> queryPersonByInnerId(@Param("list") List list, @Param("tabCode") String tabCode);
 
     /**
      * 根据Pkid获取innerId
+     *
      * @param list
      * @return
      */
@@ -32,34 +38,39 @@ public interface TbPersonProjectMapper extends MyMapper<TbPersonProject> {
 
     /**
      * 根据id获取人员信息
+     *
      * @param param
      * @return
      */
-    List<TbPersonProject> queryPersonProjectByPid(Map<String,Object> param);
+    List<TbPersonProject> queryPersonProjectByPid(Map<String, Object> param);
 
     /**
      * 根据类型获取人员信息
+     *
      * @param param
      * @return
      */
-    List<TbPersonProject> queryPersonByParam(Map<String,Object> param);
+    List<TbPersonProject> queryPersonByParam(Map<String, Object> param);
 
     /**
      * 获取人员信息
+     *
      * @param param
      * @return
      */
-    List<TbPersonProject> queryPersonByCode(Map<String,Object> param);
+    List<TbPersonProject> queryPersonByCode(Map<String, Object> param);
 
     /**
      * 获取人员业绩
+     *
      * @param param
      * @return
      */
-    List<TbPersonProject> queryPersonProjectByParam(Map<String,Object> param);
+    List<TbPersonProject> queryPersonProjectByParam(Map<String, Object> param);
 
     /**
      * 获取人员业绩根据innerid
+     *
      * @param innerId
      * @return
      */
