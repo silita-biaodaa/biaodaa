@@ -49,7 +49,7 @@
   </insert>
 
   <insert id="insertCompanyInfo" parameterType="com.silita.biaodaa.model.TbCompanyInfo">
-    INSERT INTO `tb_company_info`(
+    INSERT INTO `tb_company_info_${tabCode}`(
     `pkid`,`com_name`,`credit_code`,`business_num`,`org_code`,`province`,`city`,
     `com_type`,`trade`,`legal_person`,`regis_capital`,`regis_date`,`start_date`,
     `end_date`,`check_org`,`check_date`,`scope`,`com_address`,`phone`,`email`,`com_url`,

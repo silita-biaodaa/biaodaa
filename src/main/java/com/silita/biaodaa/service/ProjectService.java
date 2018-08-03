@@ -298,9 +298,9 @@ public class ProjectService {
 
         //去掉重复的proId
         if (null != list && list.size() > 0) {
-            Set<Integer> set = new HashSet(list);
-            List<Integer> proList = new ArrayList<>(set);
-            resultMap = tbProjectMapper.queryProjectListByIds(proList);
+            Set<String> set = new HashSet(list);
+            List<String> proList = new ArrayList<>(set);
+            resultMap = tbProjectMapper.queryProjectListByIds(list);
         }
         if (null != resultMap && resultMap.size() > 0) {
             for (Map<String, Object> map : resultMap) {

@@ -36,19 +36,16 @@ public class TestController {
     private static final Logger logger = Logger.getLogger(TestController.class);
 
 
-
-
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Map<String, Object> getTestID(@PathVariable String id) {
         TUser user = testService.getTestName(id);
-        if(user==null){
+        if (user == null) {
             user = new TUser();
         }
         return new ImmutableMap.Builder<String, Object>().put("status", 1)
-                .put("msg", "成功！").put("data",user).build();
+                .put("msg", "成功！").put("data", user).build();
     }
-
 
 
 }

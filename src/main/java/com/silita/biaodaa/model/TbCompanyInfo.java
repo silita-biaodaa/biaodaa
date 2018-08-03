@@ -127,4 +127,9 @@ public class TbCompanyInfo {
      * 地址
      */
     private String comAddress;
+
+    /**
+     * tab
+     */
+    private String tabCode;
 }

@@ -11,24 +11,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 下载记录
+ */
 @RequestMapping("/record")
 @Controller
-public class DownloadRecordController extends BaseController{
+public class DownloadRecordController extends BaseController {
 
     @Autowired
     DownloadRecordService downloadRecordService;
 
     /**
-     * 记录下载次数
+     * TODO: 记录下载次数
+     *
      * @param param
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/downRecord", method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> downRecord(@RequestBody Map<String,Object> param){
-        Map<String,Object> resultMap = new HashMap<>();
+    @RequestMapping(value = "/downRecord", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> downRecord(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
         successMsg(resultMap);
-        resultMap.put("data",downloadRecordService.downloadRecord(param));
+        resultMap.put("data", downloadRecordService.downloadRecord(param));
         return resultMap;
     }
 }

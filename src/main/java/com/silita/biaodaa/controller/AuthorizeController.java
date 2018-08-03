@@ -27,16 +27,22 @@ public class AuthorizeController {
     private AuthorizeService authorizeService;
 
 
+    /**
+     * TODO: 注册
+     *
+     * @param userTempBdd
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/userRegister",produces = "application/json;charset=utf-8")
-    public Map<String,Object> userRegister(@RequestBody UserTempBdd userTempBdd){
+    @RequestMapping(value = "/userRegister", produces = "application/json;charset=utf-8")
+    public Map<String, Object> userRegister(@RequestBody UserTempBdd userTempBdd) {
         Map result = new HashMap();
         result.put("code", 1);
         result.put("data", null);
 
-        try{
+        try {
             String msg = authorizeService.addUserTemp(userTempBdd);
-            if("".equals(msg)) {
+            if ("".equals(msg)) {
                 result.put("msg", "用户注册成功！");
                 result.put("data", authorizeService.queryUserTempByUserPhone(userTempBdd));
             } else {
@@ -45,24 +51,30 @@ public class AuthorizeController {
             }
         } catch (Exception e) {
             logger.error("用户注册异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
         }
         return result;
     }
 
+    /**
+     * TODO:用户登录
+     *
+     * @param userTempBdd
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/userLogin",produces = "application/json;charset=utf-8")
-    public Map<String,Object> userLogin(@RequestBody UserTempBdd userTempBdd){
+    @RequestMapping(value = "/userLogin", produces = "application/json;charset=utf-8")
+    public Map<String, Object> userLogin(@RequestBody UserTempBdd userTempBdd) {
         Map result = new HashMap();
         result.put("code", 1);
         result.put("data", null);
 
-        try{
+        try {
             String msg = authorizeService.checkUserPhone(userTempBdd);
-            if("".equals(msg)) {
+            if ("".equals(msg)) {
                 UserTempBdd vo = authorizeService.queryUserTempByUserNameOrPhoneAndPassWd(userTempBdd);
-                if(vo != null) {
+                if (vo != null) {
                     result.put("msg", "用户登录成功！");
                     result.put("data", vo);
                 } else {
@@ -75,25 +87,31 @@ public class AuthorizeController {
             }
         } catch (Exception e) {
             logger.error("用户登录异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
         }
         return result;
     }
 
+    /**
+     * TODO:第三方绑定或注册
+     *
+     * @param userTempBdd
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/thirdPartyBindingOrRegister",produces = "application/json;charset=utf-8")
-    public Map<String,Object> thirdPartyBinding(@RequestBody UserTempBdd userTempBdd){
+    @RequestMapping(value = "/thirdPartyBindingOrRegister", produces = "application/json;charset=utf-8")
+    public Map<String, Object> thirdPartyBinding(@RequestBody UserTempBdd userTempBdd) {
         Map result = new HashMap();
         result.put("code", 1);
         result.put("data", null);
 
-        try{
+        try {
             String msg = authorizeService.updateOrInsetUserTemp(userTempBdd);
-            if("".equals(msg)) {
-                if(userTempBdd.getType() == 1) {
+            if ("".equals(msg)) {
+                if (userTempBdd.getType() == 1) {
                     result.put("msg", "绑定微信成功！");
-                } else if(userTempBdd.getType() == 2) {
+                } else if (userTempBdd.getType() == 2) {
                     result.put("msg", "绑定QQ成功！");
                 }
                 result.put("data", authorizeService.queryUserTempByUserPhone(userTempBdd));
@@ -103,22 +121,28 @@ public class AuthorizeController {
             }
         } catch (Exception e) {
             logger.error("用户绑定第三方账号异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
         }
         return result;
     }
 
+    /**
+     * TODO: 第三方登录
+     *
+     * @param userTempBdd
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/thirdPartyLogin",produces = "application/json;charset=utf-8")
-    public Map<String,Object> thirdPartyLogin(@RequestBody UserTempBdd userTempBdd){
+    @RequestMapping(value = "/thirdPartyLogin", produces = "application/json;charset=utf-8")
+    public Map<String, Object> thirdPartyLogin(@RequestBody UserTempBdd userTempBdd) {
         Map result = new HashMap();
         result.put("code", 1);
         result.put("data", null);
 
-        try{
+        try {
             UserTempBdd vo = authorizeService.queryUserTempByWXUnionIdOrQQOpenId(userTempBdd);
-            if(vo != null) {
+            if (vo != null) {
                 result.put("msg", "第三方登录成功！");
                 result.put("data", vo);
             } else {
@@ -127,21 +151,27 @@ public class AuthorizeController {
             }
         } catch (Exception e) {
             logger.error("第三方登录异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
         }
         return result;
     }
 
+    /**
+     * TODO: 忘记密码
+     *
+     * @param userTempBdd
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/forgotPassword",produces = "application/json;charset=utf-8")
-    public Map<String,Object> forgotPassword(@RequestBody UserTempBdd userTempBdd){
+    @RequestMapping(value = "/forgotPassword", produces = "application/json;charset=utf-8")
+    public Map<String, Object> forgotPassword(@RequestBody UserTempBdd userTempBdd) {
         Map result = new HashMap();
         result.put("code", 1);
 
-        try{
+        try {
             String msg = authorizeService.UpdatePassWdByForgetPassword(userTempBdd);
-            if("".equals(msg)) {
+            if ("".equals(msg)) {
                 result.put("msg", "找回密码成功！");
             } else {
                 result.put("code", 0);
@@ -149,51 +179,64 @@ public class AuthorizeController {
             }
         } catch (Exception e) {
             logger.error("找回密码异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
         }
         return result;
     }
 
+    /**
+     * TODO:微信登录
+     *
+     * @param code
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/weChatLogin",produces = "application/json;charset=utf-8")
-    public Map<String,Object> weChatLogin(@RequestBody String code){
+    @RequestMapping(value = "/weChatLogin", produces = "application/json;charset=utf-8")
+    public Map<String, Object> weChatLogin(@RequestBody String code) {
         Map result = new HashMap();
         result.put("code", 0);
         result.put("data", null);
-        try{
+        try {
             Map map = authorizeService.weChatLogin(code);
-            int codeTemp = (int)map.get("code");
-            if(codeTemp == 3) {
+            int codeTemp = (int) map.get("code");
+            if (codeTemp == 3) {
                 result.put("code", 3);
                 map.put("msg", "用户已取消登录！");
-            } else if(codeTemp == 1) {
+            } else if (codeTemp == 1) {
                 result.put("code", 1);
                 map.put("msg", "微信扫码登录成功！");
                 result.put("data", map.get("data"));
-            } else if(codeTemp == 2) {
+            } else if (codeTemp == 2) {
                 result.put("code", 2);
                 map.put("msg", "用户还未绑定！");
             }
         } catch (Exception e) {
             logger.error("微信扫描登录异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
         }
         return result;
     }
 
+    /**
+     * TODO: 获取验证码
+     *
+     * @param invitation
+     * @param request
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/getVerificationCode",produces = "application/json;charset=utf-8")
-    public Map<String,Object> getVerificationCode(@RequestBody InvitationBdd invitation, HttpServletRequest request){
+    @RequestMapping(value = "/getVerificationCode", produces = "application/json;charset=utf-8")
+    public Map<String, Object> getVerificationCode(@RequestBody InvitationBdd invitation, HttpServletRequest request) {
         String adder = request.getHeader("X-real-ip");
         Map result = new HashMap();
         result.put("code", 1);
 
-        try{
+        try {
             invitation.setInvitationIp(adder);
             String msg = authorizeService.sendRegisterVerificationCode(invitation);
-            if("".equals(msg)) {
+            if ("".equals(msg)) {
                 result.put("msg", "获取验证码信息成功！");
             } else {
                 result.put("code", 0);
@@ -201,8 +244,8 @@ public class AuthorizeController {
             }
         } catch (Exception e) {
             logger.error("获取验证码信息异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
         }
         return result;
     }

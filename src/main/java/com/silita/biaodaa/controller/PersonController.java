@@ -18,19 +18,20 @@ import java.util.Map;
 public class PersonController extends BaseController {
 
     @Autowired
-    PersonService  personService;
+    PersonService personService;
 
     /**
-     * 人员详情
+     * TODO: 人员详情
+     *
      * @param param
      * @return
      */
-    @RequestMapping(value = "/detail",method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> detail(@RequestBody Map<String,Object> param){
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("code",this.SUCCESS_CODE);
-        resultMap.put("msg",this.SUCCESS_MSG);
-        resultMap.put("data",personService.getPersonDetail(param));
+    @RequestMapping(value = "/detail", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> detail(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", this.SUCCESS_CODE);
+        resultMap.put("msg", this.SUCCESS_MSG);
+        resultMap.put("data", personService.getPersonDetail(param));
         return resultMap;
     }
 

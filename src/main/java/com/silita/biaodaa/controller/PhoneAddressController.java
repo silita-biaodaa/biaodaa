@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * 记录手机号
+ */
 @RequestMapping("phone/address")
 @RestController
 public class PhoneAddressController {
@@ -21,12 +24,13 @@ public class PhoneAddressController {
     PhoneAddressService phoneAddressService;
 
     /**
-     * 添加手机
+     * TODO: 添加手机号
+     *
      * @param json
      * @return
      */
-    @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public Map<String,Object> addPhoneAddress(String json){
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public Map<String, Object> addPhoneAddress(String json) {
         return phoneAddressService.addPhoneAddress(json);
     }
 

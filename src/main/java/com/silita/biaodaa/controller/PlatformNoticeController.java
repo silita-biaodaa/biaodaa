@@ -15,17 +15,23 @@ import java.util.Map;
  */
 @RequestMapping("/platform/notice")
 @RestController
-public class PlatformNoticeController extends BaseController{
+public class PlatformNoticeController extends BaseController {
 
     @Autowired
     PlatformNoticeService platformNoticeService;
 
-    @RequestMapping(value = "/list",method = RequestMethod.POST,produces="application/json;charset=utf-8")
-    public Map<String,Object> getPlatformNoticeList(@RequestBody Map<String,Object> param){
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("code",this.SUCCESS_CODE);
-        resultMap.put("msg",this.SUCCESS_MSG);
-        return platformNoticeService.getPlatformNoticeList(param,resultMap);
+    /**
+     * TODO: 平台列表
+     *
+     * @param param
+     * @return
+     */
+    @RequestMapping(value = "/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> getPlatformNoticeList(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", this.SUCCESS_CODE);
+        resultMap.put("msg", this.SUCCESS_MSG);
+        return platformNoticeService.getPlatformNoticeList(param, resultMap);
     }
 
 }

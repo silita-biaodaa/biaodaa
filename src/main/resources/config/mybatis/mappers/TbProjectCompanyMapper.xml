@@ -31,5 +31,6 @@
         <!--<if test="orgCode != null and orgCode != ''">-->
             <!--AND t.`org_code` = #{orgCode}-->
         <!--</if>-->
+--         GROUP BY t.`pro_id`
     </select>
 </mapper>

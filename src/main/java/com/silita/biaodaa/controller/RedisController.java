@@ -20,8 +20,17 @@ public class RedisController {
     @Autowired
     private MyRedisTemplate myRedisTemplate;
 
+    /**
+     * TODO: 清除缓存
+     *
+     * @param model
+     * @param key
+     * @param pwd
+     * @param type
+     * @return
+     */
     @RequestMapping(value = "/clearCache/{key}")
-    public String clearCache(Model model, @PathVariable("key") String key, String pwd, String type){
+    public String clearCache(Model model, @PathVariable("key") String key, String pwd, String type) {
         try {
             if (pwd != null && pwd.equals("ybjsadmin")) {
                 if (type != null && type.equals("batch")) {
@@ -34,8 +43,8 @@ public class RedisController {
             } else {
                 model.addAttribute("info", "request is failure.");
             }
-        }catch(Exception e){
-            logger.error(e,e);
+        } catch (Exception e) {
+            logger.error(e, e);
         }
         return "jsonView";
     }

@@ -40,49 +40,62 @@ public class FoundationController extends BaseController {
     @Autowired
     TbCompanyService tbCompanyService;
 
+    /**
+     * TODO: 轮播图
+     *
+     * @param params
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/listBannerImage",produces = "application/json;charset=utf-8")
-    public Map<String,Object> listBannerImage(@RequestBody Map params){
+    @RequestMapping(value = "/listBannerImage", produces = "application/json;charset=utf-8")
+    public Map<String, Object> listBannerImage(@RequestBody Map params) {
         Map result = new HashMap();
         result.put("code", 1);
         result.put("msg", "获取轮播图信息成功!");
 
-        try{
+        try {
             List<CarouselImage> carouselImages = foundationService.queryCarouselImageList(params);
             result.put("data", carouselImages);
         } catch (Exception e) {
             logger.error("获取轮播图信息异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
-        }
-        return result;
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/listHotHotWords",produces = "application/json;charset=utf-8")
-    public Map<String,Object> listHotHotWords(@RequestBody Map params){
-        Map result = new HashMap();
-        result.put("code", 1);
-        result.put("msg", "获取热词信息成功!");
-
-        try{
-            List<TbHotWords> hotWordses = foundationService.queryHotWordsByTypeList(params);
-            result.put("data", hotWordses);
-        } catch (Exception e) {
-            logger.error("获取热词信息异常！" + e.getMessage(), e);
-            result.put("code",0);
-            result.put("msg",e.getMessage());
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
         }
         return result;
     }
 
     /**
-     * 版本查询
+     * TODO: 获取热词
+     *
      * @param params
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/getVersion", produces="application/json;charset=utf-8")
+    @RequestMapping(value = "/listHotHotWords", produces = "application/json;charset=utf-8")
+    public Map<String, Object> listHotHotWords(@RequestBody Map params) {
+        Map result = new HashMap();
+        result.put("code", 1);
+        result.put("msg", "获取热词信息成功!");
+
+        try {
+            List<TbHotWords> hotWordses = foundationService.queryHotWordsByTypeList(params);
+            result.put("data", hotWordses);
+        } catch (Exception e) {
+            logger.error("获取热词信息异常！" + e.getMessage(), e);
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * TODO: 版本查询
+     *
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getVersion", produces = "application/json;charset=utf-8")
     public Map<String, Object> getVersion(@RequestBody Map<String, Object> params) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", 1);
@@ -102,12 +115,13 @@ public class FoundationController extends BaseController {
     }
 
     /**
-     * 添加反馈意见
+     * TODO: 添加反馈意见
+     *
      * @param params
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/addFeedback", method = RequestMethod.POST, produces="application/json;charset=utf-8")
+    @RequestMapping(value = "/addFeedback", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> addFeedback(@RequestBody Map<String, Object> params) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", 1);
@@ -117,7 +131,7 @@ public class FoundationController extends BaseController {
             Preconditions.checkArgument(StringUtils.isNotBlank(userId), "未登录");
             logger.info(String.format("添加反馈意见，用户id:%s", userId));
             params.put("pid", userId);
-            Preconditions.checkArgument(params.containsKey("problem") && !Strings.isNullOrEmpty((String)params.get("problem")), "problem不能为空！");
+            Preconditions.checkArgument(params.containsKey("problem") && !Strings.isNullOrEmpty((String) params.get("problem")), "problem不能为空！");
             foundationService.addFeedback(params);
         } catch (Exception e) {
             logger.error(String.format("反馈意见添加失败！%s", e.getMessage()));
@@ -128,23 +142,24 @@ public class FoundationController extends BaseController {
     }
 
     /**
-     * 申请保证金借款
+     * TODO: 申请保证金借款
+     *
      * @param params
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/borrow", method=RequestMethod.POST, produces="application/json;charset=utf-8")
+    @RequestMapping(value = "/borrow", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> borrow(@RequestBody Map<String, Object> params) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", 1);
         result.put("msg", "申请保证金借款成功!");
         try {
-            Preconditions.checkArgument(params.containsKey("region") && !Strings.isNullOrEmpty((String)params.get("region")), "region不能为空！");
-            Preconditions.checkArgument(params.containsKey("projName") && !Strings.isNullOrEmpty((String)params.get("projName")), "projName不能为空！");
-            Preconditions.checkArgument(params.containsKey("borrower") && !Strings.isNullOrEmpty((String)params.get("borrower")), "borrower不能为空！");
-            Preconditions.checkArgument(params.containsKey("kbTime") && !Strings.isNullOrEmpty((String)params.get("kbTime")), "kbTime不能为空！");
+            Preconditions.checkArgument(params.containsKey("region") && !Strings.isNullOrEmpty((String) params.get("region")), "region不能为空！");
+            Preconditions.checkArgument(params.containsKey("projName") && !Strings.isNullOrEmpty((String) params.get("projName")), "projName不能为空！");
+            Preconditions.checkArgument(params.containsKey("borrower") && !Strings.isNullOrEmpty((String) params.get("borrower")), "borrower不能为空！");
+            Preconditions.checkArgument(params.containsKey("kbTime") && !Strings.isNullOrEmpty((String) params.get("kbTime")), "kbTime不能为空！");
             Preconditions.checkArgument(params.containsKey("phone"), "phone不能为空！");
-            Preconditions.checkArgument(params.containsKey("money") && !Strings.isNullOrEmpty((String)params.get("money")), "money不能为空！");
+            Preconditions.checkArgument(params.containsKey("money") && !Strings.isNullOrEmpty((String) params.get("money")), "money不能为空！");
             Object phoneObject = (Object) params.get("phone");
             if (phoneObject instanceof Number) {
                 params.put("phone", String.valueOf(phoneObject));
@@ -159,12 +174,13 @@ public class FoundationController extends BaseController {
     }
 
     /**
-     * 行业链接筛选
+     * TODO: 行业链接筛选
+     *
      * @param params
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/links", method=RequestMethod.POST, produces="application/json;charset=utf-8")
+    @RequestMapping(value = "/links", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> links(@RequestBody Map<String, Object> params) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", 1);
@@ -173,12 +189,12 @@ public class FoundationController extends BaseController {
             String region = (String) params.get("region");
             if (StringUtils.isNotBlank(region)) {
                 params.remove("region");
-                List<Map<String,Object>> areaList = tbCompanyService.getArea();
+                List<Map<String, Object>> areaList = tbCompanyService.getArea();
                 String[] regions = StringUtils.split(region, "|");
                 Preconditions.checkArgument(null != regions && regions.length > 0 && regions.length <= 2, "地区格式传入不正确！正确格式为：湖南省||长沙市");
                 if (regions.length == 2) {
                     String[] keys = regions[1].split(",");
-                    for(int i = 0;i<keys.length;i++){
+                    for (int i = 0; i < keys.length; i++) {
                         if (keys[i].contains("湘西")) {
                             keys[i] = "湘西自治州";
                         }
@@ -221,12 +237,13 @@ public class FoundationController extends BaseController {
     }
 
     /**
-     * 客户常用链接
+     * TODO: 客户常用链接
+     *
      * @param params
      * @return
      */
     @ResponseBody
-    @RequestMapping(value="/customUrls", method=RequestMethod.POST, produces="application/json;charset=utf-8")
+    @RequestMapping(value = "/customUrls", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> customUrls(@RequestBody Map<String, Object> params) {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", 1);
@@ -240,7 +257,7 @@ public class FoundationController extends BaseController {
             String region = (String) params.get("region");
             if (StringUtils.isNotBlank(region)) {
                 params.remove("region");
-                List<Map<String,Object>> areaList = tbCompanyService.getArea();
+                List<Map<String, Object>> areaList = tbCompanyService.getArea();
                 String[] regions = StringUtils.split(region, "|");
                 Preconditions.checkArgument(null != regions && regions.length > 0 && regions.length <= 2, "地区格式传入不正确！正确格式为：湖南省||长沙市");
                 if (regions.length == 2) {
@@ -286,7 +303,8 @@ public class FoundationController extends BaseController {
     }
 
     /**
-     * 获得省份和城市列表
+     * TODO: 获得省份和城市列表
+     *
      * @return
      */
     @ResponseBody
@@ -307,7 +325,8 @@ public class FoundationController extends BaseController {
     }
 
     /**
-     * 获得招标项目列表
+     * TODO: 获得招标项目列表
+     *
      * @return
      */
     @ResponseBody

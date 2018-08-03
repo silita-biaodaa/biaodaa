@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @RequestMapping("/bid")
 @Controller
-public class BidEvaluationMethodController extends BaseController{
+public class BidEvaluationMethodController extends BaseController {
 
     @Autowired
     BidEvaluationMethodService bidEvaluationMethodService;
@@ -26,56 +26,72 @@ public class BidEvaluationMethodController extends BaseController{
     ElasticseachService elasticseachService;
 
     /**
-     * 项目名称检索
+     * TODO:项目名称检索
+     *
      * @param params
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/filter", method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> filter(@RequestBody Map<String, Object> params){
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("data",bidEvaluationMethodService.getSnatchUrlList(params));
+    @RequestMapping(value = "/filter", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> filter(@RequestBody Map<String, Object> params) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("data", bidEvaluationMethodService.getSnatchUrlList(params));
         return successMap(resultMap);
     }
 
+    /**
+     * TODO: 获取多标段
+     *
+     * @param params
+     * @return
+     */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> list(@RequestBody Map<String, Object> params) {
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("data",bidEvaluationMethodService.getNoticeDetailList(params));
+    @RequestMapping(value = "/list", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> list(@RequestBody Map<String, Object> params) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("data", bidEvaluationMethodService.getNoticeDetailList(params));
         return successMap(resultMap);
     }
 
-    private Map<String,Object> successMap(Map<String,Object> resultMap){
-        resultMap.put("code",this.SUCCESS_CODE);
-        resultMap.put("msg",this.SUCCESS_MSG);
+
+    /**
+     * TODO: 封装成功code
+     *
+     * @param resultMap
+     * @return
+     */
+    private Map<String, Object> successMap(Map<String, Object> resultMap) {
+        resultMap.put("code", this.SUCCESS_CODE);
+        resultMap.put("msg", this.SUCCESS_MSG);
         return resultMap;
     }
 
     /**
-     * 获取信用等级最新年份
+     * TODO:获取信用等级最新年份
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/ration", method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> getRation(){
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("data",bidEvaluationMethodService.getReaYear());
+    @RequestMapping(value = "/ration", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> getRation() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("data", bidEvaluationMethodService.getReaYear());
         return successMap(resultMap);
     }
 
     /**
-     * 评标计算
+     * TODO:评标计算
+     *
      * @param param
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/bidCompute", method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> bidCompute(@RequestBody Map<String, Object> param){
-        Map<String,Object> resultMap = new HashMap<>();
+    @RequestMapping(value = "/bidCompute", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> bidCompute(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
         try {
-            Map<String,Object> dataMap = bidEvaluationMethodService.bidCompute(param);
-            resultMap.put("data",dataMap);
+            Map<String, Object> dataMap = bidEvaluationMethodService.bidCompute(param);
+            resultMap.put("data", dataMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,39 +99,42 @@ public class BidEvaluationMethodController extends BaseController{
     }
 
     /**
-     * 评标历史列表
+     * TODO:评标历史列表
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/record/list", method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> list(){
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("data",bidEvaluationMethodService.getBidComputerList());
+    @RequestMapping(value = "/record/list", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> list() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("data", bidEvaluationMethodService.getBidComputerList());
         return successMap(resultMap);
     }
 
     /**
-     * 删除评标历史
+     * TODO:删除评标历史
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/del", method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> delBidComputer(@RequestBody Map<String, Object> param){
-        Map<String,Object> resultMap = new HashMap<>();
+    @RequestMapping(value = "/del", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> delBidComputer(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
         bidEvaluationMethodService.delBidComputer(param);
         return successMap(resultMap);
     }
 
     /**
-     * 结果详情
+     * TODO:结果详情
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/detail", method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> detail(@RequestBody Map<String, Object> param){
-        Map<String,Object> resultMap = new HashMap<>();
+    @RequestMapping(value = "/detail", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> detail(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
         try {
-            resultMap.put("data",bidEvaluationMethodService.getBidCoDetail(param));
+            resultMap.put("data", bidEvaluationMethodService.getBidCoDetail(param));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -123,24 +142,30 @@ public class BidEvaluationMethodController extends BaseController{
     }
 
     /**
-     * 评标结果
+     * TODO:评标结果
+     *
      * @param param
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/result", method = RequestMethod.POST,produces = "application/json")
-    public Map<String,Object> result(@RequestBody Map<String, Object> param){
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("data",bidEvaluationMethodService.getBidResult(param));
+    @RequestMapping(value = "/result", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> result(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("data", bidEvaluationMethodService.getBidResult(param));
         return successMap(resultMap);
     }
 
+    /**
+     * TODO: es导入
+     *
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/esSnatchurl", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String,Object> esSnatchurl(){
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("code",this.SUCCESS_CODE);
-        resultMap.put("msg",this.SUCCESS_MSG);
+    public Map<String, Object> esSnatchurl() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", this.SUCCESS_CODE);
+        resultMap.put("msg", this.SUCCESS_MSG);
         elasticseachService.batchAddSnatchUrl();
         return resultMap;
     }
