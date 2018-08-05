@@ -25,12 +25,12 @@ public class XmlImportTest extends ConfigTest {
     TbCompanyInfoService tbCompanyInfoService;
 
 
-    public void test(File file) throws Exception {
+    public void test(File file,String province) throws Exception {
 //        File file = new File("F:\\data\\江西-广西\\广西-建筑\\天眼查(广西)(W20080327171533264902113).xls");
         FileInputStream inputStream = new FileInputStream(file);
         String fileName = file.getName();
 //        String provice = fileName.substring(ProjectAnalysisUtil.getIndex(fileName, "(") + 1, ProjectAnalysisUtil.getIndex(fileName, ")"));
-        String provice = "江西省";
+//        String provice = "江西省";
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(inputStream);
         List<String> companyList = new ArrayList<>();
         if (null != hssfWorkbook) {
@@ -41,7 +41,7 @@ public class XmlImportTest extends ConfigTest {
             HSSFRow row = null;
             HSSFCell cell = null;
             Map<String, Object> param = new HashMap<>();
-            for (int i = 1; i <= rowCount; i++) {
+            for (int i = 2; i <= rowCount; i++) {
                 row = null;
                 row = sheet.getRow(i);
                 companyInfo = new TbCompanyInfo();
@@ -49,7 +49,7 @@ public class XmlImportTest extends ConfigTest {
                 param.put("date", new Date());
                 companyInfo.setTrade("建筑业");
                 cell = row.getCell(0);
-                companyInfo.setTabCode(this.getCode(provice));
+                companyInfo.setTabCode(this.getCode(province));
                 companyInfo.setComName(cell.getStringCellValue().trim());
                 if ("".equals(companyInfo.getComName()) || companyList.contains(companyInfo.getComName())) {
                     continue;
@@ -69,7 +69,7 @@ public class XmlImportTest extends ConfigTest {
                 if (null != cell && null != cell.getStringCellValue()) {
                     companyInfo.setRegisDate(cell.getStringCellValue().trim());
                 }
-                companyInfo.setProvince(provice);
+                companyInfo.setProvince(province);
                 cell = row.getCell(4);
                 if (null != cell && StringUtils.isNotBlank(cell.getStringCellValue())) {
                     companyInfo.setCity(cell.getStringCellValue().trim());
@@ -132,6 +132,15 @@ public class XmlImportTest extends ConfigTest {
             case "贵州省":
                 tabCode = "guiz";
                 break;
+            case "吉林省":
+                tabCode = "jil";
+                break;
+            case "河北省":
+                tabCode = "hebei";
+                break;
+            case "四川省":
+                tabCode = "sichuan";
+                break;
         }
         return tabCode;
     }
@@ -144,12 +153,12 @@ public class XmlImportTest extends ConfigTest {
 
     @Test
     public void getFile(){
-        File file = new File("F:\\data\\江西-广西\\江西");
+        File file = new File("F:\\data\\四川\\四川省");
         File[]  files = file.listFiles();
         for(File f : files){
             System.out.println(f.getName());
             try {
-                test(f);
+                test(f,"四川省");
             } catch (Exception e) {
                 System.out.println(f.getName());
                 e.printStackTrace();

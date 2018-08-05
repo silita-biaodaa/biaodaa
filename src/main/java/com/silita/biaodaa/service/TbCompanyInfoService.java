@@ -18,14 +18,15 @@ public class TbCompanyInfoService {
 
 
     public void saveCompanyInfo(List<TbCompanyInfo> comList) {
-        TbCompanyInfo companyInfo = null;
+        Integer count = 0;
         for (TbCompanyInfo info : comList) {
             if(StringUtils.isNotBlank(info.getComName())){
-                companyInfo = null;
-                companyInfo = tbCompanyInfoMapper.queryDetailByComName(info.getComName());
-                if (null == companyInfo) {
-                    tbCompanyInfoMapper.insertCompanyInfo(info);
+                count = 0;
+                count = tbCompanyInfoMapper.queryCount(info.getComName(),info.getTabCode());
+                if (count > 0) {
+                    continue;
                 }
+                tbCompanyInfoMapper.insertCompanyInfo(info);
             }
         }
     }

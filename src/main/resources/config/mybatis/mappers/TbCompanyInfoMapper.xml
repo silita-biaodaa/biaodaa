@@ -96,4 +96,9 @@
     update tb_company t set t.regis_capital = #{regisCapital},t.city = #{city} where t.com_id = #{comId}
   </update>
 
+  <select id="queryCount" resultType="java.lang.Integer">
+      select count(1)
+      from tb_company_info_${tabCode}
+      where com_name = #{name}
+  </select>
 </mapper>

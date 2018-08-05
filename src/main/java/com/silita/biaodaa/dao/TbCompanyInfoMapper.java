@@ -67,4 +67,12 @@ public interface TbCompanyInfoMapper extends MyMapper<TbCompanyInfo> {
      * @return
      */
     int updateCompany(TbCompany company);
+
+    /**
+     * 获取企业个数
+     *
+     * @param name
+     * @return
+     */
+    Integer queryCount(@Param("name") String name,@Param("tabCode") String tabCode);
 }
