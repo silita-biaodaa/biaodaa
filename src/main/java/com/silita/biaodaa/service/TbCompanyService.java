@@ -330,7 +330,7 @@ public class TbCompanyService {
 
         TbCompanyInfo companyInfo = null;
         for (TbCompany company : list) {
-            companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName());
+            companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),null);
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
 //                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
@@ -897,7 +897,7 @@ public class TbCompanyService {
         TbCompanyInfo companyInfo = null;
         if (null != companyList && companyList.size() > 0) {
             for (TbCompany company : companyList) {
-                companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName());
+                companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),null);
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
                         company.setPhone(companyInfo.getPhone().split(";")[0].trim());

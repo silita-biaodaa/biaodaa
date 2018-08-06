@@ -275,7 +275,7 @@ public class NoticeService {
                     List<TbCompany> companyCertBasicList = noticeMapper.selectCompanyCertBasic(idsMap);
                     TbCompanyInfo tbCompanyInfo = null;
                     for (TbCompany company : list) {
-                        tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName());
+                        tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),null);
                         if (null != tbCompanyInfo) {
                             if (null != tbCompanyInfo.getPhone()) {
                                 company.setPhone(tbCompanyInfo.getPhone().split(";")[0].toLowerCase());

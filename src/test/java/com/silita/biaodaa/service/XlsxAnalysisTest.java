@@ -44,9 +44,8 @@ public class XlsxAnalysisTest extends ConfigTest{
                 companyInfo = new TbCompanyInfo();
                 param.put("time", System.currentTimeMillis());
                 param.put("date", new Date());
-                companyInfo.setTrade("建筑业");
+//                companyInfo.setTrade("建筑业");
                 cell = row.getCell(0);
-                companyInfo.setTabCode(this.getCode(province));
                 if(null != cell){
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     if(null != cell.getStringCellValue()) {
@@ -86,6 +85,13 @@ public class XlsxAnalysisTest extends ConfigTest{
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     if(StringUtils.isNotBlank(cell.getStringCellValue())) {
                         companyInfo.setCity(cell.getStringCellValue().trim());
+                        companyInfo.setProvince(tbCompanyInfoService.getProvince(companyInfo.getCity()));
+                        if(null == companyInfo.getProvince()){
+                            companyInfo.setTabCode(this.getCode("湖南"));
+                        }else {
+                            companyInfo.setTabCode(this.getCode(companyInfo.getProvince()));
+                        }
+
                     }
                 }
                 cell = row.getCell(5);
@@ -238,6 +244,10 @@ public class XlsxAnalysisTest extends ConfigTest{
             case "湖北省":
                 tabCode = "hubei";
                 break;
+                default:
+                    tabCode = null;
+                    break;
+
         }
         return tabCode;
     }
@@ -250,12 +260,12 @@ public class XlsxAnalysisTest extends ConfigTest{
 
     @Test
     public void getFile(){
-        File file = new File("F:\\data\\云南省");
+        File file = new File("F:\\data\\勘察设计（1949-2014） 2\\勘察设计（1949-2014）");
         File[]  files = file.listFiles();
         for(File f : files){
             System.out.println(f.getName());
             try {
-                test(f,"云南省");
+                test(f,"陕西省");
             } catch (Exception e) {
                 System.out.println(f.getName());
                 e.printStackTrace();

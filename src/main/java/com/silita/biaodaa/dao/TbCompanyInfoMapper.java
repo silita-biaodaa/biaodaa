@@ -42,7 +42,7 @@ public interface TbCompanyInfoMapper extends MyMapper<TbCompanyInfo> {
      * @param name
      * @return
      */
-    TbCompanyInfo queryDetailByComName(String name);
+    TbCompanyInfo queryDetailByComName(@Param("name") String name,@Param("tabCode") String tabCode);
 
     /**
      * 获取公司总数
@@ -75,4 +75,11 @@ public interface TbCompanyInfoMapper extends MyMapper<TbCompanyInfo> {
      * @return
      */
     Integer queryCount(@Param("name") String name,@Param("tabCode") String tabCode);
+
+    /**
+     * 根据城市获取省份
+     * @param city
+     * @return
+     */
+    String queryProvinceByCity(String city);
 }

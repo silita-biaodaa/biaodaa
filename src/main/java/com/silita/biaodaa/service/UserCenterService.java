@@ -139,7 +139,7 @@ public class UserCenterService {
         TbCompanyInfo companyInfo = null;
         for (Map<String, Object> map : companys) {
             if(null != map.get("comName")){
-                companyInfo = tbCompanyInfoMapper.queryDetailByComName(MapUtils.getString(map,"comName"));
+                companyInfo = tbCompanyInfoMapper.queryDetailByComName(MapUtils.getString(map,"comName"),null);
                 if(null != companyInfo){
                     if(null != companyInfo.getPhone()){
 //                        map.put("phone",companyInfo.getPhone().split(";")[0].trim());

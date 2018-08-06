@@ -49,19 +49,39 @@
   </insert>
 
   <insert id="insertCompanyInfo" parameterType="com.silita.biaodaa.model.TbCompanyInfo">
-    INSERT INTO `tb_company_info_${tabCode}`(
-    `pkid`,`com_name`,`credit_code`,`business_num`,`org_code`,`province`,`city`,
-    `com_type`,`trade`,`legal_person`,`regis_capital`,`regis_date`,`start_date`,
-    `end_date`,`check_org`,`check_date`,`scope`,`com_address`,`phone`,`email`,`com_url`,
-    `status`)
-    VALUES
-    (
-    #{pkid},#{comName},#{creditCode},#{businessNum},#{orgCode},#{province},#{city},
-    #{comType},#{trade},#{legalPerson},#{regisCapital},#{regisDate},#{startDate},
-    #{endDate},#{checkOrg},#{checkDate},#{scope},#{comAddress},#{phone},#{email},#{comUrl},
-    #{status}
-    )
+    INSERT INTO
+        <if test="tabCode != null and tabCode != ''">
+           tb_company_info_${tabCode}
+        </if>
+        <if test="tabCode == null or tabCode == ''">
+           tb_company_info
+        </if>
+        (
+        `pkid`,`com_name`,`credit_code`,`business_num`,`org_code`,`province`,`city`,
+        `com_type`,`trade`,`legal_person`,`regis_capital`,`regis_date`,`start_date`,
+        `end_date`,`check_org`,`check_date`,`scope`,`com_address`,`phone`,`email`,`com_url`,
+        `status`)
+        VALUES
+        (
+        #{pkid},#{comName},#{creditCode},#{businessNum},#{orgCode},#{province},#{city},
+        #{comType},#{trade},#{legalPerson},#{regisCapital},#{regisDate},#{startDate},
+        #{endDate},#{checkOrg},#{checkDate},#{scope},#{comAddress},#{phone},#{email},#{comUrl},
+        #{status}
+        )
   </insert>
+
+  <select id="queryDetailByComName" resultType="com.silita.biaodaa.model.TbCompanyInfo">
+    select
+    t.*
+    <if test="tabCode != null and tabCode != ''">
+      from tb_company_info_${tabCode} t
+    </if>
+    <if test="tabCode == null or tabCode == ''">
+      from tb_company_info t
+    </if>
+    where t.com_name = #{name}
+    limit 1
+  </select>
 
   <select id="queryPhoneByComName" parameterType="java.lang.String" resultType="java.lang.String">
     select
@@ -71,24 +91,18 @@
     limit 1
   </select>
 
-  <select id="queryDetailByComName" resultType="com.silita.biaodaa.model.TbCompanyInfo" parameterType="java.lang.String">
-    select
-      t.*
-    from tb_company_info t
-    where t.com_name = #{name}
-    limit 1
-  </select>
-
   <select id="queryComCount" resultType="java.lang.Integer">
     SELECT COUNT(1)
     FROM tb_company t
     WHERE t.regis_capital IS NULL AND  t.com_name IS NOT NULL
+    order by t.px desc
   </select>
 
   <select id="queryCompanyList" resultType="com.silita.biaodaa.model.TbCompany">
     select t.*
     from tb_company t
     where t.regis_capital is null and  t.com_name is not null
+    order by t.px desc
     limit #{page},#{pageSize}
   </select>
 
@@ -98,7 +112,18 @@
 
   <select id="queryCount" resultType="java.lang.Integer">
       select count(1)
-      from tb_company_info_${tabCode}
+      <if test="tabCode != null and tabCode != ''">
+        from tb_company_info_${tabCode}
+      </if>
+      <if test="tabCode == null or tabCode == ''">
+        from tb_company_info
+      </if>
       where com_name = #{name}
+  </select>
+
+  <select id="queryProvinceByCity" resultType="java.lang.String" parameterType="java.lang.String">
+    select
+      t.`display_name`
+    from area t where t.`name` like CONCAT('%',#{city},'%') limit 1
   </select>
 </mapper>

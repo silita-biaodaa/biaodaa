@@ -54,7 +54,7 @@ public class CompanyBootstrap implements ApplicationListener<ApplicationEvent> {
                     scheduler.scheduleAtFixedRate(countBidTask, lockTimes,24 * 60, TimeUnit.MINUTES);
                     logger.info("----------当前时间【"+start+"】，任务执行时间【"+endLock+"】，中间间隔【"+lockTimes+"】分");
                     //TODO: 人员缓存
-                    scheduler.scheduleAtFixedRate(personTask, 0, 61, TimeUnit.MINUTES);
+//                    scheduler.scheduleAtFixedRate(personTask, 0, 61, TimeUnit.MINUTES);
                     //TODO: 公司同步Elasticsearch
                     String comTimer = "01:01:00";
                     String comEndLock = end + " "+comTimer.trim();

@@ -1,7 +1,10 @@
 package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.dao.TbCompanyInfoMapper;
+import com.silita.biaodaa.dao.TbCompanyMapper;
+import com.silita.biaodaa.dao.TwfDictMapper;
 import com.silita.biaodaa.model.TbCompanyInfo;
+import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,5 +32,13 @@ public class TbCompanyInfoService {
                 tbCompanyInfoMapper.insertCompanyInfo(info);
             }
         }
+    }
+
+    public String getProvince(String city){
+        String display = tbCompanyInfoMapper.queryProvinceByCity(city);
+        if(StringUtils.isBlank(display)){
+            return null;
+        }
+        return ProjectAnalysisUtil.getProvince(display);
     }
 }
