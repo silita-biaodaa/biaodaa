@@ -61,7 +61,7 @@ public class GradeController {
         result.put("code", 1);
         result.put("msg", "操作成功!");
         try {
-            gradeService.updateCompany();
+            gradeService.getCompany();
         } catch (Exception e) {
             result.put("code", 0);
             result.put("msg", e.getMessage());

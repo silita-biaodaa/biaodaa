@@ -12,6 +12,7 @@ import com.silita.biaodaa.model.TbZzGrade;
 import com.silita.biaodaa.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-//@Transactional
 public class GradeService {
 
     @Autowired
@@ -89,7 +89,8 @@ public class GradeService {
         return companyQualList;
     }
 
-    public void updateCompany() {
+
+    public void getCompany() {
         Integer count = tbCompanyInfoMapper.queryComCount();
         if (count > 0) {
             Integer pages = elasticseachService.getPage(count, 3000);
@@ -102,9 +103,6 @@ public class GradeService {
                 companyList = tbCompanyInfoMapper.queryCompanyList(page,pageSize);
                 if(null != companyList && companyList.size() > 0){
                     for(TbCompany company : companyList){
-                        if("湖南耀邦建设有限公司".equals(company.getComName())){
-                            System.out.println("湖南耀邦建设有限公司");
-                        }
                         companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),CommonUtil.getCode(company.getRegisAddress()));
                         if(null != companyInfo){
                             if(null != companyInfo.getCity()){
@@ -113,11 +111,15 @@ public class GradeService {
                             if(null != companyInfo.getRegisCapital()){
                                 company.setRegisCapital(companyInfo.getRegisCapital());
                             }
-                            tbCompanyInfoMapper.updateCompany(company);
+                            update(company);
                         }
                     }
                 }
             }
         }
+    }
+
+    private void update(TbCompany company){
+        tbCompanyInfoMapper.updateCompany(company);
     }
 }
