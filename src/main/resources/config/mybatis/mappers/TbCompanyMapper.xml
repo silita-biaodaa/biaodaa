@@ -39,12 +39,13 @@
       s.cert_no,
       s.cert_date,
       s.valid_date,
-      b.runScope AS comRange,
+--       b.runScope AS comRange,
       b.registerStatus AS subsist,
 --       TRIM(SUBSTRING_INDEX(t.`phone`, ';', 1)) AS phone,
       TRIM(t.`phone`) AS phone,
       TRIM(SUBSTRING_INDEX(t.`com_url`, ';', 1))  AS comUrl,
       TRIM(SUBSTRING_INDEX(t.`email`, ';', 1)) AS email,
+      t.`scope` AS comRange,
       t.`regis_date` as regisDate
     FROM
       tb_company c
@@ -295,6 +296,7 @@
               ,t.com_name
               ,t.com_name_py
               ,IFNULL(t.px,0) AS px
+              ,regis_address AS regisAddress
       FROM tb_company t
       WHERE 1=1
       AND t.`com_name` IS NOT NULL AND t.`com_name` != ''

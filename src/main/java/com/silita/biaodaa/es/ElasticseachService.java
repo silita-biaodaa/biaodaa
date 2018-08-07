@@ -69,10 +69,15 @@ public class ElasticseachService {
         Map sort = new HashMap<String, String>();
         sort.put("px", SortOrder.DESC);
         String comName = MapUtils.getString(param, "name");
+        String regisAddress = MapUtils.getString(param, "regisAddress");
+        if (null == regisAddress) {
+            regisAddress = "湖南省";
+        }
         PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "count"), sort);
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "comName", comName));
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "comNamePy", comName));
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "regisAddress", regisAddress));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "company", "comes", querys, pageSort);
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = null;
@@ -90,12 +95,12 @@ public class ElasticseachService {
         if (total % pageSize == 0) {
             pages = total / pageSize;
         } else {
-            pages = (total/pageSize) + 1;
+            pages = (total / pageSize) + 1;
         }
         return pages;
     }
 
-    public void batchAddSnatchUrl(){
+    public void batchAddSnatchUrl() {
         nativeElasticSearchUtils.createIndexAndCreateMapping(transportClient, SnatchurlEs.class);
         Integer count = snatchurlMapper.querySnatchurlCount();
         List<SnatchurlEs> snaList = new ArrayList<>();
@@ -114,13 +119,13 @@ public class ElasticseachService {
         }
     }
 
-    public List<Map<String,Object>> querySnatchUrl(Map<String,Object> param){
+    public List<Map<String, Object>> querySnatchUrl(Map<String, Object> param) {
         String title = MapUtils.getString(param, "projName");
         Map sort = new HashMap<String, String>();
         sort.put("openDate", SortOrder.DESC);
-        PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "limit"),sort);
+        PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "limit"), sort);
         List<QuerysModel> querys = new ArrayList();
-        querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "title", "*"+title+"*"));
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "title", "*" + title + "*"));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "snatchurl", "snatchurl_zhaobiao", querys, pageSort);
 //        nativeElasticSearchUtils.close(transportClient);
         List<Map<String, Object>> list = new ArrayList<>();
