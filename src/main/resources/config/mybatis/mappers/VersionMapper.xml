@@ -5,4 +5,11 @@
     <select id="getVersion" parameterType="String" resultType="String">
         select versionInformation from mishu.version where loginChannel=#{loginChannel}
     </select>
+
+    <select id="queryVersion" parameterType="java.lang.String" resultType="java.util.Map">
+        select versionInformation as versionInformation
+                ,content as content
+                ,is_update as isUpdate
+        from mishu.version where loginChannel=#{loginChannel}
+    </select>
 </mapper>

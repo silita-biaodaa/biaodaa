@@ -2,6 +2,7 @@ package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSON;
 import com.silita.biaodaa.model.TbCompanyInfo;
+import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -27,6 +28,7 @@ public class XlsxAnalysisTest extends ConfigTest{
         FileInputStream inputStream = new FileInputStream(file);
         String fileName = file.getName();
 //        String provice = fileName.substring(ProjectAnalysisUtil.getIndex(fileName, "(") + 1, ProjectAnalysisUtil.getIndex(fileName, ")"));
+         province = fileName.substring(ProjectAnalysisUtil.getIndex(fileName,"-")+1,ProjectAnalysisUtil.getIndex(fileName,"-")+3);
 //        String provice = "江西省";
         Workbook hssfWorkbook = new XSSFWorkbook(inputStream);
         List<String> companyList = new ArrayList<>();
@@ -79,18 +81,19 @@ public class XlsxAnalysisTest extends ConfigTest{
                         companyInfo.setRegisDate(cell.getStringCellValue().trim());
                     }
                 }
-                companyInfo.setProvince(province);
+                companyInfo.setTabCode(this.getCode(province));
+                companyInfo.setProvince(this.getProvince(province));
                 cell = row.getCell(4);
                 if (null != cell) {
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     if(StringUtils.isNotBlank(cell.getStringCellValue())) {
                         companyInfo.setCity(cell.getStringCellValue().trim());
-                        companyInfo.setProvince(tbCompanyInfoService.getProvince(companyInfo.getCity()));
-                        if(null == companyInfo.getProvince()){
-                            companyInfo.setTabCode(this.getCode("湖南"));
-                        }else {
-                            companyInfo.setTabCode(this.getCode(companyInfo.getProvince()));
-                        }
+//                        companyInfo.setProvince(tbCompanyInfoService.getProvince(companyInfo.getCity()));
+//                        if(null == companyInfo.getProvince()){
+//                            companyInfo.setTabCode(this.getCode("湖南"));
+//                        }else {
+//                            companyInfo.setTabCode(this.getCode(companyInfo.getProvince()));
+//                        }
 
                     }
                 }
@@ -160,89 +163,129 @@ public class XlsxAnalysisTest extends ConfigTest{
     private String getCode(String province) {
         String tabCode = "";
         switch (province) {
-            case "广西壮族自治区":
+            case "广西":
                 tabCode = "guangx";
+                province = "广西壮族自治区";
                 break;
-            case "江西省":
+            case "江西":
                 tabCode = "jiangx";
+                province = "江西省";
                 break;
-            case "贵州省":
+            case "贵州":
                 tabCode = "guiz";
+                province = "贵州省";
                 break;
-            case "吉林省":
+            case "吉林":
                 tabCode = "jil";
+                province = "吉林省";
                 break;
-            case "河北省":
+            case "河北":
                 tabCode = "hebei";
+                province = "河北省";
                 break;
-            case "四川省":
+            case "四川":
                 tabCode = "sichuan";
+                province = "四川省";
                 break;
-            case "天津市":
+            case "天津":
                 tabCode = "tianj";
+                province = "天津市";
                 break;
-            case "甘肃省":
+            case "甘肃":
                 tabCode = "gans";
+                province = "甘肃省";
                 break;
-            case "黑龙江省":
+            case "黑龙":
                 tabCode = "heilj";
+                province = "黑龙江省";
                 break;
-            case "青海省":
+            case "青海":
                 tabCode = "qingh";
+                province = "青海省";
                 break;
-            case "西藏自治区":
+            case "西藏":
                 tabCode = "xizang";
+                province = "西藏自治区";
                 break;
-            case "安徽省":
+            case "安徽":
                 tabCode = "anh";
+                province = "安徽省";
                 break;
-            case "北京市":
+            case "北京":
                 tabCode = "beij";
+                province = "北京市";
                 break;
-            case "福建省":
+            case "福建":
                 tabCode = "fuj";
+                province = "福建";
                 break;
-            case "浙江省":
+            case "浙江":
                 tabCode = "zhej";
+                province = "浙江省";
                 break;
-            case "河南省":
+            case "河南":
                 tabCode = "henan";
+                province = "河南省";
                 break;
-            case "江苏省":
+            case "江苏":
                 tabCode = "jiangs";
+                province = "江苏省";
                 break;
-            case "内蒙古自治区":
+            case "内蒙":
                 tabCode = "neimg";
+                province = "内蒙古自治区";
                 break;
-            case "宁夏回族自治区":
+            case "宁夏":
                 tabCode = "ningx";
+                province = "宁夏回族自治区";
                 break;
-            case "山东省":
+            case "山东":
                 tabCode = "shand";
+                province = "山东省";
                 break;
-            case "山西省":
+            case "山西":
                 tabCode = "sanx";
+                province = "山西省";
                 break;
-            case "海南省":
+            case "海南":
                 tabCode = "hain";
+                province = "海南";
                 break;
-            case "上海市":
+            case "上海":
                 tabCode = "shangh";
+                province = "上海市";
                 break;
-            case "广东省":
+            case "广东":
                 tabCode = "guangd";
+                province = "广东省";
                 break;
-            case "新疆维吾尔自治区":
+            case "新疆":
                 tabCode = "xinjiang";
+                province = "新疆维吾尔自治区";
                 break;
-            case "云南省":
+            case "云南":
                 tabCode = "yunn";
+                province = "云南省";
                 break;
-            case "陕西省":
+            case "陕西":
                 tabCode = "shanxi";
+                province = "陕西省";
                 break;
-            case "湖北省":
+            case "湖北":
                 tabCode = "hubei";
+                province = "湖北省";
+                break;
+            case "重庆":
+                tabCode = null;
+                province = "重庆市";
+                break;
+            case "湖南":
+                tabCode = null;
+                province = "湖南省";
+                break;
+            case "辽宁":
+                tabCode = null;
+                province = "辽宁省";
                 break;
                 default:
                     tabCode = null;
@@ -252,6 +295,105 @@ public class XlsxAnalysisTest extends ConfigTest{
         return tabCode;
     }
 
+    public String  getProvince(String province){
+        switch (province) {
+            case "广西":
+                province = "广西壮族自治区";
+                break;
+            case "江西":
+                province = "江西省";
+                break;
+            case "贵州":
+                province = "贵州省";
+                break;
+            case "吉林":
+                province = "吉林省";
+                break;
+            case "河北":
+                province = "河北省";
+                break;
+            case "四川":
+                province = "四川省";
+                break;
+            case "天津":
+                province = "天津市";
+                break;
+            case "甘肃":
+                province = "甘肃省";
+                break;
+            case "黑龙":
+                province = "黑龙江省";
+                break;
+            case "青海":
+                province = "青海省";
+                break;
+            case "西藏":
+                province = "西藏自治区";
+                break;
+            case "安徽":
+                province = "安徽省";
+                break;
+            case "北京":
+                province = "北京市";
+                break;
+            case "福建":
+                province = "福建";
+                break;
+            case "浙江":
+                province = "浙江省";
+                break;
+            case "河南":
+                province = "河南省";
+                break;
+            case "江苏":
+                province = "江苏省";
+                break;
+            case "内蒙":
+                province = "内蒙古自治区";
+                break;
+            case "宁夏":
+                province = "宁夏回族自治区";
+                break;
+            case "山东":
+                province = "山东省";
+                break;
+            case "山西":
+                province = "山西省";
+                break;
+            case "海南":
+                province = "海南";
+                break;
+            case "上海":
+                province = "上海市";
+                break;
+            case "广东":
+                province = "广东省";
+                break;
+            case "新疆":
+                province = "新疆维吾尔自治区";
+                break;
+            case "云南":
+                province = "云南省";
+                break;
+            case "陕西":
+                province = "陕西省";
+                break;
+            case "湖北":
+                province = "湖北省";
+                break;
+            case "重庆":
+                province = "重庆市";
+                break;
+            case "湖南":
+                province = "湖南省";
+                break;
+            case "辽宁":
+                province = "辽宁省";
+                break;
+
+        }
+        return province;
+    }
     @Test
     public void test1() {
         String data = Long.toString(System.currentTimeMillis()) + new Date();
@@ -260,7 +402,7 @@ public class XlsxAnalysisTest extends ConfigTest{
 
     @Test
     public void getFile(){
-        File file = new File("F:\\data\\勘察设计（1949-2014） 2\\勘察设计（1949-2014）");
+        File file = new File("F:\\data\\监理(1)");
         File[]  files = file.listFiles();
         for(File f : files){
             System.out.println(f.getName());
@@ -272,6 +414,12 @@ public class XlsxAnalysisTest extends ConfigTest{
                 break;
             }
         }
+    }
 
+    @Test
+    public void test2(){
+        String str = "监理-安徽 (1949-2014).xlsx";
+        String dddd = str.substring(ProjectAnalysisUtil.getIndex(str,"-")+1,ProjectAnalysisUtil.getIndex(str,"-")+3);
+        System.out.println(dddd);
     }
 }

@@ -171,4 +171,13 @@ public class FoundationService {
         PageInfo pageInfo = new PageInfo(links);
         return pageInfo;
     }
+
+    /**
+     * 获得版本信息
+     * @param loginChannel  登录频道
+     * @return
+     */
+    public Map<String,Object> version(String loginChannel) {
+        return versionMapper.queryVersion(loginChannel);
+    }
 }

@@ -354,4 +354,31 @@ public class FoundationController extends BaseController {
         }
         return result;
     }
+
+
+    /**
+     * TODO: 版本查询
+     *
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/version", produces = "application/json;charset=utf-8")
+    public Map<String, Object> version(@RequestBody Map<String, Object> params) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", 1);
+        result.put("msg", "获取版本信息成功!");
+        try {
+            Preconditions.checkArgument(params.containsKey("loginChannel") && !Strings.isNullOrEmpty((String) params.get("loginChannel")), "loginChannel不能为空！");
+            String loginChannel = (String) params.get("loginChannel");
+            Map<String,Object> version = foundationService.version(loginChannel);
+            result.put("data", version);
+        } catch (Exception e) {
+//            logger.error(String.format("版本查询失败！%s", e.getMessage()));
+            e.printStackTrace();
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
 }
