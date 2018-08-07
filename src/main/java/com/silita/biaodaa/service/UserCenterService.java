@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import com.silita.biaodaa.utils.SignConvertUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -74,7 +75,7 @@ public class UserCenterService {
         InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
         if (null == invitationVo) {
             return "验证码错误或无效！";
-        } else if("1".equals(invitationVo.getInvitationState())){
+        } else if ("1".equals(invitationVo.getInvitationState())) {
             return "验证码失效！";
         }
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
@@ -92,7 +93,7 @@ public class UserCenterService {
     public String insertCollectionNotice(CollecNotice collecNotice) {
         CollecNotice vo = collecNoticeMapper.getCollecNoticeByUserIdAndNoticeId(collecNotice);
         //已关注
-        if(vo != null) {
+        if (vo != null) {
             return "您已关注该公告！";
         }
         collecNoticeMapper.insertCollecNotice(collecNotice);
@@ -103,11 +104,11 @@ public class UserCenterService {
         collecNoticeMapper.deleteCollecNoticeByUserIdAndNoticeId(collecNotice);
     }
 
-    public PageInfo queryCollectionNotice(Page page, Map<String, Object> params){
+    public PageInfo queryCollectionNotice(Page page, Map<String, Object> params) {
         List<Map<String, Object>> notices = new ArrayList<>();
 
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        if("0".equals(params.get("type"))) {
+        if ("0".equals(params.get("type"))) {
             notices = collecNoticeMapper.listZhaoBiaoCollecNoticeByUserId(params);
         } else {
             notices = collecNoticeMapper.listZhongBiaoCollecNoticeByUserId(params);
@@ -119,7 +120,7 @@ public class UserCenterService {
     public String insertCollectionCompany(ColleCompany colleCompany) {
         ColleCompany vo = colleCompanyMapper.getCollectionCompanyByUserIdAndCompanyId(colleCompany);
         //已关注
-        if(vo != null) {
+        if (vo != null) {
             return "您已关注该公司！";
         }
         colleCompanyMapper.insertCollectionCompany(colleCompany);
@@ -130,33 +131,33 @@ public class UserCenterService {
         colleCompanyMapper.deleteCollectionCompany(colleCompany);
     }
 
-    public PageInfo querCollectionCompany(Page page, Map<String, Object> params){
+    public PageInfo querCollectionCompany(Page page, Map<String, Object> params) {
         List<Map<String, Object>> companys = new ArrayList<>();
-        Map<String,CertBasic> certBasicMap = tbCompanyService.getCertBasicMap();
-        Map<String,TbSafetyCertificate> safetyCertificateMap = tbCompanyService.getSafetyCertMap();
+        Map<String, CertBasic> certBasicMap = tbCompanyService.getCertBasicMap();
+        Map<String, TbSafetyCertificate> safetyCertificateMap = tbCompanyService.getSafetyCertMap();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         companys = colleCompanyMapper.listCollectionCompany(params);
         TbCompanyInfo companyInfo = null;
         for (Map<String, Object> map : companys) {
-            if(null != map.get("comName")){
-                companyInfo = tbCompanyInfoMapper.queryDetailByComName(MapUtils.getString(map,"comName"),null);
-                if(null != companyInfo){
-                    if(null != companyInfo.getPhone()){
+            if (null != map.get("comName")) {
+                companyInfo = tbCompanyInfoMapper.queryDetailByComName(MapUtils.getString(map, "comName"), CommonUtil.getCode(MapUtils.getString(map, "regisAddress")));
+                if (null != companyInfo) {
+                    if (null != companyInfo.getPhone()) {
 //                        map.put("phone",companyInfo.getPhone().split(";")[0].trim());
-                        map.put("phone",companyInfo.getPhone().trim());
+                        map.put("phone", companyInfo.getPhone().trim());
                     }
-                    if(null == map.get("regisCapital") && null != companyInfo.getRegisCapital()){
-                        map.put("regisCapital",companyInfo.getRegisCapital());
+                    if (null == map.get("regisCapital") && null != companyInfo.getRegisCapital()) {
+                        map.put("regisCapital", companyInfo.getRegisCapital());
                     }
                 }
             }
-            if(!StringUtils.isEmpty(map.get("comName")) && !StringUtils.isEmpty(map.get("businessNum"))) {
+            if (!StringUtils.isEmpty(map.get("comName")) && !StringUtils.isEmpty(map.get("businessNum"))) {
                 CertBasic certBasic = certBasicMap.get(map.get("comName") + "|" + map.get("businessNum"));
-                if(certBasic != null) {
+                if (certBasic != null) {
                     map.put("runScope", certBasic.getRunscope());
                 }
                 TbSafetyCertificate tbSafetyCertificate = safetyCertificateMap.get(map.get("comName"));
-                if(tbSafetyCertificate!=null){
+                if (tbSafetyCertificate != null) {
                     map.put("certNo", tbSafetyCertificate.getCertNo());
                     map.put("certDate", tbSafetyCertificate.getCertDate());
                     map.put("validDate", tbSafetyCertificate.getValidDate());
@@ -169,11 +170,11 @@ public class UserCenterService {
         return pageInfo;
     }
 
-    public PageInfo queryMessageList(Page page, Map<String, Object> params){
+    public PageInfo queryMessageList(Page page, Map<String, Object> params) {
         List<MessagePush> messagePushes = new ArrayList<>();
 
         List<MessagePush> tempMessagePushes = messagePushMapper.listMessageByUserIdAndType(params);
-        if(tempMessagePushes.size() > 0) {
+        if (tempMessagePushes.size() > 0) {
             int msgId;
             Map<String, Object> temp;
             ReadedRecord readedRecord;
@@ -183,7 +184,7 @@ public class UserCenterService {
                 temp.put("msgId", msgId);
                 temp.put("userid", tempMessagePushes.get(i).getUserid());
                 Integer count = readedRecordMapper.getTotalByMsgId(temp);
-                if(count == 0) {
+                if (count == 0) {
                     readedRecord = new ReadedRecord();
                     readedRecord.setMsgId(msgId);
                     readedRecord.setUserid(tempMessagePushes.get(i).getUserid());

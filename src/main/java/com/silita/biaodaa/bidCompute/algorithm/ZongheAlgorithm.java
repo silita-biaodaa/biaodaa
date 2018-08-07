@@ -6,6 +6,7 @@ import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.model.TbBidResult;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.BidComputeService;
+import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.DoubleUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class ZongheAlgorithm implements BidComputeHandler {
     TbCompanyMapper companyMapper;
     @Autowired
     BidComputeService bidComputeService;
+    @Autowired
+    TbCompanyService tbCompanyService;
 
     @Override
     public void bidCompute(Map<String, Object> param) throws Exception {
@@ -98,6 +101,7 @@ public class ZongheAlgorithm implements BidComputeHandler {
                     bidResult.setBidStatus(1);
                     bidResultMapper.insertBidResult(bidResult);
                 } else {
+                    tbCompany = tbCompanyService.setCompanyDetail(tbCompany);
                     List<String> srcUid = companyMapper.getCertSrcUuidByName(tbCompany.getComName());
                     if(null == srcUid && null != tbCompany.getOrgCode()){
                         srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());

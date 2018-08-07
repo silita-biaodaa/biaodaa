@@ -7,6 +7,7 @@ import com.silita.biaodaa.model.TbBidResult;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.BidComputeService;
 import com.silita.biaodaa.service.BidEvaluationMethodService;
+import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.DoubleUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class HeliAlgorithm implements BidComputeHandler {
     BidComputeService bidComputeService;
     @Autowired
     BidEvaluationMethodService bidEvaluationMethodService;
+    @Autowired
+    TbCompanyService tbCompanyService;
 
     @Override
     public void bidCompute(Map<String, Object> param) {
@@ -80,6 +83,7 @@ public class HeliAlgorithm implements BidComputeHandler {
         } else {
             //初始化
             this.getReaMap(param);
+            tbCompany = tbCompanyService.setCompanyDetail(tbCompany);
             List<String> srcUid = companyMapper.getCertSrcUuidByName(tbCompany.getComName());
             if ((null == srcUid || srcUid.size() <= 0) && null != tbCompany.getOrgCode()) {
                 srcUid = companyMapper.getCertSrcUuid(tbCompany.getOrgCode());

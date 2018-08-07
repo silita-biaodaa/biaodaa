@@ -8,6 +8,7 @@ import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
@@ -80,16 +81,7 @@ public class TbCompanyService {
             String url = tbCompanyMapper.getCompanyUrl(tbCompany.getComId());
             tbCompany.setUrl(url);
         }
-        if (null != tbCompany.getPhone()) {
-            tbCompany.setPhone(tbCompany.getPhone().trim());
-        }
-        if (null != tbCompany.getComUrl()) {
-            tbCompany.setComUrl(tbCompany.getComUrl().trim());
-        }
-        if (null != tbCompany.getEmail()) {
-            tbCompany.setEmail(tbCompany.getEmail().trim());
-        }
-        return tbCompany;
+        return setCompanyDetail(tbCompany);
     }
 
     public Map<String, List<TbCompanyQualification>> queryCompanyQualification(String comId) {
@@ -330,7 +322,7 @@ public class TbCompanyService {
 
         TbCompanyInfo companyInfo = null;
         for (TbCompany company : list) {
-            companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),null);
+            companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), MapUtils.getString(param, "tabCode"));
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
 //                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
@@ -406,6 +398,7 @@ public class TbCompanyService {
 
         TbCompany company = tbCompanyMapper.getCompanyOrgCode(comId);
         if (company != null) {
+            company = setCompanyDetail(company);
             List<String> srcUuids = tbCompanyMapper.getCertSrcUuidByName(company.getComName());
             if ((null == srcUuids || srcUuids.size() <= 0) && null != company.getOrgCode()) {
                 srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
@@ -584,6 +577,7 @@ public class TbCompanyService {
 
         TbCompany company = tbCompanyMapper.getCompanyOrgCode(comId);
         if (company != null) {
+            company = setCompanyDetail(company);
             List<String> srcUuids = tbCompanyMapper.getCertSrcUuidByName(company.getComName());
             if ((null == srcUuids || srcUuids.size() <= 0) && null != company.getOrgCode()) {
                 srcUuids = tbCompanyMapper.getCertSrcUuid(company.getOrgCode());
@@ -774,7 +768,7 @@ public class TbCompanyService {
             String url = tbCompanyMapper.getCompanyUrl(tbCompany.getComId());
             tbCompany.setUrl(url);
         }
-        return tbCompany;
+        return setCompanyDetail(tbCompany);
     }
 
     /**
@@ -897,7 +891,7 @@ public class TbCompanyService {
         TbCompanyInfo companyInfo = null;
         if (null != companyList && companyList.size() > 0) {
             for (TbCompany company : companyList) {
-                companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),null);
+                companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), CommonUtil.getCode(company.getRegisAddress()));
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
                         company.setPhone(companyInfo.getPhone().split(";")[0].trim());
@@ -921,22 +915,23 @@ public class TbCompanyService {
             String[] citys = regis[1].split(",");
             if (citys.length <= 3) {
                 for (String str : citys) {
-                    if(str.contains("湘西")){
+                    if (str.contains("湘西")) {
                         cityList.add("湘西");
-                    }else {
-                        cityList.add(str.replace("市",""));
+                    } else {
+                        cityList.add(str.replace("市", ""));
                     }
                 }
             }
         }
         param.put("province", province);
+        param.put("tabCode", CommonUtil.getCode(province));
         param.put("cityList", cityList);
         return param;
     }
 
-    private String getQualType(String key){
+    private String getQualType(String key) {
         String qualType = null;
-        switch (key){
+        switch (key) {
             case "勘察资质":
                 qualType = "勘察";
                 break;
@@ -960,5 +955,31 @@ public class TbCompanyService {
                 break;
         }
         return qualType;
+    }
+
+    /**
+     * TODO: 设置公司值
+     *
+     * @param tbCompany
+     */
+    public TbCompany setCompanyDetail(TbCompany tbCompany) {
+        String tabCode = CommonUtil.getCode(tbCompany.getRegisAddress());
+        TbCompanyInfo companyInfo = tbCompanyInfoMapper.queryDetailByComName(tbCompany.getComName(), tabCode);
+        if (null != companyInfo.getPhone()) {
+            tbCompany.setPhone(companyInfo.getPhone().trim());
+        }
+        if (null != companyInfo.getScope()) {
+            tbCompany.setComRange(companyInfo.getScope());
+        }
+        if (null != companyInfo.getComUrl()) {
+            tbCompany.setComUrl(companyInfo.getComUrl().split(";")[0].trim());
+        }
+        if (null != companyInfo.getEmail()) {
+            tbCompany.setEmail(companyInfo.getEmail().split(";")[0].trim());
+        }
+        if (null != companyInfo.getOrgCode()) {
+            tbCompany.setOrgCode(companyInfo.getOrgCode());
+        }
+        return tbCompany;
     }
 }

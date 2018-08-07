@@ -18,8 +18,6 @@
       LEFT JOIN mishu_next.cert_basic b
         ON b.registerNo = c.org_code
         AND b.companyName = c.com_name
-      LEFT JOIN tb_company_info t
-        ON c.`com_name` = t.`com_name`
     WHERE 1 = 1
     and c.com_name like CONCAT('%',#{keyWord},'%')
   </select>
@@ -27,26 +25,26 @@
     <select id="getCompany" resultType="com.silita.biaodaa.model.TbCompany" parameterType="java.lang.String">
     SELECT
       c.*,
-      (
-        CASE WHEN c.`regis_capital`  IS NOT NULL
-        THEN c.`regis_capital`
-        ELSE
-        t.`regis_capital`
-        END
-      ) AS regisCapital,
+--       (
+--         CASE WHEN c.`regis_capital`  IS NOT NULL
+--         THEN c.`regis_capital`
+--         ELSE
+--         t.`regis_capital`
+--         END
+--       ) AS regisCapital,
       c.credit_code as creditCode,
       c.credit_code as businessNum,
       s.cert_no,
       s.cert_date,
       s.valid_date,
 --       b.runScope AS comRange,
-      b.registerStatus AS subsist,
+      b.registerStatus AS subsist
 --       TRIM(SUBSTRING_INDEX(t.`phone`, ';', 1)) AS phone,
-      TRIM(t.`phone`) AS phone,
-      TRIM(SUBSTRING_INDEX(t.`com_url`, ';', 1))  AS comUrl,
-      TRIM(SUBSTRING_INDEX(t.`email`, ';', 1)) AS email,
-      t.`scope` AS comRange,
-      t.`regis_date` as regisDate
+--       TRIM(t.`phone`) AS phone,
+--       TRIM(SUBSTRING_INDEX(t.`com_url`, ';', 1))  AS comUrl,
+--       TRIM(SUBSTRING_INDEX(t.`email`, ';', 1)) AS email,
+--       t.`scope` AS comRange,
+--       t.`regis_date` as regisDate
     FROM
       tb_company c
       LEFT JOIN tb_safety_certificate s
@@ -54,7 +52,7 @@
       LEFT JOIN mishu_next.cert_basic b
         ON b.registerNo = c.org_code
         AND b.companyName = c.com_name
-      LEFT JOIN tb_company_info t ON t.`com_name` = c.`com_name`
+--       LEFT JOIN tb_company_info t ON t.`com_name` = c.`com_name`
     WHERE 1 = 1
     and c.com_id = #{comId}
     limit 1
@@ -110,14 +108,7 @@
 
     <select id="getCompanyOrgCode" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbCompany">
     SELECT * ,
-        (
-          CASE WHEN c.`org_code` IS NOT NULL
-          THEN c.`org_code`
-          ELSE t1.`org_code`
-          END
-        ) AS orgCode
     FROM tb_company c
-    LEFT JOIN tb_company_info t1 ON c.`com_name` = t1.`com_name`
     where com_id=#{comId} limit 1
   </select>
 
@@ -175,26 +166,26 @@
 
     <select id="queryCompanyDetail" resultType="com.silita.biaodaa.model.TbCompany" parameterType="java.lang.String">
       select c.*,
-      (
-        CASE WHEN c.`regis_capital`  IS NOT NULL
-        THEN c.`regis_capital`
-        ELSE
-        t.`regis_capital`
-        END
-      ) AS regisCapital,
+--       (
+--         CASE WHEN c.`regis_capital`  IS NOT NULL
+--         THEN c.`regis_capital`
+--         ELSE
+--         t.`regis_capital`
+--         END
+--       ) AS regisCapital,
       c.credit_code as creditCode,
       c.credit_code as businessNum,
       s.cert_no,
       s.cert_date,
       s.valid_date,
 --       b.runScope AS comRange,
-      b.registerStatus AS subsist,
+      b.registerStatus AS subsist
 --       TRIM(SUBSTRING_INDEX(t.`phone`, ';', 1)) AS phone,
-      TRIM(t.`phone`) AS phone,
-      TRIM(SUBSTRING_INDEX(t.`com_url`, ';', 1))  AS comUrl,
-      TRIM(SUBSTRING_INDEX(t.`email`, ';', 1)) AS email,
-      t.`scope` AS comRange,
-      t.`regis_date` as regisDate
+--       TRIM(t.`phone`) AS phone,
+--       TRIM(SUBSTRING_INDEX(t.`com_url`, ';', 1))  AS comUrl,
+--       TRIM(SUBSTRING_INDEX(t.`email`, ';', 1)) AS email,
+--       t.`scope` AS comRange,
+--       t.`regis_date` as regisDate
     FROM
       tb_company c
       LEFT JOIN tb_safety_certificate s
@@ -202,7 +193,7 @@
       LEFT JOIN mishu_next.cert_basic b
         ON b.registerNo = c.org_code
         AND b.companyName = c.com_name
-      LEFT JOIN tb_company_info t ON t.`com_name` = c.`com_name`
+--       LEFT JOIN tb_company_info t ON t.`com_name` = c.`com_name`
     WHERE 1 = 1
      AND c.`com_name` = #{comName}
       ORDER BY c.`created` DESC

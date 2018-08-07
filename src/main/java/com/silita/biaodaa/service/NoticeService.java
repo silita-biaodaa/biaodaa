@@ -11,6 +11,7 @@ import com.silita.biaodaa.dao.TbCompanyInfoMapper;
 import com.silita.biaodaa.model.TbClickStatistics;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.TbCompanyInfo;
+import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.RouteUtils;
@@ -274,8 +275,10 @@ public class NoticeService {
                     List<TbCompany> companyCertList = noticeMapper.selectCompanyCert(idsMap);
                     List<TbCompany> companyCertBasicList = noticeMapper.selectCompanyCertBasic(idsMap);
                     TbCompanyInfo tbCompanyInfo = null;
+                    String tabCode = null;
                     for (TbCompany company : list) {
-                        tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),null);
+                        tabCode = CommonUtil.getCode(company.getRegisAddress());
+                        tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),tabCode);
                         if (null != tbCompanyInfo) {
                             if (null != tbCompanyInfo.getPhone()) {
                                 company.setPhone(tbCompanyInfo.getPhone().split(";")[0].toLowerCase());

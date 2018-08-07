@@ -40,6 +40,8 @@
        ,t.`design_org`
        ,t.`check_org`
        ,t.`check_finish_date`
+       ,t.`check_no`
+       ,t.`check_number`
     FROM tb_project_design t
     WHERE t.`pro_id` = #{proId}
     GROUP BY t.`sgtxh`
