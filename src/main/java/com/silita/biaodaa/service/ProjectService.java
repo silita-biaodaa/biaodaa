@@ -2,15 +2,21 @@ package com.silita.biaodaa.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.utils.ObjectUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static com.silita.biaodaa.common.RedisConstantInterface.GG_REL_COM_LIST;
+import static com.silita.biaodaa.common.RedisConstantInterface.LIST_OVER_TIME;
+import static com.silita.biaodaa.common.RedisConstantInterface.PROJECT_LIST;
 
 @Service
 public class ProjectService {
@@ -31,6 +37,8 @@ public class ProjectService {
     TbProjectSupervisionMapper tbProjectSupervisionMapper;
     @Autowired
     TbProjectCompanyMapper tbProjectCompanyMapper;
+    @Autowired
+    MyRedisTemplate myRedisTemplate;
 
     private static ProjectAnalysisUtil projectAnalysisUtil = new ProjectAnalysisUtil();
 
@@ -44,22 +52,27 @@ public class ProjectService {
     public Map<String, Object> getProjectList(Map<String, Object> param, Map<String, Object> result) {
         Integer pageNum = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        if(null != param.get("proType") && "房屋建筑".equals(param.get("proType"))){
-            param.put("proType","房屋建筑工程");
+        if (null != param.get("proType") && "房屋建筑".equals(param.get("proType"))) {
+            param.put("proType", "房屋建筑工程");
         }
-        List<Map<String, Object>> projectList = new ArrayList<Map<String, Object>>();
-        Page page = new Page();
-        page.setPageSize(pageSize);
-        page.setCurrentPage(pageNum);
+        String cacheKey = ObjectUtils.buildCacheKey(PROJECT_LIST, param);
+        PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(cacheKey);
+        if (null == pageInfo) {
+            List<Map<String, Object>> projectList = new ArrayList<Map<String, Object>>();
+            Page page = new Page();
+            page.setPageSize(pageSize);
+            page.setCurrentPage(pageNum);
 
-        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        projectList = tbProjectMapper.queryObject(param);
-        if (null != projectList && projectList.size() > 0) {
-            for (Map<String, Object> map : projectList) {
-                this.putProvince(map);
+            PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+            projectList = tbProjectMapper.queryObject(param);
+            if (null != projectList && projectList.size() > 0) {
+                for (Map<String, Object> map : projectList) {
+                    this.putProvince(map);
+                }
+                pageInfo = new PageInfo(projectList);
+                myRedisTemplate.setObject(cacheKey,pageInfo,LIST_OVER_TIME);
             }
         }
-        PageInfo pageInfo = new PageInfo(projectList);
         result.put("data", pageInfo.getList());
         result.put("pageNum", pageInfo.getPageNum());
         result.put("pageSize", pageInfo.getPageSize());
@@ -163,34 +176,6 @@ public class ProjectService {
      */
     private List<TbProjectContract> getContractList(String proId) {
         List<TbProjectContract> list = tbProjectContractMapper.queryProjectContractListByProId(proId);
-        if (null != list && list.size() > 0 && null != list.get(0)) {
-            return list;
-        }
-        List<TbProjectBuild> projectBuildList = tbProjectBuildMapper.queryConstartProBuildByProId(proId);
-        if (null != projectBuildList && projectBuildList.size() > 0) {
-            String remark = null;
-            String contractDate = null;
-            String constartPrice = null;
-            String constartNo = null;
-            TbProjectContract tbProjectContract = null;
-            for (TbProjectBuild build : projectBuildList) {
-                remark = build.getContractRemark();
-                contractDate = null;
-                constartPrice = null;
-                constartNo = null;
-                tbProjectContract = new TbProjectContract();
-                if (null != build.getContractRemark() || !"未办理合同备案".equals(build.getContractRemark())) {
-                    contractDate = remark.substring(projectAnalysisUtil.getIndex(remark, "合同日期：") + "合同日期：".length(), projectAnalysisUtil.getIndex(remark, ","));
-                    constartPrice = remark.substring(projectAnalysisUtil.getIndex(remark, "合同价格：") + "合同价格：".length(), projectAnalysisUtil.getIndex(remark, "万元"));
-                    constartNo = remark.substring(projectAnalysisUtil.getIndex(remark, "合同备案编号：") + "合同备案编号：".length(), remark.length());
-                }
-                tbProjectContract.setProvRecordCode(constartNo);
-                tbProjectContract.setAmount(constartPrice);
-                tbProjectContract.setSignDate(contractDate);
-                tbProjectContract.setCategory(build.getContractCategory());
-                list.add(tbProjectContract);
-            }
-        }
         return list;
     }
 
@@ -284,7 +269,7 @@ public class ProjectService {
 
         Map<String, Object> param = new HashMap<>();
         param.put("comName", company.getComName());
-        param.put("orgCode",company.getOrgCode());
+        param.put("orgCode", company.getOrgCode());
 
         //获取施工下的主项目
 //        List<String> list = tbProjectBuildMapper.queryProIdByComId(companyId);
