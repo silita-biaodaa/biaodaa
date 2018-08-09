@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.silita.biaodaa.common.RedisConstantInterface.GG_REL_COM_LIST;
 import static com.silita.biaodaa.common.RedisConstantInterface.LIST_OVER_TIME;
 import static com.silita.biaodaa.common.RedisConstantInterface.PROJECT_LIST;
 
@@ -155,7 +154,7 @@ public class ProjectService {
         //施工图审查
         if ("design".equals(tabType)) {
             resultList = tbProjectDesignMapper.queryProjectDesignByProId(proId);
-        } else if ("constact".equals(tabType)) {
+        } else if ("contract".equals(tabType)) {
             resultList = this.getContractList(proId);
         } else if ("zhaotoubiao".equals(tabType)) {
             resultList = this.getZhaotoubiaoList(proId);
@@ -176,6 +175,29 @@ public class ProjectService {
      */
     private List<TbProjectContract> getContractList(String proId) {
         List<TbProjectContract> list = tbProjectContractMapper.queryProjectContractListByProId(proId);
+        if(null != list && list.size() > 0){
+            Map<String,Object> param = new HashMap<>();
+            param.put("proId",proId);
+            List<String> roleList = new ArrayList<>();
+            roleList.add("发包单位");
+            roleList.add("承包单位");
+            param.put("roleList",roleList);
+            param.put("type","contract");
+            List<TbProjectCompany> projectCompanyList = null;
+            for(TbProjectContract projectContract : list){
+                param.put("pid",projectContract.getPkid());
+                projectCompanyList = tbProjectCompanyMapper.queryProComList(param);
+                if(null != projectCompanyList && projectCompanyList.size() > 0){
+                    for(TbProjectCompany company : projectCompanyList){
+                        if("发包单位".equals(company.getRole())){
+                            projectContract.setLetContractComName(company.getComName());
+                        }else if("承包单位".equals(company.getRole())){
+                            projectContract.setContractComName(company.getComName());
+                        }
+                    }
+                }
+            }
+        }
         return list;
     }
 

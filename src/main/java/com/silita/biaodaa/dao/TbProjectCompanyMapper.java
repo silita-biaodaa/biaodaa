@@ -19,4 +19,11 @@ public interface TbProjectCompanyMapper extends MyMapper<TbProjectCompany> {
      */
     List<String> queryProIdForCom(Map<String, Object> param);
 
+    /**
+     * 获取对应的业绩企业信息
+     * @param param
+     * @return
+     */
+    List<TbProjectCompany> queryProComList(Map<String,Object> param);
+
 }

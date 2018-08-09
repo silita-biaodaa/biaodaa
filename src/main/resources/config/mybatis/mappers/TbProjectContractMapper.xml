@@ -21,11 +21,17 @@
 
   <select id="queryProjectContractListByProId" resultMap="BaseResultMap" parameterType="java.lang.String">
     SELECT t.*
-	  ,GROUP_CONCAT(t2.`com_name`)
     FROM tb_project_contract t
-    LEFT JOIN tb_project_company t1 ON t.`pro_id` = t1.`pro_id`
-    LEFT JOIN tb_company t2 ON t1.`com_id` = t2.`com_id`
     WHERE t.`pro_id` = #{proId}
-    AND (t1.`role` = '发包单位' OR t1.`role` = '承包单位')
   </select>
+
+  <select id="queryProjectContractDetail" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select t.*
+    FROM tb_project_contract t
+    WHERE t.`pkid` = #{pkid}
+    <if test="proId != null and proId != ''">
+      and t.pro_id = #{proId}
+    </if>
+  </select>
+
 </mapper>

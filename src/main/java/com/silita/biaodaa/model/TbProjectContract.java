@@ -70,19 +70,33 @@ public class TbProjectContract {
     private Date created;
 
     /*非表字段*/
-
-    /**
-     * 公司名称
-     */
-    private String comName;
-
     /**
      * 承包单位
      */
     private  String contractComName;
 
     /**
+     * 承包单位组织机构代码
+     */
+    private String contractOrgCode;
+
+    /**
      * 发包单位
      */
     private  String letContractComName;
+
+    /**
+     * 发包单位组织机构代码
+     */
+    private String letOrgCode;
+
+    /**
+     * 联合体承包单位
+     */
+    private String jointComName;
+
+    /**
+     * 联合体承包单位组织机构代码
+     */
+    private String jointOrgCode;
 }

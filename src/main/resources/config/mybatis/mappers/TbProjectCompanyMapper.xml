@@ -33,4 +33,20 @@
         <!--</if>-->
 --         GROUP BY t.`pro_id`
     </select>
+
+    <select id="queryProComList" resultType="com.silita.biaodaa.model.TbProjectCompany" parameterType="java.util.Map">
+        SELECT t.*
+        FROM
+          tb_project_company t
+        WHERE 1=1
+        and t.pro_id = #{proId}
+        and t.pid = #{pid}
+        and t.type = #{type}
+        <if test="roleList != null and roleList.size > 0">
+            and
+            <foreach collection="roleList" item="list" separator="or" close=")" open="(">
+                t.role = #{list}
+            </foreach>
+        </if>
+    </select>
 </mapper>

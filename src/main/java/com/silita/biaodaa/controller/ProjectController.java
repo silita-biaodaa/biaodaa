@@ -1,10 +1,7 @@
 package com.silita.biaodaa.controller;
 
 import com.silita.biaodaa.common.MyRedisTemplate;
-import com.silita.biaodaa.service.ProjectBuildService;
-import com.silita.biaodaa.service.ProjectDesignService;
-import com.silita.biaodaa.service.ProjectService;
-import com.silita.biaodaa.service.ProjectZhaotoubiaoService;
+import com.silita.biaodaa.service.*;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +29,8 @@ public class ProjectController extends BaseController {
     ProjectBuildService projectBuildService;
     @Autowired
     MyRedisTemplate myRedisTemplate;
+    @Autowired
+    ProjectContractService projectContractService;
 
     /**
      * TODO: 业绩筛选
@@ -103,6 +102,8 @@ public class ProjectController extends BaseController {
             result.put("data", projectDesignService.getProjectDesignDetail(param));
         } else if ("build".equals(param.get("tabType").toString())) {
             result.put("data", projectBuildService.getProjectDetail(param));
+        }else if ("contract".equals(param.get("tabType").toString())){
+            result.put("data",projectContractService.getProjectContractDetail(param));
         }
         return result;
     }

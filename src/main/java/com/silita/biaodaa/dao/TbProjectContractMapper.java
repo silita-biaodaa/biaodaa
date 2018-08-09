@@ -4,6 +4,7 @@ import com.silita.biaodaa.model.TbProjectContract;
 import com.silita.biaodaa.utils.MyMapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 合同备案
@@ -18,4 +19,11 @@ public interface TbProjectContractMapper extends MyMapper<TbProjectContract> {
      * @return
      */
     List<TbProjectContract> queryProjectContractListByProId(String proId);
+
+    /**
+     * 获取合同备案详情
+     * @param param
+     * @return
+     */
+    TbProjectContract queryProjectContractDetail(Map<String,Object> param);
 }

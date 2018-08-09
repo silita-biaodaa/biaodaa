@@ -94,7 +94,6 @@ public class XlsxAnalysisTest extends ConfigTest{
 //                        }else {
 //                            companyInfo.setTabCode(this.getCode(companyInfo.getProvince()));
 //                        }
-
                     }
                 }
                 cell = row.getCell(5);
@@ -402,12 +401,12 @@ public class XlsxAnalysisTest extends ConfigTest{
 
     @Test
     public void getFile(){
-        File file = new File("F:\\data\\监理(1)");
+        File file = new File("F:\\data\\建筑劳务\\建筑劳务");
         File[]  files = file.listFiles();
         for(File f : files){
             System.out.println(f.getName());
             try {
-                test(f,"陕西省");
+                test(f,"新疆");
             } catch (Exception e) {
                 System.out.println(f.getName());
                 e.printStackTrace();
@@ -418,7 +417,7 @@ public class XlsxAnalysisTest extends ConfigTest{
 
     @Test
     public void test2(){
-        String str = "监理-安徽 (1949-2014).xlsx";
+        String str = "建筑劳务-安徽（0～20）.xlsx";
         String dddd = str.substring(ProjectAnalysisUtil.getIndex(str,"-")+1,ProjectAnalysisUtil.getIndex(str,"-")+3);
         System.out.println(dddd);
     }
