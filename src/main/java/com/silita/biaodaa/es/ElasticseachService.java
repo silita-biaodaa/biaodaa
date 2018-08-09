@@ -70,14 +70,13 @@ public class ElasticseachService {
         sort.put("px", SortOrder.DESC);
         String comName = MapUtils.getString(param, "name");
         String regisAddress = MapUtils.getString(param, "regisAddress");
-        if (null == regisAddress) {
-            regisAddress = "湖南省";
-        }
         PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "count"), sort);
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "comName", comName));
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "comNamePy", comName));
-        querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "regisAddress", regisAddress));
+        if (null != regisAddress) {
+            querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "regisAddress", regisAddress));
+        }
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "company", "comes", querys, pageSort);
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = null;

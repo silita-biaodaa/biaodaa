@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbProjectCompletionMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectCompletion" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="pro_id" property="proId" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="prov_code" property="provCode" jdbcType="VARCHAR" />
+    <result column="cost" property="cost" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="build_scale" property="buildScale" jdbcType="VARCHAR" />
+    <result column="struct" property="struct" jdbcType="VARCHAR" />
+    <result column="build_start" property="buildStart" jdbcType="VARCHAR" />
+    <result column="build_end" property="buildEnd" jdbcType="VARCHAR" />
+    <result column="record_date" property="recordDate" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <select id="queryProCompleList" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.TbProjectCompletion">
+    select t.*
+    from tb_project_completion t
+    where t.pro_id = #{proId}
+  </select>
+
+  <select id="queryProCompleDetail" resultType="com.silita.biaodaa.model.TbProjectCompletion" parameterType="java.util.Map">
+    select t.*
+    from tb_project_completion t
+    where t.pro_id = #{proId}
+    and t.pkid = #{pkid}
+  </select>
+</mapper>

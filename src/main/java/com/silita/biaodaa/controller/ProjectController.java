@@ -31,6 +31,8 @@ public class ProjectController extends BaseController {
     MyRedisTemplate myRedisTemplate;
     @Autowired
     ProjectContractService projectContractService;
+    @Autowired
+    ProjectCompletionService projectCompletionService;
 
     /**
      * TODO: 业绩筛选
@@ -104,6 +106,8 @@ public class ProjectController extends BaseController {
             result.put("data", projectBuildService.getProjectDetail(param));
         }else if ("contract".equals(param.get("tabType").toString())){
             result.put("data",projectContractService.getProjectContractDetail(param));
+        }else if ("completion".equals(param.get("tabType").toString())){
+            result.put("data",projectCompletionService.getProCompletDetail(param));
         }
         return result;
     }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.silita.biaodaa.common.RedisConstantInterface.LIST_OVER_TIME;
+import static com.silita.biaodaa.common.RedisConstantInterface.COM_OVER_TIME;
 import static com.silita.biaodaa.common.RedisConstantInterface.PROJECT_LIST;
 
 @Service
@@ -38,6 +38,8 @@ public class ProjectService {
     TbProjectCompanyMapper tbProjectCompanyMapper;
     @Autowired
     MyRedisTemplate myRedisTemplate;
+    @Autowired
+    ProjectCompletionService projectCompletionService;
 
     private static ProjectAnalysisUtil projectAnalysisUtil = new ProjectAnalysisUtil();
 
@@ -57,26 +59,27 @@ public class ProjectService {
         String cacheKey = ObjectUtils.buildCacheKey(PROJECT_LIST, param);
         PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(cacheKey);
         if (null == pageInfo) {
-            List<Map<String, Object>> projectList = new ArrayList<Map<String, Object>>();
             Page page = new Page();
             page.setPageSize(pageSize);
             page.setCurrentPage(pageNum);
 
             PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-            projectList = tbProjectMapper.queryObject(param);
+            List<Map<String, Object>> projectList = tbProjectMapper.queryObject(param);
             if (null != projectList && projectList.size() > 0) {
                 for (Map<String, Object> map : projectList) {
                     this.putProvince(map);
                 }
                 pageInfo = new PageInfo(projectList);
-                myRedisTemplate.setObject(cacheKey,pageInfo,LIST_OVER_TIME);
+                myRedisTemplate.setObject(cacheKey, pageInfo, COM_OVER_TIME);
             }
         }
-        result.put("data", pageInfo.getList());
-        result.put("pageNum", pageInfo.getPageNum());
-        result.put("pageSize", pageInfo.getPageSize());
-        result.put("total", pageInfo.getTotal());
-        result.put("pages", pageInfo.getPages());
+        if (null != pageInfo) {
+            result.put("data", pageInfo.getList());
+            result.put("pageNum", pageInfo.getPageNum());
+            result.put("pageSize", pageInfo.getPageSize());
+            result.put("total", pageInfo.getTotal());
+            result.put("pages", pageInfo.getPages());
+        }
         return result;
     }
 
@@ -151,15 +154,27 @@ public class ProjectService {
         String proId = MapUtils.getString(params, "proId");
         String tabType = MapUtils.getString(params, "tabType");
         List resultList = new ArrayList();
+        PageInfo pageInfo = null;
         //施工图审查
         if ("design".equals(tabType)) {
             resultList = tbProjectDesignMapper.queryProjectDesignByProId(proId);
         } else if ("contract".equals(tabType)) {
-            resultList = this.getContractList(proId);
+            pageInfo = this.getContractList(params);
         } else if ("zhaotoubiao".equals(tabType)) {
             resultList = this.getZhaotoubiaoList(proId);
         } else if ("build".equals(tabType)) {
-            resultList = this.getProjectBuildDetail(proId);
+            pageInfo = this.getProjectBuildDetail(params);
+        } else if ("completion".equals(tabType)) {
+            pageInfo = projectCompletionService.getProjectCompletList(params);
+        }
+        if ("contract".equals(tabType) || "build".equals(tabType) || "completion".equals(tabType)) {
+            if (null != pageInfo) {
+                result.put("data", pageInfo.getList());
+                result.put("total", pageInfo.getTotal());
+                result.put("pageNum", pageInfo.getPageNum());
+                result.put("pages", pageInfo.getPages());
+                return result;
+            }
         }
         result.put("data", resultList);
         return result;
@@ -170,35 +185,47 @@ public class ProjectService {
      * 获取项目下的合同备案列表
      * created by zhushuai
      *
-     * @param proId
+     * @param params
      * @return
      */
-    private List<TbProjectContract> getContractList(String proId) {
+    private PageInfo getContractList(Map<String, Object> params) {
+        String proId = MapUtils.getString(params, "proId");
+        Integer pageIndex = MapUtils.getInteger(params, "pageNo");
+        Integer pageSize = MapUtils.getInteger(params, "pageSize");
+        pageIndex = pageIndex == null ? 1 : pageIndex;
+        pageSize = pageSize == null ? 20 : pageSize;
+
+        Page page = new Page();
+        page.setCurrentPage(pageIndex);
+        page.setPageSize(pageSize);
+
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<TbProjectContract> list = tbProjectContractMapper.queryProjectContractListByProId(proId);
-        if(null != list && list.size() > 0){
-            Map<String,Object> param = new HashMap<>();
-            param.put("proId",proId);
+        if (null != list && list.size() > 0) {
+            Map<String, Object> param = new HashMap<>();
+            param.put("proId", proId);
             List<String> roleList = new ArrayList<>();
             roleList.add("发包单位");
             roleList.add("承包单位");
-            param.put("roleList",roleList);
-            param.put("type","contract");
+            param.put("roleList", roleList);
+            param.put("type", "contract");
             List<TbProjectCompany> projectCompanyList = null;
-            for(TbProjectContract projectContract : list){
-                param.put("pid",projectContract.getPkid());
+            for (TbProjectContract projectContract : list) {
+                param.put("pid", projectContract.getPkid());
                 projectCompanyList = tbProjectCompanyMapper.queryProComList(param);
-                if(null != projectCompanyList && projectCompanyList.size() > 0){
-                    for(TbProjectCompany company : projectCompanyList){
-                        if("发包单位".equals(company.getRole())){
+                if (null != projectCompanyList && projectCompanyList.size() > 0) {
+                    for (TbProjectCompany company : projectCompanyList) {
+                        if ("发包单位".equals(company.getRole())) {
                             projectContract.setLetContractComName(company.getComName());
-                        }else if("承包单位".equals(company.getRole())){
+                        } else if ("承包单位".equals(company.getRole())) {
                             projectContract.setContractComName(company.getComName());
                         }
                     }
                 }
             }
         }
-        return list;
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
     }
 
     private List<TbProjectZhaotoubiao> getZhaotoubiaoList(String proId) {
@@ -253,21 +280,21 @@ public class ProjectService {
         return list;
     }
 
-    private List<TbProjectBuild> getProjectBuildDetail(String proId) {
+    private PageInfo getProjectBuildDetail(Map params) {
+        String proId = MapUtils.getString(params, "proId");
+        Integer pageIndex = MapUtils.getInteger(params, "pageNo");
+        Integer pageSize = MapUtils.getInteger(params, "pageSize");
+        pageIndex = pageIndex == null ? 1 : pageIndex;
+        pageSize = pageSize == null ? 20 : pageSize;
+
+        Page page = new Page();
+        page.setCurrentPage(pageIndex);
+        page.setPageSize(pageSize);
+
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<TbProjectBuild> proBuildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
-        if (null != proBuildList && proBuildList.size() > 0 && null != proBuildList.get(0)) {
-            String remark = null;
-            String amount = null;
-            for (TbProjectBuild project : proBuildList) {
-                if (null != project.getContractRemark() && !"未办理合同备案".equals(project.getContractRemark())) {
-                    remark = project.getContractRemark();
-                    amount = remark.substring(projectAnalysisUtil.getIndex(remark, "合同价格："), projectAnalysisUtil.getIndex(remark, "万元"));
-                    project.setConstractAmount(amount == null ? null : amount.substring(projectAnalysisUtil.getIndex(amount, "：") + 1, amount.length()));
-                    project.setCompleteRemark(null);
-                }
-            }
-        }
-        return proBuildList;
+        PageInfo pageInfo = new PageInfo(proBuildList);
+        return pageInfo;
     }
 
     /**

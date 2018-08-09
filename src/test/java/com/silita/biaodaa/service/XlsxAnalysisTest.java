@@ -28,7 +28,7 @@ public class XlsxAnalysisTest extends ConfigTest{
         FileInputStream inputStream = new FileInputStream(file);
         String fileName = file.getName();
 //        String provice = fileName.substring(ProjectAnalysisUtil.getIndex(fileName, "(") + 1, ProjectAnalysisUtil.getIndex(fileName, ")"));
-         province = fileName.substring(ProjectAnalysisUtil.getIndex(fileName,"-")+1,ProjectAnalysisUtil.getIndex(fileName,"-")+3);
+//         province = fileName.substring(ProjectAnalysisUtil.getIndex(fileName,"-")+1,ProjectAnalysisUtil.getIndex(fileName,"-")+3);
 //        String provice = "江西省";
         Workbook hssfWorkbook = new XSSFWorkbook(inputStream);
         List<String> companyList = new ArrayList<>();
@@ -401,12 +401,12 @@ public class XlsxAnalysisTest extends ConfigTest{
 
     @Test
     public void getFile(){
-        File file = new File("F:\\data\\建筑劳务\\建筑劳务");
+        File file = new File("F:\\data\\工程劳务850762\\工程劳务-河北29385(1)");
         File[]  files = file.listFiles();
         for(File f : files){
             System.out.println(f.getName());
             try {
-                test(f,"新疆");
+                test(f,"河北");
             } catch (Exception e) {
                 System.out.println(f.getName());
                 e.printStackTrace();

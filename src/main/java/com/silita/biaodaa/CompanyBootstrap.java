@@ -1,9 +1,6 @@
 package com.silita.biaodaa;
 
-import com.silita.biaodaa.task.CompanyTask;
-import com.silita.biaodaa.task.CountBidTask;
-import com.silita.biaodaa.task.PersonTask;
-import com.silita.biaodaa.task.SnatchUrlTask;
+import com.silita.biaodaa.task.*;
 import com.silita.biaodaa.utils.MyDateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +32,8 @@ public class CompanyBootstrap implements ApplicationListener<ApplicationEvent> {
     CompanyTask companyTask;
     @Autowired
     SnatchUrlTask snatchUrlTask;
+    @Autowired
+    ProjectTask projectTask;
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
@@ -65,6 +64,11 @@ public class CompanyBootstrap implements ApplicationListener<ApplicationEvent> {
                     String snaEndLock = end + " "+snaTimer.trim();
                     long snaLockTimes = dateUtils.dateDiff(start, snaEndLock, "yyyy-MM-dd HH:mm:ss", "m");
                     scheduler.scheduleAtFixedRate(snatchUrlTask, snaLockTimes,24 * 60, TimeUnit.MINUTES);
+                    //TODO:业绩缓存
+                    String proTimer = "06:30:00";
+                    String proEndLock = end + " "+proTimer.trim();
+                    long proLockTimes = dateUtils.dateDiff(start, proEndLock, "yyyy-MM-dd HH:mm:ss", "m");
+                    scheduler.scheduleAtFixedRate(projectTask, proLockTimes,61, TimeUnit.MINUTES);
                     logger.info("===========任务启动完成=========");
                 } catch (Exception e) {
                      logger.info("任务启动异常", e);
