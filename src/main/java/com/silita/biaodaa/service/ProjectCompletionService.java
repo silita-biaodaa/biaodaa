@@ -29,18 +29,8 @@ public class ProjectCompletionService {
      * @param param
      * @return
      */
-    public PageInfo getProjectCompletList(Map<String, Object> param) {
-        Integer pageIndex = MapUtils.getInteger(param, "pageNo");
-        Integer pageSize = MapUtils.getInteger(param, "pageSize");
-        pageIndex = pageIndex == null ? 1 : pageIndex;
-        pageSize = pageSize == null ? 20 : pageSize;
-
-        Page page = new Page();
-        page.setCurrentPage(pageIndex);
-        page.setPageSize(pageSize);
-
-        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        return new PageInfo(tbProjectCompletionMapper.queryProCompleList(param));
+    public List<TbProjectCompletion> getProjectCompletList(Map<String, Object> param) {
+        return tbProjectCompletionMapper.queryProCompleList(param);
     }
 
     /**

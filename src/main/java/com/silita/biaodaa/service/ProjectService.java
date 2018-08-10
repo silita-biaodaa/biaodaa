@@ -159,22 +159,13 @@ public class ProjectService {
         if ("design".equals(tabType)) {
             resultList = tbProjectDesignMapper.queryProjectDesignByProId(proId);
         } else if ("contract".equals(tabType)) {
-            pageInfo = this.getContractList(params);
+            resultList = this.getContractList(params);
         } else if ("zhaotoubiao".equals(tabType)) {
             resultList = this.getZhaotoubiaoList(proId);
         } else if ("build".equals(tabType)) {
-            pageInfo = this.getProjectBuildDetail(params);
+            resultList = this.getProjectBuildDetail(params);
         } else if ("completion".equals(tabType)) {
-            pageInfo = projectCompletionService.getProjectCompletList(params);
-        }
-        if ("contract".equals(tabType) || "build".equals(tabType) || "completion".equals(tabType)) {
-            if (null != pageInfo) {
-                result.put("data", pageInfo.getList());
-                result.put("total", pageInfo.getTotal());
-                result.put("pageNum", pageInfo.getPageNum());
-                result.put("pages", pageInfo.getPages());
-                return result;
-            }
+            resultList = projectCompletionService.getProjectCompletList(params);
         }
         result.put("data", resultList);
         return result;
@@ -188,18 +179,8 @@ public class ProjectService {
      * @param params
      * @return
      */
-    private PageInfo getContractList(Map<String, Object> params) {
+    private List<TbProjectContract> getContractList(Map<String, Object> params) {
         String proId = MapUtils.getString(params, "proId");
-        Integer pageIndex = MapUtils.getInteger(params, "pageNo");
-        Integer pageSize = MapUtils.getInteger(params, "pageSize");
-        pageIndex = pageIndex == null ? 1 : pageIndex;
-        pageSize = pageSize == null ? 20 : pageSize;
-
-        Page page = new Page();
-        page.setCurrentPage(pageIndex);
-        page.setPageSize(pageSize);
-
-        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<TbProjectContract> list = tbProjectContractMapper.queryProjectContractListByProId(proId);
         if (null != list && list.size() > 0) {
             Map<String, Object> param = new HashMap<>();
@@ -224,8 +205,7 @@ public class ProjectService {
                 }
             }
         }
-        PageInfo pageInfo = new PageInfo(list);
-        return pageInfo;
+        return list;
     }
 
     private List<TbProjectZhaotoubiao> getZhaotoubiaoList(String proId) {
@@ -280,21 +260,10 @@ public class ProjectService {
         return list;
     }
 
-    private PageInfo getProjectBuildDetail(Map params) {
+    private List<TbProjectBuild> getProjectBuildDetail(Map params) {
         String proId = MapUtils.getString(params, "proId");
-        Integer pageIndex = MapUtils.getInteger(params, "pageNo");
-        Integer pageSize = MapUtils.getInteger(params, "pageSize");
-        pageIndex = pageIndex == null ? 1 : pageIndex;
-        pageSize = pageSize == null ? 20 : pageSize;
-
-        Page page = new Page();
-        page.setCurrentPage(pageIndex);
-        page.setPageSize(pageSize);
-
-        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<TbProjectBuild> proBuildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
-        PageInfo pageInfo = new PageInfo(proBuildList);
-        return pageInfo;
+        return proBuildList;
     }
 
     /**
