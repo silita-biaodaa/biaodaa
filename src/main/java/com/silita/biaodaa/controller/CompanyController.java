@@ -11,6 +11,7 @@ import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
+import com.silita.biaodaa.service.TbCompanyInfoService;
 import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
@@ -53,6 +54,9 @@ public class CompanyController extends BaseController {
 
     @Autowired
     ElasticseachService elasticseachService;
+
+    @Autowired
+    TbCompanyInfoService tbCompanyInfoService;
 
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
@@ -640,6 +644,20 @@ public class CompanyController extends BaseController {
         return resultMap;
     }
 
+    /**
+     * TODO: 分支机构
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/branchCompany", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String,Object> branchCompany(@RequestBody Map<String, Object> param){
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", this.SUCCESS_CODE);
+        resultMap.put("msg", this.SUCCESS_MSG);
+        resultMap.put("data",tbCompanyInfoService.getBranchCompany(param));
+        return resultMap;
+    }
 
     /**
      * TODO: es导入

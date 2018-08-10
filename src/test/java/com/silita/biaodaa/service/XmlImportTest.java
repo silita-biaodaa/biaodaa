@@ -198,11 +198,7 @@ public class XmlImportTest extends ConfigTest {
                     cell.setCellType(Cell.CELL_TYPE_STRING);
                     if (null != cell.getStringCellValue()) {
                         companyInfo.setProvince(cell.getStringCellValue().trim());
-                    } else {
-                        companyInfo.setProvince("湖南");
                     }
-                } else {
-                    companyInfo.setProvince("湖南");
                 }
                 cell = row.getCell(2);
                 if (null != cell) {

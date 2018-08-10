@@ -6,6 +6,7 @@ import com.silita.biaodaa.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * tb_company_info Mapper
@@ -82,4 +83,11 @@ public interface TbCompanyInfoMapper extends MyMapper<TbCompanyInfo> {
      * @return
      */
     String queryProvinceByCity(String city);
+
+    /**
+     * 获取分支机构
+     * @param param
+     * @return
+     */
+    List<TbCompanyInfo> queryBranchCompany(Map<String,Object> param);
 }

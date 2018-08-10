@@ -126,4 +126,17 @@
       t.`display_name`
     from area t where t.`name` like CONCAT('%',#{city},'%') limit 1
   </select>
+
+    <select id="queryBranchCompany" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.TbCompanyInfo">
+        select *
+        <if test="tabCode != null and tabCode != ''">
+            from tb_company_info_${tabCode}
+        </if>
+        <if test="tabCode == null or tabCode == ''">
+            from tb_company_info
+        </if>
+        where com_name like CONCAT('%',#{comName},'%')
+        and com_name != #{comName}
+        and province like CONCAT(#{province},'%')
+    </select>
 </mapper>
