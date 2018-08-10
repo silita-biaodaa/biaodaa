@@ -168,6 +168,9 @@ public class ProjectService {
             resultList = projectCompletionService.getProjectCompletList(params);
         }
         result.put("data", resultList);
+        if(null != resultList && resultList.size() > 0){
+            result.put("total",resultList.size());
+        }
         return result;
     }
 

@@ -74,10 +74,11 @@ public class ElasticseachService {
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "comName", comName));
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "comNamePy", comName));
+        List<QuerysModel> querys1 = new ArrayList();
         if (null != regisAddress) {
-            querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "regisAddress", regisAddress));
+            querys1.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_WILDCARD, "regisAddress", regisAddress));
         }
-        SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "company", "comes", querys, pageSort);
+        SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "company", "comes", querys1,querys,ConstantUtil.CONDITION_MUST , pageSort);
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = null;
         for (SearchHit hit : response.getHits()) {
@@ -125,7 +126,7 @@ public class ElasticseachService {
         PaginationAndSort pageSort = new PaginationAndSort(1, MapUtils.getInteger(param, "limit"), sort);
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "title", "*" + title + "*"));
-        SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "snatchurl", "snatchurl_zhaobiao", querys, pageSort);
+        SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "snatchurl", "snatchurl_zhaobiao", querys,null,null, pageSort);
 //        nativeElasticSearchUtils.close(transportClient);
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> snatMap = null;

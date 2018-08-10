@@ -86,4 +86,17 @@ public class TbProjectCompletion {
 
     //TODO:非表字段
     private List companys;
+
+    /**
+     * 结构体系
+     */
+    private String structs;
+
+    public void setStructs(){
+        this.structs = this.struct;
+    }
+    public String getStructs(){
+        return this.struct;
+    }
+
 }
