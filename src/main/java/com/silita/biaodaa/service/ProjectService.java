@@ -159,14 +159,34 @@ public class ProjectService {
         if ("design".equals(tabType)) {
             resultList = tbProjectDesignMapper.queryProjectDesignByProId(proId);
         } else if ("contract".equals(tabType)) {
-            resultList = this.getContractList(params);
+            if(null != MapUtils.getString(params,"pageNo")){
+                pageInfo = getContractListByPages(params);
+            }else {
+                resultList = this.getContractList(params);
+            }
         } else if ("zhaotoubiao".equals(tabType)) {
             resultList = this.getZhaotoubiaoList(proId);
         } else if ("build".equals(tabType)) {
-            resultList = this.getProjectBuildDetail(params);
+            if(null != MapUtils.getString(params,"pageNo")){
+                pageInfo = getProjectBuildDetailPages(params);
+            }else {
+                resultList = this.getProjectBuildDetail(params);
+            }
         } else if ("completion".equals(tabType)) {
-            resultList = projectCompletionService.getProjectCompletList(params);
+            if(null != MapUtils.getString(params,"pageNo")){
+                pageInfo = projectCompletionService.getProjectCompletListPages(params);
+            }else {
+                resultList = projectCompletionService.getProjectCompletList(params);
+            }
         }
+        if(null != pageInfo && (null != pageInfo.getList() && pageInfo.getList().size() > 0)){
+            result.put("data",pageInfo.getList());
+            result.put("pages",pageInfo.getPages());
+            result.put("pageNum",pageInfo.getPageNum());
+            result.put("total",pageInfo.getTotal());
+            return result;
+        }
+
         result.put("data", resultList);
         if(null != resultList && resultList.size() > 0){
             result.put("total",resultList.size());
@@ -183,6 +203,36 @@ public class ProjectService {
      * @return
      */
     private List<TbProjectContract> getContractList(Map<String, Object> params) {
+        return getContrList(params);
+    }
+
+    /**
+     * 获取项目下的合同备案列表(分页)
+     * created by zhushuai
+     *
+     * @param params
+     * @return
+     */
+    private PageInfo getContractListByPages(Map<String, Object> params) {
+        Integer pageIndex = MapUtils.getInteger(params,"pageNo");
+        Integer pageSize = MapUtils.getInteger(params,"pageSize");
+        Page page = new Page();
+        page.setPageSize(pageSize);
+        page.setCurrentPage(pageIndex);
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List<TbProjectContract> list = this.getContractList(params);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
+
+    /**
+     * 获取项目下的合同备案
+     * created by zhushuai
+     *
+     * @param params
+     * @return
+     */
+    private List<TbProjectContract> getContrList(Map<String,Object> params){
         String proId = MapUtils.getString(params, "proId");
         List<TbProjectContract> list = tbProjectContractMapper.queryProjectContractListByProId(proId);
         if (null != list && list.size() > 0) {
@@ -213,53 +263,6 @@ public class ProjectService {
 
     private List<TbProjectZhaotoubiao> getZhaotoubiaoList(String proId) {
         List<TbProjectZhaotoubiao> list = tbProjectZhaotoubiaoMapper.queryZhaotoubiaoListByProId(proId);
-//        if (null != list && list.size() > 0 && null != list.get(0)) {
-//            return list;
-//        }
-        //施工表
-//        List<TbProjectBuild> buildList = tbProjectBuildMapper.queryZhaobiaoProByProId(proId);
-//        if (null != buildList && buildList.size() > 0 && null != buildList.get(0)) {
-//            String remark = "";
-//            String zhongbiaoDate = "";
-//            TbProjectZhaotoubiao zhaotoubiao = null;
-//            for (TbProjectBuild buid : buildList) {
-//                remark = buid.getBidRemark();
-//                zhaotoubiao = new TbProjectZhaotoubiao();
-//                if (null != buid.getBidRemark() && !"未办理中标备案".equals(buid.getBidRemark())) {
-//                    zhongbiaoDate = remark.substring(projectAnalysisUtil.getIndex(remark, "中标日期："), projectAnalysisUtil.getIndex(remark, ","));
-//                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null : zhongbiaoDate.substring(projectAnalysisUtil.getIndex(zhongbiaoDate, "：") + 1, zhongbiaoDate.length()));
-//                }
-//                zhaotoubiao.setProId(buid.getProId().toString());
-//                zhaotoubiao.setZhongbiaoAmount(buid.getBidPrice());
-//                zhaotoubiao.setZhaobiaoType(buid.getBidType());
-//                zhaotoubiao.setZhongbiaoCompany(buid.getBOrg());
-//                zhaotoubiao.setPkid(buid.getPkid());
-//                list.add(zhaotoubiao);
-//            }
-//        }
-        //监理表
-//        List<TbProjectSupervision> projectSupervisionList = tbProjectSupervisionMapper.queryProjectSupervisionListByProId(proId);
-//        if (null != projectSupervisionList && projectSupervisionList.size() > 0) {
-//            String remark = "";
-//            String zhongbiaoDate = "";
-//            TbProjectZhaotoubiao zhaotoubiao = null;
-//            String amount = null;
-//            for (TbProjectSupervision proSup : projectSupervisionList) {
-//                remark = proSup.getBidRemark();
-//                zhaotoubiao = new TbProjectZhaotoubiao();
-//                zhaotoubiao.setProId(proId.toString());
-//                if (null != proSup.getBidRemark() && !"未办理中标备案".equals(proSup.getBidRemark())) {
-//                    zhongbiaoDate = remark.substring(projectAnalysisUtil.getIndex(remark, "中标日期："), projectAnalysisUtil.getIndex(remark, ","));
-//                    zhaotoubiao.setZhongbiaoDate(zhongbiaoDate == null ? null : zhongbiaoDate.substring(projectAnalysisUtil.getIndex(zhongbiaoDate, "：") + 1, zhongbiaoDate.length()));
-//                    amount = remark.substring(projectAnalysisUtil.getIndex(remark, "中标价格："), projectAnalysisUtil.getIndex(remark, "万元"));
-//                    zhaotoubiao.setZhongbiaoAmount(projectAnalysisUtil.isNumeric(amount) == true ? amount.substring(amount.lastIndexOf("中标价格：") + "中标价格：".length(), amount.length()) : null);
-//                }
-//                zhaotoubiao.setZhaobiaoType("监理");
-//                zhaotoubiao.setZhongbiaoCompany(proSup.getSuperOrg());
-//                zhaotoubiao.setPkid(proSup.getPkid());
-//                list.add(zhaotoubiao);
-//            }
-//        }
         return list;
     }
 
@@ -268,6 +271,20 @@ public class ProjectService {
         List<TbProjectBuild> proBuildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
         return proBuildList;
     }
+
+    private PageInfo getProjectBuildDetailPages(Map params) {
+        Integer pageIndex = MapUtils.getInteger(params,"pageNo");
+        Integer pageSize = MapUtils.getInteger(params,"pageSize");
+        String proId = MapUtils.getString(params, "proId");
+        Page page = new Page();
+        page.setPageSize(pageSize);
+        page.setCurrentPage(pageIndex);
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List<TbProjectBuild> proBuildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
+        PageInfo pageInfo = new PageInfo(proBuildList);
+        return pageInfo;
+    }
+
 
     /**
      * 将省信息放入集合中

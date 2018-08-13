@@ -34,6 +34,25 @@ public class ProjectCompletionService {
     }
 
     /**
+     * 获取竣工备案列表
+     *
+     * @param param
+     * @return
+     */
+    public PageInfo getProjectCompletListPages(Map<String, Object> param) {
+        Integer pageIndex = MapUtils.getInteger(param,"pageNo");
+        Integer pageSize = MapUtils.getInteger(param,"pageSize");
+        String proId = MapUtils.getString(param, "proId");
+        Page page = new Page();
+        page.setPageSize(pageSize);
+        page.setCurrentPage(pageIndex);
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List<TbProjectCompletion> list = tbProjectCompletionMapper.queryProCompleList(param);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
+
+    /**
      * 获取竣工备案详情
      *
      * @param param
