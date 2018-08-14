@@ -655,6 +655,8 @@ public class CompanyController extends BaseController {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
+        String comId = this.getComId(MapUtils.getString(param,"comId"));
+        param.put("comId",comId);
         resultMap.put("data",tbCompanyInfoService.getBranchCompany(param));
         return resultMap;
     }
