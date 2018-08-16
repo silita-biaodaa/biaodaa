@@ -401,12 +401,12 @@ public class XlsxAnalysisTest extends ConfigTest{
 
     @Test
     public void getFile(){
-        File file = new File("F:\\data\\工程劳务850762\\工程劳务-河北29385(1)");
+        File file = new File("F:\\data\\江苏");
         File[]  files = file.listFiles();
         for(File f : files){
             System.out.println(f.getName());
             try {
-                test(f,"河北");
+                test(f,"江苏");
             } catch (Exception e) {
                 System.out.println(f.getName());
                 e.printStackTrace();

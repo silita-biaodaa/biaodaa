@@ -51,8 +51,8 @@ public class PhoneAddressService {
             tbPhoneAddressBook.setDeviceId(deviceId);
             tbPhoneAddressBook.setCreatedDate(new Date());
             tbPhoneAddressBook.setUserPhone(userPhone);
-            tbPhoneAddressBook.setPhoneName(tbMap.get("phoneName").toString());
-            tbPhoneAddressBook.setPhone(tbMap.get("phone").toString());
+            tbPhoneAddressBook.setPhoneName(MapUtils.getString(tbMap,"phoneName"));
+            tbPhoneAddressBook.setPhone(MapUtils.getString(tbMap,"phone"));
             tbPhoneAddressBook.setSourceFrom(sourceFrom);
             phoneAddressBookList.add(tbPhoneAddressBook);
         }
