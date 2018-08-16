@@ -16,7 +16,7 @@
             </foreach>
         </if>
         <if test="linkName !=null and linkName != ''">
-            AND b.linkName like '%${linkName}%'
+            AND b.linkName like CONCAT('%',#{linkName},'%')
         </if>
     </select>
 </mapper>

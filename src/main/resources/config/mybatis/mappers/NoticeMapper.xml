@@ -196,7 +196,7 @@
             <if test="comThreeAptList !=null and comThreeAptList !=''">
                 and (
                 <foreach collection="comThreeAptList" item="comThreeApt" separator=" or ">
-                    suc.certificateuuid like '%${comThreeApt}%'
+                    suc.certificateuuid like CONCAT('%',#{comThreeApt},'%')
                 </foreach>
                 )
             </if>
@@ -210,15 +210,15 @@
                             <!--**及以上 -->
                             <foreach collection="aptMap.get('threeAptList')" item="zzTypeThree" open="(" close=")"
                                      separator=" or ">
-                                suc.certificateuuid like '%${zzTypeThree}%'
+                                suc.certificateuuid like CONCAT('%',#{zzTypeThree},'%')
                             </foreach>
                             <!--**及以上 排除下级资质-->
                             <foreach collection="aptMap.get('notThreeAptList')" item="notThreeApt" >
-                                and suc.certificateuuid not like '%${notThreeApt}%'
+                                and suc.certificateuuid not like CONCAT('%',#{notThreeApt},'%')
                             </foreach>
                         </when>
                         <when test="aptMap.containsKey('zzTypeTwo')">
-                           suc.certificateuuid like '%${aptMap.get("zzTypeTwo")}%'
+                           suc.certificateuuid like CONCAT('%',#{aptMap.get("zzTypeTwo")},'%')
                         </when>
                     </choose>
                 </foreach>
@@ -326,7 +326,7 @@
               )
         </if>
         <if test="title !=null and title !=''">
-            AND s.title LIKE '%${title}%'
+            AND s.title LIKE CONCAT('%',#{title},'%')
         </if>
         <if test="source==null or source=='' or source=='hunan'">
             <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
@@ -443,7 +443,7 @@
         <if test="list != null and list.size() > 0">
             and
             <foreach collection="list" item="zz" separator=" or " open="(" close=")">
-                c.`range` like '%${zz}%'
+                c.`range` like CONCAT('%',#{zz},'%')
             </foreach>
         </if>
         order by length(c.`range`) desc
