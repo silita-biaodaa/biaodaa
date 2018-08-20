@@ -69,7 +69,7 @@ public class UserCenterController {
         } catch (Exception e) {
             logger.error("更新账号基本信息异常！" + e.getMessage(), e);
             result.put("code", 0);
-            result.put("msg", e.getMessage());
+            result.put("msg", "更新账号基本信息失败");
         }
         return result;
     }
