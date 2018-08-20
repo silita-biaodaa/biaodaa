@@ -953,6 +953,9 @@ public class TbCompanyService {
             case "造价资询资质":
                 qualType = "造价资询";
                 break;
+            default:
+                qualType = key;
+                break;
         }
         return qualType;
     }
