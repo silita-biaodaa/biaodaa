@@ -92,7 +92,7 @@
   </select>
 
     <select id="getCompanyOrgCode" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbCompany">
-    SELECT * ,
+    SELECT *
     FROM tb_company c
     where com_id=#{comId} limit 1
   </select>
