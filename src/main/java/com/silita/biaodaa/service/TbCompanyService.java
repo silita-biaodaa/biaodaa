@@ -77,10 +77,10 @@ public class TbCompanyService {
         }
         // TODO: 18/5/7 存续状态写死
         tbCompany.setSubsist("存续");
-        if (tbCompany.getRegisAddress() != null && tbCompany.getRegisAddress().indexOf("湖南") > -1) {
-            String url = tbCompanyMapper.getCompanyUrl(tbCompany.getComId());
-            tbCompany.setUrl(url);
-        }
+//        if (tbCompany.getRegisAddress() != null && tbCompany.getRegisAddress().indexOf("湖南") > -1) {
+//            String url = tbCompanyMapper.getCompanyUrl(tbCompany.getComId());
+//            tbCompany.setUrl(url);
+//        }
         return setCompanyDetail(tbCompany);
     }
 
