@@ -218,7 +218,7 @@
                             </foreach>
                         </when>
                         <when test="aptMap.containsKey('zzTypeTwo')">
-                           suc.certificateuuid like CONCAT('%',#{aptMap.get("zzTypeTwo")},'%')
+                            suc.certificateuuid like  '%${aptMap.get("zzTypeTwo")}%'
                         </when>
                     </choose>
                 </foreach>
@@ -360,7 +360,7 @@
                 concat(#{provName},IFNULL(concat('-',IFNULL(dl.projdq,aa.name)),''),IFNULL(concat('-',dl.projXs),'')) as projDq,dl.pbMode,dl.projSum,
                 <if test="type == 0">
                     dl.bmSite,dl.kbSite,dl.kbStaffAsk,
-                    (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id} AND (zz.block = dl.block OR dl.block = '' OR dl.block is null) )  zzRank,
+                    (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id})  zzRank,
                     dl.tbAssureEndDate,
                     dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
                     dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
