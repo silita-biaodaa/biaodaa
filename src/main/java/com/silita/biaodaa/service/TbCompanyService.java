@@ -326,7 +326,7 @@ public class TbCompanyService {
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
 //                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
-                    company.setPhone(companyInfo.getPhone());
+                    company.setPhone(this.solPhone(companyInfo.getPhone()));
                 }
                 if (null == company.getRegisCapital() && null != companyInfo.getRegisCapital()) {
                     company.setRegisCapital(companyInfo.getRegisCapital());
@@ -969,7 +969,7 @@ public class TbCompanyService {
         String tabCode = CommonUtil.getCode(tbCompany.getRegisAddress());
         TbCompanyInfo companyInfo = tbCompanyInfoMapper.queryDetailByComName(tbCompany.getComName(), tabCode);
         if (null != companyInfo.getPhone()) {
-            tbCompany.setPhone(companyInfo.getPhone().trim());
+            tbCompany.setPhone(solPhone(companyInfo.getPhone().trim()).trim());
         }
         if (null != companyInfo.getScope()) {
             tbCompany.setComRange(companyInfo.getScope());
@@ -984,5 +984,42 @@ public class TbCompanyService {
             tbCompany.setOrgCode(companyInfo.getOrgCode());
         }
         return tbCompany;
+    }
+
+    private String solPhone(String phone) {
+        List<String> phoneList = new ArrayList<>();
+        List<String> tellList = new ArrayList<>();
+        String[] phones = phone.split(";");
+        if (null != phones && phones.length > 0) {
+            for (String str : phones) {
+                if (str.trim().startsWith("1")) {
+                    phoneList.add(str.trim());
+                } else {
+                    tellList.add(str.trim());
+                }
+            }
+
+            String resultPhone = "";
+            if (null != phoneList && phoneList.size() > 0) {
+                for (int i = 0; i < phoneList.size(); i++) {
+                    if (0 == i) {
+                        resultPhone = phoneList.get(0);
+                    } else {
+                        resultPhone = resultPhone + ";" + phoneList.get(i);
+                    }
+                }
+            }
+            if (null != tellList && tellList.size() > 0) {
+                for (int i = 0; i < tellList.size(); i++) {
+                    if (null != resultPhone && !"".equals(resultPhone)) {
+                        resultPhone = resultPhone + ";" + tellList.get(i);
+                    } else {
+                        resultPhone = tellList.get(0);
+                    }
+                }
+            }
+            return resultPhone;
+        }
+        return phone;
     }
 }
