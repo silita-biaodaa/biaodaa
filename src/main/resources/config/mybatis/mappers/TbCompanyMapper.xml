@@ -277,7 +277,7 @@
       FROM tb_company t
       WHERE 1=1
       AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
-      order by t.com_id asc
+      order by t.px asc
       limit #{page},#{pageSize}
   </select>
 
