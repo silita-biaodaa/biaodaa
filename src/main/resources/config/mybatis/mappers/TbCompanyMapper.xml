@@ -50,7 +50,7 @@
         tb_company c
         where 1=1
         <if test="keyWord!=null and keyWord!=''">
-            and c.com_name like CONCAT('%',#{keyWord},'%')
+            and (c.com_name like CONCAT('%',#{keyWord},'%') or c.legal_person like CONCAT('%',#{keyWord},'%'))
         </if>
         <if test="province!=null and province!=''">
             and c.regis_address like CONCAT('%',#{province},'%')
@@ -196,7 +196,7 @@
         ON c.com_name = s.companyName
         WHERE c.com_id IS NOT NULL
         <if test="keyWord!=null and keyWord!=''">
-            and c.com_name like CONCAT('%',#{keyWord},'%')
+            and (c.com_name like CONCAT('%',#{keyWord},'%') or c.legal_person like CONCAT('%',#{keyWord},'%'))
         </if>
         <if test="province!=null and province!=''">
             and c.regis_address like CONCAT('%',#{province},'%')

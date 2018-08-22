@@ -581,15 +581,7 @@ public class CompanyController extends BaseController {
         if (MyStringUtils.isNotNull(name)) {
             params.put("name", "*" + name.toLowerCase() + "*");
             params.put("count", 5);
-            int paramHash = ObjectUtils.buildMapParamHash(params);
-            String listKey = RedisConstantInterface.COM_NAME_MATCH + paramHash;
-            nameList = (List<Map<String, Object>>) myRedisTemplate.getObject(listKey);
-            if (nameList == null) {
-                nameList = elasticseachService.quary(params);
-                if (nameList != null) {
-                    myRedisTemplate.setObject(listKey, nameList, COM_OVER_TIME);
-                }
-            }
+            nameList = elasticseachService.quary(params);
         }
         result.put("data", nameList);
         successMsg(result);
@@ -646,18 +638,19 @@ public class CompanyController extends BaseController {
 
     /**
      * TODO: 分支机构
+     *
      * @param param
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/branchCompany", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String,Object> branchCompany(@RequestBody Map<String, Object> param){
+    public Map<String, Object> branchCompany(@RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
-        String comId = this.getComId(MapUtils.getString(param,"comId"));
-        param.put("comId",comId);
-        resultMap.put("data",tbCompanyInfoService.getBranchCompany(param));
+        String comId = this.getComId(MapUtils.getString(param, "comId"));
+        param.put("comId", comId);
+        resultMap.put("data", tbCompanyInfoService.getBranchCompany(param));
         return resultMap;
     }
 
