@@ -51,9 +51,11 @@ public class CompanyBootstrap implements ApplicationListener<ApplicationEvent> {
                     long lockTimes = dateUtils.dateDiff(start, endLock, "yyyy-MM-dd HH:mm:ss", "m");
                     //TODO: 统计中标企业
                     scheduler.scheduleAtFixedRate(countBidTask, lockTimes,24 * 60, TimeUnit.MINUTES);
-                    logger.info("----------当前时间【"+start+"】，任务执行时间【"+endLock+"】，中间间隔【"+lockTimes+"】分");
                     //TODO: 人员缓存
-                    scheduler.scheduleAtFixedRate(personTask, 0, 24 * 61, TimeUnit.MINUTES);
+                    String timerPerson = "02:01:00";
+                    String endLockPerson = end + " "+timerPerson.trim();
+                    long lockTimesPers = dateUtils.dateDiff(start, endLockPerson, "yyyy-MM-dd HH:mm:ss", "m");
+                    scheduler.scheduleAtFixedRate(personTask, 0, lockTimesPers, TimeUnit.MINUTES);
                     //TODO: 公司同步Elasticsearch
                     String comTimer = "01:01:00";
                     String comEndLock = end + " "+comTimer.trim();
