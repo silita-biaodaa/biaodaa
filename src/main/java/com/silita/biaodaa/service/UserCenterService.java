@@ -144,7 +144,7 @@ public class UserCenterService {
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
 //                        map.put("phone",companyInfo.getPhone().split(";")[0].trim());
-                        map.put("phone", companyInfo.getPhone().trim());
+                        map.put("phone", tbCompanyService.solPhone(companyInfo.getPhone().trim()));
                     }
                     if (null == map.get("regisCapital") && null != companyInfo.getRegisCapital()) {
                         map.put("regisCapital", companyInfo.getRegisCapital());

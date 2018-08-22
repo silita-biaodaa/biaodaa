@@ -52,6 +52,8 @@ public class NoticeService {
     private TbClickStatisticsMapper tbClickStatisticsMapper;
     @Autowired
     TbCompanyInfoMapper tbCompanyInfoMapper;
+    @Autowired
+    TbCompanyService tbCompanyService;
 
     /**
      * 资质id拼接
@@ -281,7 +283,7 @@ public class NoticeService {
                         tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),tabCode);
                         if (null != tbCompanyInfo) {
                             if (null != tbCompanyInfo.getPhone()) {
-                                company.setPhone(tbCompanyInfo.getPhone().split(";")[0].toLowerCase());
+                                company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim()).split(";")[0].toLowerCase());
                             }
                             if (null == company.getRegisCapital() && null != tbCompanyInfo.getRegisCapital()) {
                                 company.setRegisCapital(tbCompanyInfo.getRegisCapital());

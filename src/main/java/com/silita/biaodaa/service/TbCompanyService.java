@@ -894,8 +894,8 @@ public class TbCompanyService {
                 companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), CommonUtil.getCode(company.getRegisAddress()));
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
-                        company.setPhone(companyInfo.getPhone().split(";")[0].trim());
-                        company.setPhone(companyInfo.getPhone());
+//                        company.setPhone(companyInfo.getPhone().split(";")[0].trim());
+                        company.setPhone(this.solPhone(companyInfo.getPhone()).split(";")[0].trim());
                     }
                     if (null != companyInfo.getRegisCapital()) {
                         company.setRegisCapital(companyInfo.getRegisCapital());
@@ -986,7 +986,7 @@ public class TbCompanyService {
         return tbCompany;
     }
 
-    private String solPhone(String phone) {
+    public String solPhone(String phone) {
         List<String> phoneList = new ArrayList<>();
         List<String> tellList = new ArrayList<>();
         String[] phones = phone.split(";");
