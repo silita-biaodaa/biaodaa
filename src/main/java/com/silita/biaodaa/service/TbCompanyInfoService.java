@@ -5,6 +5,7 @@ import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.TbCompanyInfo;
 import com.silita.biaodaa.utils.CommonUtil;
+import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,8 @@ public class TbCompanyInfoService {
     TbCompanyInfoMapper tbCompanyInfoMapper;
     @Autowired
     TbCompanyMapper tbCompanyMapper;
+    @Autowired
+    TbCompanyService tbCompanyService;
 
 
     public void saveCompanyInfo(List<TbCompanyInfo> comList) {
@@ -56,7 +59,15 @@ public class TbCompanyInfoService {
         } else {
             comMap.put("province", company.getRegisAddress());
         }
-        return tbCompanyInfoMapper.queryBranchCompany(comMap);
+        List<TbCompanyInfo> companyInfos = tbCompanyInfoMapper.queryBranchCompany(comMap);
+        if(null != companyInfos && companyInfos.size() > 0){
+            for(TbCompanyInfo info : companyInfos){
+                if(MyStringUtils.isNotNull(info.getPhone())){
+                    info.setPhone(tbCompanyService.solPhone(info.getPhone()));
+                }
+            }
+        }
+        return companyInfos;
     }
 
     public String getProvince(String city) {
