@@ -74,7 +74,7 @@
         <servlet-class>com.silita.biaodaa.servlet.NoticeFileUploadServlet</servlet-class>
         <init-param>
             <param-name>uploadPath</param-name>
-            <param-value>/mnt/file/</param-value>
+            <param-value>/home/file</param-value>
         </init-param>
         <init-param>
             <param-name>maxSize</param-name>
