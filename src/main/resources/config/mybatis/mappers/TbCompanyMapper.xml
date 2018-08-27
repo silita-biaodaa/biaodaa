@@ -72,9 +72,16 @@
         </if>
         <if test="zzLevel == 'level'">
             and
-            <foreach collection="range" item="zzList" close=")" separator="or" open="(">
-                c.range like CONCAT('%',#{zzList},'%')
-            </foreach>
+            <if test="rangeType == 'or'">
+                <foreach collection="range" item="zzList" close=")" separator="or" open="(">
+                    c.range like CONCAT('%',#{zzList},'%')
+                </foreach>
+            </if>
+            <if test="rangeType == 'and'">
+                <foreach collection="range" item="zzList" close=")" separator="and" open="(">
+                    c.range like CONCAT('%',#{zzList},'%')
+                </foreach>
+            </if>
         </if>
         order by c.px desc
     </select>
@@ -218,9 +225,16 @@
         </if>
         <if test="zzLevel == 'level'">
             and
-            <foreach collection="range" item="zzList" close=")" separator="or" open="(">
-                c.range like CONCAT('%',#{zzList},'%')
-            </foreach>
+            <if test="rangeType == 'or'">
+                <foreach collection="range" item="zzList" close=")" separator="or" open="(">
+                    c.range like CONCAT('%',#{zzList},'%')
+                </foreach>
+            </if>
+            <if test="rangeType == 'and'">
+                <foreach collection="range" item="zzList" close=")" separator="and" open="(">
+                    c.range like CONCAT('%',#{zzList},'%')
+                </foreach>
+            </if>
         </if>
         <if test="level!=null and level!=''">
             and a.secureLevel=#{level}

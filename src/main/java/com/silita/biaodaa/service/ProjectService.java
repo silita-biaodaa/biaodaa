@@ -157,39 +157,47 @@ public class ProjectService {
         PageInfo pageInfo = null;
         //施工图审查
         if ("design".equals(tabType)) {
-            resultList = tbProjectDesignMapper.queryProjectDesignByProId(proId);
+            if (null != MapUtils.getString(params, "pageNo")) {
+                pageInfo = getProjectDesignByPage(params);
+            } else {
+                resultList = tbProjectDesignMapper.queryProjectDesignByProId(proId);
+            }
         } else if ("contract".equals(tabType)) {
-            if(null != MapUtils.getString(params,"pageNo")){
+            if (null != MapUtils.getString(params, "pageNo")) {
                 pageInfo = getContractListByPages(params);
-            }else {
+            } else {
                 resultList = this.getContractList(params);
             }
         } else if ("zhaotoubiao".equals(tabType)) {
-            resultList = this.getZhaotoubiaoList(proId);
+            if (null != MapUtils.getString(params, "pageNo")) {
+                pageInfo = getZhaotoubiaoListByPage(params);
+            } else {
+                resultList = this.getZhaotoubiaoList(proId);
+            }
         } else if ("build".equals(tabType)) {
-            if(null != MapUtils.getString(params,"pageNo")){
+            if (null != MapUtils.getString(params, "pageNo")) {
                 pageInfo = getProjectBuildDetailPages(params);
-            }else {
+            } else {
                 resultList = this.getProjectBuildDetail(params);
             }
         } else if ("completion".equals(tabType)) {
-            if(null != MapUtils.getString(params,"pageNo")){
+            if (null != MapUtils.getString(params, "pageNo")) {
                 pageInfo = projectCompletionService.getProjectCompletListPages(params);
-            }else {
+            } else {
                 resultList = projectCompletionService.getProjectCompletList(params);
             }
         }
-        if(null != pageInfo && (null != pageInfo.getList() && pageInfo.getList().size() > 0)){
-            result.put("data",pageInfo.getList());
-            result.put("pages",pageInfo.getPages());
-            result.put("pageNum",pageInfo.getPageNum());
-            result.put("total",pageInfo.getTotal());
+        if (null != pageInfo && (null != pageInfo.getList() && pageInfo.getList().size() > 0)) {
+            result.put("data", pageInfo.getList());
+            result.put("pages", pageInfo.getPages());
+            result.put("pageNum", pageInfo.getPageNum());
+            result.put("total", pageInfo.getTotal());
             return result;
         }
 
         result.put("data", resultList);
-        if(null != resultList && resultList.size() > 0){
-            result.put("total",resultList.size());
+        if (null != resultList && resultList.size() > 0) {
+            result.put("total", resultList.size());
         }
         return result;
     }
@@ -214,8 +222,8 @@ public class ProjectService {
      * @return
      */
     private PageInfo getContractListByPages(Map<String, Object> params) {
-        Integer pageIndex = MapUtils.getInteger(params,"pageNo");
-        Integer pageSize = MapUtils.getInteger(params,"pageSize");
+        Integer pageIndex = MapUtils.getInteger(params, "pageNo");
+        Integer pageSize = MapUtils.getInteger(params, "pageSize");
         Page page = new Page();
         page.setPageSize(pageSize);
         page.setCurrentPage(pageIndex);
@@ -232,7 +240,7 @@ public class ProjectService {
      * @param params
      * @return
      */
-    private List<TbProjectContract> getContrList(Map<String,Object> params){
+    private List<TbProjectContract> getContrList(Map<String, Object> params) {
         String proId = MapUtils.getString(params, "proId");
         List<TbProjectContract> list = tbProjectContractMapper.queryProjectContractListByProId(proId);
         if (null != list && list.size() > 0) {
@@ -261,20 +269,57 @@ public class ProjectService {
         return list;
     }
 
+    /**
+     * 招投标列表
+     *
+     * @param proId
+     * @return
+     */
     private List<TbProjectZhaotoubiao> getZhaotoubiaoList(String proId) {
         List<TbProjectZhaotoubiao> list = tbProjectZhaotoubiaoMapper.queryZhaotoubiaoListByProId(proId);
         return list;
     }
 
+    /**
+     * 招投标列表（分页）
+     *
+     * @param param
+     * @return
+     */
+    private PageInfo getZhaotoubiaoListByPage(Map<String, Object> param) {
+        Integer pageIndex = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
+        String proId = MapUtils.getString(param, "proId");
+        Page page = new Page();
+        page.setPageSize(pageSize);
+        page.setCurrentPage(pageIndex);
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List<TbProjectZhaotoubiao> list = tbProjectZhaotoubiaoMapper.queryZhaotoubiaoListByProId(proId);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
+
+    /**
+     * 施工许可
+     *
+     * @param params
+     * @return
+     */
     private List<TbProjectBuild> getProjectBuildDetail(Map params) {
         String proId = MapUtils.getString(params, "proId");
         List<TbProjectBuild> proBuildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
         return proBuildList;
     }
 
+    /**
+     * 施工许可（分页）
+     *
+     * @param params
+     * @return
+     */
     private PageInfo getProjectBuildDetailPages(Map params) {
-        Integer pageIndex = MapUtils.getInteger(params,"pageNo");
-        Integer pageSize = MapUtils.getInteger(params,"pageSize");
+        Integer pageIndex = MapUtils.getInteger(params, "pageNo");
+        Integer pageSize = MapUtils.getInteger(params, "pageSize");
         String proId = MapUtils.getString(params, "proId");
         Page page = new Page();
         page.setPageSize(pageSize);
@@ -285,6 +330,24 @@ public class ProjectService {
         return pageInfo;
     }
 
+    /**
+     * 施工图审查（分页）
+     *
+     * @param param
+     * @return
+     */
+    private PageInfo getProjectDesignByPage(Map param) {
+        Integer pageIndex = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
+        String proId = MapUtils.getString(param, "proId");
+        Page page = new Page();
+        page.setPageSize(pageSize);
+        page.setCurrentPage(pageIndex);
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List<TbProjectDesign> list = tbProjectDesignMapper.queryProjectDesignByProId(proId);
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
 
     /**
      * 将省信息放入集合中

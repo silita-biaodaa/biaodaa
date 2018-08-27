@@ -355,6 +355,10 @@ public class CompanyController extends BaseController {
             String keyWord = MapUtils.getString(params, "keyWord");
 
             String levelRank = MapUtils.getString(params, "levelRank");
+            String rangeType = MapUtils.getString(params, "rangeType");
+            if (MyStringUtils.isNull(rangeType)) {
+                rangeType = "or";
+            }
 
 
             String code = "";
@@ -377,6 +381,7 @@ public class CompanyController extends BaseController {
             param.put("maxCapital", maxCapital);
             param.put("qualCode", StringUtils.strip(code, ","));
             param.put("keyWord", keyWord);
+            param.put("rangeType",rangeType);
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
