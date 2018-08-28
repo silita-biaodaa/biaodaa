@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by zhangxiahui on 18/4/4.
@@ -326,7 +328,7 @@ public class TbCompanyService {
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
 //                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
-                    company.setPhone(this.solPhone(companyInfo.getPhone()));
+                    company.setPhone(this.solPhone(companyInfo.getPhone(),"replace"));
                 }
                 if (null == company.getRegisCapital() && null != companyInfo.getRegisCapital()) {
                     company.setRegisCapital(companyInfo.getRegisCapital());
@@ -895,7 +897,7 @@ public class TbCompanyService {
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
 //                        company.setPhone(companyInfo.getPhone().split(";")[0].trim());
-                        company.setPhone(this.solPhone(companyInfo.getPhone()).split(";")[0].trim());
+                        company.setPhone(this.solPhone(companyInfo.getPhone(),"replace"));
                     }
                     if (null != companyInfo.getRegisCapital()) {
                         company.setRegisCapital(companyInfo.getRegisCapital());
@@ -968,37 +970,37 @@ public class TbCompanyService {
     public TbCompany setCompanyDetail(TbCompany tbCompany) {
         String tabCode = CommonUtil.getCode(tbCompany.getRegisAddress());
         TbCompanyInfo companyInfo = tbCompanyInfoMapper.queryDetailByComName(tbCompany.getComName(), tabCode);
-        if (null != companyInfo.getPhone()) {
-            tbCompany.setPhone(solPhone(companyInfo.getPhone().trim()).trim());
+        if (null != companyInfo && null != companyInfo.getPhone()) {
+            tbCompany.setPhone(solPhone(companyInfo.getPhone().trim(),null));
         }
-        if (null != companyInfo.getScope()) {
+        if (null != companyInfo && null != companyInfo.getScope()) {
             tbCompany.setComRange(companyInfo.getScope());
         }
-        if (null != companyInfo.getComUrl()) {
+        if (null != companyInfo && null != companyInfo.getComUrl()) {
             tbCompany.setComUrl(companyInfo.getComUrl().split(";")[0].trim());
         }
-        if (null != companyInfo.getEmail()) {
+        if (null != companyInfo && null != companyInfo.getEmail()) {
             tbCompany.setEmail(companyInfo.getEmail().split(";")[0].trim());
         }
-        if (null != companyInfo.getOrgCode()) {
+        if (null != companyInfo && null != companyInfo.getOrgCode()) {
             tbCompany.setOrgCode(companyInfo.getOrgCode());
         }
         return tbCompany;
     }
 
-    public String solPhone(String phone) {
+    public String solPhone(String phone,String type) {
         List<String> phoneList = new ArrayList<>();
         List<String> tellList = new ArrayList<>();
-        String[] phones = phone.split(";");
+        Object[] phones = doWeightPhone(phone.split(";"));
         if (null != phones && phones.length > 0) {
-            for (String str : phones) {
-                if (str.trim().startsWith("1")) {
-                    phoneList.add(str.trim());
+            for (Object str : phones) {
+                if (str.toString().startsWith("1")) {
+                    phoneList.add(str.toString());
                 } else {
-                    tellList.add(str.trim());
+                    str = insertString("-",str.toString(),4);
+                    tellList.add(str.toString());
                 }
             }
-
             String resultPhone = "";
             if (null != phoneList && phoneList.size() > 0) {
                 for (int i = 0; i < phoneList.size(); i++) {
@@ -1018,8 +1020,79 @@ public class TbCompanyService {
                     }
                 }
             }
+            if("replace".equals(type)){
+                resultPhone = replaceStr("*",resultPhone.split(";")[0]);
+            }
             return resultPhone;
         }
         return phone;
+    }
+
+    /**
+     * 电话号码去重
+     *
+     * @param strings
+     * @return
+     */
+    public Object[] doWeightPhone(String[] strings) {
+        String regEx = "[`~!@#$%^&*()\\-+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+        Pattern p = Pattern.compile(regEx);
+        List<String> list = new ArrayList<>();
+        for (String str : strings) {
+            Matcher m = p.matcher(str);
+            list.add(m.replaceAll("").replace(" ", "").trim());
+        }
+        //去重
+        Set<String> set = new HashSet<>();
+        set.addAll(list);
+        return set.toArray();
+    }
+
+    //插入字符
+    public static String insertString(String srcStr, String descStr, int off) {
+        if (off > descStr.length()) {
+            return "";
+        }
+        char[] src = srcStr.toCharArray();
+        char[] desc = descStr.toCharArray();
+        StringBuilder ret = new StringBuilder();
+        for (int i = 0; i <= desc.length; i++) {
+            if (i == off) {
+                for (int j = 0; j < src.length; j++) {
+                    ret.append(src[j]);
+                }
+            }
+            if (i < desc.length) {
+                ret.append(desc[i]);
+            }
+        }
+        return ret.toString();
+    }
+
+    /**
+     * 电话号码替换*
+     * @param srcStr
+     * @param descStr
+     * @return
+     */
+    public static String replaceStr(String srcStr, String descStr) {
+        char[] descs = descStr.toCharArray();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i<descStr.length(); i++) {
+            if(descStr.startsWith("0")){
+                if(i >= 5 && i <= 8){
+                    stringBuilder.append("*");
+                }else {
+                    stringBuilder.append(descs[i]);
+                }
+            }else {
+                if(i >= 3 && i < 7){
+                    stringBuilder.append(srcStr);
+                }else {
+                    stringBuilder.append(descs[i]);
+                }
+            }
+        }
+        return stringBuilder.toString();
     }
 }

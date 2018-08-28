@@ -283,7 +283,7 @@ public class NoticeService {
                         tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),tabCode);
                         if (null != tbCompanyInfo) {
                             if (null != tbCompanyInfo.getPhone()) {
-                                company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim()).split(";")[0].toLowerCase());
+                                company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim(),"replace").toLowerCase());
                             }
                             if (null == company.getRegisCapital() && null != tbCompanyInfo.getRegisCapital()) {
                                 company.setRegisCapital(tbCompanyInfo.getRegisCapital());

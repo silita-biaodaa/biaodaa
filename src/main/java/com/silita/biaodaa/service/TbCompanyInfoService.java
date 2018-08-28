@@ -63,7 +63,7 @@ public class TbCompanyInfoService {
         if(null != companyInfos && companyInfos.size() > 0){
             for(TbCompanyInfo info : companyInfos){
                 if(MyStringUtils.isNotNull(info.getPhone())){
-                    info.setPhone(tbCompanyService.solPhone(info.getPhone()));
+                    info.setPhone(tbCompanyService.solPhone(info.getPhone(),null));
                 }
             }
         }
