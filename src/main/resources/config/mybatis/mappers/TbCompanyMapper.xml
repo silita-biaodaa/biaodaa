@@ -74,12 +74,16 @@
             and
             <if test="rangeType == 'or'">
                 <foreach collection="range" item="zzList" close=")" separator="or" open="(">
-                    c.range like CONCAT('%',#{zzList},'%')
+                    <foreach collection="zzList.rangeList" item="rangeList" close=")" separator="or" open="(">
+                        c.range like CONCAT('%',#{rangeList},'%')
+                    </foreach>
                 </foreach>
             </if>
             <if test="rangeType == 'and'">
                 <foreach collection="range" item="zzList" close=")" separator="and" open="(">
-                    c.range like CONCAT('%',#{zzList},'%')
+                    <foreach collection="zzList.rangeList" item="rangeList" close=")" separator="or" open="(">
+                        c.range like CONCAT('%',#{rangeList},'%')
+                    </foreach>
                 </foreach>
             </if>
         </if>
@@ -227,12 +231,16 @@
             and
             <if test="rangeType == 'or'">
                 <foreach collection="range" item="zzList" close=")" separator="or" open="(">
-                    c.range like CONCAT('%',#{zzList},'%')
+                    <foreach collection="zzList.rangeList" item="rangeList" close=")" separator="or" open="(">
+                        c.range like CONCAT('%',#{rangeList},'%')
+                    </foreach>
                 </foreach>
             </if>
             <if test="rangeType == 'and'">
                 <foreach collection="range" item="zzList" close=")" separator="and" open="(">
-                    c.range like CONCAT('%',#{zzList},'%')
+                    <foreach collection="zzList.rangeList" item="rangeList" close=")" separator="or" open="(">
+                        c.range like CONCAT('%',#{rangeList},'%')
+                    </foreach>
                 </foreach>
             </if>
         </if>

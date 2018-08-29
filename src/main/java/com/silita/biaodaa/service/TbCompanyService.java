@@ -293,16 +293,22 @@ public class TbCompanyService {
             String[] qualCodes = qualCode.split(",");
             List<String> rangeList = new ArrayList<>();
             String zzLevel = null;
+            List<Map> rangeMapList = new ArrayList<>();
+            Map rangeMap = null;
             for (String str : qualCodes) {
+                rangeList = new ArrayList<>();
+                rangeMap = new HashMap();
                 if (str.contains("/")) {
                     zzLevel = str.substring(analysisUtil.getIndex(str, "/") + 1, str.length());
                 } else {
                     zzLevel = "default";
                 }
                 rangeList.addAll(this.getQualCode(str, zzLevel));
+                rangeMap.put("rangeList",rangeList);
+                rangeMapList.add(rangeMap);
             }
             param.put("zzLevel", "level");
-            param.put("range", rangeList);
+            param.put("range", rangeMapList);
         }
         //地区
         if (null != param.get("regisAddress")) {
