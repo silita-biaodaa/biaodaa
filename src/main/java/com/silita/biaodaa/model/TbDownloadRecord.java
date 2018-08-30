@@ -17,7 +17,7 @@ public class TbDownloadRecord {
     /**
      * 文件 id
      */
-    private Integer fileId;
+    private String fileId;
 
     /**
      * 下载链接
@@ -44,4 +44,8 @@ public class TbDownloadRecord {
      */
     private Date updated;
 
+    /**
+     * 下载时间
+     */
+    private String downDate;
 }

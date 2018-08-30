@@ -2,15 +2,13 @@ package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.event.ListDataEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 人员信息Service
@@ -24,15 +22,13 @@ public class PersonService {
     @Autowired
     TbPersonProjectMapper tbPersonProjectMapper;
     @Autowired
-    TbProjectDesignMapper tbProjectDesignMapper;
-    @Autowired
-    TbProjectSupervisionMapper tbProjectSupervisionMapper;
-    @Autowired
-    TbProjectBuildMapper tbProjectBuildMapper;
-    @Autowired
     CertUndesirableMapper certUndesirableMapper;
     @Autowired
     TbPersonChangeMapper tbPersonChangeMapper;
+    @Autowired
+    TbProjectMapper tbProjectMapper;
+    @Autowired
+    TbProjectCompanyMapper tbProjectCompanyMapper;
 
     /**
      * 获取人员详情
@@ -90,46 +86,63 @@ public class PersonService {
         }
         List<Map<String, Object>> persProjectList = new ArrayList<>();
         Map<String, Object> perProjectMap = null;
-        Map<String, Object> zhaotouParam = null;
+        Map<String, Object> paraMap = new HashMap<>();
+        TbProjectCompany projectCompany = null;
+        List<TbProjectCompany> projectCompanyList = null;
         if (null != personProjectList && personProjectList.size() > 0) {
             for (TbPersonProject per : personProjectList) {
                 perProjectMap = new HashMap<>();
-                if ("supervision".equals(per.getType())) {
-                    TbProjectSupervision projectSupervision = tbProjectSupervisionMapper.querySupervisionDetailById(per.getPid());
-                    if (null != projectSupervision) {
-                        perProjectMap.put("proType", projectSupervision.getProTypeMain());
-                        perProjectMap.put("proName", projectSupervision.getProName());
-                        perProjectMap.put("proWhere", projectSupervision.getProWhere());
-                        perProjectMap.put("superOrg", projectSupervision.getSuperOrg());
-                        perProjectMap.put("proId", projectSupervision.getProId());
-                    }
-                } else if ("build".equals(per.getType())) {
-                    TbProjectBuild projectBuild = tbProjectBuildMapper.queryProjectBuildDetail(null, per.getPid());
-                    if (null != projectBuild) {
-                        perProjectMap.put("proType", projectBuild.getProTypeMain());
-                        perProjectMap.put("proName", projectBuild.getProName());
-                        perProjectMap.put("proWhere", projectBuild.getProWhere());
-                        perProjectMap.put("bOrg", projectBuild.getBOrg());
-                        perProjectMap.put("proId", projectBuild.getProId());
-                    }
-                } else if ("design".equals(per.getType())) {
-                    TbProjectDesign projectDesign = tbProjectDesignMapper.queryProjectDesignById(per.getPid());
-                    if (null != projectDesign) {
-                        perProjectMap.put("proType", projectDesign.getProTypeMain());
-                        perProjectMap.put("proName", projectDesign.getProName());
-                        perProjectMap.put("proWhere", projectDesign.getProWhere());
-                        perProjectMap.put("exploreOrg", projectDesign.getExploreOrg());
-                        perProjectMap.put("designOrg", projectDesign.getDesignOrg());
-                        perProjectMap.put("proId", projectDesign.getProId());
-                    }
-                }
-                if (MapUtils.isNotEmpty(perProjectMap)) {
-                    perProjectMap.put("role", per.getRole());
+                TbProject project = tbProjectMapper.queryProjectDetail(per.getProId());
+                perProjectMap.put("proId", project.getProId());
+                perProjectMap.put("proType", project.getProType());
+                perProjectMap.put("proName", project.getProName());
+                perProjectMap.put("proWhere", project.getProWhere());
+                perProjectMap.put("bOrg", per.getComName());
+                perProjectMap.put("role", per.getRole());
+                if (MyStringUtils.isNotNull(per.getComName())) {
+                    perProjectMap.put("company", per.getComName());
                     persProjectList.add(perProjectMap);
+                    continue;
+                }
+                if (MyStringUtils.isNull(per.getComName())) {
+                    List<String> roleList = new ArrayList<>();
+                    if ("项目经理".equals(per.getRole()) || "项目总监".equals(per.getRole())) {
+                        paraMap.put("proId", per.getProId());
+                        paraMap.put("pid", per.getPid());
+                        roleList.add("施工单位");
+                        paraMap.put("roleList", roleList);
+                        projectCompanyList = tbProjectCompanyMapper.queryProComList(paraMap);
+                        if (null != projectCompanyList && projectCompanyList.size() > 0) {
+                            projectCompany = projectCompanyList.get(0);
+                        }
+                        if (null != projectCompany) {
+                            perProjectMap.put("company", projectCompany.getComName());
+                        }
+                        persProjectList.add(perProjectMap);
+                        continue;
+                    } else if ("总监理工程师".equals(per.getRole())) {
+                        paraMap.put("proId", per.getProId());
+                        paraMap.put("pid", per.getPid());
+                        roleList.add("监理单位");
+                        paraMap.put("roleList", roleList);
+                        projectCompanyList = tbProjectCompanyMapper.queryProComList(paraMap);
+                        if (null != projectCompanyList && projectCompanyList.size() > 0) {
+                            projectCompany = projectCompanyList.get(0);
+                        }
+                        if (null != projectCompany) {
+                            perProjectMap.put("company", projectCompany.getComName());
+                        }
+                        persProjectList.add(perProjectMap);
+                        continue;
+                    }
                 }
             }
         }
-        return persProjectList;
+        Set<Map<String, Object>> setList = new HashSet<>();
+        setList.addAll(persProjectList);
+        List<Map<String, Object>> projectList = new ArrayList<>();
+        projectList.addAll(setList);
+        return projectList;
     }
 
     public List<TbPersonChange> getPersonChangeList(Map<String, Object> param) {

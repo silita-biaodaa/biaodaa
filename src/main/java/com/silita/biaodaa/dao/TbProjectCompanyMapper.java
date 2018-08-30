@@ -1,5 +1,6 @@
 package com.silita.biaodaa.dao;
 
+import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.TbProjectCompany;
 import com.silita.biaodaa.utils.MyMapper;
 

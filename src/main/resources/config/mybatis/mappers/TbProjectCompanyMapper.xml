@@ -41,7 +41,9 @@
         WHERE 1=1
         and t.pro_id = #{proId}
         and t.pid = #{pid}
-        and t.type = #{type}
+        <if test="type != null and type != ''">
+            and t.type = #{type}
+        </if>
         <if test="roleList != null and roleList.size > 0">
             and
             <foreach collection="roleList" item="list" separator="or" close=")" open="(">

@@ -1,6 +1,8 @@
 package com.silita.biaodaa.controller;
 
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.service.DownloadRecordService;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,10 @@ public class DownloadRecordController extends BaseController {
     public Map<String, Object> downRecord(@RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         successMsg(resultMap);
+        if ("company".equals(MapUtils.getString(param, "downType"))) {
+            resultMap.put("data",downloadRecordService.getCompanyRecord(param));
+            return resultMap;
+        }
         resultMap.put("data", downloadRecordService.downloadRecord(param));
         return resultMap;
     }
