@@ -57,8 +57,11 @@ public class PersonService {
             resultMap.put("personQualificat", tbPersonQualificationList);
             return resultMap;
         } else if ("personProject".equals(tabType)) {
-            List<Map<String, Object>> prosonProjectList = this.getPersonProjectList(param);
-            resultMap.put("prosonProjectList", prosonProjectList);
+            List<Map<String, Object>> personProjectList = this.getPersonProjectList(param);
+            resultMap.put("prosonProjectList", personProjectList);
+            if (null != personProjectList && personProjectList.size() > 0) {
+                resultMap.put("total", personProjectList.size());
+            }
             return resultMap;
         } else if ("bearCase".equals(tabType)) {
             resultMap.put("bearCaseList", null);
@@ -106,7 +109,7 @@ public class PersonService {
                 }
                 if (MyStringUtils.isNull(per.getComName())) {
                     List<String> roleList = new ArrayList<>();
-                    if ("项目经理".equals(per.getRole()) || "项目总监".equals(per.getRole())) {
+                    if ("项目经理".equals(per.getRole())) {
                         paraMap.put("proId", per.getProId());
                         paraMap.put("pid", per.getPid());
                         roleList.add("施工单位");
@@ -120,7 +123,7 @@ public class PersonService {
                         }
                         persProjectList.add(perProjectMap);
                         continue;
-                    } else if ("总监理工程师".equals(per.getRole())) {
+                    } else if ("总监理工程师".equals(per.getRole()) || "项目总监".equals(per.getRole())) {
                         paraMap.put("proId", per.getProId());
                         paraMap.put("pid", per.getPid());
                         roleList.add("监理单位");
@@ -138,11 +141,16 @@ public class PersonService {
                 }
             }
         }
-        Set<Map<String, Object>> setList = new HashSet<>();
-        setList.addAll(persProjectList);
-        List<Map<String, Object>> projectList = new ArrayList<>();
-        projectList.addAll(setList);
-        return projectList;
+        if(null != persProjectList && persProjectList.size() > 0) {
+            for (int i = 0; i < persProjectList.size() - 1; i++) {
+                for (int j = persProjectList.size() - 1; j > i; j--) {
+                    if (persProjectList.get(j).get("proId").toString().equals(persProjectList.get(i).get("proId").toString())) {
+                        persProjectList.remove(j);
+                    }
+                }
+            }
+        }
+        return persProjectList;
     }
 
     public List<TbPersonChange> getPersonChangeList(Map<String, Object> param) {

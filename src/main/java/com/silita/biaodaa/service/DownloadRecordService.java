@@ -30,8 +30,8 @@ public class DownloadRecordService {
             tbDownloadRecord.setUpdated(new Date());
             count = tbDownloadRecordMapper.updateDownloadRecord(tbDownloadRecord);
         } else {
-            param.put("record",record);
-            tbDownloadRecord = initDownRecord(param,"add");
+            param.put("record", record);
+            tbDownloadRecord = initDownRecord(param, "add");
             count = tbDownloadRecordMapper.insertDownloadRecord(tbDownloadRecord);
         }
         if (count > 0) {
@@ -41,7 +41,7 @@ public class DownloadRecordService {
     }
 
     public int getCompanyRecord(Map<String, Object> param) {
-        param.put("fileId", param.put("fileId", VisitInfoHolder.getUserId()));
+        param.put("fileId", VisitInfoHolder.getUserId());
         String toDay = MyDateUtils.getDate(null);
         param.put("downDate", toDay);
         Integer record = 0;
@@ -60,8 +60,8 @@ public class DownloadRecordService {
             count = tbDownloadRecordMapper.updateDownloadRecord(tbDownloadRecord);
         } else {
             record += 1;
-            param.put("record",record);
-            tbDownloadRecord = initDownRecord(param,"add");
+            param.put("record", record);
+            tbDownloadRecord = initDownRecord(param, "add");
             count = tbDownloadRecordMapper.insertDownloadRecord(tbDownloadRecord);
         }
         if (count > 0) {
@@ -72,19 +72,20 @@ public class DownloadRecordService {
 
     /**
      * 初始化参数值
+     *
      * @param param
      * @return
      */
-    private TbDownloadRecord initDownRecord(Map<String,Object> param,String operate){
+    private TbDownloadRecord initDownRecord(Map<String, Object> param, String operate) {
         TbDownloadRecord tbDownloadRecord = new TbDownloadRecord();
-        tbDownloadRecord.setRecord(MapUtils.getInteger(param,"record"));
+        tbDownloadRecord.setRecord(MapUtils.getInteger(param, "record"));
         tbDownloadRecord.setDownType(MapUtils.getString(param, "downType"));
         tbDownloadRecord.setFileId(MapUtils.getString(param, "fileId"));
         tbDownloadRecord.setUrl(MapUtils.getString(param, "url"));
         tbDownloadRecord.setDownDate(MapUtils.getString(param, "downDate"));
-        if("add".equals(operate)){
+        if ("add".equals(operate)) {
             tbDownloadRecord.setCreated(new Date());
-        }else{
+        } else {
             tbDownloadRecord.setUpdated(new Date());
         }
         return tbDownloadRecord;
