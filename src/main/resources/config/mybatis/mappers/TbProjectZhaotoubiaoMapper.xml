@@ -70,5 +70,7 @@
 
     <select id="queryZhaotouDetailByPkid" resultMap="BaseResultMap" parameterType="java.lang.String">
         select t.*
+        from tb_project_zhaotoubiao t
+        where t.pkid = #{pkid}
     </select>
 </mapper>

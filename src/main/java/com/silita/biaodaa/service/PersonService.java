@@ -29,6 +29,8 @@ public class PersonService {
     TbProjectMapper tbProjectMapper;
     @Autowired
     TbProjectCompanyMapper tbProjectCompanyMapper;
+    @Autowired
+    TbProjectZhaotoubiaoMapper tbProjectZhaotoubiaoMapper;
 
     /**
      * 获取人员详情
@@ -100,14 +102,24 @@ public class PersonService {
                 perProjectMap.put("proType", project.getProType());
                 perProjectMap.put("proName", project.getProName());
                 perProjectMap.put("proWhere", project.getProWhere());
-                perProjectMap.put("bOrg", per.getComName());
                 perProjectMap.put("role", per.getRole());
                 if (MyStringUtils.isNotNull(per.getComName())) {
                     perProjectMap.put("company", per.getComName());
+                    perProjectMap.put("bOrg", per.getComName());
                     persProjectList.add(perProjectMap);
                     continue;
                 }
                 if (MyStringUtils.isNull(per.getComName())) {
+                    //判断是否招投标
+                    if ("zhaotoubiao".equals(per.getType())) {
+                        TbProjectZhaotoubiao zhaotoubiao = tbProjectZhaotoubiaoMapper.queryZhaotouDetailByPkid(per.getPid());
+                        if(null != zhaotoubiao){
+                            perProjectMap.put("company", zhaotoubiao.getZhongbiaoCompany());
+                            perProjectMap.put("bOrg", zhaotoubiao.getZhongbiaoCompany());
+                            persProjectList.add(perProjectMap);
+                            continue;
+                        }
+                    }
                     List<String> roleList = new ArrayList<>();
                     if ("项目经理".equals(per.getRole())) {
                         paraMap.put("proId", per.getProId());
@@ -120,6 +132,7 @@ public class PersonService {
                         }
                         if (null != projectCompany) {
                             perProjectMap.put("company", projectCompany.getComName());
+                            perProjectMap.put("bOrg", projectCompany.getComName());
                         }
                         persProjectList.add(perProjectMap);
                         continue;
@@ -133,6 +146,7 @@ public class PersonService {
                             projectCompany = projectCompanyList.get(0);
                         }
                         if (null != projectCompany) {
+                            perProjectMap.put("bOrg", projectCompany.getComName());
                             perProjectMap.put("company", projectCompany.getComName());
                         }
                         persProjectList.add(perProjectMap);
@@ -141,7 +155,7 @@ public class PersonService {
                 }
             }
         }
-        if(null != persProjectList && persProjectList.size() > 0) {
+        if (null != persProjectList && persProjectList.size() > 0) {
             for (int i = 0; i < persProjectList.size() - 1; i++) {
                 for (int j = persProjectList.size() - 1; j > i; j--) {
                     if (persProjectList.get(j).get("proId").toString().equals(persProjectList.get(i).get("proId").toString())) {
