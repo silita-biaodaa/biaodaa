@@ -228,7 +228,7 @@ public class CompanyController extends BaseController {
         try {
             checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
             String comId = MapUtils.getString(params, "comId");
-//            comId = getComId(comId);
+            comId = getComId(comId);
             String category = MapUtils.getString(params, "category");
             String keyWord = MapUtils.getString(params, "keyWord");
             String province = MapUtils.getString(params, "province");
