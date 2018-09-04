@@ -895,6 +895,9 @@ public class TbCompanyService {
      * @return
      */
     public List<TbCompany> getHostCompanyList(Map<String, Object> param) {
+        if(null != PropertiesUtils.getProperty("company.size")){
+            param.put("limit",Integer.parseInt(PropertiesUtils.getProperty("company.size")));
+        }
         List<TbCompany> companyList = tbCompanyMapper.queryHostCompanyList(param);
         TbCompanyInfo companyInfo = null;
         if (null != companyList && companyList.size() > 0) {
