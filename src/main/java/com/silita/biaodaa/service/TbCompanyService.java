@@ -329,8 +329,10 @@ public class TbCompanyService {
         }
 
         TbCompanyInfo companyInfo = null;
+        String tabCode = null;
         for (TbCompany company : list) {
-            companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), MapUtils.getString(param, "tabCode"));
+            tabCode = CommonUtil.getCode(company.getRegisAddress());
+            companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), tabCode);
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
 //                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
