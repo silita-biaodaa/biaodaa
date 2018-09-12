@@ -71,8 +71,15 @@
 
     <select id="queryCountBidList" parameterType="java.util.Map" resultType="java.util.Map">
         select
-          t.com_name as comName,
-          t.num as num
+        t.com_name as comName,
+        <choose>
+            <when test="endDate != null and endDate != ''">
+                SUM(t.num) as num
+            </when>
+            <otherwise>
+                t.num as num
+            </otherwise>
+        </choose>
         from tb_count_bid_info t
         where
         <choose>
@@ -84,25 +91,45 @@
                 t.stat_date = #{statDate}
             </otherwise>
         </choose>
-        and t.num &gt;= #{count}
-        order by t.num desc
+        <choose>
+            <when test="endDate != null and endDate != ''">
+                GROUP BY t.`com_name`
+                HAVING SUM(t.num) &gt;= #{count}
+                ORDER BY SUM(t.num) DESC
+            </when>
+            <otherwise>
+                and t.num &gt;= #{count}
+                order by t.num desc
+            </otherwise>
+        </choose>
     </select>
 
     <select id="queryCountBidNum" parameterType="java.util.Map" resultType="java.util.Map">
-        select ifnull(count(t.com_name),0) as comNameCount,
-        ifnull(sum(t.num),0) as sumNum
-        from tb_count_bid_info t
-        where
         <choose>
             <when test="endDate != null and endDate != ''">
-                t.stat_date &gt;= #{statDate}
-                and t.stat_date &lt;= #{endDate}
+                SELECT
+                IFNULL(COUNT(t1.comNameCount), 0) AS comNameCount,
+                IFNULL(SUM(t1.sumNum), 0) AS sumNum
+                FROM
+                (SELECT
+                IFNULL(COUNT(t.com_name), 0) AS comNameCount,
+                IFNULL(SUM(t.num), 0) AS sumNum
+                FROM
+                tb_count_bid_info t
+                WHERE t.stat_date &gt;= #{statDate}
+                AND t.stat_date &lt;= #{endDate}
+                GROUP BY t.`com_name`
+                HAVING SUM(t.num) &gt;= #{count}) t1
             </when>
             <otherwise>
+                select ifnull(count(t.com_name),0) as comNameCount,
+                ifnull(sum(t.num),0) as sumNum
+                from tb_count_bid_info t
+                where
                 t.stat_date = #{statDate}
+                and t.num &gt;= #{count}
             </otherwise>
         </choose>
-        and t.num &gt;= #{count}
     </select>
 
     <select id="queryCountBidByStat" parameterType="java.util.Map" resultType="int">

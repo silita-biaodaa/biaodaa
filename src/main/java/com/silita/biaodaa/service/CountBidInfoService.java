@@ -64,18 +64,18 @@ public class CountBidInfoService {
     }
 
 
-    public Map<String, Object> listCountBid(Map<String,Object> valueMap) {
+    public Map<String, Object> listCountBid(Map<String, Object> valueMap) {
         Map<String, Object> resultMap = new HashMap<>();
         if (MyStringUtils.isNull(valueMap.get("statDate"))) {
-            valueMap.put("statDate",sdf.format(dateUtils.getToday()));
+            valueMap.put("statDate", sdf.format(dateUtils.getToday()));
         }
-        String ressDate = MapUtils.getString(valueMap,"statDate");
-        if(null != valueMap.get("ressDate")){
-            ressDate = MapUtils.getString(valueMap,"ressDate");
+        String ressDate = MapUtils.getString(valueMap, "statDate");
+        if (null != valueMap.get("ressDate")) {
+            ressDate = MapUtils.getString(valueMap, "ressDate");
         }
         Map<String, Object> param = new HashMap<>();
         param.put("statDate", valueMap.get("statDate"));
-        if(null != valueMap.get("endDate")){
+        if (null != valueMap.get("endDate")) {
             param.put("endDate", valueMap.get("endDate"));
         }
         param.put("count", valueMap.get("count"));
@@ -121,7 +121,7 @@ public class CountBidInfoService {
         String content = PropertiesUtils.getProperty("com.content");
         //title
         String title = PropertiesUtils.getProperty("notice.title");
-        if(null != valueMap.get("conTitle") && null != valueMap.get("releaseTime")){
+        if (null != valueMap.get("conTitle") && null != valueMap.get("releaseTime")) {
             title = title.replace("{date}", valueMap.get("conTitle").toString());
             content = content.replace("{date}", valueMap.get("conTitle").toString()).replace("{comCount}", companyCount).replace("{num}", zhongCount)
                     .replace("{sixCount}", sixCount).replace("{threCount}", threeCount).replace("{countNum}", valueMap.get("countNum").toString()).replace("{couNum}", valueMap.get("couNum").toString());
@@ -131,6 +131,8 @@ public class CountBidInfoService {
             return resultMap;
         }
         title = title.replace("{date}", dateUtils.getTime(statDate, "yyyy-MM-dd", "yyyy年MM月"));
+        content = content.replace("{date}", dateUtils.getTime(statDate, "yyyy-MM-dd", "yyyy年MM月")).replace("{comCount}", companyCount).replace("{num}", zhongCount)
+                .replace("{sixCount}", sixCount).replace("{threCount}", threeCount).replace("{countNum}", valueMap.get("countNum").toString()).replace("{couNum}", valueMap.get("couNum").toString());
         resultMap.put("title", title);
         resultMap.put("statDate", statDate);
         resultMap.put("remark", content);
@@ -147,8 +149,8 @@ public class CountBidInfoService {
         valueMap.put("endDate", endDate);
         valueMap.put("conTitle", title);
         valueMap.put("releaseTime", startDate + "~" + endDate);
-        valueMap.put("countNum",20);
-        valueMap.put("couNum",10);
+        valueMap.put("countNum", 20);
+        valueMap.put("couNum", 10);
         platformNoticeService.insert(getContentTitle(valueMap));
     }
 
