@@ -62,8 +62,8 @@ public interface TbCountBidInfoMapper extends MyMapper<TbCountBidInfo> {
     /**
      * 获取当月统计数
      *
-     * @param statDate
+     * @param param
      * @return
      */
-    int queryCountBidByStat(String statDate);
+    int queryCountBidByStat(Map<String,Object> param);
 }

@@ -30,7 +30,7 @@
                 ,t.release_time AS releaseTime
         from tb_platform_notice t
         where t.status = 1
-        order by t.release_time desc
+        order by t.cerated desc
     </select>
 
     <update id="updateRemark" parameterType="java.util.Map">

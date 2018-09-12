@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.biaodaa.dao.TbCountBidInfoMapper" >
-  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbCountBidInfo" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="pkid" property="pkid" jdbcType="INTEGER" />
-    <result column="com_name" property="comName" jdbcType="VARCHAR" />
-    <result column="stat_date" property="statDate" jdbcType="VARCHAR" />
-    <result column="num" property="num" jdbcType="INTEGER" />
-    <result column="type" property="type" jdbcType="BIT" />
-    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
-  </resultMap>
+<mapper namespace="com.silita.biaodaa.dao.TbCountBidInfoMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbCountBidInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="com_name" property="comName" jdbcType="VARCHAR"/>
+        <result column="stat_date" property="statDate" jdbcType="VARCHAR"/>
+        <result column="num" property="num" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="BIT"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
 
-  <select id="queryZhongbiaoCount" parameterType="java.util.Map" resultType="java.util.Map">
+    <select id="queryZhongbiaoCount" parameterType="java.util.Map" resultType="java.util.Map">
     SELECT
       t.oneName as comName,
       DATE_FORMAT(t.gsDate, '%Y-%m-01')  AS statDate,
@@ -35,27 +35,27 @@
     GROUP BY t.oneName;
   </select>
 
-  <delete id="delZhongBiaoCountByDate" parameterType="java.lang.String">
+    <delete id="delZhongBiaoCountByDate" parameterType="java.lang.String">
     DELETE
     FROM `tb_count_bid_info`
     WHERE `stat_date` = #{statDate}
   </delete>
 
-  <insert id="batchInsertCountBinInfo" parameterType="java.util.List">
-      INSERT INTO `tb_count_bid_info`
-            (
-             `com_name`,
-             `stat_date`,
-             `num`,
-             `type`
-             )
-      VALUES
-      <foreach collection="list" item="list" separator=",">
+    <insert id="batchInsertCountBinInfo" parameterType="java.util.List">
+        INSERT INTO `tb_count_bid_info`
         (
-          #{list.comName},#{list.statDate},#{list.num},#{list.type}
+        `com_name`,
+        `stat_date`,
+        `num`,
+        `type`
         )
-      </foreach>
-  </insert>
+        VALUES
+        <foreach collection="list" item="list" separator=",">
+            (
+            #{list.comName},#{list.statDate},#{list.num},#{list.type}
+            )
+        </foreach>
+    </insert>
 
 
     <insert id="insertCountBinInfo" parameterType="java.util.Map">
@@ -74,23 +74,50 @@
           t.com_name as comName,
           t.num as num
         from tb_count_bid_info t
-        where t.stat_date = #{statDate}
-        and t.num &gt;= 3
+        where
+        <choose>
+            <when test="endDate != null and endDate != ''">
+                t.stat_date &gt;= #{statDate}
+                and t.stat_date &lt;= #{endDate}
+            </when>
+            <otherwise>
+                t.stat_date = #{statDate}
+            </otherwise>
+        </choose>
+        and t.num &gt;= #{count}
         order by t.num desc
     </select>
 
     <select id="queryCountBidNum" parameterType="java.util.Map" resultType="java.util.Map">
         select ifnull(count(t.com_name),0) as comNameCount,
-                ifnull(sum(t.num),0) as sumNum
+        ifnull(sum(t.num),0) as sumNum
         from tb_count_bid_info t
-        where t.stat_date = #{statDate}
-         and t.num &gt;= #{count}
+        where
+        <choose>
+            <when test="endDate != null and endDate != ''">
+                t.stat_date &gt;= #{statDate}
+                and t.stat_date &lt;= #{endDate}
+            </when>
+            <otherwise>
+                t.stat_date = #{statDate}
+            </otherwise>
+        </choose>
+        and t.num &gt;= #{count}
     </select>
 
-    <select id="queryCountBidByStat" parameterType="java.lang.String" resultType="int">
+    <select id="queryCountBidByStat" parameterType="java.util.Map" resultType="int">
         select count(1)
         from tb_count_bid_info t
-        where t.stat_date = #{statDate}
+        where
+        <choose>
+            <when test="endDate != null and endDate != ''">
+                t.stat_date &gt;= #{statDate}
+                and t.stat_date &lt;= #{endDate}
+            </when>
+            <otherwise>
+                t.stat_date = #{statDate}
+            </otherwise>
+        </choose>
     </select>
 
 </mapper>
