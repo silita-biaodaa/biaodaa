@@ -144,7 +144,7 @@ public class UserCenterService {
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
 //                        map.put("phone",companyInfo.getPhone().split(";")[0].trim());
-                        map.put("phone", tbCompanyService.solPhone(companyInfo.getPhone().trim(),"replace"));
+                        map.put("phone", tbCompanyService.solPhone(companyInfo.getPhone().trim(), "replace"));
                     }
                     if (null == map.get("regisCapital") && null != companyInfo.getRegisCapital()) {
                         map.put("regisCapital", companyInfo.getRegisCapital());
@@ -200,7 +200,9 @@ public class UserCenterService {
 
     public void updateAllReadedRecordToRead(Map<String, Object> params) {
         List<Map<String, Object>> msgIds = messagePushMapper.listIdByUserId(params);
-        readedRecordMapper.batchUpdateReadOrReadedByUserIds(msgIds);
+        if (null != msgIds && msgIds.size() > 0) {
+            readedRecordMapper.batchUpdateReadOrReadedByUserIds(msgIds);
+        }
     }
 
     public MessagePush getMessagePushById(Map<String, Object> params) {
