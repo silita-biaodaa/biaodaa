@@ -23,4 +23,14 @@ public class CarouselImage {
     private Integer ordernum;
 
     private Integer showtype;
+
+    /**
+     * 图片关键字
+     */
+    private String antistop;
+
+    /**
+     * 详情信息
+     */
+    private String detail;
 }
