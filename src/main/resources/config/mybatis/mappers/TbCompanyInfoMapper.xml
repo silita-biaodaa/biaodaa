@@ -137,6 +137,8 @@
         </if>
         where com_name like CONCAT('%',#{comName},'%')
         and com_name != #{comName}
-        and province like CONCAT(#{province},'%')
+        <if test="province != null and province != ''">
+            and province like CONCAT(#{province},'%')
+        </if>
     </select>
 </mapper>

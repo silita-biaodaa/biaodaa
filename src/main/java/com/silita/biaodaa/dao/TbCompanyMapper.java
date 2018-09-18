@@ -1,7 +1,7 @@
 package com.silita.biaodaa.dao;
 
-import com.silita.biaodaa.model.CompanyEs;
 import com.silita.biaodaa.model.TbCompany;
+import com.silita.biaodaa.model.es.CompanyEs;
 import com.silita.biaodaa.utils.MyMapper;
 
 import java.util.List;

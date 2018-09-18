@@ -36,7 +36,7 @@
     <!--<result column="source" property="source" jdbcType="VARCHAR" />-->
   <!--</resultMap>-->
 
-  <select id="querySnatchurlList" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.SnatchurlEs">
+  <select id="querySnatchurlList" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.es.SnatchurlEs">
     select
       t.id as snatchId
       ,t.title as title

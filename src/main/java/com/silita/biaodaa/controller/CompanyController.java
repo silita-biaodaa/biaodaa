@@ -653,7 +653,7 @@ public class CompanyController extends BaseController {
         resultMap.put("msg", this.SUCCESS_MSG);
         String comId = this.getComId(MapUtils.getString(param, "comId"));
         param.put("comId", comId);
-        resultMap.put("data", tbCompanyInfoService.getBranchCompany(param));
+        resultMap.put("data", elasticseachService.queryBranchCompany(param));
         return resultMap;
     }
 
@@ -668,7 +668,22 @@ public class CompanyController extends BaseController {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
-        elasticseachService.bastchAddCompany();
+        elasticseachService.batchAddCompany();
+        return resultMap;
+    }
+
+    /**
+     * TODO: 分支机构es导入
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/esBranchCompany", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> esBranchCompany() {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", this.SUCCESS_CODE);
+        resultMap.put("msg", this.SUCCESS_MSG);
+        elasticseachService.batchAddBranchCompany();
         return resultMap;
     }
 

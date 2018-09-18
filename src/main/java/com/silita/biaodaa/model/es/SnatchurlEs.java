@@ -1,4 +1,4 @@
-package com.silita.biaodaa.model;
+package com.silita.biaodaa.model.es;
 
 import com.silita.biaodaa.elastic.Annotation.Document;
 import com.silita.biaodaa.elastic.Annotation.Filed;

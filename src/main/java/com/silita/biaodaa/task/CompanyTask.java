@@ -18,7 +18,7 @@ public class CompanyTask implements Runnable {
     public void run() {
         try {
             logger.info("--------------公司同步elasticsearch开始");
-            elasticseachService.bastchAddCompany();
+            elasticseachService.batchAddCompany();
             logger.info("--------------公司同步elasticsearch结束");
         }catch (Exception e){
             logger.error("----------------公司同步elasticsearch失败");

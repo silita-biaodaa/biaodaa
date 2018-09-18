@@ -290,7 +290,7 @@
     limit #{limit}
   </select>
 
-    <select id="queryCompanyEsList" resultType="com.silita.biaodaa.model.CompanyEs" parameterType="java.util.Map">
+    <select id="queryCompanyEsList" resultType="com.silita.biaodaa.model.es.CompanyEs" parameterType="java.util.Map">
       SELECT t.com_id
               ,t.com_name
               ,t.com_name_py
@@ -299,7 +299,7 @@
       FROM tb_company t
       WHERE 1=1
       AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
-      order by t.px asc
+      order by t.px desc
       limit #{page},#{pageSize}
   </select>
 

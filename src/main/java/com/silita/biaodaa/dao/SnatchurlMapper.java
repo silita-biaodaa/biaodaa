@@ -1,6 +1,7 @@
 package com.silita.biaodaa.dao;
 
-import com.silita.biaodaa.model.SnatchurlEs;
+
+import com.silita.biaodaa.model.es.SnatchurlEs;
 
 import java.util.List;
 import java.util.Map;
