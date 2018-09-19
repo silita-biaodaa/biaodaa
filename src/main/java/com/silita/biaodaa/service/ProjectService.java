@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.silita.biaodaa.common.RedisConstantInterface.COM_OVER_TIME;
 import static com.silita.biaodaa.common.RedisConstantInterface.PROJECT_LIST;
+import static com.silita.biaodaa.common.RedisConstantInterface.PRO_OVER_TIME;
 
 @Service
 public class ProjectService {
@@ -70,7 +70,7 @@ public class ProjectService {
                     this.putProvince(map);
                 }
                 pageInfo = new PageInfo(projectList);
-                myRedisTemplate.setObject(cacheKey, pageInfo, COM_OVER_TIME);
+                myRedisTemplate.setObject(cacheKey, pageInfo, PRO_OVER_TIME);
             }
         }
         if (null != pageInfo) {

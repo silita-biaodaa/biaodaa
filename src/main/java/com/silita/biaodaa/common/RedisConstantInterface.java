@@ -23,4 +23,6 @@ public interface RedisConstantInterface {
 
 	int COM_OVER_TIME = 60*60;
 
+	int PRO_OVER_TIME = 3600*24;
+
 }

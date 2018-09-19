@@ -7,6 +7,7 @@ import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
+import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
@@ -52,6 +53,12 @@ public class TbCompanyService {
 
     @Autowired
     TbCompanyInfoMapper tbCompanyInfoMapper;
+
+    @Autowired
+    ElasticseachService elasticseachService;
+
+    @Autowired
+    ProjectService projectService;
 
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
@@ -119,6 +126,8 @@ public class TbCompanyService {
                         qual.setQualName(range[0]);
                         qualList.add(qual);
                     }
+                    //排序
+
                     qualMap.put(key, qualList);
                 }
             }
@@ -304,7 +313,7 @@ public class TbCompanyService {
                     zzLevel = "default";
                 }
                 rangeList.addAll(this.getQualCode(str, zzLevel));
-                rangeMap.put("rangeList",rangeList);
+                rangeMap.put("rangeList", rangeList);
                 rangeMapList.add(rangeMap);
             }
             param.put("zzLevel", "level");
@@ -336,7 +345,7 @@ public class TbCompanyService {
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
 //                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
-                    company.setPhone(this.solPhone(companyInfo.getPhone(),"replace"));
+                    company.setPhone(this.solPhone(companyInfo.getPhone(), "replace"));
                 }
                 if (null == company.getRegisCapital() && null != companyInfo.getRegisCapital()) {
                     company.setRegisCapital(companyInfo.getRegisCapital());
@@ -897,8 +906,8 @@ public class TbCompanyService {
      * @return
      */
     public List<TbCompany> getHostCompanyList(Map<String, Object> param) {
-        if(null != PropertiesUtils.getProperty("company.size")){
-            param.put("limit",Integer.parseInt(PropertiesUtils.getProperty("company.size")));
+        if (null != PropertiesUtils.getProperty("company.size")) {
+            param.put("limit", Integer.parseInt(PropertiesUtils.getProperty("company.size")));
         }
         List<TbCompany> companyList = tbCompanyMapper.queryHostCompanyList(param);
         TbCompanyInfo companyInfo = null;
@@ -908,7 +917,7 @@ public class TbCompanyService {
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
 //                        company.setPhone(companyInfo.getPhone().split(";")[0].trim());
-                        company.setPhone(this.solPhone(companyInfo.getPhone(),"replace"));
+                        company.setPhone(this.solPhone(companyInfo.getPhone(), "replace"));
                     }
                     if (null != companyInfo.getRegisCapital()) {
                         company.setRegisCapital(companyInfo.getRegisCapital());
@@ -982,11 +991,11 @@ public class TbCompanyService {
         String tabCode = CommonUtil.getCode(tbCompany.getRegisAddress());
         TbCompanyInfo companyInfo = tbCompanyInfoMapper.queryDetailByComName(tbCompany.getComName(), tabCode);
         if (null != companyInfo && null != companyInfo.getPhone()) {
-            tbCompany.setPhone(solPhone(companyInfo.getPhone().trim(),null));
+            tbCompany.setPhone(solPhone(companyInfo.getPhone().trim(), null));
         }
-        if (null != companyInfo && null != companyInfo.getScope()) {
-            tbCompany.setComRange(companyInfo.getScope());
-        }
+//        if (null != companyInfo && null != companyInfo.getScope()) {
+//            tbCompany.setComRange(companyInfo.getScope());
+//        }
         if (null != companyInfo && null != companyInfo.getComUrl()) {
             tbCompany.setComUrl(companyInfo.getComUrl().split(";")[0].trim());
         }
@@ -999,7 +1008,7 @@ public class TbCompanyService {
         return tbCompany;
     }
 
-    public String solPhone(String phone,String type) {
+    public String solPhone(String phone, String type) {
         List<String> phoneList = new ArrayList<>();
         List<String> tellList = new ArrayList<>();
         Object[] phones = doWeightPhone(phone.split(";"));
@@ -1008,7 +1017,7 @@ public class TbCompanyService {
                 if (str.toString().startsWith("1")) {
                     phoneList.add(str.toString());
                 } else {
-                    str = insertString("-",str.toString(),4);
+                    str = insertString("-", str.toString(), 4);
                     tellList.add(str.toString());
                 }
             }
@@ -1031,8 +1040,8 @@ public class TbCompanyService {
                     }
                 }
             }
-            if("replace".equals(type)){
-                resultPhone = replaceStr("*",resultPhone.split(";")[0]);
+            if ("replace".equals(type)) {
+                resultPhone = replaceStr("*", resultPhone.split(";")[0]);
             }
             return resultPhone;
         }
@@ -1082,6 +1091,7 @@ public class TbCompanyService {
 
     /**
      * 电话号码替换*
+     *
      * @param srcStr
      * @param descStr
      * @return
@@ -1089,21 +1099,47 @@ public class TbCompanyService {
     public static String replaceStr(String srcStr, String descStr) {
         char[] descs = descStr.toCharArray();
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i<descStr.length(); i++) {
-            if(descStr.startsWith("0")){
-                if(i >= 5 && i <= 8){
+        for (int i = 0; i < descStr.length(); i++) {
+            if (descStr.startsWith("0")) {
+                if (i >= 5 && i <= 8) {
                     stringBuilder.append("*");
-                }else {
+                } else {
                     stringBuilder.append(descs[i]);
                 }
-            }else {
-                if(i >= 3 && i < 7){
+            } else {
+                if (i >= 3 && i < 7) {
                     stringBuilder.append(srcStr);
-                }else {
+                } else {
                     stringBuilder.append(descs[i]);
                 }
             }
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * 企业分享-业绩/人员/分支机构个数
+     * @param param
+     * @return
+     */
+    public Map<String, Object> getShareTotal(Map<String,Object> param) {
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("branchCompanyTotal",0);
+        resultMap.put("projectTotal",0);
+        //分支机构
+        List<TbCompanyInfo> companyInfoList = elasticseachService.queryBranchCompany(param);
+        if(null != companyInfoList && companyInfoList.size() > 0){
+            resultMap.put("branchCompanyTotal",companyInfoList.size());
+        }
+        //业绩
+        List<Map<String,Object>> projectList = projectService.getProjectCompanyList(MapUtils.getString(param,"comId"));
+        if (null != projectList && projectList.size() > 0){
+            resultMap.put("projectTotal",projectList.size());
+        }
+        return resultMap;
+    }
+
+    private List<TbCompanyQualification> sortQual(List<TbCompanyQualification> qualList){
+        return qualList;
     }
 }

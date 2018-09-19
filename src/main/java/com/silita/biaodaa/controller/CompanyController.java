@@ -658,6 +658,28 @@ public class CompanyController extends BaseController {
     }
 
     /**
+     * TODO: 企业分享-业绩/人员/分支机构个数
+     *
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/shareTotal", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> shareTotal(@RequestBody Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", this.SUCCESS_CODE);
+        resultMap.put("msg", this.SUCCESS_MSG);
+        String comId = MapUtils.getString(param,"comId");
+        comId = getComId(comId);
+        param.put("comId",comId);
+        Map<String,Object> personMap = this.queryPerson(param);
+        Map<String,Object> valueMap = tbCompanyService.getShareTotal(param);
+        valueMap.put("personTotal",personMap.get("total"));
+        resultMap.put("data",valueMap);
+        return resultMap;
+    }
+
+    /**
      * TODO: es导入
      *
      * @return
