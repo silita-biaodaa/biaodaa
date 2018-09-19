@@ -993,9 +993,9 @@ public class TbCompanyService {
         if (null != companyInfo && null != companyInfo.getPhone()) {
             tbCompany.setPhone(solPhone(companyInfo.getPhone().trim(), null));
         }
-//        if (null != companyInfo && null != companyInfo.getScope()) {
-//            tbCompany.setComRange(companyInfo.getScope());
-//        }
+        if (null != companyInfo && null != companyInfo.getScope()) {
+            tbCompany.setComRange(companyInfo.getScope());
+        }
         if (null != companyInfo && null != companyInfo.getComUrl()) {
             tbCompany.setComUrl(companyInfo.getComUrl().split(";")[0].trim());
         }

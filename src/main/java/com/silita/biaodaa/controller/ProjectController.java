@@ -1,6 +1,5 @@
 package com.silita.biaodaa.controller;
 
-import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.service.*;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 业绩
@@ -27,8 +27,6 @@ public class ProjectController extends BaseController {
     ProjectDesignService projectDesignService;
     @Autowired
     ProjectBuildService projectBuildService;
-    @Autowired
-    MyRedisTemplate myRedisTemplate;
     @Autowired
     ProjectContractService projectContractService;
     @Autowired
@@ -125,9 +123,6 @@ public class ProjectController extends BaseController {
         result.put("code", this.SUCCESS_CODE);
         result.put("msg", this.SUCCESS_MSG);
         String companyId = MapUtils.getString(param, "comId");
-        if (null != myRedisTemplate.getObject(companyId)) {
-            companyId = ((Map<String, Object>) myRedisTemplate.getObject(companyId)).get("comId").toString();
-        }
         result.put("data", projectService.getProjectCompanyList(companyId));
         return result;
     }

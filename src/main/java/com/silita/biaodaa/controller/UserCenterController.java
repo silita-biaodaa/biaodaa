@@ -42,9 +42,6 @@ public class UserCenterController {
     private static final Logger logger = Logger.getLogger(CompanyController.class);
     @Autowired
     private UserCenterService userCenterService;
-    @Autowired
-    private CompanyController companyController;
-
 
     /**
      * TODO: 修改用户信息
@@ -271,7 +268,6 @@ public class UserCenterController {
 
         try {
             colleCompany.setUserid(VisitInfoHolder.getUid());
-            colleCompany.setCompanyid(companyController.getComId(colleCompany.getCompanyid()));
             String msg = userCenterService.insertCollectionCompany(colleCompany);
             if ("".equals(msg)) {
                 result.put("msg", "关注企业成功！");
@@ -301,7 +297,6 @@ public class UserCenterController {
 
         try {
             colleCompany.setUserid(VisitInfoHolder.getUid());
-            colleCompany.setCompanyid(companyController.getComId(colleCompany.getCompanyid()));
             userCenterService.deleteCollectionCompany(colleCompany);
             result.put("msg", "取消关注成功！");
         } catch (Exception e) {
