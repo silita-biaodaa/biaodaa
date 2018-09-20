@@ -156,5 +156,19 @@ public class Law {
      * 审判长
      */
     private String presidingJudge;
-    
+
+    /**
+     * 审判员
+     */
+    private String judicialOfficer;
+
+    /**
+     * 书记员
+     */
+    private String courtClerk;
+
+    /**
+     * 档案编号
+     */
+    private String number;
 }

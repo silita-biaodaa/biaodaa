@@ -55,7 +55,7 @@ public class CompanyBootstrap implements ApplicationListener<ApplicationEvent> {
                     String timerPerson = "02:01:00";
                     String endLockPerson = end + " "+timerPerson.trim();
                     long lockTimesPers = dateUtils.dateDiff(start, endLockPerson, "yyyy-MM-dd HH:mm:ss", "m");
-                    scheduler.scheduleAtFixedRate(personTask, 0, lockTimesPers, TimeUnit.MINUTES);
+//                    scheduler.scheduleAtFixedRate(personTask, 0, lockTimesPers, TimeUnit.MINUTES);
                     //TODO: 公司同步Elasticsearch
                     String comTimer = "01:01:00";
                     String comEndLock = end + " "+comTimer.trim();

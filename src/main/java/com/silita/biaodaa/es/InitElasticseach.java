@@ -18,7 +18,23 @@ public class InitElasticseach {
 
     private static String cluster = PropertiesUtils.getProperty("ELASTICSEARCH_CLUSTER");
 
+    private static String lawIp = PropertiesUtils.getProperty("BIAODAA_ELASTICSEARCH_IP");
+
+    private static String lawHost = PropertiesUtils.getProperty("BIAODAA_ELASTICSEARCH_HOST");
+
+    private static String lawCluster = PropertiesUtils.getProperty("BIAODAA_ELASTICSEARCH_CLUSTER");
+
     public static TransportClient initClient() {
+        TransportClient client = init(ip,cluster,host);
+        return client;
+    }
+
+    public static TransportClient initLawClient() {
+        TransportClient client = init(lawIp,lawCluster,lawHost);
+        return client;
+    }
+
+    private static TransportClient init(String ip,String cluster,String host){
         TransportClient client = null;
         try {
             Settings settings = Settings.builder()
@@ -33,5 +49,4 @@ public class InitElasticseach {
         }
         return client;
     }
-
 }
