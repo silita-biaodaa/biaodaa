@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.model.es.CompanyLawEs;
 import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import com.silita.biaodaa.utils.SignConvertUtil;
@@ -42,6 +43,8 @@ public class UserCenterService {
     private TbCompanyInfoMapper tbCompanyInfoMapper;
     @Autowired
     private TbCompanyService tbCompanyService;
+    @Autowired
+    private LawService lawService;
 
     public UserTempBdd updateUserTemp(UserTempBdd userTempBdd) {
         userTempBddMapper.updateUserTemp(userTempBdd);
@@ -112,6 +115,15 @@ public class UserCenterService {
             notices = collecNoticeMapper.listZhaoBiaoCollecNoticeByUserId(params);
         } else {
             notices = collecNoticeMapper.listZhongBiaoCollecNoticeByUserId(params);
+            if (null != notices && notices.size() > 0) {
+                CompanyLawEs companyLawEs;
+                Map<String, Object> param = new HashMap<>();
+                for (Map<String, Object> map : notices) {
+                    param.put("comName", map.get("oneName"));
+                    companyLawEs = lawService.queryCompanyLaew(param);
+                    map.put("oneLaw", companyLawEs.getTotal());
+                }
+            }
         }
         PageInfo pageInfo = new PageInfo(notices);
         return pageInfo;

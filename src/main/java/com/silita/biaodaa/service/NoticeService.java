@@ -11,6 +11,7 @@ import com.silita.biaodaa.dao.TbCompanyInfoMapper;
 import com.silita.biaodaa.model.TbClickStatistics;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.TbCompanyInfo;
+import com.silita.biaodaa.model.es.CompanyLawEs;
 import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
@@ -54,6 +55,8 @@ public class NoticeService {
     TbCompanyInfoMapper tbCompanyInfoMapper;
     @Autowired
     TbCompanyService tbCompanyService;
+    @Autowired
+    LawService lawService;
 
     /**
      * 资质id拼接
@@ -280,10 +283,10 @@ public class NoticeService {
                     String tabCode = null;
                     for (TbCompany company : list) {
                         tabCode = CommonUtil.getCode(company.getRegisAddress());
-                        tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(),tabCode);
+                        tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), tabCode);
                         if (null != tbCompanyInfo) {
                             if (null != tbCompanyInfo.getPhone()) {
-                                company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim(),"replace").toLowerCase());
+                                company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim(), "replace").toLowerCase());
                             }
                             if (null == company.getRegisCapital() && null != tbCompanyInfo.getRegisCapital()) {
                                 company.setRegisCapital(tbCompanyInfo.getRegisCapital());
@@ -365,12 +368,33 @@ public class NoticeService {
     public List queryNoticeDetail(Map params) throws Exception {
         buildNoticeDetilTable(params);
         List<Map> resList = noticeMapper.queryNoticeDetail(params);
+        String type = MapUtils.getString(params, "type");
+        if (type.equals(SNATCHURL_ZHONGBIAO)) {
+            CompanyLawEs companyLawEs;
+            if (null != resList && resList.size() > 0) {
+                Map<String, Object> param = new HashMap<>();
+                for (Map<String, Object> map : resList) {
+                    param.put("comName", map.get("oneName"));
+                    companyLawEs = lawService.queryCompanyLaew(map);
+                    map.put("oneLaw", companyLawEs.getTotal());
+
+                    param.put("comName", map.get("twoName"));
+                    companyLawEs = lawService.queryCompanyLaew(map);
+                    map.put("twoLaw", companyLawEs.getTotal());
+
+                    param.put("comName", map.get("threeName"));
+                    companyLawEs = lawService.queryCompanyLaew(map);
+                    map.put("threeLaw", companyLawEs.getTotal());
+                }
+            }
+        }
         if (resList != null && resList.size() > 1) {
             for (int i = 1; i < resList.size(); i++) {
                 Map res = resList.get(i);
                 res.remove("content");
             }
         }
+
         return resList;
     }
 
@@ -410,6 +434,8 @@ public class NoticeService {
      * 招标，中标结果分拣
      */
     private void sortingResult(List<Map> relList) {
+        Map<String,Object> param = new HashMap<>();
+        CompanyLawEs companyLawEs;
         if (relList != null && relList.size() > 0) {
             //招标，中标结果划分
             for (Map result : relList) {
@@ -420,11 +446,13 @@ public class NoticeService {
                         result.remove("zhaobiao_pbMode");
                     }
                 } else if (type.equals(SNATCHURL_ZHONGBIAO)) {
+                    param.put("comName",result.get("oneName"));
+                    companyLawEs = lawService.queryCompanyLaew(param);
+                    result.put("oneLaw",companyLawEs.getTotal());
                     if (result.get("zhongbiao_pbMode") != null) {
                         result.put("pbMode", result.get("zhongbiao_pbMode"));
                         result.remove("zhongbiao_pbMode");
                     }
-
                 }
             }
         }

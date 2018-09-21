@@ -2,14 +2,19 @@ package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.elastic.common.ConstantUtil;
 import com.silita.biaodaa.elastic.common.NativeElasticSearchUtils;
 import com.silita.biaodaa.elastic.model.PaginationAndSort;
 import com.silita.biaodaa.elastic.model.QuerysModel;
 import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.es.InitElasticseach;
+import com.silita.biaodaa.model.TbCompanyInfo;
+import com.silita.biaodaa.model.es.CompanyEs;
+import com.silita.biaodaa.model.es.CompanyLawEs;
 import com.silita.biaodaa.model.es.Law;
 import com.silita.biaodaa.utils.MyDateUtils;
+import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -22,7 +27,10 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class LawService {
@@ -31,6 +39,8 @@ public class LawService {
     NativeElasticSearchUtils nativeElasticSearchUtils;
     @Autowired
     ElasticseachService elasticseachService;
+    @Autowired
+    TbCompanyMapper tbCompanyMapper;
 
     private static TransportClient client = InitElasticseach.initLawClient();
 
@@ -45,11 +55,11 @@ public class LawService {
         PaginationAndSort pageSort = new PaginationAndSort(MapUtils.getInteger(param, "pageNo"), MapUtils.getInteger(param, "pageSize"), sort);
         List<QuerysModel> querys = new ArrayList();
         List<QuerysModel> querys1 = new ArrayList();
-        if (null != comName) {
+        if (MyStringUtils.isNotNull(comName)) {
             List<QuerysModel> comQuerys = getCondition(comName, "must");
             querys.addAll(comQuerys);
         }
-        if (null != keyWord) {
+        if (MyStringUtils.isNotNull(keyWord)) {
             List<QuerysModel> keyQuerys = getCondition(keyWord, "must");
             querys.addAll(keyQuerys);
         }
@@ -57,28 +67,15 @@ public class LawService {
             Long[] yearLog = getLong(start, end);
             querys1.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_RANGE, "date", yearLog[0] + ConstantUtil.SPLIT_WORDS + yearLog[1]));
         }
-        SearchRequestBuilder searchRequestBuilder = null;
-        BoolQueryBuilder boolQueryBuilder = null;
-        BoolQueryBuilder boolQueryBuilder1 = null;
-        if ((null != querys && querys.size() > 0) && (null == querys1 || querys1.size() <= 0)) {
-            boolQueryBuilder = this.buildCondition(querys);
-            searchRequestBuilder = this.getBuild(boolQueryBuilder, pageSort);
-        } else if (null != querys1 && querys1.size() > 0 && (null == querys || querys.size() <= 0)) {
-            boolQueryBuilder1 = this.buildCondition(querys1);
-            searchRequestBuilder = this.getBuild(boolQueryBuilder1, pageSort);
-        } else if ((null != querys && querys.size() > 0) && (null != querys1 && querys1.size() > 0)) {
-            boolQueryBuilder = this.buildCondition(querys);
-            boolQueryBuilder1 = this.buildCondition(querys1);
-            searchRequestBuilder = this.getBuild(boolQueryBuilder.must(boolQueryBuilder1), pageSort);
-        } else {
-            searchRequestBuilder = this.getBuild(null, pageSort);
-        }
 
-        SearchResponse response = nativeElasticSearchUtils.builderToSearchResponse(searchRequestBuilder);
+        SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "law", querys1, querys, ConstantUtil.CONDITION_MUST, pageSort);
         if (null == response && response.getHits().getTotalHits() <= 0) {
             return null;
         }
         Integer total = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
+        if (MyStringUtils.isNull(keyWord) && MyStringUtils.isNull(comName)) {
+            total = getAll(client, "alias_biaodaa", "law");
+        }
         Integer pages = elasticseachService.getPage(total, MapUtils.getInteger(param, "pageSize"));
         resultMap.put("total", total);
         resultMap.put("pages", pages);
@@ -99,6 +96,8 @@ public class LawService {
             law.setCourt(jsonObject.getString("court"));
             law.setTitle(jsonObject.getString("title"));
             law.setUrl(jsonObject.getString("url"));
+            law.setDate(jsonObject.getLong("date"));
+            law.setKeyword(jsonObject.getString("keyWord"));
             lawList.add(law);
         }
         resultMap.put("data", lawList);
@@ -143,11 +142,11 @@ public class LawService {
     private List<QuerysModel> getCondition(String condition, String conditionType) {
         List<QuerysModel> querys = new ArrayList();
         if ("must".equals(conditionType)) {
-            querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_MATCH, "content", condition));
-            querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_MATCH, "title", condition));
+            querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "content", "*" + condition + "*"));
+            querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "title", "*" + condition + "*"));
         } else if ("mustNot".equals(conditionType)) {
-            querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST_NOT, ConstantUtil.MATCHING_MATCH, "content", condition));
-            querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST_NOT, ConstantUtil.MATCHING_MATCH, "title", condition));
+            querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_MATCH, "content", "*" + condition + "*"));
+            querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_MATCH, "title", "*" + condition + "*"));
         }
         return querys;
     }
@@ -173,20 +172,83 @@ public class LawService {
         return boolBuilder;
     }
 
+    private Integer getAll(TransportClient client, String indexName, String type) {
+        SearchRequestBuilder builder = client.prepareSearch(indexName).setTypes(type);
+        SearchResponse response = builder.setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
+        Long hits = response.getHits().getTotalHits();
+        Integer count = Integer.valueOf(Long.toString(hits));
+        return count;
+    }
 
-    private SearchRequestBuilder getBuild(BoolQueryBuilder boolBuilder, PaginationAndSort paginationAndSort) {
-        SearchRequestBuilder builder = client.prepareSearch(new String[]{"alias_biaodaa"}).setTypes(new String[]{"law"});
-        builder = builder.setQuery(boolBuilder);
-        if (null != paginationAndSort) {
-            builder = builder.setFrom(paginationAndSort.getStart()).setSize(paginationAndSort.getPageSize());
-            Map<String, SortOrder> sort = paginationAndSort.getSort();
-            Map.Entry entry;
-            if (sort != null && sort.size() > 0) {
-                for (Iterator var19 = sort.entrySet().iterator(); var19.hasNext(); builder = builder.addSort((String) entry.getKey(), (SortOrder) entry.getValue())) {
-                    entry = (Map.Entry) var19.next();
+    public void countCompanyLaw() {
+        Integer count = tbCompanyMapper.queryCompanyCount();
+        List<CompanyEs> comList = new ArrayList<>();
+        if (count > 0) {
+            Map<String, Object> param = new HashMap<>();
+            param.put("pageSize", 1000);
+            //获取pages
+            Integer pages = elasticseachService.getPage(count, 1000);
+            List<CompanyLawEs> list;
+            CompanyLawEs companyLawEs;
+            for (int i = 1; i <= pages; i++) {
+                param.put("page", (i - 1) * 1000);
+                comList = tbCompanyMapper.queryCompanyEsList(param);
+                if (null != comList && comList.size() > 0) {
+                    for (CompanyEs companyEs : comList) {
+                        list = new ArrayList<>();
+                        companyLawEs = getCompanyLawCount(companyEs.getComName());
+                        companyLawEs.setComId(companyEs.getComId());
+                        list.add(companyLawEs);
+                        nativeElasticSearchUtils.batchInsertDate(client,"biaodaa", "companyforlaw", list);
+                    }
                 }
             }
         }
-        return builder;
+    }
+
+    public CompanyLawEs getCompanyLawCount(String comName) {
+        CompanyLawEs companyLawEs = new CompanyLawEs();
+        companyLawEs.setBriCount(0);
+        companyLawEs.setComName(comName);
+        companyLawEs.setJudCount(0);
+        List<QuerysModel> querys = new ArrayList();
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_WILDCARD, "content", "*" + comName + "*"));
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_WILDCARD, "content", "*行贿*"));
+        SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "law", new ArrayList<>(), querys, ConstantUtil.CONDITION_MUST, null);
+        Integer briCount = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
+        companyLawEs.setBriCount(briCount);
+        querys = new ArrayList<>();
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_WILDCARD, "content", "*" + comName + "*"));
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST_NOT, ConstantUtil.MATCHING_WILDCARD, "content", "*行贿*"));
+        response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "law", new ArrayList<>(), querys, ConstantUtil.CONDITION_MUST, null);
+        Integer judCount = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
+        companyLawEs.setJudCount(judCount);
+        companyLawEs.setTotal(companyLawEs.getBriCount()+companyLawEs.getJudCount());
+        return companyLawEs;
+    }
+
+    public CompanyLawEs queryCompanyLaew(Map<String, Object> param) {
+        String comName = MapUtils.getString(param, "comName");
+        CompanyLawEs companyLawEs = new CompanyLawEs();
+        companyLawEs.setTotal(0);
+        companyLawEs.setBriCount(0);
+        companyLawEs.setJudCount(0);
+        if(MyStringUtils.isNull(comName)){
+            return companyLawEs;
+        }
+        List<QuerysModel> querys = new ArrayList();
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "comName", comName));
+        SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "companyforlaw", querys, new ArrayList<>(), null, null);
+        if(null == response.getHits() || response.getHits().getTotalHits() <= 0){
+            return companyLawEs;
+        }
+        String result = response.getHits().getAt(0).getSourceAsString();
+        JSONObject jsonObject = JSON.parseObject(result);
+        companyLawEs.setComId(jsonObject.getString("comId"));
+        companyLawEs.setTotal(jsonObject.getInteger("total"));
+        companyLawEs.setJudCount(jsonObject.getInteger("judCount"));
+        companyLawEs.setComName(jsonObject.getString("comName"));
+        companyLawEs.setBriCount(jsonObject.getInteger("briCount"));
+        return companyLawEs;
     }
 }

@@ -57,7 +57,11 @@ public class LawController {
     @ResponseBody
     @RequestMapping(value = "/countComLaw", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> countComLaw(@RequestBody Map<String, Object> params) {
-        return null;
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", 1);
+        resultMap.put("msg", "操作成功");
+        lawService.countCompanyLaw();
+        return resultMap;
     }
 
     /**
