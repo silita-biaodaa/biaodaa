@@ -52,120 +52,120 @@ public class Law {
      */
     private String dateStr;
 
-    /**
-     * 案由
-     */
-    private String cause;
-
-    /**
-     * 案件类型
-     */
-    private String type;
-
-    /**
-     * 程序，一审二审这些
-     */
-    private String procedure;
-
-    /**
-     * 标签
-     */
-    private String tags;
-
-    /**
-     * 原告
-     */
-    private String accuser;
-
-    /**
-     * 被告
-     */
-    private String accused;
-
-    /**
-     * 原审被告
-     */
-    private String originalAccused;
-
-    /**
-     * 上诉人
-     */
-    private String appellor;
-
-    /**
-     * 被上诉人
-     */
-    private String appellee;
-
-    /**
-     * 申请人
-     */
-    private String applicant;
-
-    /**
-     * 被申请人
-     */
-    private String respondent;
-
-    /**
-     * 申请执行人
-     */
-    private String executionApplicant;
-
-    /**
-     * 被执行人
-     */
-    private String executionedApplicant;
-
-    /**
-     * 原审第三人
-     */
-    private String originalThirdMan;
-
-    /**
-     * 委托代理人
-     */
-    private String entrustedAgent;
-
-    /**
-     * 第三人
-     */
-    private String thirdMan;
-
-    /**
-     * 律师
-     */
-    private String lawyer;
-
-    /**
-     * 实习律师
-     */
-    private String practiceLawyer;
-
-    /**
-     * 法律工作者
-     */
-    private String paralegal;
-
-    /**
-     * 律师事务所
-     */
-    private String lawOffice;
-
-    /**
-     * 审判长
-     */
-    private String presidingJudge;
-
-    /**
-     * 审判员
-     */
-    private String judicialOfficer;
-
-    /**
-     * 书记员
-     */
-    private String courtClerk;
+//    /**
+//     * 案由
+//     */
+//    private String cause;
+//
+//    /**
+//     * 案件类型
+//     */
+//    private String type;
+//
+//    /**
+//     * 程序，一审二审这些
+//     */
+//    private String procedure;
+//
+//    /**
+//     * 标签
+//     */
+//    private String tags;
+//
+//    /**
+//     * 原告
+//     */
+//    private String accuser;
+//
+//    /**
+//     * 被告
+//     */
+//    private String accused;
+//
+//    /**
+//     * 原审被告
+//     */
+//    private String originalAccused;
+//
+//    /**
+//     * 上诉人
+//     */
+//    private String appellor;
+//
+//    /**
+//     * 被上诉人
+//     */
+//    private String appellee;
+//
+//    /**
+//     * 申请人
+//     */
+//    private String applicant;
+//
+//    /**
+//     * 被申请人
+//     */
+//    private String respondent;
+//
+//    /**
+//     * 申请执行人
+//     */
+//    private String executionApplicant;
+//
+//    /**
+//     * 被执行人
+//     */
+//    private String executionedApplicant;
+//
+//    /**
+//     * 原审第三人
+//     */
+//    private String originalThirdMan;
+//
+//    /**
+//     * 委托代理人
+//     */
+//    private String entrustedAgent;
+//
+//    /**
+//     * 第三人
+//     */
+//    private String thirdMan;
+//
+//    /**
+//     * 律师
+//     */
+//    private String lawyer;
+//
+//    /**
+//     * 实习律师
+//     */
+//    private String practiceLawyer;
+//
+//    /**
+//     * 法律工作者
+//     */
+//    private String paralegal;
+//
+//    /**
+//     * 律师事务所
+//     */
+//    private String lawOffice;
+//
+//    /**
+//     * 审判长
+//     */
+//    private String presidingJudge;
+//
+//    /**
+//     * 审判员
+//     */
+//    private String judicialOfficer;
+//
+//    /**
+//     * 书记员
+//     */
+//    private String courtClerk;
 
     /**
      * 档案编号

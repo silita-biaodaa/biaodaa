@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RequestMapping("/law")
@@ -41,9 +42,10 @@ public class LawController {
     @ResponseBody
     @RequestMapping(value = "/detail", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> detail(@RequestBody Map<String, Object> params) {
-        Map<String, Object> resultMap = lawService.getLawList(params);
+        Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", 1);
         resultMap.put("msg", "操作成功");
+        resultMap.put("data",lawService.getLawDetal(params));
         return resultMap;
     }
 
