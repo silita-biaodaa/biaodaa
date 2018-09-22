@@ -375,15 +375,15 @@ public class NoticeService {
                 Map<String, Object> param = new HashMap<>();
                 for (Map<String, Object> map : resList) {
                     param.put("comName", map.get("oneName"));
-                    companyLawEs = lawService.queryCompanyLaew(map);
+                    companyLawEs = lawService.queryCompanyLaw(map);
                     map.put("oneLaw", companyLawEs.getTotal());
 
                     param.put("comName", map.get("twoName"));
-                    companyLawEs = lawService.queryCompanyLaew(map);
+                    companyLawEs = lawService.queryCompanyLaw(map);
                     map.put("twoLaw", companyLawEs.getTotal());
 
                     param.put("comName", map.get("threeName"));
-                    companyLawEs = lawService.queryCompanyLaew(map);
+                    companyLawEs = lawService.queryCompanyLaw(map);
                     map.put("threeLaw", companyLawEs.getTotal());
                 }
             }
@@ -447,7 +447,7 @@ public class NoticeService {
                     }
                 } else if (type.equals(SNATCHURL_ZHONGBIAO)) {
                     param.put("comName",result.get("oneName"));
-                    companyLawEs = lawService.queryCompanyLaew(param);
+                    companyLawEs = lawService.queryCompanyLaw(param);
                     result.put("oneLaw",companyLawEs.getTotal());
                     if (result.get("zhongbiao_pbMode") != null) {
                         result.put("pbMode", result.get("zhongbiao_pbMode"));

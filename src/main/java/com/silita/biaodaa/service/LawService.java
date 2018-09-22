@@ -9,7 +9,6 @@ import com.silita.biaodaa.elastic.model.PaginationAndSort;
 import com.silita.biaodaa.elastic.model.QuerysModel;
 import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.es.InitElasticseach;
-import com.silita.biaodaa.model.TbCompanyInfo;
 import com.silita.biaodaa.model.es.CompanyEs;
 import com.silita.biaodaa.model.es.CompanyLawEs;
 import com.silita.biaodaa.model.es.Law;
@@ -44,6 +43,11 @@ public class LawService {
 
     private static TransportClient client = InitElasticseach.initLawClient();
 
+    /**
+     * 获取法务列表
+     * @param param
+     * @return
+     */
     public Map<String, Object> getLawList(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         Map sort = new HashMap<String, String>();
@@ -104,7 +108,11 @@ public class LawService {
         return resultMap;
     }
 
-
+    /**
+     * 获取法务详情
+     * @param param
+     * @return
+     */
     public Law getLawDetal(Map<String, Object> param) {
         String id = MapUtils.getString(param, "id");
         List<QuerysModel> querys = new ArrayList();
@@ -130,6 +138,12 @@ public class LawService {
         return law;
     }
 
+    /**
+     * 获取时间（Long类型）
+     * @param start
+     * @param end
+     * @return
+     */
     public Long[] getLong(String start, String end) {
         Long[] lon = new Long[2];
         start = start + "-01-01";
@@ -139,6 +153,12 @@ public class LawService {
         return lon;
     }
 
+    /**
+     * 封装条件
+     * @param condition
+     * @param conditionType
+     * @return
+     */
     private List<QuerysModel> getCondition(String condition, String conditionType) {
         List<QuerysModel> querys = new ArrayList();
         if ("must".equals(conditionType)) {
@@ -151,27 +171,13 @@ public class LawService {
         return querys;
     }
 
-    private BoolQueryBuilder buildCondition(List<QuerysModel> querysModels) {
-        BoolQueryBuilder boolBuilder = QueryBuilders.boolQuery();
-        QueryBuilder queryBuilder;
-        for (QuerysModel querysModel : querysModels) {
-            queryBuilder = nativeElasticSearchUtils.buildQueryBuilder(querysModel);
-            if ("match".equals(querysModel.getQueryType())) {
-                queryBuilder = QueryBuilders.matchQuery(querysModel.getQueryKey(), querysModel.getQueryValues()).minimumShouldMatch("100%");
-            }
-            if ("must".equals(querysModel.getMatchingType())) {
-                boolBuilder.must(queryBuilder);
-            } else if ("filter".equals(querysModel.getMatchingType())) {
-                boolBuilder.filter(queryBuilder);
-            } else if ("should".equals(querysModel.getMatchingType())) {
-                boolBuilder.should(queryBuilder);
-            } else if ("mustNot".equals(querysModel.getMatchingType())) {
-                boolBuilder.mustNot(queryBuilder);
-            }
-        }
-        return boolBuilder;
-    }
-
+    /**
+     * 获取总数
+     * @param client
+     * @param indexName
+     * @param type
+     * @return
+     */
     private Integer getAll(TransportClient client, String indexName, String type) {
         SearchRequestBuilder builder = client.prepareSearch(indexName).setTypes(type);
         SearchResponse response = builder.setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
@@ -180,6 +186,9 @@ public class LawService {
         return count;
     }
 
+    /**
+     * 统计公司法务
+     */
     public void countCompanyLaw() {
         Integer count = tbCompanyMapper.queryCompanyCount();
         List<CompanyEs> comList = new ArrayList<>();
@@ -206,6 +215,11 @@ public class LawService {
         }
     }
 
+    /**
+     * 查询公司法务
+     * @param comName
+     * @return
+     */
     public CompanyLawEs getCompanyLawCount(String comName) {
         CompanyLawEs companyLawEs = new CompanyLawEs();
         companyLawEs.setBriCount(0);
@@ -227,7 +241,13 @@ public class LawService {
         return companyLawEs;
     }
 
-    public CompanyLawEs queryCompanyLaew(Map<String, Object> param) {
+
+    /**
+     * 查询公司法务
+     * @param param
+     * @return
+     */
+    public CompanyLawEs queryCompanyLaw(Map<String, Object> param) {
         String comName = MapUtils.getString(param, "comName");
         CompanyLawEs companyLawEs = new CompanyLawEs();
         companyLawEs.setTotal(0);
@@ -250,5 +270,27 @@ public class LawService {
         companyLawEs.setComName(jsonObject.getString("comName"));
         companyLawEs.setBriCount(jsonObject.getInteger("briCount"));
         return companyLawEs;
+    }
+
+    /**
+     * 查询公司资质
+     * @param comName
+     * @return
+     */
+    public String queryCompangScope(String comName){
+        String scope = null;
+        if(MyStringUtils.isNull(comName)){
+            return scope;
+        }
+        List<QuerysModel> querys = new ArrayList();
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "comName", comName));
+        SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "company", querys, new ArrayList<>(), null, null);
+        if(null == response.getHits() || response.getHits().getTotalHits() <= 0){
+            return scope;
+        }
+        String result = response.getHits().getAt(0).getSourceAsString();
+        JSONObject jsonObject = JSON.parseObject(result);
+        scope = jsonObject.getString("operate_range");
+        return scope;
     }
 }
