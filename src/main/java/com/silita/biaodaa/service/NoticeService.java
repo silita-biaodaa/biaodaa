@@ -375,15 +375,15 @@ public class NoticeService {
                 Map<String, Object> param = new HashMap<>();
                 for (Map<String, Object> map : resList) {
                     param.put("comName", map.get("oneName"));
-                    companyLawEs = lawService.queryCompanyLaw(map);
+                    companyLawEs = lawService.queryCompanyLaw(param);
                     map.put("oneLaw", companyLawEs.getTotal());
 
                     param.put("comName", map.get("twoName"));
-                    companyLawEs = lawService.queryCompanyLaw(map);
+                    companyLawEs = lawService.queryCompanyLaw(param);
                     map.put("twoLaw", companyLawEs.getTotal());
 
                     param.put("comName", map.get("threeName"));
-                    companyLawEs = lawService.queryCompanyLaw(map);
+                    companyLawEs = lawService.queryCompanyLaw(param);
                     map.put("threeLaw", companyLawEs.getTotal());
                 }
             }

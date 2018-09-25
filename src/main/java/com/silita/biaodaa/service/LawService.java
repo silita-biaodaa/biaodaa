@@ -66,13 +66,13 @@ public class LawService {
         BoolQueryBuilder boolQueryBuilder1 = QueryBuilders.boolQuery();
         BoolQueryBuilder boolQueryBuilder2 = QueryBuilders.boolQuery();
         if (MyStringUtils.isNotNull(comName)) {
-            queryBuilder1 = QueryBuilders.queryStringQuery("\""+comName.replace("有限公司","")+"\"").field("content").splitOnWhitespace(false);
-            queryBuilder4 = QueryBuilders.queryStringQuery("\""+comName.replace("有限公司","")+"\"").field("title").splitOnWhitespace(false);
+            queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
+            queryBuilder4 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("title").splitOnWhitespace(false);
             boolQueryBuilder1.should(queryBuilder1).should(queryBuilder4);
         }
         if (MyStringUtils.isNotNull(keyWord)) {
-            queryBuilder2 = QueryBuilders.queryStringQuery("\""+keyWord.replace("有限公司","")+"\"").field("content").splitOnWhitespace(false);
-            queryBuilder5 = QueryBuilders.queryStringQuery("\""+keyWord.replace("有限公司","")+"\"").field("title").splitOnWhitespace(false);
+            queryBuilder2 = QueryBuilders.queryStringQuery("\"" + keyWord.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
+            queryBuilder5 = QueryBuilders.queryStringQuery("\"" + keyWord.replace("有限公司", "") + "\"").field("title").splitOnWhitespace(false);
             boolQueryBuilder2.should(queryBuilder2).should(queryBuilder5);
         }
         if (null != start && null != end) {
@@ -98,7 +98,7 @@ public class LawService {
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder2).should(queryBuilder5));
         } else if (null != queryBuilder3) {
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder3));
-        }else {
+        } else {
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law");
         }
         addSearchBuild(requestBuilder, pageSort);
@@ -108,7 +108,7 @@ public class LawService {
             return null;
         }
         Integer total = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
-        if (MyStringUtils.isNull(keyWord) && MyStringUtils.isNull(comName)) {
+        if (MyStringUtils.isNull(keyWord) && MyStringUtils.isNull(comName) && MyStringUtils.isNull(start) && MyStringUtils.isNull(end)) {
             total = getAll(client, "biaodaa", "law");
         }
         Integer pages = elasticseachService.getPage(total, MapUtils.getInteger(param, "pageSize"));
@@ -187,20 +187,6 @@ public class LawService {
     }
 
     /**
-     * 封装条件
-     *
-     * @param condition
-     * @param conditionType
-     * @return
-     */
-    private List<QuerysModel> getCondition(String condition, String conditionType) {
-        List<QuerysModel> querys = new ArrayList();
-        querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "content", "*" + condition + "*"));
-//        querys.add(new QuerysModel(ConstantUtil.CONDITION_SHOULD, ConstantUtil.MATCHING_WILDCARD, "title", "*" + condition + "*"));
-        return querys;
-    }
-
-    /**
      * 获取总数
      *
      * @param client
@@ -256,7 +242,7 @@ public class LawService {
         companyLawEs.setBriCount(0);
         companyLawEs.setComName(comName);
         companyLawEs.setJudCount(0);
-        QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\""+comName+"\"").field("content").splitOnWhitespace(false);
+        QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
         QueryBuilder queryBuilder2 = QueryBuilders.queryStringQuery("\"行贿\"").field("content").splitOnWhitespace(false);
         SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).must(queryBuilder2));
         SearchResponse response = requestBuilder.execute().actionGet();
@@ -269,7 +255,6 @@ public class LawService {
         companyLawEs.setTotal(companyLawEs.getBriCount() + companyLawEs.getJudCount());
         return companyLawEs;
     }
-
 
     /**
      * 查询公司法务
@@ -286,7 +271,7 @@ public class LawService {
         if (MyStringUtils.isNull(comName)) {
             return companyLawEs;
         }
-        QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\""+comName+"\"").field("comName").splitOnWhitespace(false);
+        QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName + "\"").field("comName").splitOnWhitespace(false);
         SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("companyforlaw").setQuery(QueryBuilders.boolQuery().must(queryBuilder1));
         SearchResponse response = requestBuilder.execute().actionGet();
         if (null == response.getHits() || response.getHits().getTotalHits() <= 0) {
@@ -327,6 +312,7 @@ public class LawService {
 
     /**
      * es查询排序
+     *
      * @param builder
      * @param paginationAndSort
      */
@@ -345,18 +331,19 @@ public class LawService {
 
     /**
      * 获取公司文案
+     *
      * @param param
      * @return
      */
-    public Map<String,Object> getCompanyLaw(Map<String,Object> param){
+    public Map<String, Object> getCompanyLaw(Map<String, Object> param) {
         CompanyLawEs companyLawEs = this.queryCompanyLaw(param);
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("lawBri",PropertiesUtils.getProperty("law.bri"));
-        resultMap.put("briCount",companyLawEs.getBriCount());
-        resultMap.put("lawJud",PropertiesUtils.getProperty("law.jud"));
-        resultMap.put("judCount",companyLawEs.getJudCount());
-        resultMap.put("lawTotal",PropertiesUtils.getProperty("law.total"));
-        resultMap.put("total",companyLawEs.getTotal());
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("lawBri", PropertiesUtils.getProperty("law.bri"));
+        resultMap.put("briCount", companyLawEs.getBriCount());
+        resultMap.put("lawJud", PropertiesUtils.getProperty("law.jud"));
+        resultMap.put("judCount", companyLawEs.getJudCount());
+        resultMap.put("lawTotal", PropertiesUtils.getProperty("law.total"));
+        resultMap.put("total", companyLawEs.getTotal());
         return resultMap;
     }
 }
