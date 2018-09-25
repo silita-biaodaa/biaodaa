@@ -14,6 +14,7 @@ import com.silita.biaodaa.model.es.CompanyLawEs;
 import com.silita.biaodaa.model.es.Law;
 import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
+import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -65,13 +66,13 @@ public class LawService {
         BoolQueryBuilder boolQueryBuilder1 = QueryBuilders.boolQuery();
         BoolQueryBuilder boolQueryBuilder2 = QueryBuilders.boolQuery();
         if (MyStringUtils.isNotNull(comName)) {
-            queryBuilder1 = QueryBuilders.queryStringQuery("\""+comName+"\"").field("content").splitOnWhitespace(false);
-            queryBuilder4 = QueryBuilders.queryStringQuery("\""+comName+"\"").field("title").splitOnWhitespace(false);
+            queryBuilder1 = QueryBuilders.queryStringQuery("\""+comName.replace("有限公司","")+"\"").field("content").splitOnWhitespace(false);
+            queryBuilder4 = QueryBuilders.queryStringQuery("\""+comName.replace("有限公司","")+"\"").field("title").splitOnWhitespace(false);
             boolQueryBuilder1.should(queryBuilder1).should(queryBuilder4);
         }
         if (MyStringUtils.isNotNull(keyWord)) {
-            queryBuilder2 = QueryBuilders.queryStringQuery("\""+keyWord+"\"").field("content").splitOnWhitespace(false);
-            queryBuilder5 = QueryBuilders.queryStringQuery("\""+keyWord+"\"").field("title").splitOnWhitespace(false);
+            queryBuilder2 = QueryBuilders.queryStringQuery("\""+keyWord.replace("有限公司","")+"\"").field("content").splitOnWhitespace(false);
+            queryBuilder5 = QueryBuilders.queryStringQuery("\""+keyWord.replace("有限公司","")+"\"").field("title").splitOnWhitespace(false);
             boolQueryBuilder2.should(queryBuilder2).should(queryBuilder5);
         }
         if (null != start && null != end) {
@@ -97,6 +98,8 @@ public class LawService {
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder2).should(queryBuilder5));
         } else if (null != queryBuilder3) {
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder3));
+        }else {
+            requestBuilder = client.prepareSearch("biaodaa").setTypes("law");
         }
         addSearchBuild(requestBuilder, pageSort);
         SearchResponse response = requestBuilder.execute().actionGet();
@@ -106,7 +109,7 @@ public class LawService {
         }
         Integer total = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
         if (MyStringUtils.isNull(keyWord) && MyStringUtils.isNull(comName)) {
-            total = getAll(client, "alias_biaodaa", "law");
+            total = getAll(client, "biaodaa", "law");
         }
         Integer pages = elasticseachService.getPage(total, MapUtils.getInteger(param, "pageSize"));
         resultMap.put("total", total);
@@ -146,10 +149,10 @@ public class LawService {
         String id = MapUtils.getString(param, "id");
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "_id", id));
-        SearchRequestBuilder requestBuilder = nativeElasticSearchUtils.baseComplexQuery(client, "alias_biaodaa", "law", querys, null, ConstantUtil.CONDITION_MUST, null);
+        SearchRequestBuilder requestBuilder = nativeElasticSearchUtils.baseComplexQuery(client, "biaodaa", "law", querys, null, ConstantUtil.CONDITION_MUST, null);
         SearchResponse response = nativeElasticSearchUtils.builderToSearchResponse(requestBuilder);
-        if (null == response && response.getHits().getTotalHits() <= 0) {
-            return null;
+        if (response.getHits().getTotalHits() <= 0) {
+            return new Law();
         }
         String result = null;
         JSONObject jsonObject = null;
@@ -283,9 +286,9 @@ public class LawService {
         if (MyStringUtils.isNull(comName)) {
             return companyLawEs;
         }
-        List<QuerysModel> querys = new ArrayList();
-        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "comName", comName));
-        SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "companyforlaw", querys, new ArrayList<>(), null, null);
+        QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\""+comName+"\"").field("comName").splitOnWhitespace(false);
+        SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("companyforlaw").setQuery(QueryBuilders.boolQuery().must(queryBuilder1));
+        SearchResponse response = requestBuilder.execute().actionGet();
         if (null == response.getHits() || response.getHits().getTotalHits() <= 0) {
             return companyLawEs;
         }
@@ -311,7 +314,7 @@ public class LawService {
             return scope;
         }
         List<QuerysModel> querys = new ArrayList();
-        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "comName", comName));
+        querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "name", comName));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "company", querys, new ArrayList<>(), null, null);
         if (null == response.getHits() || response.getHits().getTotalHits() <= 0) {
             return scope;
@@ -322,6 +325,11 @@ public class LawService {
         return scope;
     }
 
+    /**
+     * es查询排序
+     * @param builder
+     * @param paginationAndSort
+     */
     private void addSearchBuild(SearchRequestBuilder builder, PaginationAndSort paginationAndSort) {
         if (null != paginationAndSort) {
             builder = builder.setFrom(paginationAndSort.getStart()).setSize(paginationAndSort.getPageSize());
@@ -333,5 +341,22 @@ public class LawService {
                 }
             }
         }
+    }
+
+    /**
+     * 获取公司文案
+     * @param param
+     * @return
+     */
+    public Map<String,Object> getCompanyLaw(Map<String,Object> param){
+        CompanyLawEs companyLawEs = this.queryCompanyLaw(param);
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("lawBri",PropertiesUtils.getProperty("law.bri"));
+        resultMap.put("briCount",companyLawEs.getBriCount());
+        resultMap.put("lawJud",PropertiesUtils.getProperty("law.jud"));
+        resultMap.put("judCount",companyLawEs.getJudCount());
+        resultMap.put("lawTotal",PropertiesUtils.getProperty("law.total"));
+        resultMap.put("total",companyLawEs.getTotal());
+        return resultMap;
     }
 }

@@ -65,9 +65,17 @@ public class LawController {
     }
 
     /**
-     * 统计
+     * 统计公司法务数据
+     *
+     * @return
      */
-    public void countLaw() {
-
+    @ResponseBody
+    @RequestMapping(value = "/companyLaw", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> companyLaw(@RequestBody Map<String, Object> params) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("code", 1);
+        resultMap.put("msg", "操作成功");
+        resultMap.put("data",lawService.getCompanyLaw(params));
+        return resultMap;
     }
 }

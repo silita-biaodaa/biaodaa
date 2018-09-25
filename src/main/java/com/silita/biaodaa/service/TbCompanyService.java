@@ -10,6 +10,7 @@ import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.CommonUtil;
+import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
@@ -59,6 +60,9 @@ public class TbCompanyService {
 
     @Autowired
     ProjectService projectService;
+
+    @Autowired
+    LawService lawService;
 
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
@@ -993,8 +997,11 @@ public class TbCompanyService {
         if (null != companyInfo && null != companyInfo.getPhone()) {
             tbCompany.setPhone(solPhone(companyInfo.getPhone().trim(), null));
         }
-        if (null != companyInfo && null != companyInfo.getScope()) {
+        String scope = lawService.queryCompangScope(tbCompany.getComName());
+        if(MyStringUtils.isNull(scope) && null != companyInfo && null != companyInfo.getScope()){
             tbCompany.setComRange(companyInfo.getScope());
+        }else {
+            tbCompany.setComRange(scope);
         }
         if (null != companyInfo && null != companyInfo.getComUrl()) {
             tbCompany.setComUrl(companyInfo.getComUrl().split(";")[0].trim());
