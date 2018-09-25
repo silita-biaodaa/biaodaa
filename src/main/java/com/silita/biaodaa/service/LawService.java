@@ -166,7 +166,7 @@ public class LawService {
         law.setCourt(jsonObject.getString("court"));
         law.setTitle(jsonObject.getString("title"));
         law.setUrl(jsonObject.getString("url"));
-        law.setContent(jsonObject.getString("content"));
+        law.setContent(jsonObject.getString("content").replaceAll("<a.*?</a>", ""));
         return law;
     }
 
