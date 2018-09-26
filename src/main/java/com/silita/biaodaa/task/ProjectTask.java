@@ -1,8 +1,9 @@
 package com.silita.biaodaa.task;
 
+import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.dao.TbPersonQualificationMapper;
 import com.silita.biaodaa.service.ProjectService;
-import com.silita.biaodaa.service.TbCompanyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,12 @@ public class ProjectTask implements Runnable{
     TbPersonQualificationMapper tbPersonQualificationMapper;
     @Autowired
     ProjectService projectService;
+    @Autowired
+    MyRedisTemplate myRedisTemplate;
 
     @Override
     public void run() {
+        myRedisTemplate.batchDel(RedisConstantInterface.PROJECT_LIST);
         List<Map<String, Object>> provinceList = tbPersonQualificationMapper.getProvinceList();
         Map<String,Object> param = new HashMap<>();
         param.put("pageSize",20);

@@ -1,7 +1,5 @@
 package com.silita.biaodaa.controller;
 
-import com.silita.biaodaa.common.MyRedisTemplate;
-import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.service.PersonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
