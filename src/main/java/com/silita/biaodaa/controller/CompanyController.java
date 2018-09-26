@@ -239,8 +239,8 @@ public class CompanyController extends BaseController {
             if (keyWord != null && !"".equals(keyWord)) {
                 // TODO: 18/5/21 更新排序移到打开人员处理
                 //tbCompanyService.updatePersonPX(tableCode,keyWord);
+                param.put("keyWord", keyWord);
             }
-            param.put("keyWord", keyWord);
             if (comId != null && !"".equals(comId)) {
                 TbCompany company = tbCompanyService.getCompany(comId);
                 if (company != null) {
@@ -262,7 +262,9 @@ public class CompanyController extends BaseController {
             }
 
             param.put("tableCode", tableCode);
-            param.put("category", category);
+            if(MyStringUtils.isNotNull(category)){
+                param.put("category", category);
+            }
 
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");

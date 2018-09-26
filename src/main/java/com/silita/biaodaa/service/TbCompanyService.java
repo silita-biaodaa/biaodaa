@@ -3,16 +3,15 @@ package com.silita.biaodaa.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.cache.GlobalCache;
+import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.*;
-import com.silita.biaodaa.utils.CommonUtil;
-import com.silita.biaodaa.utils.MyStringUtils;
-import com.silita.biaodaa.utils.ProjectAnalysisUtil;
-import com.silita.biaodaa.utils.PropertiesUtils;
+import com.silita.biaodaa.utils.*;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -22,6 +21,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.silita.biaodaa.common.RedisConstantInterface.PRO_OVER_TIME;
 
 /**
  * Created by zhangxiahui on 18/4/4.
@@ -63,6 +64,9 @@ public class TbCompanyService {
 
     @Autowired
     LawService lawService;
+
+    @Autowired
+    MyRedisTemplate myRedisTemplate;
 
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
@@ -195,9 +199,8 @@ public class TbCompanyService {
     }
 
     public PageInfo queryCompanyPerson(Page page, Map<String, Object> param) {
-        List<TbPersonQualification> list = new ArrayList<>();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        list = tbPersonQualificationMapper.queryCompanyPerson(param);
+        List<TbPersonQualification> list = tbPersonQualificationMapper.queryCompanyPerson(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -716,31 +719,21 @@ public class TbCompanyService {
 
 
     public PageInfo getPersonCacheMap(Page page, Map<String, Object> param) {
-        Map<String, PageInfo> personMap = globalCache.getPersonMap();
         String key = "person|" + page.getCurrentPage() + "|" + page.getPageSize() + "|"
                 + param.get("comId") + "|" + param.get("category") + "|" + param.get("keyWord") + "|" + param.get("tableCode");
-        Long time = globalCache.getVaildTime().get(key);
-
-        long nowTime = System.currentTimeMillis();
-        long value = 3600000;
         String cacheTime = PropertiesUtils.getProperty("personCacheTime");
-        if (cacheTime != null) {
-            value = Long.parseLong(cacheTime);
+        param.put("currentPage",page.getCurrentPage());
+        int paramHash = ObjectUtils.buildMapParamHash(param);
+        String listKey = RedisConstantInterface.PERSON_LIST + paramHash;
+        PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
+        if (null != pageInfo) {
+            logger.info("注册人员数据启用缓存[" + key + "]========缓存数据共计[" + pageInfo.getList().size() + "]条");
+            return pageInfo;
         }
-        if (time != null && nowTime - time < value) {
-            if (personMap != null && personMap.size() > 0) {
-                PageInfo pageInfo = personMap.get(key);
-                if (pageInfo != null && pageInfo.getList() != null) {
-                    logger.info("注册人员数据启用缓存[" + key + "]========缓存数据共计[" + pageInfo.getList().size() + "]条");
-                    return pageInfo;
-                }
-
-            }
+        pageInfo = queryCompanyPerson(page, param);
+        if (null != pageInfo && null != pageInfo.getList()) {
+            myRedisTemplate.setObject(listKey, pageInfo, Integer.valueOf(cacheTime));
         }
-        PageInfo pageInfo = queryCompanyPerson(page, param);
-        personMap.put(key, pageInfo);
-        globalCache.setPersonMap(personMap);
-        globalCache.getVaildTime().put(key, nowTime);
         return pageInfo;
     }
 
@@ -998,9 +991,9 @@ public class TbCompanyService {
             tbCompany.setPhone(solPhone(companyInfo.getPhone().trim(), null));
         }
         String scope = lawService.queryCompangScope(tbCompany.getComName());
-        if(MyStringUtils.isNull(scope) && null != companyInfo && null != companyInfo.getScope()){
+        if (MyStringUtils.isNull(scope) && null != companyInfo && null != companyInfo.getScope()) {
             tbCompany.setComRange(companyInfo.getScope());
-        }else {
+        } else {
             tbCompany.setComRange(scope);
         }
         if (null != companyInfo && null != companyInfo.getComUrl()) {
@@ -1126,27 +1119,28 @@ public class TbCompanyService {
 
     /**
      * 企业分享-业绩/人员/分支机构个数
+     *
      * @param param
      * @return
      */
-    public Map<String, Object> getShareTotal(Map<String,Object> param) {
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("branchCompanyTotal",0);
-        resultMap.put("projectTotal",0);
+    public Map<String, Object> getShareTotal(Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("branchCompanyTotal", 0);
+        resultMap.put("projectTotal", 0);
         //分支机构
         List<TbCompanyInfo> companyInfoList = elasticseachService.queryBranchCompany(param);
-        if(null != companyInfoList && companyInfoList.size() > 0){
-            resultMap.put("branchCompanyTotal",companyInfoList.size());
+        if (null != companyInfoList && companyInfoList.size() > 0) {
+            resultMap.put("branchCompanyTotal", companyInfoList.size());
         }
         //业绩
-        List<Map<String,Object>> projectList = projectService.getProjectCompanyList(MapUtils.getString(param,"comId"));
-        if (null != projectList && projectList.size() > 0){
-            resultMap.put("projectTotal",projectList.size());
+        List<Map<String, Object>> projectList = projectService.getProjectCompanyList(MapUtils.getString(param, "comId"));
+        if (null != projectList && projectList.size() > 0) {
+            resultMap.put("projectTotal", projectList.size());
         }
         return resultMap;
     }
 
-    private List<TbCompanyQualification> sortQual(List<TbCompanyQualification> qualList){
+    private List<TbCompanyQualification> sortQual(List<TbCompanyQualification> qualList) {
         return qualList;
     }
 }

@@ -47,33 +47,33 @@ public class CompanyBootstrap implements ApplicationListener<ApplicationEvent> {
                     String end = dateUtils.getDate(dateUtils.getBeforeCurrentDate(1), "yyyy-MM-dd");
 //                    String end = dateUtils.getTime("yyyy-MM-dd");
                     String timer = "03:01:00";
-                    String endLock = end + " "+timer.trim();
+                    String endLock = end + " " + timer.trim();
                     long lockTimes = dateUtils.dateDiff(start, endLock, "yyyy-MM-dd HH:mm:ss", "m");
                     //TODO: 统计中标企业
-                    scheduler.scheduleAtFixedRate(countBidTask, lockTimes,24 * 60, TimeUnit.MINUTES);
+                    scheduler.scheduleAtFixedRate(countBidTask, lockTimes, 24 * 60, TimeUnit.MINUTES);
                     //TODO: 人员缓存
                     String timerPerson = "02:01:00";
-                    String endLockPerson = end + " "+timerPerson.trim();
+                    String endLockPerson = end + " " + timerPerson.trim();
                     long lockTimesPers = dateUtils.dateDiff(start, endLockPerson, "yyyy-MM-dd HH:mm:ss", "m");
-                    scheduler.scheduleAtFixedRate(personTask, 0, lockTimesPers, TimeUnit.MINUTES);
+                    scheduler.scheduleAtFixedRate(personTask, lockTimesPers, 24 * 60, TimeUnit.MINUTES);
                     //TODO: 公司同步Elasticsearch
                     String comTimer = "01:01:00";
-                    String comEndLock = end + " "+comTimer.trim();
+                    String comEndLock = end + " " + comTimer.trim();
                     long comLockTimes = dateUtils.dateDiff(start, comEndLock, "yyyy-MM-dd HH:mm:ss", "m");
-                    scheduler.scheduleAtFixedRate(companyTask, comLockTimes,24 * 60, TimeUnit.MINUTES);
+                    scheduler.scheduleAtFixedRate(companyTask, comLockTimes, 24 * 60, TimeUnit.MINUTES);
                     //TODO: 招标同步Elasticsearch
                     String snaTimer = "05:01:00";
-                    String snaEndLock = end + " "+snaTimer.trim();
+                    String snaEndLock = end + " " + snaTimer.trim();
                     long snaLockTimes = dateUtils.dateDiff(start, snaEndLock, "yyyy-MM-dd HH:mm:ss", "m");
-                    scheduler.scheduleAtFixedRate(snatchUrlTask, snaLockTimes,24 * 60, TimeUnit.MINUTES);
+                    scheduler.scheduleAtFixedRate(snatchUrlTask, snaLockTimes, 24 * 60, TimeUnit.MINUTES);
                     //TODO:业绩缓存
                     String proTimer = "06:30:00";
-                    String proEndLock = end + " "+proTimer.trim();
+                    String proEndLock = end + " " + proTimer.trim();
                     long proLockTimes = dateUtils.dateDiff(start, proEndLock, "yyyy-MM-dd HH:mm:ss", "m");
-                    scheduler.scheduleAtFixedRate(projectTask, proLockTimes,61, TimeUnit.MINUTES);
+                    scheduler.scheduleAtFixedRate(projectTask, proLockTimes, 24 * 60, TimeUnit.MINUTES);
                     logger.info("===========任务启动完成=========");
                 } catch (Exception e) {
-                     logger.info("任务启动异常", e);
+                    logger.info("任务启动异常", e);
                 }
             }
         }

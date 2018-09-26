@@ -17,6 +17,8 @@ public interface RedisConstantInterface {
 
 	String PROJECT_LIST = "project_list"; //业绩列表
 
+	String PERSON_LIST = "person_list_";  //人员缓存
+
 	int DETAIL_OVER_TIME = 30*60;
 
 	int LIST_OVER_TIME = 600;

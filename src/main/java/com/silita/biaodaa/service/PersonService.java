@@ -1,14 +1,19 @@
 package com.silita.biaodaa.service;
 
+import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.event.ListDataEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 人员信息Service
@@ -16,6 +21,8 @@ import java.util.*;
  */
 @Service
 public class PersonService {
+
+    private Logger logger = LoggerFactory.getLogger(PersonService.class);
 
     @Autowired
     TbPersonMapper tbPersonMapper;
@@ -31,6 +38,10 @@ public class PersonService {
     TbProjectCompanyMapper tbProjectCompanyMapper;
     @Autowired
     TbProjectZhaotoubiaoMapper tbProjectZhaotoubiaoMapper;
+    @Autowired
+    TbCompanyService tbCompanyService;
+    @Autowired
+    TbPersonQualificationMapper tbPersonQualificationMapper;
 
     /**
      * 获取人员详情
@@ -113,7 +124,7 @@ public class PersonService {
                     //判断是否招投标
                     if ("zhaotoubiao".equals(per.getType())) {
                         TbProjectZhaotoubiao zhaotoubiao = tbProjectZhaotoubiaoMapper.queryZhaotouDetailByPkid(per.getPid());
-                        if(null != zhaotoubiao){
+                        if (null != zhaotoubiao) {
                             perProjectMap.put("company", zhaotoubiao.getZhongbiaoCompany());
                             perProjectMap.put("bOrg", zhaotoubiao.getZhongbiaoCompany());
                             persProjectList.add(perProjectMap);
@@ -171,5 +182,23 @@ public class PersonService {
         String flag = MapUtils.getString(param, "name") + "_" + MapUtils.getString(param, "sex")
                 + "_" + MapUtils.getString(param, "idCard");
         return tbPersonChangeMapper.queryPersonChangeByFlag(flag);
+    }
+
+    public void setRedisParam() {
+        Page page = new Page();
+        page.setPageSize(20);
+        List<Map<String, Object>> provinceList = tbPersonQualificationMapper.getProvinceList();
+        Map<String, Object> param = new HashMap<>();
+        if (null != provinceList && provinceList.size() > 0) {
+            for (Map<String, Object> provin : provinceList) {
+                logger.info("---------缓存【" + provin.get("code") + "】省人员数据begin------------");
+                param.put("tableCode", provin.get("code").toString());
+                for (int i = 0; i < 5; i++) {
+                    page.setCurrentPage((i + 1));
+                    tbCompanyService.getPersonCacheMap(page, param);
+                }
+                logger.info("---------缓存【" + provin.get("code") + "】省人员数据end------------");
+            }
+        }
     }
 }
