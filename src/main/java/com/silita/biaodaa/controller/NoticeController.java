@@ -506,15 +506,14 @@ public class NoticeController extends BaseController {
             params.put("id", id);
             int paramHash = ObjectUtils.buildMapParamHash(params);
             String listKey = RedisConstantInterface.GG_DETAIL + paramHash;
-//            List<Map> detailList = (List<Map>) myRedisTemplate.getObject(listKey);
-            List<Map> detailList = null;
+            List<Map> detailList = (List<Map>) myRedisTemplate.getObject(listKey);
             if (detailList == null) {
                 settingRouteTable(params);
                 settingProvName(params);
                 detailList = noticeService.queryNoticeDetail(params);
-//                if (detailList != null && detailList.size() > 0) {
-//                    myRedisTemplate.setObject(listKey, detailList, DETAIL_OVER_TIME);
-//                }
+                if (detailList != null && detailList.size() > 0) {
+                    myRedisTemplate.setObject(listKey, detailList, DETAIL_OVER_TIME);
+                }
             }
 
             String source = MapUtils.getString(params, "source");
