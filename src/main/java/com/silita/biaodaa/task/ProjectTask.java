@@ -35,7 +35,7 @@ public class ProjectTask implements Runnable{
             for (Map<String, Object> provin : provinceList) {
                 logger.info("---------缓存【" + provin.get("name") + "】省业绩数据begin------------");
                 param.put("area",provin.get("name").toString());
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 6; i++) {
                     param.put("pageNo",(i+1));
                     projectService.getProjectList(param,null);
                 }

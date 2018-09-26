@@ -193,7 +193,7 @@ public class PersonService {
             for (Map<String, Object> provin : provinceList) {
                 logger.info("---------缓存【" + provin.get("code") + "】省人员数据begin------------");
                 param.put("tableCode", provin.get("code").toString());
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 6; i++) {
                     page.setCurrentPage((i + 1));
                     tbCompanyService.getPersonCacheMap(page, param);
                 }

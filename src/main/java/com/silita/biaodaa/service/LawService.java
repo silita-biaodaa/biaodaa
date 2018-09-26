@@ -24,6 +24,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,8 @@ import java.util.*;
 
 @Service
 public class LawService {
+
+    private Logger logger = LoggerFactory.getLogger(LawService.class);
 
     @Autowired
     NativeElasticSearchUtils nativeElasticSearchUtils;
@@ -102,6 +106,8 @@ public class LawService {
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law");
         }
         addSearchBuild(requestBuilder, pageSort);
+        logger.info("查询elasticsearch:" + "\n" + requestBuilder);
+//        System.out.println(requestBuilder);
         SearchResponse response = requestBuilder.execute().actionGet();
 //        SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "law", querys1, querys, ConstantUtil.CONDITION_MUST, pageSort);
         if (null == response && response.getHits().getTotalHits() <= 0) {
@@ -150,6 +156,7 @@ public class LawService {
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "_id", id));
         SearchRequestBuilder requestBuilder = nativeElasticSearchUtils.baseComplexQuery(client, "biaodaa", "law", querys, null, ConstantUtil.CONDITION_MUST, null);
+        logger.info("查询elasticsearch:" + "\n" + requestBuilder);
         SearchResponse response = nativeElasticSearchUtils.builderToSearchResponse(requestBuilder);
         if (response.getHits().getTotalHits() <= 0) {
             return new Law();
@@ -166,7 +173,7 @@ public class LawService {
         law.setCourt(jsonObject.getString("court"));
         law.setTitle(jsonObject.getString("title"));
         law.setUrl(jsonObject.getString("url"));
-        law.setContent(jsonObject.getString("content").replaceAll("<a.*?</a>", ""));
+        law.setContent(jsonObject.getString("content").replaceAll("<a href[^>]*>", "").replaceAll("</a>", ""));
         return law;
     }
 
@@ -245,10 +252,12 @@ public class LawService {
         QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
         QueryBuilder queryBuilder2 = QueryBuilders.queryStringQuery("\"行贿\"").field("content").splitOnWhitespace(false);
         SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).must(queryBuilder2));
+        logger.info("查询" + comName + "行贿:" + "\n" + requestBuilder);
         SearchResponse response = requestBuilder.execute().actionGet();
         Integer briCount = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
         companyLawEs.setBriCount(briCount);
         requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).mustNot(queryBuilder2));
+        logger.info("查询" + comName + "司法:" + "\n" + requestBuilder);
         response = requestBuilder.execute().actionGet();
         Integer judCount = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
         companyLawEs.setJudCount(judCount);
@@ -273,6 +282,7 @@ public class LawService {
         }
         QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName + "\"").field("comName").splitOnWhitespace(false);
         SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("companyforlaw").setQuery(QueryBuilders.boolQuery().must(queryBuilder1));
+        logger.info("查询elasticsearch:" + "\n" + requestBuilder);
         SearchResponse response = requestBuilder.execute().actionGet();
         if (null == response.getHits() || response.getHits().getTotalHits() <= 0) {
             return companyLawEs;
