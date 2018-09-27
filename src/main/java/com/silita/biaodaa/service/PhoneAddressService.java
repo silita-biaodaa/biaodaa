@@ -2,6 +2,7 @@ package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.dao.TbPhoneAddressBookMapper;
 import com.silita.biaodaa.model.TbPhoneAddressBook;
+import com.silita.biaodaa.utils.EmojiUtils;
 import com.silita.biaodaa.utils.JsonUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
@@ -51,7 +52,7 @@ public class PhoneAddressService {
             tbPhoneAddressBook.setDeviceId(deviceId);
             tbPhoneAddressBook.setCreatedDate(new Date());
             tbPhoneAddressBook.setUserPhone(userPhone);
-            tbPhoneAddressBook.setPhoneName(MapUtils.getString(tbMap,"phoneName"));
+            tbPhoneAddressBook.setPhoneName(EmojiUtils.emojiChange(MapUtils.getString(tbMap,"phoneName")));
             tbPhoneAddressBook.setPhone(MapUtils.getString(tbMap,"phone"));
             tbPhoneAddressBook.setSourceFrom(sourceFrom);
             phoneAddressBookList.add(tbPhoneAddressBook);
