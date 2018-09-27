@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class ProjectTask implements Runnable{
+public class ProjectTask implements Runnable {
 
     private Logger logger = LoggerFactory.getLogger(ProjectTask.class);
 
@@ -29,15 +29,16 @@ public class ProjectTask implements Runnable{
     public void run() {
         myRedisTemplate.batchDel(RedisConstantInterface.PROJECT_LIST);
         List<Map<String, Object>> provinceList = tbPersonQualificationMapper.getProvinceList();
-        Map<String,Object> param = new HashMap<>();
-        param.put("pageSize",20);
+        Map<String, Object> param = new HashMap<>();
+        param.put("pageSize", 20);
+        param.put("tabType","project");
         if (null != provinceList && provinceList.size() > 0) {
             for (Map<String, Object> provin : provinceList) {
                 logger.info("---------缓存【" + provin.get("name") + "】省业绩数据begin------------");
-                param.put("area",provin.get("name").toString());
+                param.put("area", provin.get("name").toString());
                 for (int i = 0; i < 6; i++) {
-                    param.put("pageNo",(i+1));
-                    projectService.getProjectList(param,null);
+                    param.put("pageNo", (i + 1));
+                    projectService.getProjectList(param, new HashMap<>());
                 }
                 logger.info("---------缓存【" + provin.get("name") + "】省业绩数据end------------");
             }

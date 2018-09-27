@@ -82,7 +82,6 @@ public class LawService {
         if (null != start && null != end) {
             Long[] yearLog = getLong(start, end);
             queryBuilder3 = QueryBuilders.rangeQuery("date").from(yearLog[0]).to(yearLog[1]).includeLower(true).includeUpper(true);
-
         }
         if (null != queryBuilder1 && null != queryBuilder2 && null != queryBuilder3) {
             boolQueryBuilder.must(boolQueryBuilder1).must(boolQueryBuilder2).must(queryBuilder3);
@@ -106,9 +105,10 @@ public class LawService {
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law");
         }
         addSearchBuild(requestBuilder, pageSort);
-        logger.info("查询elasticsearch:" + "\n" + requestBuilder);
+        logger.info("查询elasticsearch-beginTime:" + System.currentTimeMillis() + "\n" + requestBuilder);
 //        System.out.println(requestBuilder);
         SearchResponse response = requestBuilder.execute().actionGet();
+        logger.info("查询elasticsearch-endTime:" + System.currentTimeMillis() + "\n" + response);
 //        SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "law", querys1, querys, ConstantUtil.CONDITION_MUST, pageSort);
         if (null == response && response.getHits().getTotalHits() <= 0) {
             return null;
@@ -156,8 +156,9 @@ public class LawService {
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "_id", id));
         SearchRequestBuilder requestBuilder = nativeElasticSearchUtils.baseComplexQuery(client, "biaodaa", "law", querys, null, ConstantUtil.CONDITION_MUST, null);
-        logger.info("查询elasticsearch:" + "\n" + requestBuilder);
+        logger.info("查询elasticsearch-begin:" + "\n" + requestBuilder);
         SearchResponse response = nativeElasticSearchUtils.builderToSearchResponse(requestBuilder);
+        logger.info("查询elasticsearch-end:" + "\n" + response);
         if (response.getHits().getTotalHits() <= 0) {
             return new Law();
         }
@@ -252,13 +253,15 @@ public class LawService {
         QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
         QueryBuilder queryBuilder2 = QueryBuilders.queryStringQuery("\"行贿\"").field("content").splitOnWhitespace(false);
         SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).must(queryBuilder2));
-        logger.info("查询" + comName + "行贿:" + "\n" + requestBuilder);
+        logger.info("查询" + comName + "行贿-begin:" + "\n" + requestBuilder);
         SearchResponse response = requestBuilder.execute().actionGet();
+        logger.info("查询" + comName + "行贿-end:" + "\n" + response);
         Integer briCount = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
         companyLawEs.setBriCount(briCount);
         requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).mustNot(queryBuilder2));
-        logger.info("查询" + comName + "司法:" + "\n" + requestBuilder);
+        logger.info("查询" + comName + "司法-begin:" + "\n" + requestBuilder);
         response = requestBuilder.execute().actionGet();
+        logger.info("查询" + comName + "司法-end:" + "\n" + response);
         Integer judCount = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
         companyLawEs.setJudCount(judCount);
         companyLawEs.setTotal(companyLawEs.getBriCount() + companyLawEs.getJudCount());
@@ -282,8 +285,9 @@ public class LawService {
         }
         QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName + "\"").field("comName").splitOnWhitespace(false);
         SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("companyforlaw").setQuery(QueryBuilders.boolQuery().must(queryBuilder1));
-        logger.info("查询elasticsearch:" + "\n" + requestBuilder);
+        logger.info("查询elasticsearch-begin:" + "\n" + requestBuilder);
         SearchResponse response = requestBuilder.execute().actionGet();
+        logger.info("查询elasticsearch-end:" + "\n" + response);
         if (null == response.getHits() || response.getHits().getTotalHits() <= 0) {
             return companyLawEs;
         }
