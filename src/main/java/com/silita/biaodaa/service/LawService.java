@@ -107,7 +107,7 @@ public class LawService {
         addSearchBuild(requestBuilder, pageSort);
         logger.info("查询elasticsearch-beginTime:" + System.currentTimeMillis() + "\n" + requestBuilder);
 //        System.out.println(requestBuilder);
-        SearchResponse response = requestBuilder.execute().actionGet();
+        SearchResponse response = requestBuilder.setFetchSource(new String[]{"date","case_no","title","court"},null).execute().actionGet();
         logger.info("查询elasticsearch-endTime:" + System.currentTimeMillis() + "----------------------------------");
 //        SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "law", querys1, querys, ConstantUtil.CONDITION_MUST, pageSort);
         if (null == response && response.getHits().getTotalHits() <= 0) {
@@ -157,6 +157,7 @@ public class LawService {
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "_id", id));
         SearchRequestBuilder requestBuilder = nativeElasticSearchUtils.baseComplexQuery(client, "biaodaa", "law", querys, null, ConstantUtil.CONDITION_MUST, null);
         logger.info("查询elasticsearch-begin:" + "\n" + requestBuilder);
+        requestBuilder.setFetchSource(new String[]{"date","case_no","title","court","content","url"},null);
         SearchResponse response = nativeElasticSearchUtils.builderToSearchResponse(requestBuilder);
         if (response.getHits().getTotalHits() <= 0) {
             return new Law();
@@ -168,7 +169,7 @@ public class LawService {
         law.setId(response.getHits().getAt(0).getId());
         jsonObject = JSON.parseObject(result);
         law.setDateStr((MyDateUtils.longDateToStr(jsonObject.getLong("date"), "yyyy-MM-dd")));
-        law.setNumber(jsonObject.getString("number"));
+//        law.setNumber(jsonObject.getString("number"));
         law.setCaseNo(jsonObject.getString("case_no"));
         law.setCourt(jsonObject.getString("court"));
         law.setTitle(jsonObject.getString("title"));
@@ -252,12 +253,14 @@ public class LawService {
         QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
         QueryBuilder queryBuilder2 = QueryBuilders.queryStringQuery("\"行贿\"").field("content").splitOnWhitespace(false);
         SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).must(queryBuilder2));
+        requestBuilder.setFetchSource(new String[]{"case_no"},null);
         logger.info("查询" + comName + "行贿-beginTime:" + System.currentTimeMillis() + "\n" + requestBuilder);
         SearchResponse response = requestBuilder.execute().actionGet();
         logger.info("查询" + comName + "行贿-endTime:" + System.currentTimeMillis());
         Integer briCount = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
         companyLawEs.setBriCount(briCount);
         requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).mustNot(queryBuilder2));
+        requestBuilder.setFetchSource(new String[]{"case_no"},null);
         logger.info("查询" + comName + "司法-beginTime:" + System.currentTimeMillis() + "\n" + requestBuilder);
         response = requestBuilder.execute().actionGet();
         logger.info("查询" + comName + "司法-endTime:" + System.currentTimeMillis());

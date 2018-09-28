@@ -23,7 +23,8 @@ public class CleanEsTest extends ConfigTest{
 
     @Test
     public void test(){
-        nativeElasticSearchUtils.deleteIndex(InitElasticseach.initClient(),"company");
+//        nativeElasticSearchUtils.deleteIndex(InitElasticseach.initClient(),"company");
+        delLaw();
     }
 
     /**
@@ -47,18 +48,19 @@ public class CleanEsTest extends ConfigTest{
 
         System.out.println(count_num);
 
-//        public void delLaw(){
-//            QueryBuilder queryBuilder1 = QueryBuilders.rangeQuery("date").gt(new Date().getTime());
-//            QueryBuilder queryBuilder3 = QueryBuilders.boolQuery().must(queryBuilder1);
-//            SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(queryBuilder3).setSize(9000);
-//            SearchResponse response = requestBuilder.execute().actionGet();
-//            DeleteRequestBuilder deleteRequestBuilder;
-//            System.out.println(response.getHits().totalHits);
-//            for (SearchHit hit : response.getHits()) {
-//                System.out.println(hit.getId());
-//                deleteRequestBuilder = client.prepareDelete("biaodaa","law",hit.getId());
-//                deleteRequestBuilder.execute().actionGet();
-//            }
-//        }
+    }
+
+    public void delLaw() {
+        QueryBuilder queryBuilder1 = QueryBuilders.rangeQuery("date").gt(new Date().getTime());
+        QueryBuilder queryBuilder3 = QueryBuilders.boolQuery().must(queryBuilder1);
+        SearchRequestBuilder requestBuilder = InitElasticseach.initLawClient().prepareSearch("biaodaa").setTypes("law").setQuery(queryBuilder3).setSize(9000);
+        SearchResponse response = requestBuilder.execute().actionGet();
+        DeleteRequestBuilder deleteRequestBuilder;
+        System.out.println(response.getHits().totalHits);
+        for (SearchHit hit : response.getHits()) {
+            System.out.println(hit.getId());
+            deleteRequestBuilder = InitElasticseach.initLawClient().prepareDelete("biaodaa", "law", hit.getId());
+            deleteRequestBuilder.execute().actionGet();
+        }
     }
 }
