@@ -96,9 +96,9 @@ public class LawService {
             boolQueryBuilder.must(boolQueryBuilder2).must(queryBuilder3);
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(boolQueryBuilder);
         } else if (null != queryBuilder1) {
-            requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).should(queryBuilder4));
+            requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(boolQueryBuilder1);
         } else if (null != queryBuilder2) {
-            requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder2).should(queryBuilder5));
+            requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(boolQueryBuilder2);
         } else if (null != queryBuilder3) {
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder3));
         } else {

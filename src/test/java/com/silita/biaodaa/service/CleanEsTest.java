@@ -4,9 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.elastic.common.NativeElasticSearchUtils;
 import com.silita.biaodaa.es.InitElasticseach;
+import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.Map;
 
 public class CleanEsTest extends ConfigTest{
@@ -40,5 +47,18 @@ public class CleanEsTest extends ConfigTest{
 
         System.out.println(count_num);
 
+//        public void delLaw(){
+//            QueryBuilder queryBuilder1 = QueryBuilders.rangeQuery("date").gt(new Date().getTime());
+//            QueryBuilder queryBuilder3 = QueryBuilders.boolQuery().must(queryBuilder1);
+//            SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(queryBuilder3).setSize(9000);
+//            SearchResponse response = requestBuilder.execute().actionGet();
+//            DeleteRequestBuilder deleteRequestBuilder;
+//            System.out.println(response.getHits().totalHits);
+//            for (SearchHit hit : response.getHits()) {
+//                System.out.println(hit.getId());
+//                deleteRequestBuilder = client.prepareDelete("biaodaa","law",hit.getId());
+//                deleteRequestBuilder.execute().actionGet();
+//            }
+//        }
     }
 }
