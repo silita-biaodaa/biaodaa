@@ -26,11 +26,11 @@ public class CompanyForLawTask implements Runnable {
 
     private TransportClient transportClient = InitElasticseach.initLawClient();
 
-    public CompanyForLawTask(){
+    public CompanyForLawTask() {
 
     }
 
-    public CompanyForLawTask(int start, int end,TbCompanyMapper tbCompanyMapper,LawService lawService,NativeElasticSearchUtils nativeElasticSearchUtils){
+    public CompanyForLawTask(int start, int end, TbCompanyMapper tbCompanyMapper, LawService lawService, NativeElasticSearchUtils nativeElasticSearchUtils) {
         this.start = start;
         this.end = end;
         this.tbCompanyMapper = tbCompanyMapper;
@@ -45,25 +45,22 @@ public class CompanyForLawTask implements Runnable {
         Integer pageTotal = 0;
         while (pageTotal <= end) {          //线程会循环执行，直到所有数据都处理完
             synchronized (this) {    //在分包时需要线程同步，避免线程间处理重复的数据
-                for (int i = start; i < end; i++) {
-                    if(i == 0){
-                        param.put("page", 0);
-                    }else {
-                        param.put("page", (i - 1) * 1000);
-                    }
+                for (int i = start + 1; i <= end; i++) {
+                    param.put("page", (i - 1) * 1000);
+                    System.out.println(param.get("page") + "\t" + param.get("pageSize"));
                     comList = tbCompanyMapper.queryCompanyEsList(param);
-                    if (comList != null && comList.size() > 0) {
-                        List<CompanyLawEs> lista;
-                        CompanyLawEs companyLawEs;
-                        for (CompanyEs companyEs : comList) {
-                            lista = new ArrayList<>();
-                            companyLawEs = lawService.getCompanyLawCount(companyEs.getComName());
-                            companyLawEs.setComId(companyEs.getComId());
-                            lista.add(companyLawEs);
-                            nativeElasticSearchUtils.batchInsertDate(transportClient, "biaodaa", "companyforlaw", lista);
-                        }
+//                    if (comList != null && comList.size() > 0) {
+                    List<CompanyLawEs> lista;
+                    CompanyLawEs companyLawEs;
+                    for (CompanyEs companyEs : comList) {
+                        lista = new ArrayList<>();
+                        companyLawEs = lawService.getCompanyLawCount(companyEs.getComName());
+                        companyLawEs.setComId(companyEs.getComId());
+                        lista.add(companyLawEs);
+                        nativeElasticSearchUtils.batchInsertDate(transportClient, "biaodaa", "companyforlaw", lista);
                     }
-                    pageTotal = i;
+//                    }
+                    pageTotal = i + 1;
                 }
             }
         }

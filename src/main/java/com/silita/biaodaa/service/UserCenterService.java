@@ -120,7 +120,7 @@ public class UserCenterService {
                 Map<String, Object> param = new HashMap<>();
                 for (Map<String, Object> map : notices) {
                     param.put("comName", map.get("oneName"));
-                    companyLawEs = lawService.queryCompanyLaw(param);
+                    companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
                     map.put("oneLaw", companyLawEs.getTotal());
                 }
             }

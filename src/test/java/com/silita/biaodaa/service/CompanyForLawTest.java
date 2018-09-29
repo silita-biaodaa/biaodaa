@@ -32,10 +32,12 @@ public class CompanyForLawTest extends ConfigTest {
         //获取pages
         Integer pages = elasticseachService.getPage(count, 1000);
 //        Integer pages = 101;
-        Integer pers = elasticseachService.getPage(pages, 5);
+        Integer pers = elasticseachService.getPage(pages, 6);
         CountDownLatch countDownLatch = new CountDownLatch(6);
-        for (int i = 1; i < 6; i++) {
+        for (int i = 1; i < 7; i++) {
             CompanyForLawTask companyForLawTask = new CompanyForLawTask(((i - 1) * pers), (((i - 1) * pers) + pers), tbCompanyMapper,lawService,nativeElasticSearchUtils);
+//            CompanyForLawTask companyForLawTask = new CompanyForLawTask(5, 10, tbCompanyMapper,lawService,nativeElasticSearchUtils);
+//            companyForLawTask.run();
             Thread t = new Thread(companyForLawTask);
             t.start();
             System.out.println(((i - 1) * pers) + "\t" + (((i - 1) * pers) + pers));

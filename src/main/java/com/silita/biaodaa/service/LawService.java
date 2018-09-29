@@ -278,30 +278,53 @@ public class LawService {
      */
     public CompanyLawEs queryCompanyLaw(Map<String, Object> param) {
         String comName = MapUtils.getString(param, "comName");
-        CompanyLawEs companyLawEs = new CompanyLawEs();
-        companyLawEs.setTotal(0);
-        companyLawEs.setBriCount(0);
-        companyLawEs.setJudCount(0);
-        if (MyStringUtils.isNull(comName)) {
-            return companyLawEs;
+        if(MyStringUtils.isNull(comName)){
+            return new CompanyLawEs();
         }
-        QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName + "\"").field("comName").splitOnWhitespace(false);
-        SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("companyforlaw").setQuery(QueryBuilders.boolQuery().must(queryBuilder1));
-        logger.info("查询elasticsearch-begin:" + "\n" + requestBuilder);
-        SearchResponse response = requestBuilder.execute().actionGet();
-        if (null == response.getHits() || response.getHits().getTotalHits() <= 0) {
-            return companyLawEs;
-        }
-        String result = response.getHits().getAt(0).getSourceAsString();
-        JSONObject jsonObject = JSON.parseObject(result);
-        companyLawEs.setComId(jsonObject.getString("comId"));
-        companyLawEs.setTotal(jsonObject.getInteger("total"));
-        companyLawEs.setJudCount(jsonObject.getInteger("judCount"));
-        companyLawEs.setComName(jsonObject.getString("comName"));
-        companyLawEs.setBriCount(jsonObject.getInteger("briCount"));
+//        CompanyLawEs companyLawEs = new CompanyLawEs();
+//        companyLawEs.setTotal(0);
+//        companyLawEs.setBriCount(0);
+//        companyLawEs.setJudCount(0);
+//        if (MyStringUtils.isNull(comName)) {
+//            return companyLawEs;
+//        }
+//        QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName + "\"").field("comName").splitOnWhitespace(false);
+//        SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("companyforlaw").setQuery(QueryBuilders.boolQuery().must(queryBuilder1));
+//        logger.info("查询elasticsearch-begin:" + "\n" + requestBuilder);
+//        SearchResponse response = requestBuilder.execute().actionGet();
+//        if (null == response.getHits() || response.getHits().getTotalHits() <= 0) {
+//            return companyLawEs;
+//        }
+//        String result = response.getHits().getAt(0).getSourceAsString();
+//        JSONObject jsonObject = JSON.parseObject(result);
+//        companyLawEs.setComId(jsonObject.getString("comId"));
+//        companyLawEs.setTotal(jsonObject.getInteger("total"));
+//        companyLawEs.setJudCount(jsonObject.getInteger("judCount"));
+//        companyLawEs.setComName(jsonObject.getString("comName"));
+//        companyLawEs.setBriCount(jsonObject.getInteger("briCount"));
+        CompanyLawEs companyLawEs = getCompanyLawCount(comName);
         return companyLawEs;
     }
 
+    /**
+     * 查询中标企业法务个数
+     * @param param
+     * @return
+     */
+    public CompanyLawEs queryZhongbiaoCompanyLaw(Map<String, Object> param) {
+        String comName = MapUtils.getString(param, "comName");
+        if(MyStringUtils.isNull(comName)){
+            return new CompanyLawEs();
+        }
+        CompanyLawEs companyLawEs = new CompanyLawEs();
+        companyLawEs.setComName(comName);
+        QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
+        SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1));
+        SearchResponse response = requestBuilder.execute().actionGet();
+        Integer total = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
+        companyLawEs.setTotal(total);
+        return companyLawEs;
+    }
     /**
      * 查询公司资质
      *
