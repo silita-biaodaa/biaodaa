@@ -352,7 +352,7 @@
     </select>
 
     <select id="queryNoticeDetail" resultType="Map" parameterType="Map">
-        SELECT s.id,s.title,s.opendate,s.type
+        SELECT s.id,s.title,s.opendate,s.type,#{source} as source
         ,<include refid="noticeTypeConvert"/>
         ,s.url,
         <choose>

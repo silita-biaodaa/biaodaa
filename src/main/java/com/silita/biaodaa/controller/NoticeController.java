@@ -504,6 +504,9 @@ public class NoticeController extends BaseController {
         try {
             settingUserId(params);
             params.put("id", id);
+            if(null == params.get("source")){
+                params.put("source",HUNAN_SOURCE);
+            }
             int paramHash = ObjectUtils.buildMapParamHash(params);
             String listKey = RedisConstantInterface.GG_DETAIL + paramHash;
             List<Map> detailList = (List<Map>) myRedisTemplate.getObject(listKey);
