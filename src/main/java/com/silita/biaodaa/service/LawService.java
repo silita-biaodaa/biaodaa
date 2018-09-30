@@ -319,7 +319,7 @@ public class LawService {
         CompanyLawEs companyLawEs = new CompanyLawEs();
         companyLawEs.setComName(comName);
         QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
-        SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1));
+        SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1)).setSize(1);
         requestBuilder.setFetchSource(new String[]{},null);
         logger.info("查询elasticsearch-beginTime:" + System.currentTimeMillis() + "\n" + requestBuilder);
         SearchResponse response = requestBuilder.execute().actionGet();
