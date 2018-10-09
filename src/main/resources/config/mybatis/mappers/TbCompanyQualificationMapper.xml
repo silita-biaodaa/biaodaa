@@ -6,4 +6,7 @@
     select * from tb_company_qualification where com_id = #{comId} GROUP BY qual_name ORDER BY valid_date DESC
   </select>
 
+  <select id="queryCompanyQualCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+     select count(1) from tb_company_qualification where com_id = #{comId}
+  </select>
 </mapper>

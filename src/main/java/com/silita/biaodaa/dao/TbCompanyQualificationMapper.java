@@ -17,4 +17,11 @@ public interface TbCompanyQualificationMapper extends MyMapper<TbCompanyQualific
      * @return
      */
     List<TbCompanyQualification> queryCompanyQualification(String comId);
+
+    /**
+     * 查询公司资质
+     * @param comId
+     * @return
+     */
+    Integer queryCompanyQualCount(String comId);
 }
