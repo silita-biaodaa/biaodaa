@@ -43,15 +43,15 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        // TODO: 将分值存入Map
+        // 将分值存入Map
         Map<String, Object> scoreMap = this.getPrizeScoreMap();
-        // TODO: 获取国家级奖项并去重
+        // 获取国家级奖项并去重
         Map<String, Object> nationMap = this.getDeWeightList(this.getNationCert(yearMap, comMap), scoreMap);
-        // TODO: 获取省级奖项并去重
+        // 获取省级奖项并去重
         Map<String, Object> provinceMap = this.getDeWeightList(this.getProvinceCert(yearMap, comMap), scoreMap);
-        // TODO: 将国家级奖项和省级奖项去重
+        // 将国家级奖项和省级奖项去重
         this.getCertList(nationMap, provinceMap,scoreMap);
-        // TODO: 开始计算
+        // 开始计算
         List<Integer> saveTableList = new ArrayList<>();
         Double natoTotal = computeNation(nationMap, saveTableList);
         Double proTotal = computeProvince(provinceMap, saveTableList);
@@ -65,7 +65,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         return total;
     }
 
-    // TODO: 获取全部奖项颁发的最新时间
+    // 获取全部奖项颁发的最新时间
     private Map<String, Object> getYears(Map<String, Object> param) throws ParseException {
         Map<String, Object> resultMap = new HashMap<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年");
@@ -115,7 +115,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         return resultMap;
     }
 
-    // TODO: 获取国家级奖项
+    // 获取国家级奖项
     private Map<String, Object> getNationCert(Map<String, Object> yearMap, Map<String, Object> comMap) {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> param = new HashMap<>();
@@ -164,7 +164,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         return resultMap;
     }
 
-    // TODO: 获取省级奖项
+    // 获取省级奖项
     private Map<String, Object> getProvinceCert(Map<String, Object> yearMap, Map<String, Object> comMap) {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Object> param = new HashMap<>();
@@ -201,7 +201,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         return resultMap;
     }
 
-    // TODO: 存奖项分值
+    // 存奖项分值
     private Map<String, Object> getPrizeScoreMap() {
         Map<String, Object> scoreMap = new HashMap<>();
         //国家奖项
@@ -214,7 +214,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         return scoreMap;
     }
 
-    // TODO: 奖项去重
+    // 奖项去重
     private Map<String, Object> getDeWeightList(Map<String, Object> nationMap, Map<String, Object> scoreMap) {
         if (null == nationMap.get("certList")) {
             return nationMap;
@@ -249,7 +249,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         return nationMap;
     }
 
-    // TODO: 将国家级和省级奖项去重
+    // 将国家级和省级奖项去重
     private void getCertList(Map<String, Object> nationMap, Map<String, Object> provinceMap, Map<String, Object> scoreMap) {
         List<Map<String, Object>> nationList = (List<Map<String, Object>>) nationMap.get("certList");
         List<Map<String, Object>> provinceList = (List<Map<String, Object>>) provinceMap.get("certList");
@@ -305,7 +305,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         }
     }
 
-    // TODO: 计算国家级奖项分值
+    // 计算国家级奖项分值
     private Double computeNation(Map<String, Object> nationMap, List<Integer> saveTable) {
         Double luCount = 0D;
         Double buCount = 0D;
@@ -382,7 +382,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         return total;
     }
 
-    // TODO: 计算省级奖项分值
+    // 计算省级奖项分值
     private Double computeProvince(Map<String, Object> proMap, List<Integer> saveTable) {
         Double lotusCount = 0D;
         Double superCount = 0D;

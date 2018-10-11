@@ -28,7 +28,7 @@ public class UndesirableFilterHandler extends BaseFilterHandler<UndesirableBean>
         return "不良行为";
     }
 
-    // TODO: 18/7/3 处理资源数据
+    // 18/7/3 处理资源数据
     @Override
     Double doHandler(Map resourceMap) {
         Map<String,Object> comMap = (Map<String, Object>) resourceMap.get("comInfo");
@@ -61,7 +61,7 @@ public class UndesirableFilterHandler extends BaseFilterHandler<UndesirableBean>
         return total;
     }
 
-    // TODO: 获取总数分值
+    // 获取总数分值
     private Double getTotal(List<Map<String,Object>> undesList){
         Double total = 0D;
         Double comTotal = 0D;

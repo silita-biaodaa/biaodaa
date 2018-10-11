@@ -34,7 +34,7 @@ public class SafetyFilterHandler extends BaseFilterHandler<SafetyBean> {
         return "安全认证";
     }
 
-    // TODO: 18/7/3 处理资源数据
+    // 18/7/3 处理资源数据
     @Override
     Double doHandler(Map resourceMap) {
         Map<String,Object> comMap = (Map<String, Object>) resourceMap.get("comInfo");
@@ -44,7 +44,7 @@ public class SafetyFilterHandler extends BaseFilterHandler<SafetyBean> {
         Double total = 0D;
         if(null != safetyList && safetyList.size() > 0){
             Map<String,Object> scoreMap = this.getSafetyScore();
-            // TODO: 去重
+            // 去重
             if(safetyList.size() > 1){
                 this.getDeWeight(safetyList,scoreMap);
             }
@@ -62,7 +62,7 @@ public class SafetyFilterHandler extends BaseFilterHandler<SafetyBean> {
         return total;
     }
 
-    // TODO: 存储分值
+    // 存储分值
     private Map<String,Object> getSafetyScore(){
         Map<String,Object> scoreMap = new HashMap<>();
         scoreMap.put("省级优秀",this.config.getProvinceExcell());
@@ -72,7 +72,7 @@ public class SafetyFilterHandler extends BaseFilterHandler<SafetyBean> {
         return  scoreMap;
     }
 
-    // TODO: 去重
+    // 去重
     private void getDeWeight(List<Map<String,Object>> safetyList,Map<String,Object> scoreMap){
         List<Map<String,Object>> screList = new ArrayList<>();
         Map<String,Object> sMap = null;

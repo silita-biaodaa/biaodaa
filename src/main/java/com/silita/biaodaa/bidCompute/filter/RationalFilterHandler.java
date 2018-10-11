@@ -35,14 +35,14 @@ public class RationalFilterHandler extends BaseFilterHandler<RationalBean> {
         return "信用等级";
     }
 
-    // TODO: 18/7/3 处理资源数据
+    // 18/7/3 处理资源数据
     @Override
     Double doHandler(Map resourceMap) {
         Map<String, Object> comMap = (Map<String, Object>) resourceMap.get("comInfo");
         Map<String, Object> param = new HashMap<>();
         param.put("list", comMap.get("srcUuidList"));
 
-        // TODO: 开始计算
+        // 开始计算
         Map<String, Object> reaMap = null;
         Double yearTotal = 0D;
         Double oneYearTotal = 0D;
@@ -82,7 +82,7 @@ public class RationalFilterHandler extends BaseFilterHandler<RationalBean> {
         return total;
     }
 
-    // TODO:获取分值
+    // 获取分值
     private Double getTotal(Map<String, Object> reaMap) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         Date d = sdf.parse(reaMap.get("near").toString());
