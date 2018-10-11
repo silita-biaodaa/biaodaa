@@ -222,7 +222,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         List<Map<String, Object>> nationList = (List<Map<String, Object>>) nationMap.get("certList");
         Integer count = 0;
         for (int i = 0; i < nationList.size() - 1; i++) {
-            for (int j = nationList.size() - 1; j > i; j--)
+            for (int j = nationList.size() - 1; j > i; j--) {
                 if (nationList.get(j).get("projName").toString().equals(nationList.get(i).get("projName").toString())) {
                     Double d1 = (Double) scoreMap.get(nationList.get(j).get("mateName").toString());
                     Double d2 = (Double) scoreMap.get(nationList.get(i).get("mateName").toString());
@@ -243,6 +243,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
                         nationList.remove(j);
                     }
                 }
+            }
         }
         nationMap.put("certList", nationList);
         return nationMap;
