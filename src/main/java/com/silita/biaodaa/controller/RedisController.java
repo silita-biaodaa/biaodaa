@@ -21,7 +21,7 @@ public class RedisController {
     private MyRedisTemplate myRedisTemplate;
 
     /**
-     * TODO: 清除缓存
+     * 清除缓存
      *
      * @param model
      * @param key
