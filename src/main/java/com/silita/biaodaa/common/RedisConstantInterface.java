@@ -21,9 +21,9 @@ public interface RedisConstantInterface {
 
 	int DETAIL_OVER_TIME = 30*60;
 
-//	int LIST_OVER_TIME = 600;
+	int LIST_OVER_TIME = 600;
 
-	int LIST_OVER_TIME = 3600*24;
+//	int LIST_OVER_TIME = 3600*24;
 
 	int COM_OVER_TIME = 60*60;
 
