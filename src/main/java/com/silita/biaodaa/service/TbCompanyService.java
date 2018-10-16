@@ -68,6 +68,9 @@ public class TbCompanyService {
     @Autowired
     MyRedisTemplate myRedisTemplate;
 
+    @Autowired
+    QualService qualService;
+
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
     private ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
@@ -151,10 +154,10 @@ public class TbCompanyService {
         for (String key : set) {
             Map<String, Object> map = new HashMap<>();
             map.put("qualType", getQualType(key));
-            map.put("list", qualMap.get(key));
+            map.put("list", qualService.sortCompanyQual(qualMap.get(key),key));
             list.add(map);
         }
-        return list;
+        return qualService.sortQualType2(list);
     }
 
     public List<Map<String, Object>> getCompanyPersonCate(String comId) {

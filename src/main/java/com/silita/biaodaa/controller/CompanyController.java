@@ -59,7 +59,7 @@ public class CompanyController extends BaseController {
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
     /**
-     * TODO: 查询企业列表
+     *  查询企业列表
      *
      * @param params
      * @return
@@ -111,7 +111,7 @@ public class CompanyController extends BaseController {
 
 
     /**
-     * TODO: 企业详情
+     *  企业详情
      *
      * @param comId
      * @return
@@ -122,15 +122,8 @@ public class CompanyController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业查询失败!");
-//        comId = this.getComId(comId);
         try {
             TbCompany tbCompany = tbCompanyService.getCompany(comId);
-            //生成随机数
-//            Integer id = this.code();
-//            Map<String, Object> valueId = new HashMap<>();
-//            valueId.put("comId", tbCompany.getComId());
-//            myRedisTemplate.setObject(id.toString(), valueId, COM_OVER_TIME);
-//            tbCompany.setComId(id.toString());
             result.put("data", tbCompany);
             result.put("code", 1);
             result.put("msg", "查询成功!");
@@ -147,7 +140,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 企业资质
+     *  企业资质
      *
      * @param comId
      * @return
@@ -158,7 +151,6 @@ public class CompanyController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业资质失败!");
-//        String id = getComId(comId);
         try {
             List<Map<String, Object>> queryQualList = tbCompanyService.queryQualList(comId);
             result.put("data", queryQualList);
@@ -177,7 +169,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 企业人员注册类别
+     *  企业人员注册类别
      *
      * @param comId
      * @return
@@ -188,7 +180,6 @@ public class CompanyController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "获取企业注册人员类别失败!");
-//        String id = getComId(comId);
         try {
             List<Map<String, Object>> list = tbCompanyService.getCompanyPersonCate(comId);
             result.put("data", list);
@@ -208,7 +199,7 @@ public class CompanyController extends BaseController {
 
 
     /**
-     * TODO: 企业人员列表
+     *  企业人员列表
      *
      * @param params
      * @return
@@ -228,7 +219,6 @@ public class CompanyController extends BaseController {
         try {
             checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
             String comId = MapUtils.getString(params, "comId");
-//            comId = getComId(comId);
             String category = MapUtils.getString(params, "category");
             String keyWord = MapUtils.getString(params, "keyWord");
             String province = MapUtils.getString(params, "province");
@@ -237,7 +227,7 @@ public class CompanyController extends BaseController {
 
 
             if (keyWord != null && !"".equals(keyWord)) {
-                // TODO: 18/5/21 更新排序移到打开人员处理
+                //  18/5/21 更新排序移到打开人员处理
                 //tbCompanyService.updatePersonPX(tableCode,keyWord);
                 param.put("keyWord", keyWord);
             }
@@ -262,7 +252,7 @@ public class CompanyController extends BaseController {
             }
 
             param.put("tableCode", tableCode);
-            if(MyStringUtils.isNotNull(category)){
+            if (MyStringUtils.isNotNull(category)) {
                 param.put("category", category);
             }
 
@@ -291,7 +281,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 筛选条件
+     *  筛选条件
      *
      * @return
      */
@@ -319,7 +309,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 企业筛选列表
+     *  企业筛选列表
      *
      * @param params
      * @return
@@ -381,7 +371,7 @@ public class CompanyController extends BaseController {
             param.put("maxCapital", maxCapital);
             param.put("qualCode", StringUtils.strip(code, ","));
             param.put("keyWord", keyWord);
-            param.put("rangeType",rangeType);
+            param.put("rangeType", rangeType);
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
@@ -411,7 +401,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO:企业信誉
+     * 企业信誉
      *
      * @param comId
      * @return
@@ -422,7 +412,6 @@ public class CompanyController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业信誉查询失败!");
-//        comId = getComId(comId);
         try {
             Map<String, Object> map = tbCompanyService.getCompanyReputation(comId);
             result.put("data", map);
@@ -441,7 +430,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 企业不良行为
+     *  企业不良行为
      *
      * @param comId
      * @return
@@ -452,7 +441,6 @@ public class CompanyController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业不良记录查询失败!");
-//        comId = getComId(comId);
         try {
             Map<String, Object> map = tbCompanyService.getUndesirable(comId);
             result.put("data", map);
@@ -471,7 +459,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO:根据企业id获得logo
+     * 根据企业id获得logo
      *
      * @param params
      * @return
@@ -485,7 +473,6 @@ public class CompanyController extends BaseController {
         try {
             String comId = params.get("comId").toString();
             Preconditions.checkArgument(null != comId && "" != comId, "comId不能为空");
-//            comId = getComId(comId);
             String logo = tbCompanyService.getLogo(comId);
             result.put("data", logo);
             result.put("code", 1);
@@ -498,7 +485,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 人员详细信息
+     *  人员详细信息
      *
      * @param params
      * @return
@@ -521,7 +508,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 返回地区列表
+     *  返回地区列表
      *
      * @param
      * @return
@@ -550,7 +537,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 获取公司详情根据名称
+     *  获取公司详情根据名称
      *
      * @param params
      * @return
@@ -572,7 +559,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 根据企业名称检索
+     *  根据企业名称检索
      *
      * @param params
      * @return
@@ -595,7 +582,7 @@ public class CompanyController extends BaseController {
 
 
     /**
-     * TODO: 封装筛选条件
+     *  封装筛选条件
      *
      * @return
      */
@@ -622,7 +609,7 @@ public class CompanyController extends BaseController {
 
 
     /**
-     * TODO: 热门企业
+     * 热门企业
      *
      * @param param
      * @return
@@ -642,7 +629,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 分支机构
+     *  分支机构
      *
      * @param param
      * @return
@@ -660,7 +647,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 企业分享-业绩/人员/分支机构个数
+     *  企业分享-业绩/人员/分支机构个数
      *
      * @param param
      * @return
@@ -671,18 +658,15 @@ public class CompanyController extends BaseController {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
-//        String comId = MapUtils.getString(param,"comId");
-//        comId = getComId(comId);
-//        param.put("comId",comId);
-        Map<String,Object> personMap = this.queryPerson(param);
-        Map<String,Object> valueMap = tbCompanyService.getShareTotal(param);
-        valueMap.put("personTotal",personMap.get("total"));
-        resultMap.put("data",valueMap);
+        Map<String, Object> personMap = this.queryPerson(param);
+        Map<String, Object> valueMap = tbCompanyService.getShareTotal(param);
+        valueMap.put("personTotal", personMap.get("total"));
+        resultMap.put("data", valueMap);
         return resultMap;
     }
 
     /**
-     * TODO: es导入
+     *  es导入
      *
      * @return
      */
@@ -697,7 +681,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * TODO: 分支机构es导入
+     *  分支机构es导入
      *
      * @return
      */
@@ -710,21 +694,4 @@ public class CompanyController extends BaseController {
         elasticseachService.batchAddBranchCompany();
         return resultMap;
     }
-
-
-    //TODO: 获取随机码
-    private int code() {
-        Random random = new Random();
-        int code = random.nextInt(1000000000);
-        return code;
-    }
-
-    // TODO: 获取redis中企业id
-//    public String getComId(String id) {
-//        Map<String, Object> comIdMap = (Map<String, Object>) myRedisTemplate.getObject(id);
-//        if (null == comIdMap) {
-//            return id;
-//        }
-//        return MapUtils.getString(comIdMap, "comId");
-//    }
 }

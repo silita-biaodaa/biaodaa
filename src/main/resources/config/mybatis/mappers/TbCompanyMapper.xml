@@ -296,6 +296,7 @@
               ,t.com_name_py
               ,IFNULL(t.px,0) AS px
               ,regis_address AS regisAddress
+              ,credit_code AS creditCode
       FROM tb_company t
       WHERE 1=1
       AND t.`com_name` IS NOT NULL AND t.`com_name` != ''

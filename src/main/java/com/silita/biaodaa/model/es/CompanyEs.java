@@ -27,6 +27,9 @@ public class CompanyEs extends ElasticEntity {
     @Filed(type = FieldType.keyword)
     private String regisAddress;
 
+    @Filed(type = FieldType.keyword)
+    private String creditCode;
+
     public String getId() {
         return this.comId;
     }
