@@ -11,7 +11,7 @@ public class QualTest {
 
     @Test
     public void test() {
-        String qualStr = "建筑工程施工总承包特级,电力工程施工总承包叁级,机电工程施工总承包壹级,市政公用工程施工总承包壹级,公路工程施工总承包贰级,水利水电工程施工总承包贰级,城市及道路照明工程专业承包叁级,钢结构工程专业承包壹级,环保工程专业承包壹级,建筑装修装饰工程专业承包壹级,地基基础工程专业承包壹级";
+        String qualStr = "消防设施工程专业承包贰级,防水防腐保温工程专业承包贰级,建筑装修装饰工程专业承包贰级,建筑幕墙工程专业承包贰级,水利水电工程施工总承包叁级,建筑工程施工总承包叁级,公路工程施工总承包叁级,市政公用工程施工总承包叁级,机电工程施工总承包叁级,电力工程施工总承包叁级,矿山工程施工总承包叁级,石油化工工程施工总承包叁级,公路路基工程专业承包叁级,河湖整治工程专业承包叁级,公路路面工程专业承包叁级,环保工程专业承包叁级,地基基础工程专业承包叁级,桥梁工程专业承包叁级,隧道工程专业承包叁级,钢结构工程专业承包叁级,建筑机电安装工程专业承包叁级,古建筑工程专业承包叁级,城市及道路照明工程专业承包叁级,施工劳务不分等级";
         String[] qual = qualStr.split(",");
         List<Map<String, Object>> qualList = new ArrayList<>();
         Map<String, Object> map;
@@ -105,7 +105,20 @@ public class QualTest {
                         resultList.add(qualList.get(i));
                     }
                 } else {
-                    resultList.add(qualList.get(i));
+                    if (qualList.get(i).get("value").toString().contains("特级")) {
+                        index = getGradeIndex2(resultList, "水利", "公路", "市政", "建筑", "特级", "特级");
+                    } else if (qualList.get(i).get("value").toString().contains("壹级")) {
+                        index = getGradeIndex2(resultList, "水利", "公路", "市政", "建筑", "壹级", "特级");
+                    } else if (qualList.get(i).get("value").toString().contains("贰级")) {
+                        index = getGradeIndex2(resultList, "水利", "公路", "市政", "建筑", "贰级","壹级");
+                    } else if (qualList.get(i).get("value").toString().contains("叁级")) {
+                        index = getGradeIndex2(resultList, "水利", "公路", "市政", "建筑", "叁级","贰级");
+                    }
+                    if (index > 0) {
+                        resultList.add(index, qualList.get(i));
+                    } else {
+                        resultList.add(qualList.get(i));
+                    }
                 }
             } else {
                 resultList.add(qualList.get(i));
@@ -154,15 +167,40 @@ public class QualTest {
         return index;
     }
 
+    private int getGradeIndex2(List<Map<String, Object>> resultList, String... value) {
+        int index = getLastIndex3(resultList, value[0], value[1], value[2], value[3], value[4], value[5]) + 1;
+        return index;
+    }
+
+    private int getLastIndex3(List<Map<String, Object>> resultList, String... value) {
+        int index = -1;
+        for (int i = resultList.size() - 1; i >= 0; i--) {
+            if (resultList.get(i).get("value").toString().contains("总承包")) {
+                if ((resultList.get(i).get("value").toString().contains(value[0])
+                        || resultList.get(i).get("value").toString().contains(value[1])
+                        || resultList.get(i).get("value").toString().contains(value[2])
+                        || resultList.get(i).get("value").toString().contains(value[3]))
+                        && (resultList.get(i).get("value").toString().contains(value[4])
+                        || resultList.get(i).get("value").toString().contains(value[5]))) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
     private int getLastIndex2(List<Map<String, Object>> resultList, String... value) {
         int index = -1;
         for (int i = resultList.size() - 1; i >= 0; i--) {
-            if (resultList.get(i).get("value").toString().contains(value[0])
-                    || resultList.get(i).get("value").toString().contains(value[1])
-                    || resultList.get(i).get("value").toString().contains(value[2])
-                    || resultList.get(i).get("value").toString().contains(value[3])) {
-                index = i;
-                break;
+            if(resultList.get(i).get("value").toString().contains("总承包")){
+                if (resultList.get(i).get("value").toString().contains(value[0])
+                        || resultList.get(i).get("value").toString().contains(value[1])
+                        || resultList.get(i).get("value").toString().contains(value[2])
+                        || resultList.get(i).get("value").toString().contains(value[3])) {
+                    index = i;
+                    break;
+                }
             }
         }
         return index;
