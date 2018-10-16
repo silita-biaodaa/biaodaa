@@ -19,13 +19,13 @@ public class QualService {
     public List<TbCompanyQualification> sortCompanyQual(List<TbCompanyQualification> qualList, String qualType) {
         if ("建筑业企业资质".equals(qualType)) {
 
-            //按资质类型排序
-            List<TbCompanyQualification> resultList = this.sortQual(qualList);
-            //同等级按不同专业排序
-            List<TbCompanyQualification> resultList2 = this.sortQualType(resultList);
             //资质按等级排序
-            List<TbCompanyQualification> result = this.sortQualGrade(resultList2);
-            return result;
+            List<TbCompanyQualification> result = this.sortQualGrade(qualList);
+            //同等级按不同专业排序
+            List<TbCompanyQualification> resultList2 = this.sortQualType(result);
+            //按资质类型排序
+            List<TbCompanyQualification> resultList = this.sortQual(resultList2);
+            return resultList;
         }
         //排序等级
         List<TbCompanyQualification> result = this.sortQualGrade(qualList);
@@ -61,12 +61,12 @@ public class QualService {
         for (int i = 0; i < qualList.size(); i++) {
             if (qualList.get(i).getQualName().contains("特级")) {
                 resultList.add(getIndex(resultList, "特级") + 1, qualList.get(i));
-            } else if (qualList.get(i).getQualName().contains("一级")) {
-                resultList.add(getIndex(resultList, "特级", "一级") + 1, qualList.get(i));
-            } else if (qualList.get(i).getQualName().contains("二级")) {
-                resultList.add(getIndex(resultList, "一级", "二级") + 1, qualList.get(i));
-            } else if (qualList.get(i).getQualName().contains("三级")) {
-                resultList.add(getIndex(resultList, "二级", "三级") + 1, qualList.get(i));
+            } else if (qualList.get(i).getQualName().contains("壹级")) {
+                resultList.add(getIndex(resultList, "特级", "壹级") + 1, qualList.get(i));
+            } else if (qualList.get(i).getQualName().contains("贰级")) {
+                resultList.add(getIndex(resultList, "壹级", "贰级") + 1, qualList.get(i));
+            } else if (qualList.get(i).getQualName().contains("叁级")) {
+                resultList.add(getIndex(resultList, "贰级", "叁级") + 1, qualList.get(i));
             } else if (qualList.get(i).getQualName().contains("甲级")) {
                 resultList.add(getIndex(resultList, "甲级") + 1, qualList.get(i));
             } else if (qualList.get(i).getQualName().contains("乙级")) {
@@ -126,6 +126,24 @@ public class QualService {
             }
         }
         return resultList;
+    }
+
+    /**
+     * 获取下标
+     * @param resultList
+     * @param value
+     * @return
+     */
+    private int getLastIndex4(List<TbCompanyQualification> resultList, String... value) {
+        int index = -1;
+        for (int i = resultList.size() - 1; i >= 0; i--) {
+            if ((resultList.get(i).getQualName().contains(value[0]) && resultList.get(i).getQualName().contains(value[1]))
+                    ||(resultList.get(i).getQualName().contains(value[0]) && resultList.get(i).getQualName().contains(value[2]))) {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     /**
