@@ -18,70 +18,79 @@ public class QualService {
      */
     public List<TbCompanyQualification> sortCompanyQual(List<TbCompanyQualification> qualList, String qualType) {
         if ("建筑业企业资质".equals(qualType)) {
-
-            //资质按等级排序
-            List<TbCompanyQualification> result = this.sortQualGrade(qualList);
-            //同等级按不同专业排序
-            List<TbCompanyQualification> resultList2 = this.sortQualType(result);
-            //按资质类型排序
-            List<TbCompanyQualification> resultList = this.sortQual(resultList2);
-            return resultList;
+            return sortQual(qualList);
         }
         //排序等级
-        List<TbCompanyQualification> result = this.sortQualGrade(qualList);
+        List<TbCompanyQualification> result = this.sortQualGrade(this.sortQualGrade(qualList));
         return result;
     }
 
     /**
      * 施工资质分类
+     *
      * @param qualList
      * @return
      */
     private List<TbCompanyQualification> sortQual(List<TbCompanyQualification> qualList) {
         List<TbCompanyQualification> resultList = new ArrayList<>();
+        List<TbCompanyQualification> contractList = new ArrayList<>();
+        List<TbCompanyQualification> majorList = new ArrayList<>();
+        List<TbCompanyQualification> buildList = new ArrayList<>();
         for (int i = 0; i < qualList.size(); i++) {
             if (qualList.get(i).getQualName().contains("总承包")) {
-                resultList.add(getLastIndex(resultList, "总承包") + 1, qualList.get(i));
+                contractList.add(qualList.get(i));
             } else if (qualList.get(i).getQualName().contains("专业承包")) {
-                resultList.add(getGradeIndex2(resultList, "专业承包","专业承包" ,"总承包"), qualList.get(i));
+                majorList.add(qualList.get(i));
             } else {
-                resultList.add(qualList.get(i));
+                buildList.add(qualList.get(i));
             }
+        }
+        if (null != contractList && contractList.size() > 0) {
+            resultList.addAll(this.sortQualGrade(this.sortQualGrade(this.sortQualType(contractList))));
+        }
+        if (null != majorList && majorList.size() > 0) {
+            resultList.addAll(sortQualGrade(majorList));
+        }
+        if (null != buildList && buildList.size() > 0) {
+            resultList.addAll(buildList);
         }
         return resultList;
     }
 
     /**
      * 资质等级
+     *
      * @param qualList
      * @return
      */
     private List<TbCompanyQualification> sortQualGrade(List<TbCompanyQualification> qualList) {
         List<TbCompanyQualification> resultList = new ArrayList<>();
+        int index = -1;
         for (int i = 0; i < qualList.size(); i++) {
             if (qualList.get(i).getQualName().contains("特级")) {
-                resultList.add(getIndex(resultList, "特级") + 1, qualList.get(i));
+                index = getIndex(resultList, "特级") + 1;
             } else if (qualList.get(i).getQualName().contains("壹级")) {
-                resultList.add(getIndex(resultList, "特级", "壹级") + 1, qualList.get(i));
+                index = getIndex3(resultList, "特级", "壹级") + 1;
+
             } else if (qualList.get(i).getQualName().contains("贰级")) {
-                resultList.add(getIndex(resultList, "壹级", "贰级") + 1, qualList.get(i));
+                index = getIndex3(resultList, "壹级", "贰级") + 1;
             } else if (qualList.get(i).getQualName().contains("叁级")) {
-                resultList.add(getIndex(resultList, "贰级", "叁级") + 1, qualList.get(i));
+                index = getIndex3(resultList, "贰级", "叁级") + 1;
             } else if (qualList.get(i).getQualName().contains("甲级")) {
-                resultList.add(getIndex(resultList, "甲级") + 1, qualList.get(i));
+                index = getIndex(resultList, "甲级") + 1;
             } else if (qualList.get(i).getQualName().contains("乙级")) {
-                resultList.add(getIndex(resultList, "甲级", "乙级") + 1, qualList.get(i));
+                index = getIndex3(resultList, "甲级", "乙级") + 1;
             } else if (qualList.get(i).getQualName().contains("丙级")) {
-                resultList.add(getIndex(resultList, "乙级", "丙级") + 1, qualList.get(i));
-            } else {
-                resultList.add(qualList.get(i));
+                index = getIndex3(resultList, "乙级", "丙级") + 1;
             }
+            resultList.add(index, qualList.get(i));
         }
         return resultList;
     }
 
     /**
      * 同等级按不同专业排序
+     *
      * @param qualList
      * @return
      */
@@ -130,24 +139,7 @@ public class QualService {
 
     /**
      * 获取下标
-     * @param resultList
-     * @param value
-     * @return
-     */
-    private int getLastIndex4(List<TbCompanyQualification> resultList, String... value) {
-        int index = -1;
-        for (int i = resultList.size() - 1; i >= 0; i--) {
-            if ((resultList.get(i).getQualName().contains(value[0]) && resultList.get(i).getQualName().contains(value[1]))
-                    ||(resultList.get(i).getQualName().contains(value[0]) && resultList.get(i).getQualName().contains(value[2]))) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-
-    /**
-     * 获取下标
+     *
      * @param resultList
      * @param value
      * @return
@@ -163,6 +155,7 @@ public class QualService {
 
     /**
      * 获取下标
+     *
      * @param resultList
      * @param value
      * @return
@@ -178,6 +171,7 @@ public class QualService {
 
     /**
      * 获取下标
+     *
      * @param resultList
      * @param value
      * @return
@@ -201,6 +195,7 @@ public class QualService {
 
     /**
      * 获取下标
+     *
      * @param resultList
      * @param value
      * @return
@@ -220,6 +215,7 @@ public class QualService {
 
     /**
      * 获取下标
+     *
      * @param resultList
      * @param value
      * @return
@@ -243,13 +239,9 @@ public class QualService {
         return index;
     }
 
-    private int getGradeIndex2(List<TbCompanyQualification> resultList, String... value) {
-        int index = getIndex3(resultList, value[1], value[2]) + 1;
-        return index;
-    }
-
     /**
      * 排序类别
+     *
      * @param list
      * @return
      */
