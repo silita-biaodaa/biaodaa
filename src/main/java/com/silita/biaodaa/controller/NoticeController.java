@@ -135,9 +135,9 @@ public class NoticeController extends BaseController {
 
         //TODO:全国公告关联到维度信息之后，此处需要放开
         //全国公告暂无维度信息，涉及维度筛选条件时，直接返回空
-        if (!countryNoticeFilter(params)) {
-            return false;
-        }
+//        if (!countryNoticeFilter(params)) {
+//            return false;
+//        }
 
         //3.招、中标条件区分判断
         if (SnatchContent.SNATCHURL_ZHAOBIAO.equals(type)) {//招标
