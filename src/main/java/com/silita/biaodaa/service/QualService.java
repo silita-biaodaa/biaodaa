@@ -47,6 +47,7 @@ public class QualService {
         }
         if (null != contractList && contractList.size() > 0) {
             resultList.addAll(this.sortQualGrade(this.sortQualGrade(this.sortQualType(contractList))));
+//            resultList.addAll(this.sortQualType(contractList));
         }
         if (null != majorList && majorList.size() > 0) {
             resultList.addAll(sortQualGrade(majorList));
@@ -104,29 +105,32 @@ public class QualService {
                         index = 0;
                     } else {
                         index = getGradeIndex(resultList, "市政", "市政", "建筑", "建筑");
+                        if(index > 0){
+                            index--;
+                        }
                     }
                     resultList.add(index, qualList.get(i));
                 } else if (qualList.get(i).getQualName().contains("市政")) {
                     index = getGradeIndex(resultList, "建筑", "建筑", "市政", "市政");
-                    if (index > 0) {
+//                    if (index > 0) {
                         resultList.add(index, qualList.get(i));
-                    } else {
-                        resultList.add(qualList.get(i));
-                    }
+//                    } else {
+//                        resultList.add(qualList.get(i));
+//                    }
                 } else if (qualList.get(i).getQualName().contains("公路")) {
                     index = getGradeIndex(resultList, "市政", "建筑", "公路", "公路");
-                    if (index > 0) {
+//                    if (index > 0) {
                         resultList.add(index, qualList.get(i));
-                    } else {
-                        resultList.add(qualList.get(i));
-                    }
+//                    } else {
+//                        resultList.add(qualList.get(i));
+//                    }
                 } else if (qualList.get(i).getQualName().contains("水利")) {
                     index = getGradeIndex(resultList, "公路", "市政", "建筑", "水利");
-                    if (index > 0) {
+//                    if (index > 0) {
                         resultList.add(index, qualList.get(i));
-                    } else {
-                        resultList.add(qualList.get(i));
-                    }
+//                    } else {
+//                        resultList.add(qualList.get(i));
+//                    }
                 } else {
                     resultList.add(qualList.get(i));
                 }
