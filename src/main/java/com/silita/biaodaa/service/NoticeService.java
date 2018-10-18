@@ -404,9 +404,17 @@ public class NoticeService {
             throw new Exception("prameter type is null![type+" + type + "]");
         }
         if (type.equals(SNATCHURL_ZHAOBIAO)) {
-            params.put("detailTable", "zhaobiao_detail");
+            if("hunan".equals(params.get("source"))){
+                params.put("detailTable", "zhaobiao_detail");
+            }else {
+                params.put("detailTable", "zhaobiao_detail_others");
+            }
         } else if (type.equals(SNATCHURL_ZHONGBIAO)) {
-            params.put("detailTable", "zhongbiao_detail");
+            if("hunan".equals(params.get("source"))){
+                params.put("detailTable", "zhongbiao_detail");
+            }else {
+                params.put("detailTable", "zhongbiao_detail_others");
+            }
         }
     }
 
