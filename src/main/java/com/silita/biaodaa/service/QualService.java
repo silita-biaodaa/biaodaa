@@ -46,8 +46,9 @@ public class QualService {
             }
         }
         if (null != contractList && contractList.size() > 0) {
-            resultList.addAll(this.sortQualGrade(this.sortQualGrade(this.sortQualType(contractList))));
+//            resultList.addAll(this.sortQualGrade(this.sortQualGrade(this.sortQualType(contractList))));
 //            resultList.addAll(this.sortQualType(contractList));
+            resultList.addAll(this.sortQualGrade(this.sortQualType(contractList)));
         }
         if (null != majorList && majorList.size() > 0) {
             resultList.addAll(sortQualGrade(majorList));
@@ -71,20 +72,25 @@ public class QualService {
             if (qualList.get(i).getQualName().contains("特级")) {
                 index = getIndex(resultList, "特级") + 1;
             } else if (qualList.get(i).getQualName().contains("壹级")) {
-                index = getIndex3(resultList, "特级", "壹级") + 1;
-
+                index = getIndex3(resultList, "壹级", "特级") + 1;
             } else if (qualList.get(i).getQualName().contains("贰级")) {
-                index = getIndex3(resultList, "壹级", "贰级") + 1;
+                index = getGradeIndex(resultList, "壹级", "特级", "贰级", "贰级");
             } else if (qualList.get(i).getQualName().contains("叁级")) {
-                index = getIndex3(resultList, "贰级", "叁级") + 1;
+                index = getGradeIndex(resultList, "贰级", "壹级", "特级", "叁级");
             } else if (qualList.get(i).getQualName().contains("甲级")) {
                 index = getIndex(resultList, "甲级") + 1;
             } else if (qualList.get(i).getQualName().contains("乙级")) {
                 index = getIndex3(resultList, "甲级", "乙级") + 1;
             } else if (qualList.get(i).getQualName().contains("丙级")) {
                 index = getIndex3(resultList, "乙级", "丙级") + 1;
+            }else {
+                index = -1;
             }
-            resultList.add(index, qualList.get(i));
+            if(index<0){
+                resultList.add(qualList.get(i));
+            }else {
+                resultList.add(index, qualList.get(i));
+            }
         }
         return resultList;
     }
