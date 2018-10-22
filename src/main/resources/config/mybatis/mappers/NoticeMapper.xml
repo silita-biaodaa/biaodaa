@@ -285,10 +285,24 @@
                     </foreach>
                 </if>
                 <if test="(projSumStart !=null and projSumStart!='')" >
-                    AND detail.projSum &gt;= #{projSumStart}
+                    <choose>
+                        <when test="sumType == 'zhongbiao'">
+                            AND detail.oneOffer &gt;= #{projSumStart}
+                        </when>
+                        <otherwise>
+                            AND detail.projSum &gt;= #{projSumStart}
+                        </otherwise>
+                    </choose>
                 </if>
                 <if test="(projSumEnd !=null and projSumEnd!='')" >
-                    and detail.projSum &lt;= #{projSumEnd}
+                    <choose>
+                        <when test="sumType == 'zhongbiao'">
+                            AND detail.oneOffer &lt;= #{projSumEnd}
+                        </when>
+                        <otherwise>
+                            and detail.projSum &lt;= #{projSumEnd}
+                        </otherwise>
+                    </choose>
                 </if>
                 <if test="(kbDateStart !=null and kbDateStart !='')">
                     AND detail.tbEndDate &gt;= #{kbDateStart}
@@ -330,7 +344,14 @@
         </if>
         <if test="source==null or source=='' or source=='hunan'">
             <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
-                AND  !(detail.projSum REGEXP '[^0-9.]') AND detail.projSum !=''
+                <choose>
+                    <when test="sumType == 'zhongbiao'">
+                        AND  !(detail.oneOffer REGEXP '[^0-9.]') AND detail.oneOffer !=''
+                    </when>
+                    <otherwise>
+                        AND  !(detail.projSum REGEXP '[^0-9.]') AND detail.projSum !=''
+                    </otherwise>
+                </choose>
             </if>
         </if>
         <choose>
