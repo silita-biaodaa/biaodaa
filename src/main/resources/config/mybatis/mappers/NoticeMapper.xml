@@ -76,20 +76,26 @@
     <sql id="noticeListHead">
         SELECT DISTINCT s.id,s.title,s.opendate,s.type,s.source
         ,<include refid="noticeTypeConvert"/>
-        <if test="source==null or source=='' or source=='hunan'">
-            <choose>
-                <when test="type==99 or type ==null or type ==''">
-                    ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
-                    ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
-                </when>
-                <otherwise>
-                    ,IFNULL((SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ),'其他') pbMode
-                </otherwise>
-            </choose>
-            ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
-            <if test="type == 2 or type==99  or type ==null or type ==''">
-                <include refid="zhongbidaoDetailField"/>
-            </if>
+        <choose>
+            <when test="type==99 or type ==null or type ==''">
+                <choose>
+                    <when test="source==null or source=='' or source=='hunan'">
+                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
+                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
+                    </when>
+                    <otherwise>
+                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail_others dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
+                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail_others dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                ,IFNULL((SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ),'其他') pbMode
+            </otherwise>
+        </choose>
+        ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
+        <if test="type == 2 or type==99  or type ==null or type ==''">
+            <include refid="zhongbidaoDetailField"/>
         </if>
     </sql>
 
@@ -117,8 +123,9 @@
         ,(SELECT GROUP_CONCAT(distinct dd.oneName SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) oneName
         ,(SELECT GROUP_CONCAT(distinct dd.projSum SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) projSum-->
         <!-- 中标列表多标段公告只显示第一标段信息 -->
-        ,(SELECT outdd.oneName from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(dd.id)  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id )) oneName
-        ,(SELECT outdd.projSum from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(dd.id)  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id )) projSum
+        ,(SELECT outdd.oneName from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id)  FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id )) oneName
+        ,(SELECT outdd.projSum from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id)  FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id )) projSum
+        ,(SELECT outdd.oneOffer from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id) FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id )) oneOffer
     </sql>
 
     <select id="queryNoticeCollStatus" parameterType="Map" resultType="Long">
@@ -342,7 +349,6 @@
         <if test="title !=null and title !=''">
             AND s.title LIKE CONCAT('%',#{title},'%')
         </if>
-        <if test="source==null or source=='' or source=='hunan'">
             <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
                 <choose>
                     <when test="sumType == 'zhongbiao'">
@@ -353,7 +359,6 @@
                     </otherwise>
                 </choose>
             </if>
-        </if>
         <choose>
             <when test="type==99">
                 and (s.type =0 or s.type=2)
