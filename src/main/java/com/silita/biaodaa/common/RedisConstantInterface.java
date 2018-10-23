@@ -19,6 +19,8 @@ public interface RedisConstantInterface {
 
 	String PERSON_LIST = "person_list_";  //人员缓存
 
+	String NOTIC_LAW = "notic_law_";  //公告缓存
+
 	int DETAIL_OVER_TIME = 30*60;
 
 	int LIST_OVER_TIME = 3600;
@@ -29,4 +31,5 @@ public interface RedisConstantInterface {
 
 	int PRO_OVER_TIME = 3600*24;
 
+	int LAW_LIST_OVER_TIME = 3600*24*7;
 }

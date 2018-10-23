@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * Created by dh on 2017/9/5.
  */
 @Controller
+@RequestMapping("/redis")
 public class RedisController {
-    private Log logger = LogFactory.getLog(NoticeController.class);
+    private Log logger = LogFactory.getLog(RedisController.class);
 
     @Autowired
     private MyRedisTemplate myRedisTemplate;

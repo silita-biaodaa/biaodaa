@@ -60,7 +60,7 @@ public class LawController {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", 1);
         resultMap.put("msg", "操作成功");
-        lawService.countCompanyLaw();
+        lawService.countNoticCompanyLaw(params);
         return resultMap;
     }
 

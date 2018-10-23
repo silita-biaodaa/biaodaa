@@ -299,6 +299,9 @@
       FROM tb_company t
       WHERE 1=1
       AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
+      <if test="regisAddress != null and regisAddress != ''">
+          and t.regis_address = #{regisAddress}
+      </if>
       order by t.px desc
       limit #{page},#{pageSize}
   </select>
@@ -308,6 +311,17 @@
       FROM tb_company t
       WHERE 1=1
       AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
+  </select>
+
+    <select id="queryCompanyAddressCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+    SELECT count(1)
+      FROM tb_company t
+      WHERE 1=1
+      AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
+        <if test="regisAddress != null and regisAddress != ''">
+            and t.regis_address = #{regisAddress}
+        </if>
+      order by t.px desc
   </select>
 
     <select id="getCertSrcUuidByName" resultType="java.lang.String" parameterType="java.lang.String">

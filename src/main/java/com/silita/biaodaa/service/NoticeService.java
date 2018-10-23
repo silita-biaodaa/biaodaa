@@ -374,17 +374,21 @@ public class NoticeService {
             if (null != resList && resList.size() > 0) {
                 Map<String, Object> param = new HashMap<>();
                 for (Map<String, Object> map : resList) {
-                    param.put("comName", map.get("oneName"));
-                    companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                    map.put("oneLaw", companyLawEs.getTotal());
-
-                    param.put("comName", map.get("twoName"));
-                    companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                    map.put("twoLaw", companyLawEs.getTotal());
-
-                    param.put("comName", map.get("threeName"));
-                    companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                    map.put("threeLaw", companyLawEs.getTotal());
+                    if(null != map.get("oneName")){
+                        param.put("comName", map.get("oneName"));
+                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
+                        map.put("oneLaw", companyLawEs.getTotal());
+                    }
+                    if(null != map.get("twoName")){
+                        param.put("comName", map.get("twoName"));
+                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
+                        map.put("twoLaw", companyLawEs.getTotal());
+                    }
+                    if (null != map.get("threeName")){
+                        param.put("comName", map.get("threeName"));
+                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
+                        map.put("threeLaw", companyLawEs.getTotal());
+                    }
                 }
             }
         }
@@ -446,9 +450,11 @@ public class NoticeService {
                         result.remove("zhaobiao_pbMode");
                     }
                 } else if (type.equals(SNATCHURL_ZHONGBIAO)) {
-                    param.put("comName",result.get("oneName"));
-                    companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                    result.put("oneLaw",companyLawEs.getTotal());
+                    if (null != result.get("oneName")){
+                        param.put("comName",result.get("oneName"));
+                        companyLawEs = lawService.queryZhongbiaoListCompanyLaw(param);
+                        result.put("oneLaw",companyLawEs.getTotal());
+                    }
                     if (result.get("zhongbiao_pbMode") != null) {
                         result.put("pbMode", result.get("zhongbiao_pbMode"));
                         result.remove("zhongbiao_pbMode");
