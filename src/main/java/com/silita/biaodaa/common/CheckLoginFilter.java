@@ -27,8 +27,8 @@ public class CheckLoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String requestUri = request.getRequestURI();
-        String xToken = null ;
-        xToken = SecurityCheck.getHeaderValue(request,"X-TOKEN");
+        String xToken = null;
+        xToken = SecurityCheck.getHeaderValue(request, "X-TOKEN");
 
 
         String sign = null;
@@ -37,11 +37,12 @@ public class CheckLoginFilter implements Filter {
         String phone = null;
         String userId = null;
         Map<String, String> parameters = new HashedMap();
-        if(xToken!=null){
-            String [] token = xToken.split("\\.");
-            if(token.length==2){
+        boolean isHei = false;
+        if (xToken != null) {
+            String[] token = xToken.split("\\.");
+            if (token.length == 2) {
                 sign = token[0];
-                String json = new String(Base64.getDecoder().decode(token[1]),"utf-8");
+                String json = new String(Base64.getDecoder().decode(token[1]), "utf-8");
                 JSONObject jsonObject = (JSONObject) JSONObject.parse(json);
                 name = jsonObject.getString("name");
                 password = jsonObject.getString("password");
@@ -50,35 +51,47 @@ public class CheckLoginFilter implements Filter {
                 parameters.put("name", name);
                 parameters.put("password", password);
                 parameters.put("phone", phone);
-                parameters.put("userId",userId);
+                String blacklist = PropertiesUtils.getProperty("blacklist");
+                if (blacklist.contains(phone)) {
+                    isHei = true;
+                }
+                parameters.put("userId", userId);
             }
         }
         VisitInfoHolder.setUserId(phone);
         VisitInfoHolder.setUid(userId);
 
+
         //FILTER_URL
         String filterUrl = PropertiesUtils.getProperty("FILTER_URL");
         boolean boo = false;
-        if(filterUrl!=null){
-            String[] urls  = filterUrl.split(",");
-            for(String url : urls){
-                if(requestUri.contains(url)){
+        if (filterUrl != null) {
+            String[] urls = filterUrl.split(",");
+            for (String url : urls) {
+                if (requestUri.contains(url)) {
                     boo = true;
                     break;
                 }
             }
         }
-        if(requestUri.equals("/")){
+        if (requestUri.equals("/")) {
             boo = true;
         }
-        if(boo){
+        if (boo) {
             filterChain.doFilter(servletRequest, servletResponse);
-        }else if("biaodaaTestToken".equals(xToken)){
+        } else if ("biaodaaTestToken".equals(xToken)) {
             LOGGER.debug("进入登录系统Filter,开发者进入系统");
             filterChain.doFilter(servletRequest, servletResponse);
-        }else if(SecurityCheck.checkSigner(parameters,sign)){//如果有签名先校验签名
-            filterChain.doFilter(servletRequest, servletResponse);
-        }else{
+        } else if (SecurityCheck.checkSigner(parameters, sign)) {//如果有签名先校验签名
+            if (isHei) {
+                response.setCharacterEncoding("utf-8");
+                response.setContentType("application/json; charset=utf-8");
+                PrintWriter out = response.getWriter();
+                out.print("{\"code\":0,\"msg\":\"您的账号疑似非法爬虫，现已冻结，如有疑问，请联系标大大客服(0731-85076077)\"}");
+            }else {
+                filterChain.doFilter(servletRequest, servletResponse);
+            }
+        } else {
             //LOGGER.info("进入登录系统Filter,["+requestUri+"]["+xToken+"]无权限");
             response.setCharacterEncoding("utf-8");
             response.setContentType("application/json; charset=utf-8");
