@@ -401,7 +401,6 @@ public class NoticeController extends BaseController {
         Map resultMap = null;
         forbidAllType(params);//性能问题，暂禁止查询所有type公告
         try {
-            settingUserId(params);
 //        search.setTypeToInt(type);
 //        encodingConvert(search);
             Page page = buildPage(params);
@@ -415,10 +414,11 @@ public class NoticeController extends BaseController {
                 } else {
                     resultMap.put("isLastPage", false);
                 }
-
                 int paramHash = ObjectUtils.buildMapParamHash(params);
                 String listKey = RedisConstantInterface.GG_LIST + paramHash;
+                logger.info("公告列表key:" + listKey + "--------------------");
                 PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
+                settingUserId(params);
                 if (pageInfo == null) {
                     boolean isExecute = parseViewParams(params);
                     if (isExecute) {
@@ -504,8 +504,8 @@ public class NoticeController extends BaseController {
         try {
             settingUserId(params);
             params.put("id", id);
-            if(null == params.get("source")){
-                params.put("source",HUNAN_SOURCE);
+            if (null == params.get("source")) {
+                params.put("source", HUNAN_SOURCE);
             }
             int paramHash = ObjectUtils.buildMapParamHash(params);
             String listKey = RedisConstantInterface.GG_DETAIL + paramHash;

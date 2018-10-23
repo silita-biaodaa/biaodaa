@@ -193,6 +193,13 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
     Integer queryCompanyCount();
 
     /**
+     * 获取企业数
+     *
+     * @return
+     */
+    Integer queryCompanyAddressCount(Map<String, Object> param);
+
+    /**
      * 根据名称获取uuid
      *
      * @param companyName
