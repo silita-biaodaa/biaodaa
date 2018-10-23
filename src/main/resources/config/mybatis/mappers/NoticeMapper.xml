@@ -24,20 +24,22 @@
         select c.com_id,c.com_name,c.org_code
         from tb_company c
         where c.com_id in
-        <foreach  collection="comList" item="com" separator=","  open="(" close=")">
+        <foreach collection="comList" item="com" separator="," open="(" close=")">
             #{com.comId}
         </foreach>
     </sql>
 
-    <select id="selectCompanyCert" resultType="com.silita.biaodaa.model.TbCompany" parameterType="com.silita.biaodaa.model.TbCompany">
+    <select id="selectCompanyCert" resultType="com.silita.biaodaa.model.TbCompany"
+            parameterType="com.silita.biaodaa.model.TbCompany">
         SELECT cc.com_id,s.cert_no,s.cert_date,s.valid_date
         FROM (
-          <include refid="queryComByIds"/>
+        <include refid="queryComByIds"/>
         ) cc,mishu.tb_safety_certificate s
         WHERE s.com_name =cc.com_name
     </select>
 
-    <select id="selectCompanyCertBasic" resultType="com.silita.biaodaa.model.TbCompany" parameterType="com.silita.biaodaa.model.TbCompany">
+    <select id="selectCompanyCertBasic" resultType="com.silita.biaodaa.model.TbCompany"
+            parameterType="com.silita.biaodaa.model.TbCompany">
         SELECT cc.com_id,b.runScope as comRange,b.registerStatus as subsist
         FROM (
         <include refid="queryComByIds"/>
@@ -75,25 +77,32 @@
 
     <sql id="noticeListHead">
         SELECT DISTINCT s.id,s.title,s.opendate,s.type,s.source
-        ,<include refid="noticeTypeConvert"/>
+        ,
+        <include refid="noticeTypeConvert"/>
         <choose>
             <when test="type==99 or type ==null or type ==''">
                 <choose>
                     <when test="source==null or source=='' or source=='hunan'">
-                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
-                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
+                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail dd WHERE
+                        dd.snatchurlid =s.id ) zhaobiao_pbMode
+                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail dd WHERE
+                        dd.snatchurlid =s.id ) zhongbiao_pbMode
                     </when>
                     <otherwise>
-                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail_others dd WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
-                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail_others dd WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
+                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhaobiao_detail_others dd
+                        WHERE dd.snatchurlid =s.id ) zhaobiao_pbMode
+                        ,(SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.zhongbiao_detail_others dd
+                        WHERE dd.snatchurlid =s.id ) zhongbiao_pbMode
                     </otherwise>
                 </choose>
             </when>
             <otherwise>
-                ,IFNULL((SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id ),'其他') pbMode
+                ,IFNULL((SELECT GROUP_CONCAT(distinct dd.pbMode SEPARATOR ',') FROM mishu.${detailTable} dd WHERE
+                dd.snatchurlid =s.id ),'其他') pbMode
             </otherwise>
         </choose>
-        ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id ) certificate
+        ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id
+        ) certificate
         <if test="type == 2 or type==99  or type ==null or type ==''">
             <include refid="zhongbidaoDetailField"/>
         </if>
@@ -103,10 +112,10 @@
         FROM
         <choose>
             <when test="snatchurl_tbn != null and snatchurl_tbn != ''">
-            ${snatchurl_tbn} s
+                ${snatchurl_tbn} s
             </when>
             <otherwise>
-            mishu.snatchurl s
+                mishu.snatchurl s
             </otherwise>
         </choose>
     </sql>
@@ -114,7 +123,7 @@
     <sql id="noticeListTail">
         and DATE_ADD(now(),INTERVAL -${queryDays} DAY) &lt; s.openDate
         <if test="aptMapList==null or aptMapList.size()==0">
-        order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
+            order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
         </if>
     </sql>
 
@@ -123,9 +132,12 @@
         ,(SELECT GROUP_CONCAT(distinct dd.oneName SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) oneName
         ,(SELECT GROUP_CONCAT(distinct dd.projSum SEPARATOR ',')  FROM mishu.zhongbiao_detail dd WHERE dd.snatchurlid =s.id ) projSum-->
         <!-- 中标列表多标段公告只显示第一标段信息 -->
-        ,(SELECT outdd.oneName from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id)  FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id )) oneName
-        ,(SELECT outdd.projSum from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id)  FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id )) projSum
-        ,(SELECT outdd.oneOffer from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id) FROM mishu.${detailTable} dd WHERE dd.snatchurlid =s.id )) oneOffer
+        ,(SELECT outdd.oneName from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id) FROM
+        mishu.${detailTable} dd WHERE dd.snatchurlid =s.id )) oneName
+        ,(SELECT outdd.projSum from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id) FROM
+        mishu.${detailTable} dd WHERE dd.snatchurlid =s.id )) projSum
+        ,(SELECT outdd.oneOffer from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id) FROM
+        mishu.${detailTable} dd WHERE dd.snatchurlid =s.id )) oneOffer
     </sql>
 
     <select id="queryNoticeCollStatus" parameterType="Map" resultType="Long">
@@ -133,20 +145,20 @@
         FROM mishu_write.collec_notice co
         WHERE co.noticeid IN
         <foreach collection="idSet" item="noticeId" open="(" close=")" separator=",">
-           #{noticeId}
+            #{noticeId}
         </foreach>
-        AND  userid=#{userId}
+        AND userid=#{userId}
     </select>
 
 
     <select id="queryCompanyCollStatus" parameterType="Map" resultType="java.lang.String">
-        SELECT  cc.companyId
+        SELECT cc.companyId
         FROM mishu_write.colle_company_new cc
         WHERE cc.companyId IN
         <foreach collection="idSet" item="id" open="(" close=")" separator=",">
-        #{id}
+            #{id}
         </foreach>
-        AND  userid=#{userId}
+        AND userid=#{userId}
     </select>
 
 
@@ -168,10 +180,10 @@
         <if test="projectType !=null and projectType!=''">
             and s.biddingType =#{projectType}
         </if>
-        <if test="province !=null and province !=''" >
-            and s.province =(select name_abbr from mishu.area ar where ar.name = #{province}  and grade=0)
+        <if test="province !=null and province !=''">
+            and s.province =(select name_abbr from mishu.area ar where ar.name = #{province} and grade=0)
         </if>
-        <if test="city !=null and city !=''" >
+        <if test="city !=null and city !=''">
             and s.city in(select name_abbr from mishu.area where display_name like '%${city}%')
         </if>
         <if test="search !=null and search !=''">
@@ -192,57 +204,64 @@
         <include refid="noticeListHead"/>
         <!--报名地点 -->
         <!--<if test="type==0 and bmSiteStr !=null and bmSiteStr!=''">-->
-          <!--,detail.bmSite-->
+        <!--,detail.bmSite-->
         <!--</if>-->
         <include refid="noticeListBaseFrom"/>
         <if test="source==null or source=='' or source=='hunan'">
-        <!--资质筛选 -->
-        <if test=" (comThreeAptList !=null and comThreeAptList !='') or (aptMapList!=null and aptMapList.size()>0) or (zzTypeOneList != null and zzTypeOneList.size()>0)">
-            join mishu.snatch_url_cert suc on suc.contId=s.id
-            <!-- 企业匹配的三级资质 -->
-            <if test="comThreeAptList !=null and comThreeAptList !=''">
-                and (
-                <foreach collection="comThreeAptList" item="comThreeApt" separator=" or ">
-                    suc.certificateuuid like CONCAT('%',#{comThreeApt},'%')
-                </foreach>
-                )
-            </if>
+            <!--资质筛选 -->
+            <if test=" (comThreeAptList !=null and comThreeAptList !='') or (aptMapList!=null and aptMapList.size()>0) or (zzTypeOneList != null and zzTypeOneList.size()>0)">
+              <choose>
+                  <when test="source == '' or source == null or source == 'hunan'">
+                      join mishu.snatch_url_cert suc on suc.contId=s.id
+                  </when>
+                  <otherwise>
+                      join mishu.snatch_url_cert_others suc on suc.contId=s.id
+                  </otherwise>
+              </choose>
+                <!-- 企业匹配的三级资质 -->
+                <if test="comThreeAptList !=null and comThreeAptList !=''">
+                    and (
+                    <foreach collection="comThreeAptList" item="comThreeApt" separator=" or ">
+                        suc.certificateuuid like CONCAT('%',#{comThreeApt},'%')
+                    </foreach>
+                    )
+                </if>
 
-            <if test="aptMapList!=null and aptMapList.size() > 0">
-                and (
-                <!--筛选选择的资质 -->
-                <foreach collection="aptMapList" item="aptMap" separator=" or " open="(" close=")">
-                    <choose>
-                        <when test="aptMap.containsKey('threeAptList')">
-                            <!--**及以上 -->
-                            <foreach collection="aptMap.get('threeAptList')" item="zzTypeThree" open="(" close=")"
-                                     separator=" or ">
-                                suc.certificateuuid like CONCAT('%',#{zzTypeThree},'%')
-                            </foreach>
-                            <!--**及以上 排除下级资质-->
-                            <foreach collection="aptMap.get('notThreeAptList')" item="notThreeApt" >
-                                and suc.certificateuuid not like CONCAT('%',#{notThreeApt},'%')
-                            </foreach>
-                        </when>
-                        <when test="aptMap.containsKey('zzTypeTwo')">
-                            suc.certificateuuid like  '%${aptMap.get("zzTypeTwo")}%'
-                        </when>
-                    </choose>
-                </foreach>
-                )
-            </if>
+                <if test="aptMapList!=null and aptMapList.size() > 0">
+                    and (
+                    <!--筛选选择的资质 -->
+                    <foreach collection="aptMapList" item="aptMap" separator=" or " open="(" close=")">
+                        <choose>
+                            <when test="aptMap.containsKey('threeAptList')">
+                                <!--**及以上 -->
+                                <foreach collection="aptMap.get('threeAptList')" item="zzTypeThree" open="(" close=")"
+                                         separator=" or ">
+                                    suc.certificateuuid like CONCAT('%',#{zzTypeThree},'%')
+                                </foreach>
+                                <!--**及以上 排除下级资质-->
+                                <foreach collection="aptMap.get('notThreeAptList')" item="notThreeApt">
+                                    and suc.certificateuuid not like CONCAT('%',#{notThreeApt},'%')
+                                </foreach>
+                            </when>
+                            <when test="aptMap.containsKey('zzTypeTwo')">
+                                suc.certificateuuid like '%${aptMap.get("zzTypeTwo")}%'
+                            </when>
+                        </choose>
+                    </foreach>
+                    )
+                </if>
 
-            <if test="zzTypeOneList != null and zzTypeOneList.size()>0">
-                join (select distinct  majoruuid  as majorUuid
-                from mishu.aptitude_dictionary
-                where
-                <foreach collection="zzTypeOneList" item="zzTypeOne" separator=" or ">
-                     aptitudeCode=#{zzTypeOne}
-                </foreach>
-                ) zzdic on locate(zzdic.majorUuid,suc.certificateUuid)>0
-            </if>
+                <if test="zzTypeOneList != null and zzTypeOneList.size()>0">
+                    join (select distinct majoruuid as majorUuid
+                    from mishu.aptitude_dictionary
+                    where
+                    <foreach collection="zzTypeOneList" item="zzTypeOne" separator=" or ">
+                        aptitudeCode=#{zzTypeOne}
+                    </foreach>
+                    ) zzdic on locate(zzdic.majorUuid,suc.certificateUuid)>0
+                </if>
 
-        </if>
+            </if>
             <if test=" ( oneName !=null and oneName !='') or (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='') or (county != null and county != '')">
                 join mishu.${detailTable} detail on s.id=detail.snatchurlid
                 <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
@@ -256,17 +275,17 @@
                 <!--</if>-->
 
                 <if test="type==0">
-                <!--报名地址-->
-                  <if test="bmSiteStr!=null and bmSiteStr!=''">
-                      <choose>
-                          <when test="bmSite==2">
-                              AND LENGTH(detail.bmSite)>1 AND detail.bmSite not like '%网上%'
-                          </when>
-                          <otherwise>
-                              AND detail.bmSite like #{bmSiteStr}
-                          </otherwise>
-                      </choose>
-                  </if>
+                    <!--报名地址-->
+                    <if test="bmSiteStr!=null and bmSiteStr!=''">
+                        <choose>
+                            <when test="bmSite==2">
+                                AND LENGTH(detail.bmSite)>1 AND detail.bmSite not like '%网上%'
+                            </when>
+                            <otherwise>
+                                AND detail.bmSite like #{bmSiteStr}
+                            </otherwise>
+                        </choose>
+                    </if>
                 </if>
 
                 <!--评标办法 -->
@@ -274,16 +293,16 @@
                     AND
                     <foreach collection="modeStr" item="list" close=")" separator="or" open="(">
                         <!--<if test="list == '其他'">-->
-                            <!--(detail.pbMode is null or detail.pbMode = '') and s.edit = 1-->
+                        <!--(detail.pbMode is null or detail.pbMode = '') and s.edit = 1-->
                         <!--</if>-->
                         <!--<if test="list != '其他'">-->
-                            <!--detail.pbMode = #{list}-->
+                        <!--detail.pbMode = #{list}-->
                         <!--</if>-->
                         <choose>
                             <when test="list == '其他'">
-                                  detail.pbMode is null or detail.pbMode = ''
-                                  or detail.pbMode = '平江县土石方工程评标定标办法'
-                                  or detail.pbMode = '/'
+                                detail.pbMode is null or detail.pbMode = ''
+                                or detail.pbMode = '平江县土石方工程评标定标办法'
+                                or detail.pbMode = '/'
                             </when>
                             <otherwise>
                                 detail.pbMode = #{list}
@@ -291,7 +310,7 @@
                         </choose>
                     </foreach>
                 </if>
-                <if test="(projSumStart !=null and projSumStart!='')" >
+                <if test="(projSumStart !=null and projSumStart!='')">
                     <choose>
                         <when test="sumType == 'zhongbiao'">
                             AND detail.oneOffer &gt;= #{projSumStart}
@@ -301,7 +320,7 @@
                         </otherwise>
                     </choose>
                 </if>
-                <if test="(projSumEnd !=null and projSumEnd!='')" >
+                <if test="(projSumEnd !=null and projSumEnd!='')">
                     <choose>
                         <when test="sumType == 'zhongbiao'">
                             AND detail.oneOffer &lt;= #{projSumEnd}
@@ -329,36 +348,36 @@
         </if>
         <!--省份判断祛除，不同省按不同表区分 -->
         <!--<if test="province !=null and province !=''" >-->
-            <!--and s.province =(select name_abbr from mishu.area ar where ar.name LIKE '${province}%'  and grade=0)-->
+        <!--and s.province =(select name_abbr from mishu.area ar where ar.name LIKE '${province}%'  and grade=0)-->
         <!--</if>-->
-        <if test="city !=null and city.size() > 0" >
+        <if test="city !=null and city.size() > 0">
             AND s.city in(
-              select name_abbr from mishu.area where 1=1 and
-              <foreach collection="city" item="list" open="(" separator="or" close=")">
-                  name like CONCAT(#{list},'%')
-              </foreach>
+            select name_abbr from mishu.area where 1=1 and
+            <foreach collection="city" item="list" open="(" separator="or" close=")">
+                name like CONCAT(#{list},'%')
+            </foreach>
             )
         </if>
         <if test="county != null and county != ''">
             AND
-              (
-                 detail.projXs like CONCAT(#{county},'%') or
-                 s.county = (select name_abbr from mishu.area where display_name like CONCAT(#{county},'%'))
-              )
+            (
+            detail.projXs like CONCAT(#{county},'%') or
+            s.county = (select name_abbr from mishu.area where display_name like CONCAT(#{county},'%'))
+            )
         </if>
         <if test="title !=null and title !=''">
             AND s.title LIKE CONCAT('%',#{title},'%')
         </if>
-            <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
-                <choose>
-                    <when test="sumType == 'zhongbiao'">
-                        AND  !(detail.oneOffer REGEXP '[^0-9.]') AND detail.oneOffer !=''
-                    </when>
-                    <otherwise>
-                        AND  !(detail.projSum REGEXP '[^0-9.]') AND detail.projSum !=''
-                    </otherwise>
-                </choose>
-            </if>
+        <if test="(projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd!='')">
+            <choose>
+                <when test="sumType == 'zhongbiao'">
+                    AND !(detail.oneOffer REGEXP '[^0-9.]') AND detail.oneOffer !=''
+                </when>
+                <otherwise>
+                    AND !(detail.projSum REGEXP '[^0-9.]') AND detail.projSum !=''
+                </otherwise>
+            </choose>
+        </if>
         <choose>
             <when test="type==99">
                 and (s.type =0 or s.type=2)
@@ -379,27 +398,23 @@
 
     <select id="queryNoticeDetail" resultType="Map" parameterType="Map">
         SELECT s.id,s.title,s.opendate,s.type,#{source} as source
-        ,<include refid="noticeTypeConvert"/>
+        ,
+        <include refid="noticeTypeConvert"/>
         ,s.url,
-        <choose>
-            <when test="source==null or source=='' or source=='hunan'">
-                concat(#{provName},IFNULL(concat('-',IFNULL(dl.projdq,aa.name)),''),IFNULL(concat('-',dl.projXs),'')) as projDq,dl.pbMode,dl.projSum,
-                <if test="type == 0">
-                    dl.bmSite,dl.kbSite,dl.kbStaffAsk,
-                    (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =#{id})  zzRank,
-                    dl.tbAssureEndDate,
-                    dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
-                    dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
-                </if>
-                <if test="type == 2">
-                    dl.oneName,dl.oneOffer,dl.twoName,dl.twoOffer,dl.threeName,dl.threeOffer,
-                </if>
-                dl.block,
-            </when>
-            <otherwise>
-                #{provName} as projDq,
-            </otherwise>
-        </choose>
+        concat(#{provName},IFNULL(concat('-',IFNULL(dl.projdq,aa.name)),''),IFNULL(concat('-',dl.projXs),'')) as
+        projDq,dl.pbMode,dl.projSum,
+        <if test="type == 0">
+            dl.bmSite,dl.kbSite,dl.kbStaffAsk,
+            (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId
+            =#{id}) zzRank,
+            dl.tbAssureEndDate,
+            dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
+            dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
+        </if>
+        <if test="type == 2">
+            dl.oneName,dl.oneOffer,dl.twoName,dl.twoOffer,dl.threeName,dl.threeOffer,
+        </if>
+        dl.block,
         sc.content
         <include refid="noticeListBaseFrom"/>
         left join
@@ -412,11 +427,9 @@
             </otherwise>
         </choose>
         on sc.snatchurlid=s.id
-        <if test="source==null or source=='' or source=='hunan'">
-         left join mishu.${detailTable} dl on dl.snatchurlid=s.id
-        </if>
+        left join mishu.${detailTable} dl on dl.snatchurlid=s.id
         left join mishu.area aa on aa.name_abbr=s.city and aa.grade=1
-         where s.type = #{type} and s.isshow=0 and s.id=#{id}
+        where s.type = #{type} and s.isshow=0 and s.id=#{id}
     </select>
 
     <select id="queryRelCount" resultType="Long" parameterType="Long">
@@ -442,11 +455,11 @@
     <select id="queryRelations" resultType="Map" parameterType="Long">
         <include refid="noticeListHead"/>
         <include refid="noticeListBaseFrom"/>
-         join (
+        join (
         <include refid="relationNotices"/>
         ) rd on rd.id=s.id
         WHERE s.isshow=0
-         order by s.id desc,s.openDate desc
+        order by s.id desc,s.openDate desc
     </select>
 
     <select id="queryNoticeZZById" resultType="String" parameterType="Map">
@@ -456,7 +469,7 @@
     </select>
 
     <select id="queryComInfoByZZ" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
-       <include refid="selectCompanyInfo"></include>
+        <include refid="selectCompanyInfo"></include>
     </select>
 
     <select id="queryCompanyCountByZZ" resultType="Integer" parameterType="java.util.Map">
@@ -496,7 +509,7 @@
         where com_name = #{com_name}
     </select>
 
-    <select id="queryMatchIntoComCount"  parameterType="Map" resultType="Map">
+    <select id="queryMatchIntoComCount" parameterType="Map" resultType="Map">
         SELECT zz.contid,aa.title,
         (CASE aa.tbassureSum WHEN '' THEN 0 WHEN '/' THEN 0 ELSE IFNULL(aa.tbassureSum,0) END) as tbassureSum,
         aa.opendate,aa.pbmode,concat(aa.tbAssureEndDate,' ',aa.tbAssureEndTime) as tbAssureEnd,
@@ -524,7 +537,7 @@
         group by zz.contid
     </select>
 
-    <select id="queryMatchComCount"  parameterType="Map" resultType="Map">
+    <select id="queryMatchComCount" parameterType="Map" resultType="Map">
         SELECT zz.contid,aa.title,
           (CASE aa.tbassureSum WHEN '' THEN 0 WHEN '/' THEN 0 ELSE IFNULL(aa.tbassureSum,0) END) as tbassureSum,
           aa.opendate,aa.pbmode,concat(aa.tbAssureEndDate,' ',aa.tbAssureEndTime) as tbAssureEnd,

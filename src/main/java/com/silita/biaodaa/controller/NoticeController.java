@@ -502,7 +502,6 @@ public class NoticeController extends BaseController {
     public Map<String, Object> queryDetail(@PathVariable Long id, @RequestBody Map params) {
         Map resultMap = new HashMap();
         try {
-            settingUserId(params);
             params.put("id", id);
             if (null == params.get("source")) {
                 params.put("source", HUNAN_SOURCE);
@@ -510,6 +509,7 @@ public class NoticeController extends BaseController {
             int paramHash = ObjectUtils.buildMapParamHash(params);
             String listKey = RedisConstantInterface.GG_DETAIL + paramHash;
             List<Map> detailList = (List<Map>) myRedisTemplate.getObject(listKey);
+            settingUserId(params);
             if (detailList == null) {
                 settingRouteTable(params);
                 settingProvName(params);
