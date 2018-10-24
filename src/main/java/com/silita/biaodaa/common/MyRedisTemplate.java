@@ -213,6 +213,21 @@ public class MyRedisTemplate {
         }
     }
 
+    public void setObject(String key ,Object obj){
+        ShardedJedis jedis = null;
+        try {
+            String bKey = buildKey(key);
+            jedis =getJedis();
+            jedis.set(bKey.getBytes(), ObjectTranscoder.serialize(obj));
+        } catch (Exception e) {
+            logger.error("setObject error : "+e);
+        }finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
     public Object getObject(String key){
         Object obj = null;
         ShardedJedis jedis = null;

@@ -2,6 +2,8 @@ package com.silita.biaodaa.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.ArticlesMapper;
@@ -12,10 +14,7 @@ import com.silita.biaodaa.model.TbClickStatistics;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.TbCompanyInfo;
 import com.silita.biaodaa.model.es.CompanyLawEs;
-import com.silita.biaodaa.utils.CommonUtil;
-import com.silita.biaodaa.utils.MyDateUtils;
-import com.silita.biaodaa.utils.MyStringUtils;
-import com.silita.biaodaa.utils.RouteUtils;
+import com.silita.biaodaa.utils.*;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,7 +55,7 @@ public class NoticeService {
     @Autowired
     TbCompanyService tbCompanyService;
     @Autowired
-    LawService lawService;
+    MyRedisTemplate myRedisTemplate;
 
     /**
      * 资质id拼接
@@ -371,23 +370,36 @@ public class NoticeService {
         String type = MapUtils.getString(params, "type");
         if (type.equals(SNATCHURL_ZHONGBIAO)) {
             CompanyLawEs companyLawEs;
+            String key;
             if (null != resList && resList.size() > 0) {
                 Map<String, Object> param = new HashMap<>();
                 for (Map<String, Object> map : resList) {
                     if(null != map.get("oneName")){
                         param.put("comName", map.get("oneName"));
-                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                        map.put("oneLaw", companyLawEs.getTotal());
+                        key =  RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                        companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
+//                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
+                        if(null != companyLawEs){
+                            map.put("oneLaw", companyLawEs.getTotal());
+                        }
                     }
                     if(null != map.get("twoName")){
                         param.put("comName", map.get("twoName"));
-                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                        map.put("twoLaw", companyLawEs.getTotal());
+//                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
+                        key =  RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                        companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
+                        if(null != companyLawEs){
+                            map.put("twoLaw", companyLawEs.getTotal());
+                        }
                     }
                     if (null != map.get("threeName")){
                         param.put("comName", map.get("threeName"));
-                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                        map.put("threeLaw", companyLawEs.getTotal());
+//                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
+                        key =  RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                        companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
+                        if(null != companyLawEs){
+                            map.put("threeLaw", companyLawEs.getTotal());
+                        }
                     }
                 }
             }
@@ -470,8 +482,12 @@ public class NoticeService {
                 } else if (type.equals(SNATCHURL_ZHONGBIAO)) {
                     if (null != result.get("oneName")){
                         param.put("comName",result.get("oneName"));
-                        companyLawEs = lawService.queryZhongbiaoListCompanyLaw(param);
-                        result.put("oneLaw",companyLawEs.getTotal());
+//                        companyLawEs = lawService.queryZhongbiaoListCompanyLaw(param);
+                        String key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                        companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
+                        if (null != companyLawEs){
+                            result.put("oneLaw",companyLawEs.getTotal());
+                        }
                     }
                     if (result.get("zhongbiao_pbMode") != null) {
                         result.put("pbMode", result.get("zhongbiao_pbMode"));
