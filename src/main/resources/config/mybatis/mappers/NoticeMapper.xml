@@ -509,7 +509,7 @@
                 and zz.contid=#{id}
             </when>
             <otherwise>
-                FROM mishu.snatch_url_cert
+                FROM mishu.snatch_url_cert zz
                 where zz.contid=#{id}
             </otherwise>
         </choose>
