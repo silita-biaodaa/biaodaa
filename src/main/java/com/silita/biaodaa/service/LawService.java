@@ -79,12 +79,12 @@ public class LawService {
         BoolQueryBuilder boolQueryBuilder2 = QueryBuilders.boolQuery();
         if (MyStringUtils.isNotNull(comName)) {
             queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
-            queryBuilder4 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("title").splitOnWhitespace(false);
+            queryBuilder4 = QueryBuilders.wildcardQuery("title", "*" + comName.replace("有限公司", "") + "*");
             boolQueryBuilder1.should(queryBuilder1).should(queryBuilder4);
         }
         if (MyStringUtils.isNotNull(keyWord)) {
             queryBuilder2 = QueryBuilders.queryStringQuery("\"" + keyWord.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
-            queryBuilder5 = QueryBuilders.queryStringQuery("\"" + keyWord.replace("有限公司", "") + "\"").field("title").splitOnWhitespace(false);
+            queryBuilder5 = QueryBuilders.wildcardQuery("title", "*" + comName.replace("有限公司", "") + "*");
             boolQueryBuilder2.should(queryBuilder2).should(queryBuilder5);
         }
         if (null != start && null != end) {
@@ -113,10 +113,10 @@ public class LawService {
             requestBuilder = client.prepareSearch("biaodaa").setTypes("law");
         }
         addSearchBuild(requestBuilder, pageSort);
-        logger.info("查询elasticsearch-beginTime:" + System.currentTimeMillis() + "\n" + requestBuilder);
+        logger.info("查询elasticsearch-json:" + "\n" + requestBuilder);
 //        System.out.println(requestBuilder);
         SearchResponse response = requestBuilder.setFetchSource(new String[]{"date", "case_no", "title", "court"}, null).execute().actionGet();
-        logger.info("查询elasticsearch-endTime:" + System.currentTimeMillis() + "----------------------------------");
+        logger.info("查询elasticsearch-totalTime:" + response.getTookInMillis() + "----------------------------------");
 //        SearchResponse response = nativeElasticSearchUtils.complexQuery(client, "biaodaa", "law", querys1, querys, ConstantUtil.CONDITION_MUST, pageSort);
         if (null == response && response.getHits().getTotalHits() <= 0) {
             return null;
@@ -164,9 +164,10 @@ public class LawService {
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_TERMS, "_id", id));
         SearchRequestBuilder requestBuilder = nativeElasticSearchUtils.baseComplexQuery(client, "biaodaa", "law", querys, null, ConstantUtil.CONDITION_MUST, null);
-        logger.info("查询elasticsearch-begin:" + "\n" + requestBuilder);
+        logger.info("查询elasticsearch-json:" + "\n" + requestBuilder);
         requestBuilder.setFetchSource(new String[]{"date", "case_no", "title", "court", "content", "url"}, null);
         SearchResponse response = nativeElasticSearchUtils.builderToSearchResponse(requestBuilder);
+        logger.info("查询elasticsearch-totalTime:" + response.getTookInMillis() + "----------------------------------------");
         if (response.getHits().getTotalHits() <= 0) {
             return new Law();
         }
@@ -231,18 +232,22 @@ public class LawService {
         companyLawEs.setJudCount(0);
         QueryBuilder queryBuilder1 = QueryBuilders.queryStringQuery("\"" + comName.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
         QueryBuilder queryBuilder2 = QueryBuilders.queryStringQuery("\"行贿\"").field("content").splitOnWhitespace(false);
-        SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).must(queryBuilder2));
+        QueryBuilder queryBuilder3 = QueryBuilders.wildcardQuery("title", "*" + comName.replace("有限公司", "") + "*");
+        BoolQueryBuilder boolQueryBuilder1 = QueryBuilders.boolQuery().should(queryBuilder1).should(queryBuilder3);
+        BoolQueryBuilder boolQueryBuilder2 = QueryBuilders.boolQuery().must(queryBuilder2);
+        BoolQueryBuilder boolQueryBuilder3 = QueryBuilders.boolQuery().must(boolQueryBuilder1).must(boolQueryBuilder2);
+        SearchRequestBuilder requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(boolQueryBuilder3);
         requestBuilder.setFetchSource(new String[]{"case_no"}, null);
-        logger.info("查询" + comName + "行贿-beginTime:" + System.currentTimeMillis() + "\n" + requestBuilder);
+        logger.info("查询" + comName + "行贿-json:" + "\n" + requestBuilder);
         SearchResponse response = requestBuilder.execute().actionGet();
-        logger.info("查询" + comName + "行贿-endTime:" + System.currentTimeMillis());
+        logger.info("查询" + comName + "行贿-totalTime:" + response.getTookInMillis() + "----------------------------------");
         Integer briCount = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
         companyLawEs.setBriCount(briCount);
-        requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().must(queryBuilder1).mustNot(queryBuilder2));
+        requestBuilder = client.prepareSearch("biaodaa").setTypes("law").setQuery(QueryBuilders.boolQuery().should(queryBuilder1).should(queryBuilder3).mustNot(queryBuilder2));
         requestBuilder.setFetchSource(new String[]{"case_no"}, null);
-        logger.info("查询" + comName + "司法-beginTime:" + System.currentTimeMillis() + "\n" + requestBuilder);
+        logger.info("查询" + comName + "司法-json:" + "\n" + requestBuilder);
         response = requestBuilder.execute().actionGet();
-        logger.info("查询" + comName + "司法-endTime:" + System.currentTimeMillis());
+        logger.info("查询" + comName + "司法-totalTime:" + response.getTookInMillis() + "----------------------------------");
         Integer judCount = Integer.valueOf(Long.toString(response.getHits().getTotalHits()));
         companyLawEs.setJudCount(judCount);
         companyLawEs.setTotal(companyLawEs.getBriCount() + companyLawEs.getJudCount());
@@ -410,11 +415,11 @@ public class LawService {
         Map<String, Object> comMap = new HashMap<>();
         if (count > 0) {
             Map<String, Object> param = new HashMap<>();
-            param.put("pageSize", 3000);
+            param.put("pageSize", 1);
             //获取pages
-            Integer pages = elasticseachService.getPage(count, 3000);
+            Integer pages = elasticseachService.getPage(count, 1);
             for (int i = 1; i <= pages; i++) {
-                param.put("page", (i - 1) * 3000);
+                param.put("page", (i - 1) * 1);
                 if (null != com && null != com.get("regisAddress")) {
                     param.put("regisAddress", com.get("regisAddress"));
                 }
@@ -427,7 +432,7 @@ public class LawService {
                         if (null == companyLawEs) {
                             companyLawEs = this.queryZhongbiaoCompanyLaw(comMap);
                             if (null != companyLawEs.getTotal() && companyLawEs.getTotal() > 0) {
-                                myRedisTemplate.setObject(key, companyLawEs, LAW_LIST_OVER_TIME);
+                                myRedisTemplate.setObject(key, companyLawEs,-1);
                             }
                         }
                     }
