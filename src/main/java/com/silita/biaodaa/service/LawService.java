@@ -415,11 +415,11 @@ public class LawService {
         Map<String, Object> comMap = new HashMap<>();
         if (count > 0) {
             Map<String, Object> param = new HashMap<>();
-            param.put("pageSize", 1);
+            param.put("pageSize", 2000);
             //获取pages
-            Integer pages = elasticseachService.getPage(count, 1);
+            Integer pages = elasticseachService.getPage(count, 2000);
             for (int i = 1; i <= pages; i++) {
-                param.put("page", (i - 1) * 1);
+                param.put("page", (i - 1) * 2000);
                 if (null != com && null != com.get("regisAddress")) {
                     param.put("regisAddress", com.get("regisAddress"));
                 }
@@ -432,7 +432,7 @@ public class LawService {
                         if (null == companyLawEs) {
                             companyLawEs = this.queryZhongbiaoCompanyLaw(comMap);
                             if (null != companyLawEs.getTotal() && companyLawEs.getTotal() > 0) {
-                                myRedisTemplate.setObject(key, companyLawEs,-1);
+                                myRedisTemplate.setObject(key, companyLawEs);
                             }
                         }
                     }
