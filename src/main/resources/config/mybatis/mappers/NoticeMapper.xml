@@ -107,11 +107,13 @@
         </choose>
         <choose>
             <when test="source == '' or source == null or source == 'hunan'">
-                ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId =s.id
+                ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE
+                zz.contId =s.id
                 ) certificate
             </when>
             <otherwise>
-                ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert_others zz WHERE zz.contId =s.id and zz.source = #{source}
+                ,(SELECT GROUP_CONCAT(distinct zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert_others zz WHERE
+                zz.contId =s.id and zz.source = #{source}
                 ) certificate
             </otherwise>
         </choose>
@@ -283,84 +285,87 @@
                 </foreach>
                 ) zzdic on locate(zzdic.majorUuid,suc.certificateUuid)>0
             </if>
-            <if test=" ( oneName !=null and oneName !='') or (type==0 and bmSiteStr !=null and bmSiteStr!='') or (modeStr !=null and modeStr!='') or (projSumStart !=null and projSumStart!='') or (projSumEnd !=null and projSumEnd !='') or (kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='') or (county != null and county != '')">
-                join mishu.${detailTable} detail on s.id=detail.snatchurlid
-                <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
-                <!--and(-->
-                <!--<foreach item = "dq" index="index" collection = "regions" separator=" or ">-->
-                <!--<if test="dq!=null and dq!=''">-->
-                <!--detail.projDq like '%${dq}%'-->
-                <!--</if>-->
-                <!--</foreach>-->
-                <!--)-->
-                <!--</if>-->
+        </if>
+        <if test="( oneName !=null and oneName !='') or ( type==0 and bmSiteStr !=null and bmSiteStr!='') or ( modeStr !=null and modeStr!='') or ( projSumStart !=null and projSumStart!='') or ( projSumEnd !=null and projSumEnd !='') or ( kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='') or ( county != null and county != '')">
+            join mishu.${detailTable} detail on s.id=detail.snatchurlid
+            <if test="source != '' and source != null and source != 'hunan'">
+                and detail.source = #{source}
+            </if>
+            <!--<if test="regions !=null and regions !=''" > 维度地区信息不准-->
+            <!--and(-->
+            <!--<foreach item = "dq" index="index" collection = "regions" separator=" or ">-->
+            <!--<if test="dq!=null and dq!=''">-->
+            <!--detail.projDq like '%${dq}%'-->
+            <!--</if>-->
+            <!--</foreach>-->
+            <!--)-->
+            <!--</if>-->
 
-                <if test="type==0">
-                    <!--报名地址-->
-                    <if test="bmSiteStr!=null and bmSiteStr!=''">
-                        <choose>
-                            <when test="bmSite==2">
-                                AND LENGTH(detail.bmSite)>1 AND detail.bmSite not like '%网上%'
-                            </when>
-                            <otherwise>
-                                AND detail.bmSite like #{bmSiteStr}
-                            </otherwise>
-                        </choose>
-                    </if>
-                </if>
-
-                <!--评标办法 -->
-                <if test="modeStr != null and modeStr.size() > 0">
-                    AND
-                    <foreach collection="modeStr" item="list" close=")" separator="or" open="(">
-                        <!--<if test="list == '其他'">-->
-                        <!--(detail.pbMode is null or detail.pbMode = '') and s.edit = 1-->
-                        <!--</if>-->
-                        <!--<if test="list != '其他'">-->
-                        <!--detail.pbMode = #{list}-->
-                        <!--</if>-->
-                        <choose>
-                            <when test="list == '其他'">
-                                detail.pbMode is null or detail.pbMode = ''
-                                or detail.pbMode = '平江县土石方工程评标定标办法'
-                                or detail.pbMode = '/'
-                            </when>
-                            <otherwise>
-                                detail.pbMode = #{list}
-                            </otherwise>
-                        </choose>
-                    </foreach>
-                </if>
-                <if test="(projSumStart !=null and projSumStart!='')">
+            <if test="type==0">
+                <!--报名地址-->
+                <if test="bmSiteStr!=null and bmSiteStr!=''">
                     <choose>
-                        <when test="sumType == 'zhongbiao'">
-                            AND detail.oneOffer &gt;= #{projSumStart}
+                        <when test="bmSite==2">
+                            AND LENGTH(detail.bmSite)>1 AND detail.bmSite not like '%网上%'
                         </when>
                         <otherwise>
-                            AND detail.projSum &gt;= #{projSumStart}
+                            AND detail.bmSite like #{bmSiteStr}
                         </otherwise>
                     </choose>
                 </if>
-                <if test="(projSumEnd !=null and projSumEnd!='')">
+            </if>
+
+            <!--评标办法 -->
+            <if test="modeStr != null and modeStr.size() > 0">
+                AND
+                <foreach collection="modeStr" item="list" close=")" separator="or" open="(">
+                    <!--<if test="list == '其他'">-->
+                    <!--(detail.pbMode is null or detail.pbMode = '') and s.edit = 1-->
+                    <!--</if>-->
+                    <!--<if test="list != '其他'">-->
+                    <!--detail.pbMode = #{list}-->
+                    <!--</if>-->
                     <choose>
-                        <when test="sumType == 'zhongbiao'">
-                            AND detail.oneOffer &lt;= #{projSumEnd}
+                        <when test="list == '其他'">
+                            detail.pbMode is null or detail.pbMode = ''
+                            or detail.pbMode = '平江县土石方工程评标定标办法'
+                            or detail.pbMode = '/'
                         </when>
                         <otherwise>
-                            and detail.projSum &lt;= #{projSumEnd}
+                            detail.pbMode = #{list}
                         </otherwise>
                     </choose>
-                </if>
-                <if test="(kbDateStart !=null and kbDateStart !='')">
-                    AND detail.tbEndDate &gt;= #{kbDateStart}
-                </if>
-                <if test="( kbDateEnd !=null and kbDateEnd !='')">
-                    AND detail.tbEndDate &lt;= #{kbDateEnd}
-                </if>
-                <!--中标第一候选人(企业名称)-->
-                <if test="( oneName !=null and oneName !='')">
-                    AND detail.oneName = #{oneName}
-                </if>
+                </foreach>
+            </if>
+            <if test="(projSumStart !=null and projSumStart!='')">
+                <choose>
+                    <when test="sumType == 'zhongbiao'">
+                        AND detail.oneOffer &gt;= #{projSumStart}
+                    </when>
+                    <otherwise>
+                        AND detail.projSum &gt;= #{projSumStart}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="(projSumEnd !=null and projSumEnd!='')">
+                <choose>
+                    <when test="sumType == 'zhongbiao'">
+                        AND detail.oneOffer &lt;= #{projSumEnd}
+                    </when>
+                    <otherwise>
+                        and detail.projSum &lt;= #{projSumEnd}
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="(kbDateStart !=null and kbDateStart !='')">
+                AND detail.tbEndDate &gt;= #{kbDateStart}
+            </if>
+            <if test="( kbDateEnd !=null and kbDateEnd !='')">
+                AND detail.tbEndDate &lt;= #{kbDateEnd}
+            </if>
+            <!--中标第一候选人(企业名称)-->
+            <if test="( oneName !=null and oneName !='')">
+                AND detail.oneName = #{oneName}
             </if>
         </if>
         WHERE s.isShow = 0
@@ -426,8 +431,18 @@
         projDq,dl.pbMode,dl.projSum,
         <if test="type == 0">
             dl.bmSite,dl.kbSite,dl.kbStaffAsk,
-            (SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId
-            =#{id}) zzRank,
+            (
+            <choose>
+                <when test="source != null and source != '' and source != 'hunan'">
+                    SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert_others zz WHERE zz.contId
+                    =#{id} and zz.source = #{source}
+                </when>
+                <otherwise>
+                    SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert zz WHERE zz.contId
+                    =#{id}
+                </otherwise>
+            </choose>
+            ) zzRank,
             dl.tbAssureEndDate,
             dl.tbAssureEndTime,dl.tbAssureSum,dl.bmEndDate,dl.bmEndTime,dl.bmSite,
             dl.tbEndDate as kbDate,dl.tbEndTime as kbTime,dl.kbSite,dl.kbStaffAsk,
@@ -449,6 +464,9 @@
         </choose>
         on sc.snatchurlid=s.id
         left join mishu.${detailTable} dl on dl.snatchurlid=s.id
+        <if test="source != null and source != '' and source != 'hunan'">
+            and dl.source = #{source}
+        </if>
         left join mishu.area aa on aa.name_abbr=s.city and aa.grade=1
         where s.type = #{type} and s.isshow=0 and s.id=#{id}
     </select>
