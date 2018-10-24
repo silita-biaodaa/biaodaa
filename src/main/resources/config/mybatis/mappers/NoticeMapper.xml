@@ -505,13 +505,14 @@
         SELECT group_concat(DISTINCT zz.certificateuuid separator ',') as zzlist
         <choose>
             <when test="source != null and source != '' and source != 'hunan'">
-                FROM mishu.snatch_url_cert_others zz on zz.source = #{source}
+                FROM mishu.snatch_url_cert_others zz where zz.source = #{source}
+                and zz.contid=#{id}
             </when>
             <otherwise>
-                FROM mishu.snatch_url_cert zz
+                FROM mishu.snatch_url_cert
+                where zz.contid=#{id}
             </otherwise>
         </choose>
-        where zz.contid=#{id}
     </select>
 
     <select id="queryComInfoByZZ" resultType="com.silita.biaodaa.model.TbCompany" parameterType="Map">
