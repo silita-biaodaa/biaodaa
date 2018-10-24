@@ -530,29 +530,29 @@ public class NoticeController extends BaseController {
             //添加点击次数
             resultMap.put("clickCount", noticeService.getClickCountBySourceAndTypeAndInnertId(params));
 
-            if (MyStringUtils.isNull(source) || source.equals(HUNAN_SOURCE)) {
-                Long relNoticeCount = noticeService.queryRelCount(id);
+//            if (MyStringUtils.isNull(source) || source.equals(HUNAN_SOURCE)) {
+            Long relNoticeCount = noticeService.queryRelCountParam(params);
 
-                resultMap.put("relNoticeCount", relNoticeCount);//相关公告数量
-                //招标详情
-                String type = MapUtils.getString(params, "type");
-                if (type.equals(SNATCHURL_ZHAOBIAO)) {
-                    Integer relCompanySize = noticeService.queryCompanyCountById(params);
-                    List<Map> fileList = noticeService.queryNoticeFile(id);
-                    int fileSize = 0;
-                    if (fileList != null && fileList.size() > 0) {
-                        fileSize = fileList.size();
-                    }
-                    resultMap.put("relCompanySize", relCompanySize);//资质相关企业
-                    resultMap.put("fileCount", fileSize);//文件列表
+            resultMap.put("relNoticeCount", relNoticeCount);//相关公告数量
+            //招标详情
+            String type = MapUtils.getString(params, "type");
+            if (type.equals(SNATCHURL_ZHAOBIAO)) {
+                Integer relCompanySize = noticeService.queryCompanyCountById(params);
+                List<Map> fileList = noticeService.queryNoticeFile(id);
+                int fileSize = 0;
+                if (fileList != null && fileList.size() > 0) {
+                    fileSize = fileList.size();
                 }
-
-            } else {
-                //todo:全国公告暂不支持
-                resultMap.put("relNoticeCount", 0);//相关公告数量
-                resultMap.put("relCompanySize", 0);//资质相关企业
-                resultMap.put("fileCount", 0);//文件列表
+                resultMap.put("relCompanySize", relCompanySize);//资质相关企业
+                resultMap.put("fileCount", fileSize);//文件列表
             }
+
+//            } else {
+//                //todo:全国公告暂不支持
+//                resultMap.put("relNoticeCount", 0);//相关公告数量
+//                resultMap.put("relCompanySize", 0);//资质相关企业
+//                resultMap.put("fileCount", 0);//文件列表
+//            }
             successMsg(resultMap);
         } catch (Exception e) {
             logger.error(e, e);

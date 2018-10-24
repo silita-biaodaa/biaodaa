@@ -503,7 +503,14 @@
 
     <select id="queryNoticeZZById" resultType="String" parameterType="Map">
         SELECT group_concat(DISTINCT zz.certificateuuid separator ',') as zzlist
-        FROM mishu.snatch_url_cert zz
+        <choose>
+            <when test="source != null and source != '' and source != 'hunan'">
+                FROM mishu.snatch_url_cert_others zz
+            </when>
+            <otherwise>
+                FROM mishu.snatch_url_cert zz
+            </otherwise>
+        </choose>
         where zz.contid=#{id}
     </select>
 
@@ -624,4 +631,28 @@
       #{batchNum}
      )
     </insert>
+
+    <select id="queryRelCountByParam" parameterType="java.util.Map" resultType="java.lang.Long">
+        select count(a.id)
+        FROM (
+        select DISTINCT id
+         from
+         <choose>
+             <when test="source != null and source != '' and source != 'hunan'">
+                 mishu.snatchurl_${source}
+             </when>
+             <otherwise>
+                 mishu.snatchurl
+             </otherwise>
+         </choose>
+         join ((select re.nextid as reid
+                 from mishu.snatchrelation re
+                 where re.mainid=#{id})
+                  union all
+                 (select mainid as reid
+                 from mishu.snatchrelation re
+                 where re.nextid=#{id})) rd on rd.reid=id
+        WHERE isshow=0
+        ) a
+    </select>
 </mapper>

@@ -433,6 +433,16 @@ public class NoticeService {
     }
 
     /**
+     * 查询相关公告数量
+     *
+     * @param param
+     * @return
+     */
+    public Long queryRelCountParam(Map<String,Object> param) {
+        return noticeMapper.queryRelCountByParam(param);
+    }
+
+    /**
      * 查询招标文件列表
      *
      * @param id

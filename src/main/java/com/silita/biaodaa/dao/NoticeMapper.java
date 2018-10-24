@@ -141,4 +141,11 @@ public interface NoticeMapper {
      * @return
      */
     List<Map> queryMatchIntoComCount(Map argMap);
+
+    /**
+     * 获取公告关联id
+     * @param param
+     * @return
+     */
+    Long queryRelCountByParam(Map<String,Object> param);
 }
