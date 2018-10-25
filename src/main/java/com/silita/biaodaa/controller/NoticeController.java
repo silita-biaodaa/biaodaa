@@ -574,8 +574,8 @@ public class NoticeController extends BaseController {
         try {
             Map argMap = new HashMap();
             argMap.put("id", id);
-            settingUserId(argMap);
             String cacheKey = ObjectUtils.buildCacheKey(GG_REL_LIST, argMap);
+            settingUserId(argMap);
             List<Map> relationNotices = (List<Map>) myRedisTemplate.getObject(cacheKey);
             if (relationNotices == null) {
                 relationNotices = noticeService.queryRelations(argMap);

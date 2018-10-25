@@ -507,7 +507,10 @@ public class NoticeService {
         return pageInfo;
     }
 
-    public List<Map> queryRelations(Map map) {
+    public List<Map> queryRelations(Map map)  throws Exception{
+        map.put("type",2);
+//        map.put("source","hunan");
+        buildNoticeDetilTable(map);
         List<Map> relList = noticeMapper.queryRelations(map);
         sortingResult(relList);
         return relList;
