@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class RedisController {
      * @param type
      * @return
      */
+    @ResponseBody
     @RequestMapping(value = "/clearCache/{key}",produces = "application/json;charset=utf-8")
     public Map<String, Object> clearCache(@PathVariable("key") String key, String pwd, String type) {
         Map<String, Object> resultMap = new HashMap<>();

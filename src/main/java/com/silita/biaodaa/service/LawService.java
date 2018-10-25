@@ -84,7 +84,7 @@ public class LawService {
         }
         if (MyStringUtils.isNotNull(keyWord)) {
             queryBuilder2 = QueryBuilders.queryStringQuery("\"" + keyWord.replace("有限公司", "") + "\"").field("content").splitOnWhitespace(false);
-            queryBuilder5 = QueryBuilders.wildcardQuery("title", "*" + comName.replace("有限公司", "") + "*");
+            queryBuilder5 = QueryBuilders.wildcardQuery("title", "*" + keyWord.replace("有限公司", "") + "*");
             boolQueryBuilder2.should(queryBuilder2).should(queryBuilder5);
         }
         if (null != start && null != end) {
