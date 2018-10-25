@@ -158,11 +158,12 @@
             and dd.source = #{source}
         </if>
         )) projSum
-        ,(SELECT outdd.oneOffer from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id) FROM
+        ,(SELECT outdd.oneOffer from mishu.${detailTable} outdd where outdd.id =(SELECT dd.id FROM
         mishu.${detailTable} dd WHERE dd.snatchurlid =s.id
         <if test="detailTable != null and detailTable == 'zhongbiao_detail_others'">
             and dd.source = #{source}
         </if>
+        ORDER BY dd.block ASC LIMIT 1
         )) oneOffer
     </sql>
 
@@ -469,6 +470,7 @@
         </if>
         left join mishu.area aa on aa.name_abbr=s.city and aa.grade=1
         where s.type = #{type} and s.isshow=0 and s.id=#{id}
+        order by dl.block
     </select>
 
     <select id="queryRelCount" resultType="Long" parameterType="Long">
