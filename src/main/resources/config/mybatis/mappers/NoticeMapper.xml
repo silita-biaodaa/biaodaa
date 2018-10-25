@@ -158,12 +158,11 @@
             and dd.source = #{source}
         </if>
         )) projSum
-        ,(SELECT outdd.oneOffer from mishu.${detailTable} outdd where outdd.id =(SELECT dd.id FROM
+        ,(SELECT outdd.oneOffer from mishu.${detailTable} outdd where outdd.id =(SELECT min(dd.id) FROM
         mishu.${detailTable} dd WHERE dd.snatchurlid =s.id
         <if test="detailTable != null and detailTable == 'zhongbiao_detail_others'">
             and dd.source = #{source}
         </if>
-        ORDER BY dd.block ASC LIMIT 1
         )) oneOffer
     </sql>
 
@@ -288,7 +287,19 @@
             </if>
         </if>
         <if test="( oneName !=null and oneName !='') or ( type==0 and bmSiteStr !=null and bmSiteStr!='') or ( modeStr !=null and modeStr!='') or ( projSumStart !=null and projSumStart!='') or ( projSumEnd !=null and projSumEnd !='') or ( kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='') or ( county != null and county != '')">
-            join mishu.${detailTable} detail on s.id=detail.snatchurlid
+            <choose>
+                <when test="( projSumStart !=null and projSumStart!='') and ( projSumEnd !=null and projSumEnd !='')">
+                    join (SELECT t.id AS nid,MIN(t1.block) AS block,t1.`oneOffer` AS oneOffer FROM ${snatchurl_tbn}  t
+                    JOIN mishu.${detailTable} t1
+                    ON t.id = t1.`snatchUrlId`
+                    GROUP BY t.id
+                    ORDER BY t1.`block` ASC
+                    ) detail ON s.`id` = detail.nid
+                </when>
+                <otherwise>
+                    join mishu.${detailTable} detail on s.id=detail.snatchurlid
+                </otherwise>
+            </choose>
             <if test="source != '' and source != null and source != 'hunan'">
                 and detail.source = #{source}
             </if>
@@ -470,7 +481,6 @@
         </if>
         left join mishu.area aa on aa.name_abbr=s.city and aa.grade=1
         where s.type = #{type} and s.isshow=0 and s.id=#{id}
-        order by dl.block
     </select>
 
     <select id="queryRelCount" resultType="Long" parameterType="Long">
