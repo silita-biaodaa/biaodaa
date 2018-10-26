@@ -3,11 +3,14 @@ package com.silita.biaodaa.service;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.model.es.CompanyLawEs;
 import com.silita.biaodaa.utils.CommonUtil;
+import com.silita.biaodaa.utils.ObjectUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import com.silita.biaodaa.utils.SignConvertUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -44,7 +47,7 @@ public class UserCenterService {
     @Autowired
     private TbCompanyService tbCompanyService;
     @Autowired
-    private LawService lawService;
+    private MyRedisTemplate myRedisTemplate;
 
     public UserTempBdd updateUserTemp(UserTempBdd userTempBdd) {
         userTempBddMapper.updateUserTemp(userTempBdd);
@@ -118,10 +121,14 @@ public class UserCenterService {
             if (null != notices && notices.size() > 0) {
                 CompanyLawEs companyLawEs;
                 Map<String, Object> param = new HashMap<>();
+                String key;
                 for (Map<String, Object> map : notices) {
                     param.put("comName", map.get("oneName"));
-                    companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                    map.put("oneLaw", companyLawEs.getTotal());
+                    key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                    companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
+                    if (null != companyLawEs){
+                        map.put("oneLaw", companyLawEs.getTotal());
+                    }
                 }
             }
         }
