@@ -65,7 +65,7 @@
         <choose>
             <when test="source != null and source != 'hunan'">
                 mishu.snatchurl_${source} s
-                LEFT JOIN mishu.zhaobiao_detail_others d ON s.id = d.snatchUrlId
+                LEFT JOIN mishu.zhaobiao_detail_others d ON s.id = d.snatchUrlId AND d.source = #{source}
             </when>
             <otherwise>
                 mishu.snatchurl s
@@ -73,9 +73,16 @@
             </otherwise>
         </choose>
         LEFT JOIN (SELECT GROUP_CONCAT(c.certificate) AS certificate, c.contId as contId
-        FROM mishu.snatch_url_cert c
-        WHERE c.contId = #{noticeId}
-        GROUP BY c.contId) temp ON temp.contId = d.snatchUrlId
+        FROM
+        <choose>
+            <when test="source != null and source != 'hunan'">
+                mishu.snatch_url_cert_others c WHERE c.contId = #{noticeId} AND c.source = #{source} GROUP BY c.contId
+            </when>
+            <otherwise>
+                mishu.snatch_url_cert c WHERE c.contId = #{noticeId} GROUP BY c.contId
+            </otherwise>
+        </choose>
+       ) temp ON temp.contId = d.snatchUrlId
         WHERE s.id = #{noticeId}
         GROUP BY s.id
         limit 1
@@ -87,11 +94,11 @@
         <choose>
             <when test="source != null and source != 'hunan'">
                 (SELECT outdd.projSum from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id )) AS projSum,
+                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS projSum,
                 (SELECT outdd.oneName from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id )) AS oneName,
+                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS oneName,
                 (SELECT outdd.pbMode from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id )) AS pbMode ,
+                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS pbMode ,
             </when>
             <otherwise>
                 (SELECT outdd.projSum from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM
@@ -108,7 +115,7 @@
         <choose>
             <when test="source != null and source != 'hunan'">
                 mishu.snatchurl_${source} s
-                LEFT JOIN mishu.zhongbiao_detail_others d ON s.id = d.snatchUrlId
+                LEFT JOIN mishu.zhongbiao_detail_others d ON s.id = d.snatchUrlId AND d.source = #{source}
             </when>
             <otherwise>
                 mishu.snatchurl s
