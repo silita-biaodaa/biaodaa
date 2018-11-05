@@ -123,15 +123,19 @@ public class UserCenterService {
             return notices;
         }
         Map<String, Object> map;
+        Map<String,Object> result;
         for (CollecNotice coll : list) {
             map = new HashMap<>();
             map.put("noticeId", coll.getNoticeid());
             map.put("source", coll.getSource());
             map.put("userId", params.get("userid"));
             if ("0".equals(params.get("type"))) {
-                notices.add(collecNoticeMapper.listZhaoBiaoCollecNoticeById(map));
+                result = collecNoticeMapper.listZhaoBiaoCollecNoticeById(map);
             } else {
-                notices.add(collecNoticeMapper.listZhongBiaoCollecNoticeById(map));
+                result = collecNoticeMapper.listZhongBiaoCollecNoticeById(map);
+            }
+            if(null != result && MapUtils.isNotEmpty(result)){
+                notices.add(result);
             }
         }
         if ("2".equals(params.get("type")) && null != notices && notices.size() > 0) {
