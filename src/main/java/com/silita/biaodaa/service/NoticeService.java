@@ -211,6 +211,7 @@ public class NoticeService {
             argMap.put("idSet", idSet);
             List collIds = null;
             if ("notice".equals(params.get("collType"))) {
+                argMap.put("source",params.get("source"));
                 collIds = this.queryNoticeCollStatus(argMap);
             } else if ("company".equals(params.get("collType"))) {
                 collIds = this.queryCompanyCollStatus(argMap);

@@ -430,7 +430,7 @@ public class NoticeController extends BaseController {
                         myRedisTemplate.setObject(listKey, pageInfo, LIST_OVER_TIME);
                     }
                 }
-                settingNoticeCollFlag(pageInfo, params);
+//                settingNoticeCollFlag(pageInfo, params);
                 buildReturnMap(resultMap, pageInfo);
                 successMsg(resultMap);
             }
@@ -465,6 +465,7 @@ public class NoticeController extends BaseController {
     private void addNoticeCollStatus(List<Map> list, Map params) {
         params.put("idKey", "id");
         params.put("collType", "notice");
+        params.put("source",params.get("source"));
         noticeService.addCollStatus(list, params);
     }
 
@@ -519,18 +520,11 @@ public class NoticeController extends BaseController {
                 }
             }
 
-            String source = MapUtils.getString(params, "source");
-            if (MyStringUtils.isNull(source) || source.equals(HUNAN_SOURCE)) {
-                addNoticeCollStatus(detailList, params);
-            } else {
-                //todo:全国公告暂不支持关注状态，统一返回false
-                noticeService.addCollStatusByRoute(detailList);
-            }
+            addNoticeCollStatus(detailList, params);
             resultMap.put(DATA_FLAG, detailList);
             //添加点击次数
             resultMap.put("clickCount", noticeService.getClickCountBySourceAndTypeAndInnertId(params));
 
-//            if (MyStringUtils.isNull(source) || source.equals(HUNAN_SOURCE)) {
             Long relNoticeCount = noticeService.queryRelCountParam(params);
 
             resultMap.put("relNoticeCount", relNoticeCount);//相关公告数量
@@ -546,13 +540,6 @@ public class NoticeController extends BaseController {
                 resultMap.put("relCompanySize", relCompanySize);//资质相关企业
                 resultMap.put("fileCount", fileSize);//文件列表
             }
-
-//            } else {
-//                //todo:全国公告暂不支持
-//                resultMap.put("relNoticeCount", 0);//相关公告数量
-//                resultMap.put("relCompanySize", 0);//资质相关企业
-//                resultMap.put("fileCount", 0);//文件列表
-//            }
             successMsg(resultMap);
         } catch (Exception e) {
             logger.error(e, e);

@@ -42,4 +42,25 @@ public interface CollecNoticeMapper extends MyMapper<CollecNotice> {
      * @return
      */
     List<Map<String, Object>> listZhongBiaoCollecNoticeByUserId(Map<String, Object> params);
+
+    /**
+     * 获取用户的关联公告
+     * @param param
+     * @return
+     */
+    List<CollecNotice> queryCollecList(Map<String,Object> param);
+
+    /**
+     * 获取全国招标关注公告
+     * @param params
+     * @return
+     */
+    Map<String, Object> listZhaoBiaoCollecNoticeById(Map<String, Object> params);
+
+    /**
+     * 获取全国中标关注公告
+     * @param params
+     * @return
+     */
+    Map<String, Object> listZhongBiaoCollecNoticeById(Map<String, Object> params);
 }

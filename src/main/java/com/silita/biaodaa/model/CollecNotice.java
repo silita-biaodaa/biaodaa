@@ -26,4 +26,6 @@ public class CollecNotice {
     private Date collectime;
 
     private Integer readorreaded;
+
+    private String source;
 }

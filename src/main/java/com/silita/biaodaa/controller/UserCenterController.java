@@ -240,7 +240,7 @@ public class UserCenterController {
             page.setCurrentPage(MapUtils.getInteger(params, "pageNo"));
 
             PageInfo pageInfo = userCenterService.queryCollectionNotice(page, params);
-            result.put("data", pageInfo.getList());
+            result.put("data", userCenterService.getNoticeList(pageInfo.getList(),params));
             result.put("pageNum", pageInfo.getPageNum());
             result.put("pageSize", pageInfo.getPageSize());
             result.put("total", pageInfo.getTotal());

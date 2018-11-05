@@ -111,29 +111,43 @@ public class UserCenterService {
     }
 
     public PageInfo queryCollectionNotice(Page page, Map<String, Object> params) {
-        List<Map<String, Object>> notices = new ArrayList<>();
-
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        if ("0".equals(params.get("type"))) {
-            notices = collecNoticeMapper.listZhaoBiaoCollecNoticeByUserId(params);
-        } else {
-            notices = collecNoticeMapper.listZhongBiaoCollecNoticeByUserId(params);
-            if (null != notices && notices.size() > 0) {
-                CompanyLawEs companyLawEs;
-                Map<String, Object> param = new HashMap<>();
-                String key;
-                for (Map<String, Object> map : notices) {
-                    param.put("comName", map.get("oneName"));
-                    key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
-                    companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
-                    if (null != companyLawEs){
-                        map.put("oneLaw", companyLawEs.getTotal());
-                    }
+        List<CollecNotice> noticeList = collecNoticeMapper.queryCollecList(params);
+        PageInfo pageInfo = new PageInfo(noticeList);
+        return pageInfo;
+    }
+
+    public List<Map<String, Object>> getNoticeList(List<CollecNotice> list, Map<String, Object> params) {
+        List<Map<String, Object>> notices = new ArrayList<>();
+        if (null == list || list.size() <= 0) {
+            return notices;
+        }
+        Map<String, Object> map;
+        for (CollecNotice coll : list) {
+            map = new HashMap<>();
+            map.put("noticeId", coll.getNoticeid());
+            map.put("source", coll.getSource());
+            map.put("userId", params.get("userid"));
+            if ("0".equals(params.get("type"))) {
+                notices.add(collecNoticeMapper.listZhaoBiaoCollecNoticeById(map));
+            } else {
+                notices.add(collecNoticeMapper.listZhongBiaoCollecNoticeById(map));
+            }
+        }
+        if ("2".equals(params.get("type")) && null != notices && notices.size() > 0) {
+            CompanyLawEs companyLawEs;
+            Map<String, Object> param = new HashMap<>();
+            String key;
+            for (Map<String, Object> mapNtic : notices) {
+                param.put("comName", mapNtic.get("oneName"));
+                key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
+                if (null != companyLawEs) {
+                    mapNtic.put("oneLaw", companyLawEs.getTotal());
                 }
             }
         }
-        PageInfo pageInfo = new PageInfo(notices);
-        return pageInfo;
+        return notices;
     }
 
     public String insertCollectionCompany(ColleCompany colleCompany) {
