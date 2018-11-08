@@ -35,13 +35,6 @@ import java.util.Map;
 @Component
 public class ElasticseachService {
 
-
-    private static String ip = PropertiesUtils.getProperty("ELASTICSEARCH_IP");
-
-    private static String host = PropertiesUtils.getProperty("ELASTICSEARCH_HOST");
-
-    private static String cluster = PropertiesUtils.getProperty("ELASTICSEARCH_CLUSTER");
-
     @Autowired
     TbCompanyMapper tbCompanyMapper;
     @Autowired
@@ -56,25 +49,6 @@ public class ElasticseachService {
     NativeElasticSearchUtils nativeElasticSearchUtils;
 
     private TransportClient transportClient = InitElasticseach.initClient();
-
-    public void batchAddCompany() {
-        nativeElasticSearchUtils.createIndexAndCreateMapping(transportClient, CompanyEs.class);
-        Integer count = tbCompanyMapper.queryCompanyCount();
-        List<CompanyEs> comList = new ArrayList<>();
-        if (count > 0) {
-            Map<String, Object> param = new HashMap<>();
-            param.put("pageSize", 3000);
-            //获取pages
-            Integer pages = this.getPage(count, 3000);
-            for (int i = 1; i <= pages; i++) {
-                param.put("page", (i - 1) * 3000);
-                comList = tbCompanyMapper.queryCompanyEsList(param);
-                if (null != comList && comList.size() > 0) {
-                    nativeElasticSearchUtils.batchInsertDate(transportClient, "company", "comes", comList);
-                }
-            }
-        }
-    }
 
     public List<Map<String, Object>> quary(Map<String, Object> param) {
         Map sort = new HashMap<String, String>();
@@ -109,25 +83,6 @@ public class ElasticseachService {
             pages = (total / pageSize) + 1;
         }
         return pages;
-    }
-
-    public void batchAddSnatchUrl() {
-        nativeElasticSearchUtils.createIndexAndCreateMapping(transportClient, SnatchurlEs.class);
-        Integer count = snatchurlMapper.querySnatchurlCount();
-        List<SnatchurlEs> snaList = new ArrayList<>();
-        if (count > 0) {
-            Map<String, Object> param = new HashMap<>();
-            param.put("pageSize", 3000);
-            //获取pages
-            Integer pages = this.getPage(count, 3000);
-            for (int i = 1; i <= pages; i++) {
-                param.put("page", (i - 1) * 3000);
-                snaList = snatchurlMapper.querySnatchurlList(param);
-                if (null != snaList && snaList.size() > 0) {
-                    nativeElasticSearchUtils.batchInsertDate(transportClient, "snatchurl", "snatchurl_zhaobiao", snaList);
-                }
-            }
-        }
     }
 
     public List<Map<String, Object>> querySnatchUrl(Map<String, Object> param) {

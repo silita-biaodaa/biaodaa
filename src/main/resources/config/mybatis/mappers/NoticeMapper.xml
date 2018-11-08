@@ -76,7 +76,7 @@
     </sql>
 
     <sql id="noticeListHead">
-        SELECT DISTINCT s.id,s.title,s.opendate,s.type,s.source
+        SELECT DISTINCT s.id,s.title,s.opendate,s.type,#{source} as source
         ,
         <include refid="noticeTypeConvert"/>
         <choose>

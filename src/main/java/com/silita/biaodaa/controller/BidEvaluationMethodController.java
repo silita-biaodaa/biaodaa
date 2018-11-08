@@ -155,18 +155,4 @@ public class BidEvaluationMethodController extends BaseController {
         return successMap(resultMap);
     }
 
-    /**
-     * TODO: es导入
-     *
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/esSnatchurl", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String, Object> esSnatchurl() {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("code", this.SUCCESS_CODE);
-        resultMap.put("msg", this.SUCCESS_MSG);
-        elasticseachService.batchAddSnatchUrl();
-        return resultMap;
-    }
 }

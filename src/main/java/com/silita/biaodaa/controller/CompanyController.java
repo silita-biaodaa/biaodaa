@@ -666,21 +666,6 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  es导入
-     *
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/esCompany", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String, Object> esCompany() {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("code", this.SUCCESS_CODE);
-        resultMap.put("msg", this.SUCCESS_MSG);
-        elasticseachService.batchAddCompany();
-        return resultMap;
-    }
-
-    /**
      *  分支机构es导入
      *
      * @return
