@@ -137,8 +137,7 @@
     <sql id="noticeListTail">
         and DATE_ADD(now(),INTERVAL -${queryDays} DAY) &lt; s.openDate
         <if test="aptMapList==null or aptMapList.size()==0">
---             order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc
-            order by s.px desc
+            order by s.openDate desc,s.edit desc,s.biddingType ASC,s.id desc,s.px desc
         </if>
     </sql>
 
@@ -432,7 +431,7 @@
                 <include refid="noticeListTail"/>
             </when>
             <otherwise>
-                order by px desc
+                order by openDate desc,px desc
             </otherwise>
         </choose>
     </select>
