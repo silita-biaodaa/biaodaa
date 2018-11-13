@@ -9,10 +9,7 @@ import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.model.es.CompanyLawEs;
-import com.silita.biaodaa.utils.CommonUtil;
-import com.silita.biaodaa.utils.ObjectUtils;
-import com.silita.biaodaa.utils.PropertiesUtils;
-import com.silita.biaodaa.utils.SignConvertUtil;
+import com.silita.biaodaa.utils.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -23,6 +20,8 @@ import org.springframework.util.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+
+import static com.silita.biaodaa.utils.RouteUtils.HUNAN_SOURCE;
 
 /**
  * Created by 91567 on 2018/4/12.
@@ -97,6 +96,9 @@ public class UserCenterService {
     }
 
     public String insertCollectionNotice(CollecNotice collecNotice) {
+        if(null != collecNotice && MyStringUtils.isNull(collecNotice.getSource())){
+            collecNotice.setSource(HUNAN_SOURCE);
+        }
         CollecNotice vo = collecNoticeMapper.getCollecNoticeByUserIdAndNoticeId(collecNotice);
         //已关注
         if (vo != null) {
@@ -107,10 +109,16 @@ public class UserCenterService {
     }
 
     public void deleteCollectionNotice(CollecNotice collecNotice) {
+        if(null != collecNotice && MyStringUtils.isNull(collecNotice.getSource())){
+            collecNotice.setSource(HUNAN_SOURCE);
+        }
         collecNoticeMapper.deleteCollecNoticeByUserIdAndNoticeId(collecNotice);
     }
 
     public PageInfo queryCollectionNotice(Page page, Map<String, Object> params) {
+        if (null == params.get("source")) {
+            params.put("source", HUNAN_SOURCE);
+        }
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<CollecNotice> noticeList = collecNoticeMapper.queryCollecList(params);
         PageInfo pageInfo = new PageInfo(noticeList);
@@ -123,7 +131,7 @@ public class UserCenterService {
             return notices;
         }
         Map<String, Object> map;
-        Map<String,Object> result;
+        Map<String, Object> result;
         for (CollecNotice coll : list) {
             map = new HashMap<>();
             map.put("noticeId", coll.getNoticeid());
@@ -134,7 +142,7 @@ public class UserCenterService {
             } else {
                 result = collecNoticeMapper.listZhongBiaoCollecNoticeById(map);
             }
-            if(null != result && MapUtils.isNotEmpty(result)){
+            if (null != result && MapUtils.isNotEmpty(result)) {
                 notices.add(result);
             }
         }
