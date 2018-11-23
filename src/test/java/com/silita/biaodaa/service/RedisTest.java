@@ -1,10 +1,13 @@
 package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.ObjectTranscoder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.ShardedJedisPool;
 
-import static com.silita.biaodaa.common.RedisConstantInterface.COM_OVER_TIME;
+import java.util.List;
 
 /**
  * <p>Created by mayongbin01 on 2017/3/9.</p>
@@ -12,18 +15,43 @@ import static com.silita.biaodaa.common.RedisConstantInterface.COM_OVER_TIME;
 public class RedisTest extends ConfigTest {
     @Autowired
     private MyRedisTemplate redisTemplate;
+    @Autowired
+    private ShardedJedisPool shardedJedisPool;
 
     @Test
     public void getAndPutTest() {
-        redisTemplate.setObject("111111","1232321dsdssds1",COM_OVER_TIME);
-        //redisTemplate.opsForHash().put("user", "age", "20");
-        Object object = redisTemplate.getObject("111111");
-        System.out.println(object);
+        ShardedJedis jedis = null;
+        try {
+            jedis = shardedJedisPool.getResource();
+            jedis.lpush("ceshi".getBytes(), ObjectTranscoder.serialize("湖南耀邦"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != jedis) {
+                jedis.close();
+            }
+        }
     }
 
-
-
-
-
+    @Test
+    public void getList(){
+        ShardedJedis jedis = null;
+        List<byte[]> list = null;
+        try {
+            jedis = shardedJedisPool.getResource();
+            list = jedis.lrange("ceshi".getBytes(),0,0);
+            if(null!= list && list.size() > 0){
+                for (byte[] str : list){
+                    System.out.println(ObjectTranscoder.deserialize(str));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (null != jedis) {
+                jedis.close();
+            }
+        }
+    }
 
 }

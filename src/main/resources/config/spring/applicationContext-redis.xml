@@ -43,4 +43,14 @@
         </constructor-arg>
     </bean>
 
+    <bean id="shardedJedisPool1" class="redis.clients.jedis.ShardedJedisPool"  scope="singleton" lazy-init="true">
+        <constructor-arg index="0" ref="jedisPoolConfig" />
+        <constructor-arg index="1">
+            <list>
+                <bean class="redis.clients.jedis.JedisShardInfo">
+                    <constructor-arg name="host" value="${redis3.uri}" />
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
 </beans>
