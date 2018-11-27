@@ -1,6 +1,7 @@
 package com.silita.biaodaa.bidCompute.filter;
 
 import com.silita.biaodaa.bidCompute.condition.PrizeBean;
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.dao.BidEvaluationMethodMapper;
 import com.silita.biaodaa.utils.DoubleUtils;
 import com.silita.biaodaa.utils.MyDateUtils;
@@ -89,7 +90,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
                     date = map.get("years").toString();
                 }
                 yearList = new ArrayList<>();
-                if ("鲁班奖".equals(map.get("mateName"))) {
+                if (Constant.PRIZE_LUBAN.equals(map.get("mateName"))) {
                     String dateN = ProjectAnalysisUtil.getStrNumber(date);
                     Date lastDate = sdf.parse(date);
                     Date endDate = null;
@@ -105,7 +106,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
                         yearList.add(endStr + "～" + date);
                         yearList.add(endStr + "-" + dateN + "年度");
                     }
-                    resultMap.put("鲁班奖", yearList);
+                    resultMap.put(Constant.PRIZE_LUBAN, yearList);
                 } else {
                     yearList.add(date);
                     resultMap.put(map.get("mateName").toString(), yearList);
@@ -126,9 +127,9 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         List<Map<String, Object>> nationList = new ArrayList<>();
         Integer lupanCount = 0;
         //鲁班奖
-        if(null != yearMap.get("鲁班奖")){
-            param.put("years", yearMap.get("鲁班奖"));
-            param.put("mateName", "鲁班奖");
+        if(null != yearMap.get(Constant.PRIZE_LUBAN)){
+            param.put("years", yearMap.get(Constant.PRIZE_LUBAN));
+            param.put("mateName", Constant.PRIZE_LUBAN);
             List<Map<String, Object>> lubanList = bidEvaluationMethodMapper.queryCertPrizeList(param);
             if (null != lubanList && lubanList.size() > 0) {
                 lupanCount = lubanList.size();
@@ -137,9 +138,9 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         }
         //全国建设工程项目施工安全生产标准化工地
         Integer buildCount = 0;
-        if(null != yearMap.get("全国建设工程项目施工安全生产标准化工地")){
-            param.put("years", yearMap.get("全国建设工程项目施工安全生产标准化工地"));
-            param.put("mateName", "全国建设工程项目施工安全生产标准化工地");
+        if(null != yearMap.get(Constant.PRIZE_BUILD)){
+            param.put("years", yearMap.get(Constant.PRIZE_BUILD));
+            param.put("mateName", Constant.PRIZE_BUILD);
             List<Map<String, Object>> buildList = bidEvaluationMethodMapper.queryCertPrizeList(param);
             if (null != buildList && buildList.size() > 0) {
                 buildCount = buildList.size();
@@ -148,19 +149,19 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         }
         //全国装饰奖
         Integer decorateCount = 0;
-        if(null != yearMap.get("全国建筑工程装饰奖")){
-            param.put("years", yearMap.get("全国建筑工程装饰奖"));
-            param.put("mateName", "全国建筑工程装饰奖");
+        if(null != yearMap.get(Constant.PRIZE_DECORATE)){
+            param.put("years", yearMap.get(Constant.PRIZE_DECORATE));
+            param.put("mateName", Constant.PRIZE_DECORATE);
             List<Map<String, Object>> decoList = bidEvaluationMethodMapper.queryCertPrizeList(param);
             if (null != decoList && decoList.size() > 0) {
                 decorateCount = decoList.size();
                 nationList.addAll(decoList);
             }
         }
-        resultMap.put("全国建筑工程装饰奖", decorateCount);
+        resultMap.put(Constant.PRIZE_DECORATE, decorateCount);
         resultMap.put("certList", nationList);
-        resultMap.put("全国建设工程项目施工安全生产标准化工地", buildCount);
-        resultMap.put("鲁班奖", lupanCount);
+        resultMap.put(Constant.PRIZE_BUILD, buildCount);
+        resultMap.put(Constant.PRIZE_LUBAN, lupanCount);
         return resultMap;
     }
 
@@ -175,9 +176,9 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         List<Map<String, Object>> provinceList = new ArrayList<>();
         //芙蓉奖
         Integer lurotCount = 0;
-        if(null != yearMap.get("芙蓉奖")){
-            param.put("years", yearMap.get("芙蓉奖"));
-            param.put("mateName", "芙蓉奖");
+        if(null != yearMap.get(Constant.PRIZE_LOTUS)){
+            param.put("years", yearMap.get(Constant.PRIZE_LOTUS));
+            param.put("mateName", Constant.PRIZE_LOTUS);
             List<Map<String, Object>> lurotList = bidEvaluationMethodMapper.queryCertPrizeList(param);
             if (null != lurotCount && lurotList.size() > 0) {
                 lurotCount = lurotList.size();
@@ -186,17 +187,17 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         }
         //省优工程
         Integer superCount = 0;
-        if(null != yearMap.get("省优工程")){
-            param.put("years", yearMap.get("省优工程"));
-            param.put("mateName", "省优工程");
+        if(null != yearMap.get(Constant.PRIZE_SUPER)){
+            param.put("years", yearMap.get(Constant.PRIZE_SUPER));
+            param.put("mateName", Constant.PRIZE_SUPER);
             List<Map<String, Object>> superList = bidEvaluationMethodMapper.queryCertPrizeList(param);
             if (null != superList && superList.size() > 0) {
                 superCount = superList.size();
                 provinceList.addAll(superList);
             }
         }
-        resultMap.put("芙蓉奖", lurotCount);
-        resultMap.put("省优工程", superCount);
+        resultMap.put(Constant.PRIZE_LOTUS, lurotCount);
+        resultMap.put(Constant.PRIZE_SUPER, superCount);
         resultMap.put("certList", provinceList);
         return resultMap;
     }
@@ -205,12 +206,12 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
     private Map<String, Object> getPrizeScoreMap() {
         Map<String, Object> scoreMap = new HashMap<>();
         //国家奖项
-        scoreMap.put("鲁班奖", this.config.getLubanPrize());
-        scoreMap.put("全国建设工程项目施工安全生产标准化工地", this.config.getBuildPrize());
-        scoreMap.put("全国建筑工程装饰奖", this.config.getDecoratePrize());
+        scoreMap.put(Constant.PRIZE_LUBAN, this.config.getLubanPrize());
+        scoreMap.put(Constant.PRIZE_BUILD, this.config.getBuildPrize());
+        scoreMap.put(Constant.PRIZE_DECORATE, this.config.getDecoratePrize());
         //省级奖项
-        scoreMap.put("芙蓉奖", this.config.getLotusPrize());
-        scoreMap.put("省优工程", this.config.getSuperPrize());
+        scoreMap.put(Constant.PRIZE_LOTUS, this.config.getLotusPrize());
+        scoreMap.put(Constant.PRIZE_SUPER, this.config.getSuperPrize());
         return scoreMap;
     }
 
@@ -319,11 +320,11 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
         if (null != nationMap.get("certList")) {
             List<Map<String, Object>> naticnList = (List<Map<String, Object>>) nationMap.get("certList");
             for (Map<String, Object> nation : naticnList) {
-                if ("鲁班奖".equals(nation.get("mateName").toString())) {
+                if (Constant.PRIZE_LUBAN.equals(nation.get("mateName").toString())) {
                     lubanList.add(nation);
-                } else if ("全国建设工程项目施工安全生产标准化工地".equals(nation.get("mateName").toString())) {
+                } else if (Constant.PRIZE_BUILD.equals(nation.get("mateName").toString())) {
                     buildList.add(nation);
-                } else if ("全国建筑工程装饰奖".equals(nation.get("mateName").toString())) {
+                } else if (Constant.PRIZE_DECORATE.equals(nation.get("mateName").toString())) {
                     desList.add(nation);
                 }
             }
@@ -331,7 +332,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
             Integer count = 0;
             if(this.config.getLubanPrize() > 0){
                 if (null != lubanList && lubanList.size() > 0) {
-                    count = (Integer) nationMap.get("鲁班奖");
+                    count = (Integer) nationMap.get(Constant.PRIZE_LUBAN);
                     if (count > this.config.getNationPrizeCon()) {
                         luCount = DoubleUtils.mul(Double.valueOf(this.config.getNationPrizeCon().toString()), this.config.getLubanPrize());
                         for (int i = 0; i < this.config.getNationPrizeCon(); i++) {
@@ -347,7 +348,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
             }
             if(this.config.getBuildPrize() > 0){
                 if (null != buildList && buildList.size() > 0) {
-                    count = (Integer) nationMap.get("全国建设工程项目施工安全生产标准化工地");
+                    count = (Integer) nationMap.get(Constant.PRIZE_BUILD);
                     if (count > this.config.getNationPrizeCon()) {
                         buCount = DoubleUtils.mul(Double.valueOf(this.config.getNationPrizeCon().toString()), this.config.getBuildPrize());
                         for (int i = 0; i < this.config.getNationPrizeCon(); i++) {
@@ -363,7 +364,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
             }
             if(this.config.getDecoratePrize() > 0){
                 if (null != desList && desList.size() > 0) {
-                    count = (Integer) nationMap.get("全国建筑工程装饰奖");
+                    count = (Integer) nationMap.get(Constant.PRIZE_DECORATE);
                     if (count > this.config.getNationPrizeCon()) {
                         buCount = DoubleUtils.mul(Double.valueOf(this.config.getNationPrizeCon().toString()), this.config.getDecoratePrize());
                         for (int i = 0; i < this.config.getNationPrizeCon(); i++) {
@@ -391,9 +392,9 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
             List<Map<String, Object>> superList = new ArrayList<>();
             List<Map<String, Object>> certList = (List<Map<String, Object>>) proMap.get("certList");
             for (Map<String, Object> proM : certList) {
-                if ("芙蓉奖".equals(proM.get("mateName").toString())) {
+                if (Constant.PRIZE_LOTUS.equals(proM.get("mateName").toString())) {
                     lotusList.add(proM);
-                } else if ("省优工程".equals(proM.get("mateName").toString())) {
+                } else if (Constant.PRIZE_SUPER.equals(proM.get("mateName").toString())) {
                     superList.add(proM);
                 }
             }
@@ -401,7 +402,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
             Integer count = 0;
             if (this.config.getLotusPrize() > 0) {
                 if (null != lotusList && lotusList.size() > 0) {
-                    count = (Integer) proMap.get("芙蓉奖");
+                    count = (Integer) proMap.get(Constant.PRIZE_LOTUS);
                     if (count > this.config.getProvinceCount()) {
                         Integer cou = count - this.config.getProvinceCount();
                         lotusCount = DoubleUtils.add(
@@ -418,7 +419,7 @@ public class PrizeFilterHandler extends BaseFilterHandler<PrizeBean> {
             }
             if (this.config.getSuperPrize() > 0) {
                 if (null != superList && superList.size() > 0) {
-                    count = (Integer) proMap.get("省优工程");
+                    count = (Integer) proMap.get(Constant.PRIZE_SUPER);
                     if (count > this.config.getProvinceCount()) {
                         Integer cou = count - this.config.getProvinceCount();
                         superCount = DoubleUtils.add(

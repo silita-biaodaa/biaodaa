@@ -2,6 +2,7 @@ package com.silita.biaodaa.bidCompute.filter;
 
 import com.silita.biaodaa.bidCompute.condition.PrizeBean;
 import com.silita.biaodaa.bidCompute.condition.SafetyBean;
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.dao.BidEvaluationMethodMapper;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.utils.DoubleUtils;
@@ -65,10 +66,10 @@ public class SafetyFilterHandler extends BaseFilterHandler<SafetyBean> {
     // 存储分值
     private Map<String,Object> getSafetyScore(){
         Map<String,Object> scoreMap = new HashMap<>();
-        scoreMap.put("省级优秀",this.config.getProvinceExcell());
-        scoreMap.put("省级合格",this.config.getProvinceQual());
-        scoreMap.put("市级优秀",this.config.getCityExcell());
-        scoreMap.put("市级合格",this.config.getCityQual());
+        scoreMap.put(Constant.EXCELL_PROVINCE,this.config.getProvinceExcell());
+        scoreMap.put(Constant.QUAL_PROVINCE,this.config.getProvinceQual());
+        scoreMap.put(Constant.EXCELL_CITY,this.config.getCityExcell());
+        scoreMap.put(Constant.QUAL_CITY,this.config.getCityQual());
         return  scoreMap;
     }
 

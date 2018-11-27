@@ -1,6 +1,7 @@
 package com.silita.biaodaa.bidCompute.filter;
 
 import com.silita.biaodaa.bidCompute.condition.UndesirableBean;
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.utils.DoubleUtils;
 import com.silita.biaodaa.utils.Name;
@@ -39,11 +40,11 @@ public class UndesirableFilterHandler extends BaseFilterHandler<UndesirableBean>
         if(null != undesList && undesList.size() > 0){
             List<Map<String,Object>> undes = new ArrayList<>();
             for(Map<String,Object> map : undesList){
-                if("一般".equals(map.get("nature").toString())){
+                if(Constant.SCORE_COMM.equals(map.get("nature").toString())){
                     if(this.config.getCommScore() > 0){
                         undes.add(map);
                     }
-                }else if ("严重".equals(map.get("nature").toString())){
+                }else if (Constant.SCORE_SEV.equals(map.get("nature").toString())){
                     if(this.config.getSevScore() > 0){
                         undes.add(map);
                     }
@@ -69,7 +70,7 @@ public class UndesirableFilterHandler extends BaseFilterHandler<UndesirableBean>
         Integer comCount = 0;
         Integer sveCount = 0;
         for (Map<String,Object> undes : undesList){
-            if("一般".equals(undes.get("nature").toString())){
+            if(Constant.SCORE_COMM.equals(undes.get("nature").toString())){
                 comCount++;
             }else{
                 sveCount++;
