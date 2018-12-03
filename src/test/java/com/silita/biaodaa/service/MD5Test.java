@@ -35,4 +35,12 @@ public class MD5Test {
         Map resultMap = JsonUtils.json2Map(result);
         System.out.println(resultMap);
     }
+
+    @Test
+    public void http1() {
+        String requestUrl = "http://web.hunanjz.com/action/personnel.ashx?opt=person&name=罗福求&sfz=430502196909253032";
+        String result = HttpUtils.sendGet(requestUrl, null);
+        Map resultMap = JsonUtils.json2Map(result);
+        System.out.println(resultMap);
+    }
 }
