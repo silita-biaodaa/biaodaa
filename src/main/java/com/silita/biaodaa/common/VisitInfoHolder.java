@@ -3,6 +3,8 @@ package com.silita.biaodaa.common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
+
 /**
  * Created by zhangxiahui on 17/7/26.
  */
@@ -32,7 +34,13 @@ public class VisitInfoHolder {
         VisitInfoHolder.uid.set(uid);
     }
 
-
-
-
+    public synchronized static String getUUID() {
+        String uuid = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return uuid;
+    }
 }

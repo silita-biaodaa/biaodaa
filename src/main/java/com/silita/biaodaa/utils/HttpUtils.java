@@ -9,13 +9,24 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -39,7 +50,6 @@ public class HttpUtils {
      * @param url   发送请求的 URL
      * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
      * @return 所代表远程资源的响应结果，null表示数据接口异常(含SQL执行异常), -1表示接口调用超时
-     * @author xiangjie
      * @date 2017年4月19日
      */
     public static String sendGet(String url, String param) {
@@ -56,7 +66,7 @@ public class HttpUtils {
             // 设置通用的请求属性
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36");
             // 建立实际的连接
             connection.connect();
             // 获取所有响应头字段
@@ -93,7 +103,6 @@ public class HttpUtils {
      * @param url   发送请求的 URL
      * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
      * @return 所代表远程资源的响应结果，null表示数据接口异常(含SQL执行异常), -1表示接口调用超时
-     * @author xiangjie
      * @date 2017年4月19日
      */
     public static JSONObject sendPost(String url, Object param) {
@@ -137,5 +146,30 @@ public class HttpUtils {
             }
         }
         return null;
+    }
+
+    public static String sendGetUrl(String url) {
+        HttpGet httpGet = new HttpGet(url);
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        try {
+            httpGet.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36");
+            HttpResponse httpResponse = httpClient.execute(httpGet);
+            if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                String resultStr = EntityUtils.toString(httpResponse.getEntity());
+                return resultStr;
+            }
+            return null;
+        } catch (IOException e) {
+            logger.error("发送 GET请求出现异常！！！", e);
+            return null;
+        } finally {
+            if (null != httpClient) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

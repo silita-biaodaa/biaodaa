@@ -89,6 +89,11 @@ public class TbPersonQualification implements Serializable {
      */
     private String sex;
 
+    /**
+     * 是否在建(默认false)
+     */
+    private Boolean isUnder;
+
     //人员姓名
     private String name;
 

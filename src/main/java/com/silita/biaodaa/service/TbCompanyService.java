@@ -71,6 +71,9 @@ public class TbCompanyService {
     @Autowired
     QualService qualService;
 
+    @Autowired
+    TbUnderConstructMapper tbUnderConstructMapper;
+
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
     private ProjectAnalysisUtil analysisUtil = new ProjectAnalysisUtil();
@@ -204,7 +207,7 @@ public class TbCompanyService {
     public PageInfo queryCompanyPerson(Page page, Map<String, Object> param) {
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<TbPersonQualification> list = tbPersonQualificationMapper.queryCompanyPerson(param);
-        PageInfo pageInfo = new PageInfo(list);
+        PageInfo pageInfo = new PageInfo(this.setIsUnder(list));
         return pageInfo;
     }
 
@@ -1143,7 +1146,21 @@ public class TbCompanyService {
         return resultMap;
     }
 
-    private List<TbCompanyQualification> sortQual(List<TbCompanyQualification> qualList) {
-        return qualList;
+    /**
+     * 设置是否在建
+     *
+     * @param list
+     */
+    private List<TbPersonQualification> setIsUnder(List<TbPersonQualification> list) {
+        if (null != list && list.size() > 0) {
+            for (TbPersonQualification person : list) {
+                person.setIsUnder(false);
+                int count = tbUnderConstructMapper.queryUnderConstructByInnerid(person.getInnerid());
+                if (count > 0) {
+                    person.setIsUnder(true);
+                }
+            }
+        }
+        return list;
     }
 }

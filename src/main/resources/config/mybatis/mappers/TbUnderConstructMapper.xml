@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbUnderConstructMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbUnderConstruct">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="VARCHAR"/>
+        <result column="innerid" property="innerid" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="id_card" property="idCard" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="date" property="date" jdbcType="VARCHAR"/>
+        <result column="county" property="county" jdbcType="VARCHAR"/>
+        <result column="pro_org" property="proOrg" jdbcType="VARCHAR"/>
+        <result column="pro_name" property="proName" jdbcType="VARCHAR"/>
+        <result column="unit_org" property="unitOrg" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insertUnderConstruct" parameterType="com.silita.biaodaa.model.TbUnderConstruct">
+    INSERT INTO `tb_under_construct`
+    (`pkid`,
+    `name`,
+    `id_card`,
+    `type`,
+    `city`,
+    `date`,
+    `county`,
+    `pro_org`,
+    `pro_name`,
+    `unit_org`,
+    `created`)
+    VALUES
+      (
+      #{pkid},#{name},#{idCard},#{type},#{city},
+      #{date},#{county},#{proOrg},#{proName},#{unitOrg},
+      now()
+      )
+  </insert>
+
+    <select id="queryUnderConstructList" parameterType="java.util.Map" resultType="java.util.Map">
+        select
+          t.`name` as `name`,
+          t.`innerid` as innerid,
+          t.`unit_org` as unitOrg,
+          t.`pro_name` as proName,
+          t.`type` as `type`
+        from tb_under_construct t
+        where 1=1
+        <if test="name != null and name != ''">
+           and t.`name` like CONCAT('%',#{name},'%')
+        </if>
+        order by t.date desc
+    </select>
+
+    <select id="queryUnderCount" parameterType="com.silita.biaodaa.model.TbUnderConstruct" resultType="java.lang.Integer">
+        select
+            count(1)
+        from tb_under_construct t
+        where 1=1
+        <if test="name != null and name != ''">
+            and t.`name` = #{name}
+        </if>
+        <if test="idCard != null and idCard != ''">
+            and t.`id_card` = #{idCard}
+        </if>
+        <if test="type != null and type != ''">
+            and t.`type` = #{type}
+        </if>
+        <if test="city != null and city != ''">
+            and t.`city` = #{city}
+        </if>
+        <if test="date != null and date != ''">
+            and t.`date` = #{date}
+        </if>
+        <if test="county != null and county != ''">
+            and t.`county` = #{county}
+        </if>
+        <if test="proOrg != null and proOrg != ''">
+            and t.`pro_org` = #{proOrg}
+        </if>
+        <if test="proName != null and proName != ''">
+            and t.`pro_name` = #{proName}
+        </if>
+        <if test="unitOrg != null and unitOrg != ''">
+            and t.`unit_org` = #{unitOrg}
+        </if>
+    </select>
+
+    <select id="queryUnderConstructByInnerid" resultType="java.lang.String">
+        select count(1) from tb_under_construct t where t.innerid = #{innerid}
+    </select>
+
+    <select id="queryUnderListInnerid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from tb_under_construct t where t.innerid = #{innerid} order by t.date desc
+    </select>
+</mapper>
