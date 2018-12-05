@@ -90,7 +90,7 @@
         </if>
     </select>
 
-    <select id="queryUnderConstructByInnerid" resultType="java.lang.String">
+    <select id="queryUnderConstructByInnerid" resultType="java.lang.Integer" parameterType="java.lang.String">
         select count(1) from tb_under_construct t where t.innerid = #{innerid}
     </select>
 
