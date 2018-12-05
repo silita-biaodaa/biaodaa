@@ -1,7 +1,6 @@
 package com.silita.biaodaa.controller;
 
 import com.silita.biaodaa.service.UnderConstructService;
-import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,12 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 @Controller
 @RequestMapping("/under")
