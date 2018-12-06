@@ -2,12 +2,11 @@ package com.silita.biaodaa.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.dao.TbPersonQualificationMapper;
 import com.silita.biaodaa.dao.TbUnderConstructMapper;
+import com.silita.biaodaa.model.TbPersonQualification;
 import com.silita.biaodaa.model.TbUnderConstruct;
 import com.silita.biaodaa.utils.*;
 import org.apache.commons.collections.MapUtils;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +28,9 @@ public class UnderConstructService {
 
     @Autowired
     TbUnderConstructMapper tbUnderConstructMapper;
+    @Autowired
+    TbPersonQualificationMapper tbPersonQualificationMapper;
 
-    private static DBCollection dbCollection = MongoUtils.init(PropertiesUtils.getProperty("mongodb.ip"), PropertiesUtils.getProperty("mongodb.host"), "mycol").getDB().getCollection("person");
 
     public PageInfo listUnderConstruct(Map<String, Object> param) {
         Integer pageNum = MapUtils.getInteger(param, "pageNo");
@@ -93,10 +94,10 @@ public class UnderConstructService {
             underConstruct.setUnitOrg(MapUtils.getString(mapList.get(i), "单位名称"));
             if (tbUnderConstructMapper.queryUnderCount(underConstruct) <= 0) {
                 underConstruct.setPkid(VisitInfoHolder.getUUID());
-                this.setIdCard(underConstruct);
+                this.getInnerid(underConstruct);
                 tbUnderConstructMapper.insertUnderConstruct(underConstruct);
             }
-            this.setIdCard(underConstruct);
+            underConstruct.setIdCard(this.setIdCard(underConstruct));
             list.add(underConstruct);
         }
         return list;
@@ -107,8 +108,9 @@ public class UnderConstructService {
      *
      * @param underConstruct
      */
-    private void setIdCard(TbUnderConstruct underConstruct) {
-        underConstruct.setIdCard(underConstruct.getIdCard().replaceAll("(\\d{4})\\d{10}(\\w{4})", "$1*****$2"));
+    private String setIdCard(TbUnderConstruct underConstruct) {
+        String idCard = underConstruct.getIdCard().replaceAll("(\\d{10})\\d{6}(\\w{2})", "$1******$2");
+        return idCard;
     }
 
     /**
@@ -116,15 +118,12 @@ public class UnderConstructService {
      * @param under
      */
     private void getInnerid(TbUnderConstruct under){
-        BasicDBObject basicDBObject = new BasicDBObject();
-        basicDBObject.put("name", under.getName());
-        basicDBObject.put("id_card", under.getIdCard());
-        DBObject dbObject = dbCollection.findOne(basicDBObject);
-        if (null != dbObject) {
-            Map map = dbObject.toMap();
-            TbUnderConstruct underConstruct = new TbUnderConstruct();
-            underConstruct.setPkid(under.getPkid());
-            underConstruct.setInnerid("00" + map.get("innerid").toString());
-        }
+        String idCard = setIdCard(under);
+        Map<String,Object> param = new HashMap<String,Object>(){{
+            put("name",under.getName());
+            put("idCard",idCard);
+            put("tableCode",RouteUtils.HUNAN_SOURCE);
+        }};
+        under.setInnerid(tbPersonQualificationMapper.queryPersonInnerid(param));
     }
 }

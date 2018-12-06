@@ -1,6 +1,7 @@
 package com.silita.biaodaa.dao;
 
 import com.silita.biaodaa.model.TbPersonQualification;
+import com.silita.biaodaa.model.TbUnderConstruct;
 import com.silita.biaodaa.utils.MyMapper;
 
 import java.util.List;
@@ -48,4 +49,11 @@ public interface TbPersonQualificationMapper extends MyMapper<TbPersonQualificat
      * @param param
      */
     void updatePersonPX(Map<String, Object> param);
+
+    /**
+     * 获取人员innerid
+     * @param param
+     * @return
+     */
+    String queryPersonInnerid(Map<String, Object> param);
 }

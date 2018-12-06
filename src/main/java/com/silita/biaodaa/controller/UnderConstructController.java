@@ -1,6 +1,7 @@
 package com.silita.biaodaa.controller;
 
 import com.silita.biaodaa.service.UnderConstructService;
+import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -51,7 +52,7 @@ public class UnderConstructController extends BaseController {
             resultMap.put("data", list);
             return resultMap;
         }
-        if (null == param.get("name")) {
+        if (MyStringUtils.isNull(param.get("name"))) {
             resultMap.put(CODE_FLAG, 0);
             resultMap.put(MSG_FLAG, "参数name不可为空!");
             return resultMap;

@@ -1,76 +1,84 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.biaodaa.dao.TbPersonQualificationMapper" >
-  <!-- 获取企业人员资质的注册类别-->
-  <select id="getCompanyPersonCate" parameterType="Map" resultType="Map">
-    select category,count(*) as num
-      from (select * from tb_person_${tableCode} where type=1
-      <if test="comId!=null and comId!=''">
-          and com_id =#{comId}
-      </if>
-      <if test="comName!=null and comName!=''">
-          and com_name=#{comName}
-      </if>
-      GROUP BY cert_no) as t
-      GROUP BY category
-  </select>
+<mapper namespace="com.silita.biaodaa.dao.TbPersonQualificationMapper">
+    <!-- 获取企业人员资质的注册类别-->
+    <select id="getCompanyPersonCate" parameterType="Map" resultType="Map">
+        select category,count(*) as num
+        from (select * from tb_person_${tableCode} where type=1
+        <if test="comId!=null and comId!=''">
+            and com_id =#{comId}
+        </if>
+        <if test="comName!=null and comName!=''">
+            and com_name=#{comName}
+        </if>
+        GROUP BY cert_no) as t
+        GROUP BY category
+    </select>
 
-  <!-- 获取企业注册人员-->
-  <select id="queryCompanyPerson" parameterType="Map" resultType="com.silita.biaodaa.model.TbPersonQualification">
-    select q.`pkid`
-            ,q.`name`
-            ,q.`sex` AS sex
-            ,q.`id_card`
-            ,q.`innerid`
-            ,q.`category`
-            ,q.`cert_no`
-            ,q.`seal_no`
-            ,q.`cert_date`
-            ,q.`valid_date`
-            ,q.`url`
-            ,q.`com_id`
-            ,q.`com_name`
-            ,q.`type`
-            ,GROUP_CONCAT(DISTINCT q.major) AS major
-            ,#{tableCode} as tabCode
-    from tb_person_${tableCode} q where 1=1 and q.type=1
-    <if test="comId!=null and comId!=''">
-      and q.com_id = #{comId}
-    </if>
-    <if test="comName!=null and comName!=''">
-      and q.com_name = #{comName}
-    </if>
-    <if test="category!=null and category!=''">
-      and q.category = #{category}
-    </if>
-    <if test="keyWord!=null and keyWord!=''">
-      and q.name = #{keyWord}
-    </if>
-      <choose>
-          <when test="tableCode=='hunan'">
-              GROUP BY IF(q.`cert_no` !='',q.`cert_no`,q.`category`),q.`com_id`,q.`name`,q.`sex`,q.`id_card`
-          </when>
-          <otherwise>
-              GROUP BY q.`id_card`,q.`category`,q.com_id
-          </otherwise>
-      </choose>
-    ORDER BY q.px DESC
-  </select>
+    <!-- 获取企业注册人员-->
+    <select id="queryCompanyPerson" parameterType="Map" resultType="com.silita.biaodaa.model.TbPersonQualification">
+        select q.`pkid`
+        ,q.`name`
+        ,q.`sex` AS sex
+        ,q.`id_card`
+        ,q.`innerid`
+        ,q.`category`
+        ,q.`cert_no`
+        ,q.`seal_no`
+        ,q.`cert_date`
+        ,q.`valid_date`
+        ,q.`url`
+        ,q.`com_id`
+        ,q.`com_name`
+        ,q.`type`
+        ,GROUP_CONCAT(DISTINCT q.major) AS major
+        ,#{tableCode} as tabCode
+        from tb_person_${tableCode} q where 1=1 and q.type=1
+        <if test="comId!=null and comId!=''">
+            and q.com_id = #{comId}
+        </if>
+        <if test="comName!=null and comName!=''">
+            and q.com_name = #{comName}
+        </if>
+        <if test="category!=null and category!=''">
+            and q.category = #{category}
+        </if>
+        <if test="keyWord!=null and keyWord!=''">
+            and q.name = #{keyWord}
+        </if>
+        <choose>
+            <when test="tableCode=='hunan'">
+                GROUP BY IF(q.`cert_no` !='',q.`cert_no`,q.`category`),q.`com_id`,q.`name`,q.`sex`,q.`id_card`
+            </when>
+            <otherwise>
+                GROUP BY q.`id_card`,q.`category`,q.com_id
+            </otherwise>
+        </choose>
+        ORDER BY q.px DESC
+    </select>
 
-  <select id="getProvinceList" resultType="Map">
+    <select id="getProvinceList" resultType="Map">
     select `name`,code from twf_dict where `type`=2 and is_valid=1
   </select>
 
-  <select id="getProvinceCode" parameterType="String" resultType="String">
+    <select id="getProvinceCode" parameterType="String" resultType="String">
     select code from twf_dict where `type`=2 and is_valid=1 and `name`=#{name}
   </select>
 
-  <update id="updatePersonPX" parameterType="Map">
+    <update id="updatePersonPX" parameterType="Map">
     update tb_person_${tableCode} set px = px + 1 where `name`= #{name}
   </update>
 
-
-
+    <select id="queryPersonInnerid" parameterType="java.util.Map" resultType="java.lang.String">
+        select
+          q.`innerid`
+        from tb_person_${tableCode} q
+        where q.type=1
+        and q.name = #{name}
+        and q.id_card = #{idCard}
+        order by q.created desc
+        limit 1
+    </select>
 
 
 </mapper>

@@ -157,6 +157,8 @@ public class HttpUtils {
             if (httpResponse.getStatusLine().getStatusCode() == 200) {
                 String resultStr = EntityUtils.toString(httpResponse.getEntity());
                 return resultStr;
+            }else if(httpResponse.getStatusLine().getStatusCode() == 403){
+                return sendGetUrl(url);
             }
             return null;
         } catch (IOException e) {
