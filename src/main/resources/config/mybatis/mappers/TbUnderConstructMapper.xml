@@ -23,6 +23,7 @@
     <insert id="insertUnderConstruct" parameterType="com.silita.biaodaa.model.TbUnderConstruct">
     INSERT INTO `tb_under_construct`
     (`pkid`,
+    `innerid`,
     `name`,
     `id_card`,
     `type`,
@@ -35,7 +36,7 @@
     `created`)
     VALUES
       (
-      #{pkid},#{name},#{idCard},#{type},#{city},
+      #{pkid},#{innerid},#{name},#{idCard},#{type},#{city},
       #{date},#{county},#{proOrg},#{proName},#{unitOrg},
       now()
       )

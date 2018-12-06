@@ -153,7 +153,9 @@ public class HttpUtils {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
             httpGet.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36");
+            logger.info("---------send begin---------url:"+url);
             HttpResponse httpResponse = httpClient.execute(httpGet);
+            logger.info("---------send begin--------------");
             if (httpResponse.getStatusLine().getStatusCode() == 200) {
                 String resultStr = EntityUtils.toString(httpResponse.getEntity());
                 return resultStr;
