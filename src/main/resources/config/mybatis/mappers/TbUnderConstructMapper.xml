@@ -52,7 +52,6 @@
         from tb_under_construct t
         where 1=1
         <if test="name != null and name != ''">
---            and t.`name` like CONCAT('%',#{name},'%')
             and t.`name` = #{name}
         </if>
         order by t.date desc
