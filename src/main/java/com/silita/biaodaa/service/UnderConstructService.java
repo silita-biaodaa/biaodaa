@@ -49,7 +49,7 @@ public class UnderConstructService {
         List<TbUnderConstruct> list = tbUnderConstructMapper.queryUnderListInnerid(param.get("innerid").toString());
         if (null != list && list.size() > 0) {
             for (TbUnderConstruct under : list) {
-                this.setIdCard(under);
+                under.setIdCard(this.setIdCard(under));
             }
         }
         return list;
