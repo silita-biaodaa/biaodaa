@@ -55,7 +55,7 @@
         <if test="name != null and name != ''">
             and t.`name` = #{name}
         </if>
-        GROUP BY t.`innerid`
+        GROUP BY t.`id_card`
         order by t.date desc
     </select>
 
