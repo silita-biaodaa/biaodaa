@@ -708,4 +708,9 @@ public class NoticeService {
             session.close();
         }
     }
+
+    public PageInfo getCompanyZhongbiaoList(Map<String,Object> param){
+
+        return null;
+    }
 }

@@ -46,4 +46,18 @@ public interface TbUnderConstructMapper extends MyMapper<TbUnderConstruct> {
      * @return
      */
     List<TbUnderConstruct> queryUnderListInnerid(String innerid);
+
+    /**
+     * 获取在建详情
+     * @param pkid
+     * @return
+     */
+    TbUnderConstruct queryUnderConstructDetail(String pkid);
+
+    /**
+     * 查询在建列表
+     * @param idCard
+     * @return
+     */
+    List<TbUnderConstruct> queryUnderListIdCard(String idCard);
 }

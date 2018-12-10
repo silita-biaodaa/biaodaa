@@ -46,7 +46,14 @@ public class UnderConstructService {
     }
 
     public List getUnderConstruct(Map<String, Object> param) {
-        List<TbUnderConstruct> list = tbUnderConstructMapper.queryUnderListInnerid(param.get("innerid").toString());
+        List<TbUnderConstruct> list = new ArrayList<>();
+        if(null != param.get("innerid")){
+            list = tbUnderConstructMapper.queryUnderListInnerid(param.get("innerid").toString());
+        }else {
+            //获取身份证id
+            TbUnderConstruct underConstruct = tbUnderConstructMapper.queryUnderConstructDetail(param.get("pkid").toString());
+            list = tbUnderConstructMapper.queryUnderListIdCard(underConstruct.getIdCard());
+        }
         if (null != list && list.size() > 0) {
             for (TbUnderConstruct under : list) {
                 under.setIdCard(this.setIdCard(under));

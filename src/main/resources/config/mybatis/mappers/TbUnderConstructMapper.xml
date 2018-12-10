@@ -44,6 +44,7 @@
 
     <select id="queryUnderConstructList" parameterType="java.util.Map" resultType="java.util.Map">
         select
+          t.`pkid` as pkid,
           t.`name` as `name`,
           t.`innerid` as innerid,
           t.`unit_org` as unitOrg,
@@ -99,5 +100,13 @@
 
     <select id="queryUnderListInnerid" parameterType="java.lang.String" resultMap="BaseResultMap">
         select * from tb_under_construct t where t.innerid = #{innerid} order by t.date desc
+    </select>
+
+    <select id="queryUnderConstructDetail" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from tb_under_construct t where t.pkid = #{pkid}
+    </select>
+
+    <select id="queryUnderListIdCard" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from tb_under_construct t where t.id_card = #{idCard} order by t.date desc
     </select>
 </mapper>
