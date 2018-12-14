@@ -733,7 +733,7 @@ public class TbCompanyService {
         String listKey = RedisConstantInterface.PERSON_LIST + paramHash;
         PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);
         if (null != pageInfo) {
-            logger.info("注册人员数据启用缓存[" + key + "]========缓存数据共计[" + pageInfo.getList().size() + "]条");
+            logger.info("注册人员数据启用缓存[" + listKey + "]========缓存数据共计[" + pageInfo.getList().size() + "]条");
             return pageInfo;
         }
         pageInfo = queryCompanyPerson(page, param);
