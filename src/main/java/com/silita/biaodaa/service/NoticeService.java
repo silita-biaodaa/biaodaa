@@ -211,7 +211,7 @@ public class NoticeService {
             argMap.put("idSet", idSet);
             List collIds = null;
             if ("notice".equals(params.get("collType"))) {
-                argMap.put("source",params.get("source"));
+                argMap.put("source", params.get("source"));
                 collIds = this.queryNoticeCollStatus(argMap);
             } else if ("company".equals(params.get("collType"))) {
                 collIds = this.queryCompanyCollStatus(argMap);
@@ -375,30 +375,30 @@ public class NoticeService {
             if (null != resList && resList.size() > 0) {
                 Map<String, Object> param = new HashMap<>();
                 for (Map<String, Object> map : resList) {
-                    if(null != map.get("oneName")){
+                    if (null != map.get("oneName")) {
                         param.put("comName", map.get("oneName"));
-                        key =  RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                        key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
                         companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
 //                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                        if(null != companyLawEs){
+                        if (null != companyLawEs) {
                             map.put("oneLaw", companyLawEs.getTotal());
                         }
                     }
-                    if(null != map.get("twoName")){
+                    if (null != map.get("twoName")) {
                         param.put("comName", map.get("twoName"));
 //                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                        key =  RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                        key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
                         companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
-                        if(null != companyLawEs){
+                        if (null != companyLawEs) {
                             map.put("twoLaw", companyLawEs.getTotal());
                         }
                     }
-                    if (null != map.get("threeName")){
+                    if (null != map.get("threeName")) {
                         param.put("comName", map.get("threeName"));
 //                        companyLawEs = lawService.queryZhongbiaoCompanyLaw(param);
-                        key =  RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
+                        key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
                         companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
-                        if(null != companyLawEs){
+                        if (null != companyLawEs) {
                             map.put("threeLaw", companyLawEs.getTotal());
                         }
                     }
@@ -421,15 +421,15 @@ public class NoticeService {
             throw new Exception("prameter type is null![type+" + type + "]");
         }
         if (type.equals(SNATCHURL_ZHAOBIAO)) {
-            if("hunan".equals(params.get("source"))){
+            if ("hunan".equals(params.get("source"))) {
                 params.put("detailTable", "zhaobiao_detail");
-            }else {
+            } else {
                 params.put("detailTable", "zhaobiao_detail_others");
             }
         } else if (type.equals(SNATCHURL_ZHONGBIAO)) {
-            if("hunan".equals(params.get("source"))){
+            if ("hunan".equals(params.get("source"))) {
                 params.put("detailTable", "zhongbiao_detail");
-            }else {
+            } else {
                 params.put("detailTable", "zhongbiao_detail_others");
             }
         }
@@ -451,7 +451,7 @@ public class NoticeService {
      * @param param
      * @return
      */
-    public Long queryRelCountParam(Map<String,Object> param) {
+    public Long queryRelCountParam(Map<String, Object> param) {
         return noticeMapper.queryRelCountByParam(param);
     }
 
@@ -469,7 +469,7 @@ public class NoticeService {
      * 招标，中标结果分拣
      */
     private void sortingResult(List<Map> relList) {
-        Map<String,Object> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
         CompanyLawEs companyLawEs;
         if (relList != null && relList.size() > 0) {
             //招标，中标结果划分
@@ -481,13 +481,13 @@ public class NoticeService {
                         result.remove("zhaobiao_pbMode");
                     }
                 } else if (type.equals(SNATCHURL_ZHONGBIAO)) {
-                    if (null != result.get("oneName")){
-                        param.put("comName",result.get("oneName"));
+                    if (null != result.get("oneName")) {
+                        param.put("comName", result.get("oneName"));
 //                        companyLawEs = lawService.queryZhongbiaoListCompanyLaw(param);
                         String key = RedisConstantInterface.NOTIC_LAW + ObjectUtils.buildMapParamHash(param);
                         companyLawEs = (CompanyLawEs) myRedisTemplate.getObject(key);
-                        if (null != companyLawEs){
-                            result.put("oneLaw",companyLawEs.getTotal());
+                        if (null != companyLawEs) {
+                            result.put("oneLaw", companyLawEs.getTotal());
                         }
                     }
                     if (result.get("zhongbiao_pbMode") != null) {
@@ -508,8 +508,8 @@ public class NoticeService {
         return pageInfo;
     }
 
-    public List<Map> queryRelations(Map map)  throws Exception{
-        map.put("type",2);
+    public List<Map> queryRelations(Map map) throws Exception {
+        map.put("type", 2);
 //        map.put("source","hunan");
         buildNoticeDetilTable(map);
         List<Map> relList = noticeMapper.queryRelations(map);
@@ -709,8 +709,31 @@ public class NoticeService {
         }
     }
 
-    public PageInfo getCompanyZhongbiaoList(Map<String,Object> param){
-
-        return null;
+    public List<Map> getCompanyZhongbiaoList(Map<String, Object> param) {
+        List<Map> list = new ArrayList<>();
+        //湖南省
+        param.put("detailTable", "zhongbiao_detail");
+        param.put("type", 2);
+        param.put("source", "hunan");
+        param.put("detailType", "company");
+        param.put("snatchurl_tbn", RouteUtils.routeTableName("mishu.snatchurl", "hunan"));
+        List<Map> listHunan = noticeMapper.queryNoticeList(param);
+        if (null != listHunan && listHunan.size() > 0) {
+            list.addAll(listHunan);
+        }
+        //外省
+        List<Map> listOthers = noticeMapper.queryCompanyOthersNoticeList(param);
+        if (null != listOthers && listOthers.size() > 0) {
+            for (Map map : listOthers){
+                Map snatchMap = noticeMapper.querySnatchurlParam(map);
+                if(MapUtils.isNotEmpty(snatchMap)){
+                    map.put("noticeType",snatchMap.get("noticeType"));
+                    map.put("projectType",snatchMap.get("projectType"));
+                }
+            }
+            list.addAll(listOthers);
+        }
+        sortingResult(list);
+        return list;
     }
 }

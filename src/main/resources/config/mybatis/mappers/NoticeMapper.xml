@@ -670,4 +670,28 @@
         WHERE isshow=0
         ) a
     </select>
+
+    <select id="queryCompanyOthersNoticeList" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT DISTINCT
+          detail.`snatchUrlId` AS id,
+          detail.`projName` AS title,
+          detail.`gsDate` AS opendate,
+          2 AS `type`,
+          detail.`source` AS source,
+          detail.oneName,
+          detail.oneOffer
+        FROM
+           mishu.zhongbiao_detail_others detail
+        WHERE detail.oneName = #{oneName}
+        ORDER BY detail.`gsDate` DESC
+    </select>
+
+    <select id="querySnatchurlParam" parameterType="java.util.Map" resultType="java.util.Map">
+      select
+        <include refid="noticeTypeConvert"/>
+      from snatchurl_${source} s
+      where s.id = #{id}
+        and s.isShow = 0 and s.type = 2
+      limit 1
+    </select>
 </mapper>

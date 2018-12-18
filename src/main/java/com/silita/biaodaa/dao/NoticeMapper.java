@@ -148,4 +148,18 @@ public interface NoticeMapper {
      * @return
      */
     Long queryRelCountByParam(Map<String,Object> param);
+
+    /**
+     * 获取公司外省公告
+     * @param param
+     * @return
+     */
+    List<Map> queryCompanyOthersNoticeList(Map<String,Object> param);
+
+    /**
+     * 获取主表的部分字段
+     * @param param
+     * @return
+     */
+    Map<String,Object> querySnatchurlParam(Map<String,Object> param);
 }

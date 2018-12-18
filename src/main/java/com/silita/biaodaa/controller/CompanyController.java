@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.base.Preconditions;
 import com.silita.biaodaa.cache.GlobalCache;
 import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.es.ElasticseachService;
@@ -13,6 +14,7 @@ import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.service.TbCompanyInfoService;
 import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.MyStringUtils;
+import com.silita.biaodaa.utils.ObjectUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -27,6 +29,7 @@ import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.silita.biaodaa.common.RedisConstantInterface.COM_OVER_TIME;
+import static com.silita.biaodaa.common.RedisConstantInterface.LIST_OVER_TIME;
 
 /**
  * 企业
@@ -677,6 +680,30 @@ public class CompanyController extends BaseController {
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
         elasticseachService.batchAddBranchCompany();
+        return resultMap;
+    }
+
+    /**
+     * 中标列表
+     * @param params
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/notice/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> companyNoticeList(@RequestBody Map<String, Object> params) {
+        int paramHash = ObjectUtils.buildMapParamHash(params);
+        String listKey = RedisConstantInterface.GG_LIST + paramHash;
+        logger.info("公告列表key:" + listKey + "--------------------");
+        List<Map> list = (List<Map>) myRedisTemplate.getObject(listKey);
+        if (null == list) {
+            list = noticeService.getCompanyZhongbiaoList(params);
+            if (null != list && list.size() > 0) {
+                myRedisTemplate.setObject(listKey,list,LIST_OVER_TIME);
+            }
+        }
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("data", list);
+        successMsg(resultMap);
         return resultMap;
     }
 }
