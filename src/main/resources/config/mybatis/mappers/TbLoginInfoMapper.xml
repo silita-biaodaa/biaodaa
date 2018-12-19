@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbLoginInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbLoginInfo" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="VARCHAR" />
+    <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+    <result column="login_tel" property="loginTel" jdbcType="VARCHAR" />
+    <result column="login_time" property="loginTime" jdbcType="TIMESTAMP" />
+    <result column="created_date" property="createdDate" jdbcType="TIMESTAMP" />
+    <result column="updated_date" property="updatedDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <delete id="deleteLoginInfo" parameterType="java.lang.String">
+      delete from tb_login_info where login_tel = #{tel}
+  </delete>
+
+  <insert id="insertLoginInfo" parameterType="com.silita.biaodaa.model.TbLoginInfo">
+    INSERT INTO `tb_login_info`
+              (`pkid`,
+               `login_name`,
+               `login_tel`,
+               `login_time`,
+               `created_date`)
+    VALUES (#{pkid},#{loginName},#{loginTel},#{loginTime},now());
+  </insert>
+</mapper>
