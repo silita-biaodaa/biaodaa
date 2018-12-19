@@ -13,7 +13,7 @@ public interface TbLoginInfoMapper extends MyMapper<TbLoginInfo> {
      * @param tel
      * @return
      */
-    int deleteLoginInfo(String tel);
+    int queryCount(String tel);
 
     /**
      * l

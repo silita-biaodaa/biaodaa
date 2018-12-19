@@ -13,9 +13,14 @@
     <result column="updated_date" property="updatedDate" jdbcType="TIMESTAMP" />
   </resultMap>
 
-  <delete id="deleteLoginInfo" parameterType="java.lang.String">
-      delete from tb_login_info where login_tel = #{tel}
-  </delete>
+  <select id="queryCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select
+        count(1)
+    from
+      tb_login_info t
+    where t.`login_tel` = #{tel}
+      and DATE_FORMAT(t.`created_date`, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+  </select>
 
   <insert id="insertLoginInfo" parameterType="com.silita.biaodaa.model.TbLoginInfo">
     INSERT INTO `tb_login_info`

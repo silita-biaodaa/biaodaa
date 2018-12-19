@@ -33,7 +33,9 @@ public class LoginInfoService {
         if (null != jsonObject.get("date")) {
             loginInfo.setLoginTime(MyDateUtils.strToDate(MyDateUtils.longDateToStr(jsonObject.getLong("date"), MyDateUtils.datetimePattern), MyDateUtils.datetimePattern));
         }
-        loginInfoMapper.deleteLoginInfo(loginInfo.getLoginTel());
+        if(loginInfoMapper.queryCount(loginInfo.getLoginTel()) > 0){
+            return;
+        }
         loginInfoMapper.insertLoginInfo(loginInfo);
     }
 
