@@ -3,11 +3,12 @@ package com.silita.biaodaa.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
 @Setter
-public class TbSafetyCertificate {
+public class TbSafetyCertificate implements Serializable {
     /**
      * 安全许可证自增ID
      */

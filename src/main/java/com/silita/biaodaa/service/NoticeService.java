@@ -712,6 +712,7 @@ public class NoticeService {
     public List<Map> getCompanyZhongbiaoList(Map<String, Object> param) {
         List<Map> list = new ArrayList<>();
         //湖南省
+        param.put("oneName",param.get("com_name"));
         param.put("detailTable", "zhongbiao_detail");
         param.put("type", 2);
         param.put("source", "hunan");

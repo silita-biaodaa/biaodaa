@@ -11,6 +11,7 @@ import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.model.InvitationBdd;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.utils.CommonUtil;
+import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import com.silita.biaodaa.utils.SignConvertUtil;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -22,6 +23,7 @@ import org.springframework.util.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,6 +142,7 @@ public class AuthorizeService {
             parameters.put("password", vo.getUserpass());
             parameters.put("phone", vo.getUserphone());
             parameters.put("userId", vo.getUserid());
+            parameters.put("date",String.valueOf(System.currentTimeMillis()));
             try {
                 String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                 String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
@@ -147,6 +150,7 @@ public class AuthorizeService {
                 String asB64 = Base64.getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
                 String xtoken = sign + "." + asB64;
                 vo.setXtoken(xtoken);
+
             } catch (NoSuchAlgorithmException e) {
             } catch (UnsupportedEncodingException e) {
             }

@@ -1,10 +1,17 @@
 package com.silita.biaodaa.common;
 
 import com.alibaba.fastjson.JSONObject;
+import com.silita.biaodaa.service.LoginInfoService;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +25,8 @@ import java.util.Map;
  * Created by zhangxiahui on 17/7/26.
  */
 public class CheckLoginFilter implements Filter {
+
+    LoginInfoService loginInfoService;
 
     private static Logger LOGGER = LoggerFactory.getLogger(CheckLoginFilter.class);
 
@@ -56,6 +65,9 @@ public class CheckLoginFilter implements Filter {
                     isHei = true;
                 }
                 parameters.put("userId", userId);
+                if ("/foundation/version".equals(requestUri)) {
+                    loginInfoService.saveLoginInfo(jsonObject);
+                }
             }
         }
         VisitInfoHolder.setUserId(phone);
@@ -88,7 +100,7 @@ public class CheckLoginFilter implements Filter {
                 response.setContentType("application/json; charset=utf-8");
                 PrintWriter out = response.getWriter();
                 out.print("{\"code\":0,\"msg\":\"您的账号疑似非法爬虫，现已冻结，如有疑问，请联系标大大客服(0731-85076077)\"}");
-            }else {
+            } else {
                 filterChain.doFilter(servletRequest, servletResponse);
             }
         } else {
@@ -105,5 +117,10 @@ public class CheckLoginFilter implements Filter {
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
+        ServletContext sc = filterConfig.getServletContext();
+        XmlWebApplicationContext cxt = (XmlWebApplicationContext) WebApplicationContextUtils.getWebApplicationContext(sc);
+        if (cxt != null && cxt.getBean("loginInfoService") != null && loginInfoService == null) {
+            loginInfoService = (LoginInfoService) cxt.getBean("loginInfoService");
+        }
     }
 }

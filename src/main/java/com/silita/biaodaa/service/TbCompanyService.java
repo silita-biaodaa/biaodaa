@@ -157,7 +157,7 @@ public class TbCompanyService {
         for (String key : set) {
             Map<String, Object> map = new HashMap<>();
             map.put("qualType", getQualType(key));
-            map.put("list", qualService.sortCompanyQual(qualMap.get(key),key));
+            map.put("list", qualService.sortCompanyQual(qualMap.get(key), key));
             list.add(map);
         }
         return qualService.sortQualType2(list);
@@ -652,55 +652,33 @@ public class TbCompanyService {
 
 
     public Map<String, CertBasic> getCertBasicMap() {
-        Map<String, CertBasic> certBasicMap;
-        Long time = globalCache.getVaildTime().get("certBasic");
-        long nowTime = System.currentTimeMillis();
-        long value = 18000000;
-        String cacheTime = PropertiesUtils.getProperty("cacheTime");
-        if (cacheTime != null) {
-            value = Long.parseLong(cacheTime);
-        }
-        if (time != null && nowTime - time < value) {
-            certBasicMap = globalCache.getCertBasicMap();
-            if (certBasicMap != null && certBasicMap.size() > 0) {
-                logger.info("企业工商数据启用缓存========缓存数据共计[" + certBasicMap.size() + "]条");
-                return certBasicMap;
-            }
+        Map<String, CertBasic> certBasicMap = (Map<String, CertBasic>) myRedisTemplate.getObject("cert_list");
+        if (certBasicMap != null && certBasicMap.size() > 0) {
+            logger.info("企业工商数据启用缓存========缓存数据共计[" + certBasicMap.size() + "]条");
+            return certBasicMap;
         }
         List<CertBasic> certBasicList = certBasicMapper.getCertBasicMap();
-        certBasicMap = new HashMap<>();
+        Map<String, CertBasic> certMap = new HashMap<>();
         for (CertBasic basic : certBasicList) {
-            certBasicMap.put(basic.getCompanyname() + "|" + basic.getRegisterno(), basic);
+            certMap.put(basic.getCompanyname() + "|" + basic.getRegisterno(), basic);
         }
-        globalCache.setCertBasicMap(certBasicMap);
-        globalCache.getVaildTime().put("certBasic", nowTime);
-        return certBasicMap;
+        myRedisTemplate.setObject("cert_list", certMap);
+        return certMap;
     }
 
     public Map<String, TbSafetyCertificate> getSafetyCertMap() {
-        Map<String, TbSafetyCertificate> safetyCertificateMap;
-        Long time = globalCache.getVaildTime().get("safetyCert");
-        long nowTime = System.currentTimeMillis();
-        long value = 18000000;
-        String cacheTime = PropertiesUtils.getProperty("cacheTime");
-        if (cacheTime != null) {
-            value = Long.parseLong(cacheTime);
-        }
-        if (time != null && nowTime - time < value) {
-            safetyCertificateMap = globalCache.getSafetyCertMap();
-            if (safetyCertificateMap != null && safetyCertificateMap.size() > 0) {
-                logger.info("企业安许证数据启用缓存========缓存数据共计[" + safetyCertificateMap.size() + "]条");
-                return safetyCertificateMap;
-            }
+        Map<String, TbSafetyCertificate> safetyCertificateMap = (Map<String, TbSafetyCertificate>) myRedisTemplate.getObject("safety_list");
+        if (safetyCertificateMap != null && safetyCertificateMap.size() > 0) {
+            logger.info("企业安许证数据启用缓存========缓存数据共计[" + safetyCertificateMap.size() + "]条");
+            return safetyCertificateMap;
         }
         List<TbSafetyCertificate> tbSafetyCertificateList = tbSafetyCertificateMapper.getSafetyCertMap();
-        safetyCertificateMap = new HashMap<>();
+        Map<String, TbSafetyCertificate> safetyMap = new HashMap<>();
         for (TbSafetyCertificate safetyCertificate : tbSafetyCertificateList) {
-            safetyCertificateMap.put(safetyCertificate.getComName(), safetyCertificate);
+            safetyMap.put(safetyCertificate.getComName(), safetyCertificate);
         }
-        globalCache.setSafetyCertMap(safetyCertificateMap);
-        globalCache.getVaildTime().put("safetyCert", nowTime);
-        return safetyCertificateMap;
+        myRedisTemplate.setObject("safety_list",safetyMap);
+        return safetyMap;
     }
 
     /**
@@ -728,7 +706,7 @@ public class TbCompanyService {
         String key = "person|" + page.getCurrentPage() + "|" + page.getPageSize() + "|"
                 + param.get("comId") + "|" + param.get("category") + "|" + param.get("keyWord") + "|" + param.get("tableCode");
         String cacheTime = PropertiesUtils.getProperty("personCacheTime");
-        param.put("currentPage",page.getCurrentPage());
+        param.put("currentPage", page.getCurrentPage());
         int paramHash = ObjectUtils.buildMapParamHash(param);
         String listKey = RedisConstantInterface.PERSON_LIST + paramHash;
         PageInfo pageInfo = (PageInfo) myRedisTemplate.getObject(listKey);

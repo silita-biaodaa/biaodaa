@@ -379,7 +379,7 @@
             </if>
             <!--中标第一候选人(企业名称)-->
             <if test="( oneName !=null and oneName !='')">
-                AND detail.oneName = #{oneName}
+                AND detail.oneName like CONCAT('%',#{oneName},'%')
             </if>
         </if>
         WHERE s.isShow = 0
@@ -682,7 +682,7 @@
           detail.oneOffer
         FROM
            mishu.zhongbiao_detail_others detail
-        WHERE detail.oneName = #{oneName}
+        WHERE detail.oneName like CONCAT('%',#{oneName},'%')
         ORDER BY detail.`gsDate` DESC
     </select>
 
