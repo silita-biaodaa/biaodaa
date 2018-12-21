@@ -65,6 +65,7 @@ public class CheckLoginFilter implements Filter {
                     isHei = true;
                 }
                 parameters.put("userId", userId);
+                parameters.put("date", jsonObject.getString("date"));
                 if ("/foundation/version".equals(requestUri)) {
                     loginInfoService.saveLoginInfo(jsonObject);
                 }

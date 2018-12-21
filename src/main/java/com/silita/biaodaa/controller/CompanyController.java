@@ -42,79 +42,22 @@ public class CompanyController extends BaseController {
     private static final Logger logger = Logger.getLogger(CompanyController.class);
 
     @Autowired
-    private MyRedisTemplate myRedisTemplate;
-
+    MyRedisTemplate myRedisTemplate;
     @Autowired
     TbCompanyService tbCompanyService;
-
     @Autowired
     CommonService commonService;
-
     @Autowired
     NoticeService noticeService;
-
     @Autowired
     ElasticseachService elasticseachService;
-
     @Autowired
     TbCompanyInfoService tbCompanyInfoService;
 
     private GlobalCache globalCache = GlobalCache.getGlobalCache();
 
     /**
-     *  查询企业列表
-     *
-     * @param params
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/query", method = RequestMethod.POST, produces = "application/json")
-    public Map<String, Object> queryCompany(@RequestBody Map<String, Object> params) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 1);
-        result.put("msg", "成功!");
-        result.put("pageNum", 1);
-        result.put("pageSize", 0);
-        result.put("total", 0);
-        result.put("pages", 1);
-
-
-        try {
-            checkArgument(MapUtils.isNotEmpty(params), "参数对象params不可为空!");
-            String keyWord = MapUtils.getString(params, "keyWord");
-            Integer pageNo = MapUtils.getInteger(params, "pageNo");
-            Integer pageSize = MapUtils.getInteger(params, "pageSize");
-            Page page = new Page();
-            page.setPageSize(pageSize);
-            page.setCurrentPage(pageNo);
-            if (keyWord == null) {
-                keyWord = "";
-            }
-            PageInfo pageInfo = tbCompanyService.queryCompanyList(page, keyWord);
-
-            Map<String, String> typeMap = new HashMap<>();
-            typeMap.put("collType", "company");
-            noticeService.addCollStatus(pageInfo.getList(), typeMap);
-            result.put("data", pageInfo.getList());
-            result.put("pageNum", pageInfo.getPageNum());
-            result.put("pageSize", pageInfo.getPageSize());
-            result.put("total", pageInfo.getTotal());
-            result.put("pages", pageInfo.getPages());
-        } catch (IllegalArgumentException e) {
-            logger.error("获取企业列表异常" + e.getMessage(), e);
-            result.put("code", 0);
-            result.put("msg", e.getMessage());
-        } catch (Exception e) {
-            logger.error("获取人企业列表异常" + e.getMessage(), e);
-            result.put("code", 0);
-            result.put("msg", e.getMessage());
-        }
-        return result;
-    }
-
-
-    /**
-     *  企业详情
+     * 企业详情
      *
      * @param comId
      * @return
@@ -143,7 +86,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  企业资质
+     * 企业资质
      *
      * @param comId
      * @return
@@ -172,7 +115,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  企业人员注册类别
+     * 企业人员注册类别
      *
      * @param comId
      * @return
@@ -202,7 +145,7 @@ public class CompanyController extends BaseController {
 
 
     /**
-     *  企业人员列表
+     * 企业人员列表
      *
      * @param params
      * @return
@@ -284,7 +227,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  筛选条件
+     * 筛选条件
      *
      * @return
      */
@@ -312,7 +255,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  企业筛选列表
+     * 企业筛选列表
      *
      * @param params
      * @return
@@ -433,7 +376,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  企业不良行为
+     * 企业不良行为
      *
      * @param comId
      * @return
@@ -462,56 +405,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     * 根据企业id获得logo
-     *
-     * @param params
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getLogo", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String, Object> getLogo(@RequestBody Map<String, Object> params) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 1);
-        result.put("msg", "获得企业logo成功！");
-        try {
-            String comId = params.get("comId").toString();
-            Preconditions.checkArgument(null != comId && "" != comId, "comId不能为空");
-            String logo = tbCompanyService.getLogo(comId);
-            result.put("data", logo);
-            result.put("code", 1);
-        } catch (Exception e) {
-            logger.error("获得企业logo异常：" + e.getMessage());
-            result.put("code", 0);
-            result.put("msg", "获得企业logo失败！");
-        }
-        return result;
-    }
-
-    /**
-     *  人员详细信息
-     *
-     * @param params
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getPersonDetail", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String, Object> getPersonDetail(@RequestBody Map<String, Object> params) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 1);
-        result.put("msg", "获得企业人员详细信息成功！");
-        try {
-            Map<String, Object> data = tbCompanyService.getPersonDetail(params);
-            result.put("data", data);
-        } catch (Exception e) {
-            logger.error("获得企业人员详细信息异常：" + e.getMessage());
-            result.put("code", 0);
-            result.put("msg", "获得企业人员详细信息失败！");
-        }
-        return result;
-    }
-
-    /**
-     *  返回地区列表
+     * 返回地区列表
      *
      * @param
      * @return
@@ -540,7 +434,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  获取公司详情根据名称
+     * 获取公司详情根据名称
      *
      * @param params
      * @return
@@ -562,7 +456,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  根据企业名称检索
+     * 根据企业名称检索
      *
      * @param params
      * @return
@@ -585,7 +479,7 @@ public class CompanyController extends BaseController {
 
 
     /**
-     *  封装筛选条件
+     * 封装筛选条件
      *
      * @return
      */
@@ -632,7 +526,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  分支机构
+     * 分支机构
      *
      * @param param
      * @return
@@ -650,7 +544,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  企业分享-业绩/人员/分支机构个数
+     * 企业分享-业绩/人员/分支机构个数
      *
      * @param param
      * @return
@@ -669,7 +563,7 @@ public class CompanyController extends BaseController {
     }
 
     /**
-     *  分支机构es导入
+     * 分支机构es导入
      *
      * @return
      */
@@ -685,6 +579,7 @@ public class CompanyController extends BaseController {
 
     /**
      * 中标列表
+     *
      * @param params
      * @return
      */
@@ -698,7 +593,7 @@ public class CompanyController extends BaseController {
         if (null == list) {
             list = noticeService.getCompanyZhongbiaoList(params);
             if (null != list && list.size() > 0) {
-                myRedisTemplate.setObject(listKey,list,LIST_OVER_TIME);
+                myRedisTemplate.setObject(listKey, list, LIST_OVER_TIME);
             }
         }
         Map<String, Object> resultMap = new HashMap<>();
