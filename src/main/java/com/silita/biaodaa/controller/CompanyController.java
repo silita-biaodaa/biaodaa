@@ -54,8 +54,6 @@ public class CompanyController extends BaseController {
     @Autowired
     TbCompanyInfoService tbCompanyInfoService;
 
-    private GlobalCache globalCache = GlobalCache.getGlobalCache();
-
     /**
      * 企业详情
      *
@@ -484,7 +482,7 @@ public class CompanyController extends BaseController {
      * @return
      */
     private Map<String, Object> getResultMap() {
-        Map<String, Object> map = globalCache.getResultMap();
+        Map<String, Object> map = (Map<String, Object>) myRedisTemplate.getObject("filter_map");
         if (MapUtils.isEmpty(map)) {
             map = new HashMap<>();
             List<CompanyQual> companyQual = tbCompanyService.getCompanyQual();
@@ -498,7 +496,7 @@ public class CompanyController extends BaseController {
             map.put("area", area);
             map.put("proviceCityCounty", proviceCityCounty);
             if (null != map) {
-                globalCache.setResultMap(map);
+                myRedisTemplate.setObject("filter_map",map);
             }
         }
         return map;

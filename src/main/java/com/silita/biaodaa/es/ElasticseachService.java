@@ -147,7 +147,6 @@ public class ElasticseachService {
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_WILDCARD, "comId", comId));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "branch_company", "branch_comes", querys, null, null, null);
         List<TbCompanyInfo> list = new ArrayList<>();
-        TbCompanyInfo companyInfo = null;
         if(null == response.getHits() || response.getHits().getTotalHits() <= 0){
             return list;
         }

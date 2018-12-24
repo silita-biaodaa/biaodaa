@@ -61,4 +61,11 @@ public abstract class BaseController {
         }
     }
 
+    protected void buildPageIndex(Map params){
+        Integer pageNo = MapUtils.getInteger(params, "pageNo");
+        if(pageNo > maxPageNum){
+            pageNo = 1;
+        }
+        params.put("pageNo",pageNo);
+    }
 }

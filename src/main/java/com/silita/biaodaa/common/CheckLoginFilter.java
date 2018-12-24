@@ -109,7 +109,7 @@ public class CheckLoginFilter implements Filter {
             response.setCharacterEncoding("utf-8");
             response.setContentType("application/json; charset=utf-8");
             PrintWriter out = response.getWriter();
-            out.print("{\"code\":0,\"msg\":\"没权限\"}");
+            out.print("{\"code\":0,\"msg\":\"请重新登录!!!\"}");
         }
 
     }

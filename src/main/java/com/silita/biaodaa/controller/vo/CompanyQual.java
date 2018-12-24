@@ -3,6 +3,7 @@ package com.silita.biaodaa.controller.vo;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -10,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class CompanyQual {
+public class CompanyQual implements Serializable {
 
     public String name;
 
