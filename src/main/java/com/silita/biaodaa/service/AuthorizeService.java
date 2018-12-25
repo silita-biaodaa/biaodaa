@@ -189,6 +189,7 @@ public class AuthorizeService {
             parameters.put("password", vo.getUserpass());
             parameters.put("phone", vo.getUserphone());
             parameters.put("userId", vo.getUserid());
+            parameters.put("date",String.valueOf(System.currentTimeMillis()));
             try {
                 String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                 String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
@@ -247,6 +248,7 @@ public class AuthorizeService {
                     parameters.put("password", vo.getUserpass());
                     parameters.put("phone", vo.getUserphone());
                     parameters.put("userId", vo.getUserid());
+                    parameters.put("date",String.valueOf(System.currentTimeMillis()));
                     try {
                         String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                         String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
@@ -310,6 +312,7 @@ public class AuthorizeService {
             parameters.put("password", vo.getUserpass());
             parameters.put("phone", vo.getUserphone());
             parameters.put("userId", vo.getUserid());
+            parameters.put("date",String.valueOf(System.currentTimeMillis()));
             try {
                 String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                 String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
