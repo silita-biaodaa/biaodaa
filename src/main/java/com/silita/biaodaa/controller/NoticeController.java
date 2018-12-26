@@ -44,7 +44,7 @@ public class NoticeController extends BaseController {
     @Autowired
     private CommonService commonService;
 
-    // TODO: 设置userid
+    // 设置userid
     private void settingUserId(Map params) {
         String userId = VisitInfoHolder.getUid();
         if (MyStringUtils.isNotNull(userId)) {
@@ -53,7 +53,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 过滤查询条件，不满足条件的直接返回
+     * 过滤查询条件，不满足条件的直接返回
      *
      * @param params
      * @return
@@ -80,14 +80,14 @@ public class NoticeController extends BaseController {
         return resultMap;
     }
 
-    // TODO: 设置source
+    // 设置source
     private void parseRouteSource(Map params) {
         String province = MapUtils.getString(params, "province");
         params.put("source", RouteUtils.parseProvinceToSource(province));
         settingRouteTable(params);
     }
 
-    //TODO: 设置表名
+    //设置表名
     private void settingRouteTable(Map params) {
         String source = MapUtils.getString(params, "source");
         if (MyStringUtils.isNotNull(source)) {
@@ -98,7 +98,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 解析/转换前端参数，返回是否执行
+     * 解析/转换前端参数，返回是否执行
      *
      * @param params
      * @return
@@ -211,7 +211,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 全国公告，筛选条件判断过滤
+     * 全国公告，筛选条件判断过滤
      *
      * @param params
      * @return
@@ -244,7 +244,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 解析资质多选条件
+     * 解析资质多选条件
      *
      * @param params
      * @param zzSplit
@@ -280,7 +280,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 查询企业具备的资质（同名企业，资质一并返回）
+     * 查询企业具备的资质（同名企业，资质一并返回）
      *
      * @param
      * @return
@@ -322,7 +322,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 性能问题，禁止查询所有类别公告。
+     * 性能问题，禁止查询所有类别公告。
      *
      * @param params
      */
@@ -335,7 +335,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 查询公告
+     * 查询公告
      *
      * @param params
      * @return
@@ -389,7 +389,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 查询公告
+     * 查询公告
      *
      * @param params
      * @return
@@ -442,14 +442,14 @@ public class NoticeController extends BaseController {
         return resultMap;
     }
 
-    //TODO: 设置公告关注状态
+    //设置公告关注状态
     private void settingNoticeCollFlag(PageInfo pageInfo, Map params) {
         if (pageInfo != null && pageInfo.getList() != null) {
             addNoticeCollStatus(pageInfo.getList(), params);
         }
     }
 
-    //TODO: 设置公司关注
+    //设置公司关注
     private void settingCompanyCollFlag(PageInfo pageInfo, Map params) {
         if (pageInfo != null && pageInfo.getList() != null) {
             addCompanyCollStatus(pageInfo.getList(), params);
@@ -457,7 +457,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 补充公告信息的关注状态
+     * 补充公告信息的关注状态
      *
      * @param list
      * @param params
@@ -470,7 +470,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 补充企业信息的关注状态
+     * 补充企业信息的关注状态
      *
      * @param list
      * @param params
@@ -482,7 +482,7 @@ public class NoticeController extends BaseController {
 
 
     /**
-     * TODO: 根据source，转换出省名称
+     * 根据source，转换出省名称
      *
      * @param params
      */
@@ -492,7 +492,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 公告详情
+     * 公告详情
      *
      * @param id
      * @param params
@@ -549,7 +549,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 关联列表
+     * 关联列表
      *
      * @param id
      * @return
@@ -581,7 +581,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 公告文件
+     * 公告文件
      *
      * @param id
      * @return
@@ -603,7 +603,7 @@ public class NoticeController extends BaseController {
 
 
     /**
-     * TODO: 公告企业
+     * 公告企业
      *
      * @param id
      * @param params
@@ -636,7 +636,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 记录访问数
+     * 记录访问数
      *
      * @param request
      * @param params
@@ -658,7 +658,7 @@ public class NoticeController extends BaseController {
         }
     }
 
-    //TODO: 解析http信息
+    //解析http信息
     private Map<String, String> parseRequest(HttpServletRequest request) {
         String userId = (String) request.getSession().getAttribute("userId");
         String ipAddr = request.getHeader("X-real-ip");//获取用户真实ip
@@ -669,7 +669,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 查询公告文章列表
+     * 查询公告文章列表
      *
      * @param params
      * @return
@@ -697,7 +697,7 @@ public class NoticeController extends BaseController {
     }
 
     /**
-     * TODO: 查询公告文章详细
+     * 查询公告文章详细
      *
      * @param params
      * @return
