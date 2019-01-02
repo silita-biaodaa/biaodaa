@@ -17,8 +17,9 @@
 
     <select id="getUserByUserNameOrPhoneAndPassWd" parameterType="com.silita.biaodaa.model.UserTempBdd"
             resultType="com.silita.biaodaa.model.UserTempBdd">
-        SELECT * FROM mishu_write.user_temp_bdd WHERE userName = #{username} AND userPass = #{userpass}
-        UNION SELECT * FROM mishu_write.user_temp_bdd WHERE userPhone = #{userphone} AND userPass = #{userpass}
+        SELECT *
+        FROM mishu_write.user_temp_bdd
+        WHERE (userName = #{username} or userPhone = #{userphone}) AND userPass = #{userpass}
     </select>
 
     <update id="updateUserTempByWxBind" parameterType="com.silita.biaodaa.model.UserTempBdd">
