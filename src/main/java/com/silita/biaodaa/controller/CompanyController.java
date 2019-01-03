@@ -585,7 +585,7 @@ public class CompanyController extends BaseController {
     @RequestMapping(value = "/notice/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> companyNoticeList(@RequestBody Map<String, Object> params) {
         int paramHash = ObjectUtils.buildMapParamHash(params);
-        String listKey = RedisConstantInterface.GG_LIST + paramHash;
+        String listKey = RedisConstantInterface.GG_LIST_COMPANY + paramHash;
         logger.info("公告列表key:" + listKey + "--------------------");
         List<Map> list = (List<Map>) myRedisTemplate.getObject(listKey);
         if (null == list) {
