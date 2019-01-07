@@ -11,6 +11,40 @@
     <context:property-placeholder location="classpath:config/biaodaa.properties" />
 
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig" lazy-init="true">
+    <!--新版是maxTotal，旧版是maxActive-->
+    <property name="maxTotal">
+        <value>${redis.pool.maxActive}</value>
+    </property>
+    <property name="minIdle">
+        <value>${redis.pool.minIdle}</value>
+    </property>
+    <property name="maxIdle">
+        <value>${redis.pool.maxIdle}</value>
+    </property>
+    <property name="maxWaitMillis">
+        <value>${redis.pool.maxWaitMillis}</value>
+    </property>
+    <property name="testOnBorrow" value="true"/>
+    <property name="testOnReturn" value="true"/>
+</bean>
+
+    <!--分片redis配置-->
+    <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool"  scope="singleton" lazy-init="true">
+        <constructor-arg index="0" ref="jedisPoolConfig" />
+        <constructor-arg index="1">
+            <list>
+                <bean class="redis.clients.jedis.JedisShardInfo">
+                    <constructor-arg name="host" value="${redis1.uri}" />
+                </bean>
+                <bean class="redis.clients.jedis.JedisShardInfo">
+                    <constructor-arg name="host" value="${redis2.uri}" />
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!--非分片redis-->
+    <bean id="jedisPoolConfig2" class="redis.clients.jedis.JedisPoolConfig" lazy-init="true">
         <!--新版是maxTotal，旧版是maxActive-->
         <property name="maxTotal">
             <value>${redis.pool.maxActive}</value>
@@ -28,29 +62,34 @@
         <property name="testOnReturn" value="true"/>
     </bean>
 
-    <!--分片redis配置-->
-    <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool"  scope="singleton" lazy-init="true">
-        <constructor-arg index="0" ref="jedisPoolConfig" />
-        <constructor-arg index="1">
-            <list>
-                <bean class="redis.clients.jedis.JedisShardInfo">
-                    <constructor-arg name="host" value="${redis1.uri}" />
-                </bean>
-                <bean class="redis.clients.jedis.JedisShardInfo">
-                    <constructor-arg name="host" value="${redis2.uri}" />
-                </bean>
-            </list>
-        </constructor-arg>
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" destroy-method="destroy">
+        <property name="poolConfig" ref="jedisPoolConfig2"></property>
+        <!--IP地址 -->
+        <property name="hostName" value="${redis.hostName}"></property>
+        <!--端口号  -->
+        <property name="port" value="${redis.port}"></property>
+        <!--如果Redis设置有密码  -->
+        <property name="password" value="${redis.password}" />
+        <!--客户端超时时间单位是毫秒  -->
+        <property name="timeout" value="${redis.timeout}"></property>
     </bean>
 
-    <!--<bean id="shardedJedisPool1" class="redis.clients.jedis.ShardedJedisPool"  scope="singleton" lazy-init="true">-->
-        <!--<constructor-arg index="0" ref="jedisPoolConfig" />-->
-        <!--<constructor-arg index="1">-->
-            <!--<list>-->
-                <!--<bean class="redis.clients.jedis.JedisShardInfo">-->
-                    <!--<constructor-arg name="host" value="${redis3.uri}" />-->
-                <!--</bean>-->
-            <!--</list>-->
-        <!--</constructor-arg>-->
-    <!--</bean>-->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory" />
+        <!--如果不配置Serializer，那么存储的时候缺省使用String  -->
+        <property name="keySerializer" >
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="valueSerializer" >
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <!--开启事务  -->
+        <property name="enableTransactionSupport" value="false"></property>
+    </bean>
 </beans>

@@ -55,7 +55,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void memberLogin()throws Exception{
-        String requestBody = "{\"login_name\":\"\",\"login_pwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phone_no\":\"13319555801\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
+        String requestBody = "{\"login_name\":\"\",\"login_pwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phone_no\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
         String responseString = mockMvc.perform(post("/authorize/memberLogin").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -76,7 +76,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void memberRegister()throws Exception{ //714241
-        String requestBody = "{\"verifyCode\":\"714241\",\"login_name\":\"\",\"login_pwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phone_no\":\"13319555801\",\"channel\":\"1002\",\"clientVersion\":\"22222\"}";
+        String requestBody = "{\"inviter_code\":\"test1\",\"verifyCode\":\"111259\",\"login_name\":\"\",\"login_pwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phone_no\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"22222\"}";
         String responseString = mockMvc.perform(post("/authorize/memberRegister").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -96,19 +96,6 @@ public class ControllerTest extends ConfigTest {
     }
 
 
-///
-//    public void testBuildSing(){
-//        String sign = null;
-//
-//        Map<String, String> parameters = new HashedMap();
-//        parameters.put("login_name", sysUser.getLogin_name());
-//        parameters.put("user_name", sysUser.getUser_name());
-//        parameters.put("pkid", sysUser.getPkid());
-//        parameters.put("channel", sysUser.getChannel());
-//        parameters.put("phone_no", sysUser.getPhone_no());
-//        parameters.put("login_time", String.valueOf(System.currentTimeMillis()));
-//        parameters.put("tokenVersion",tokenVersion);
-//    }
 
     private String initToken()throws Exception{
         System.out.println("旧登录接口。。。");
@@ -160,6 +147,7 @@ public class ControllerTest extends ConfigTest {
                 .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
         System.out.println("-----返回的json = " + responseString);
     }
+
 
 
 }

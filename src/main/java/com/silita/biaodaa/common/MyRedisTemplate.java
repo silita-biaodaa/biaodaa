@@ -2,15 +2,13 @@ package com.silita.biaodaa.common;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -247,6 +245,33 @@ public class MyRedisTemplate {
             }
         }
         return obj;
+    }
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+    /**
+     * 获取唯一Id
+     * @param key
+     * @param hashKey
+     * @param delta 增加量（不传采用1）
+     * @return
+     */
+    public Long incrementHash(String key,String hashKey,Long delta){
+        try {
+            if (null == delta) {
+                delta=1L;
+            }
+            return redisTemplate.opsForHash().increment(key, hashKey, delta);
+        } catch (Exception e) {//redis宕机时采用uuid的方式生成唯一id
+            logger.error("redis获取唯一Id失败！[key:"+key+"][hashKey:"+hashKey+"]"+e,e);
+            int first = new Random(10).nextInt(8) + 1;
+            int randNo=UUID.randomUUID().toString().hashCode();
+            if (randNo < 0) {
+                randNo=-randNo;
+            }
+            return Long.valueOf(first + String.format("%16d", randNo));
+        }
     }
 
 

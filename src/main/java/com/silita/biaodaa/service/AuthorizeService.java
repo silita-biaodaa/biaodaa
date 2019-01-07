@@ -2,6 +2,7 @@ package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.common.Constant;
+import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.SendMessage;
 import com.silita.biaodaa.common.WeChat.model.WXAccessToken;
 import com.silita.biaodaa.common.WeChat.model.WXUserInfo;
@@ -19,6 +20,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -33,6 +35,7 @@ import static java.util.Base64.getEncoder;
  * 权限模块 如注册、登录、授权
  * Created by 91567 on 2018/4/13.
  */
+@Transactional
 @Service("authorizeService")
 public class AuthorizeService {
     private Logger logger = Logger.getLogger(this.getClass());
@@ -46,7 +49,6 @@ public class AuthorizeService {
 
     @Autowired
     private VipService vipService;
-
     /**
      * 用户注册
      *
@@ -384,7 +386,7 @@ public class AuthorizeService {
      * @param sysUser
      * @return
      */
-    public synchronized String registerUser(SysUser sysUser){
+    public synchronized String registerUser(SysUser sysUser)throws Exception{
         //判断手机验证码是否有效
         Map<String, Object> params = new HashMap<>(1);
         params.put("invitationPhone", sysUser.getPhone_no());
@@ -397,7 +399,7 @@ public class AuthorizeService {
         //验证推荐人邀请码是否有效
         if(MyStringUtils.isNotNull(sysUser.getInviter_code())) {
             Integer count = userTempBddMapper.verifyInviterCode(sysUser.getInviter_code());
-            if (count == null && count != 1) {
+            if (count == null || count != 1) {
                 return Constant.ERR_VERIFY_IVITE_CODE;
             }
         }
@@ -411,11 +413,13 @@ public class AuthorizeService {
             return Constant.ERR_USER_EXIST;
         }
 
+
+        Long idtest = getIdByRedis();
         String uid = CommonUtil.getUUID();
         String rId = CommonUtil.getUUID();
         sysUser.setPkid(uid);
         sysUser.setCreate_by(sysUser.getClientVersion());
-//        sysUser.setOwn_invite_code(ShareCodeUtils.bulidCode());
+        sysUser.setOwn_invite_code(constructShareCode());
         userTempBddMapper.insertUserInfo(sysUser);
 
         SysUserRole role = new SysUserRole();
@@ -428,5 +432,30 @@ public class AuthorizeService {
         //更新验证码状态
         invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
         return Constant.SUCCESS_CODE;
+    }
+
+    /**
+     * 邀请码暂时为实时产生，后续优化成预先产生。
+     * @return
+     * @throws Exception
+     */
+    private String constructShareCode()throws Exception{
+        Long unique = getIdByRedis();
+        if(unique ==null){
+            throw new Exception("邀请码生成出错，id不能为空！");
+        }
+        return ShareCodeUtils.idToCode(unique);
+    }
+
+    @Autowired
+    private MyRedisTemplate myRedisTemplate;
+
+    private Long getIdByRedis(){
+        String rKey="inviteList";
+        String hashKey = PropertiesUtils.getProperty("redis.inviteList.key");
+        if(MyStringUtils.isNull(hashKey)){
+            hashKey="defaultMap";
+        }
+        return myRedisTemplate.incrementHash(rKey,hashKey,1L);
     }
 }

@@ -37,7 +37,7 @@ public class ShareCodeUtils {
     private static final int CODE_LEN = 6;
 
     /**
-     * 生成唯一性邀请码
+     * 生成唯一性邀请码(位数太长)
      * @param time 毫秒时间
      * @return
      */
@@ -130,20 +130,12 @@ public class ShareCodeUtils {
 
     public static Long buildRamdomLong(Long time){
         String name = ManagementFactory.getRuntimeMXBean().getName();
-        int pid = Integer.parseInt(name.split("@")[0]);
+//        int pid = Integer.parseInt(name.split("@")[0]);
         Random r = new Random();
-        int rNum = r.nextInt(999);
-        time+=pid;
+        int rNum = r.nextInt(10);
+//        time+=pid;
         time+=rNum;
         return time;
-    }
-
-    public static void main(String[] args) {
-
-//        System.out.println(bulidCode(Calendar.getInstance().getTimeInMillis()));
-//        String code = idToCode(1L);
-//        System.out.println(code);
-//        System.out.println(codeToId(code));
     }
 
 }

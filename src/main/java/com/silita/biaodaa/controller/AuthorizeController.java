@@ -29,7 +29,6 @@ public class AuthorizeController {
     @Autowired
     private AuthorizeService authorizeService;
 
-
     /**
      * 注册
      *
