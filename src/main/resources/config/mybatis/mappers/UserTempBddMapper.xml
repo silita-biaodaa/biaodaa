@@ -141,4 +141,158 @@
         SELECT COUNT(*) FROM mishu_write.user_temp_bdd WHERE userPhone = #{userphone}
     </select>
 
+    <select id="queryUserInfo" parameterType="com.silita.biaodaa.model.SysUser" resultType="com.silita.biaodaa.model.SysUser">
+        SELECT u.*,r.code as role_code,r.name as role_name,r.permissions,v.vip_name,v.expired_date,v.level
+        FROM mishu_write.sys_user_info u
+        LEFT JOIN mishu_write.sys_user_role rel on rel.user_id= u.pkid
+        LEFT JOIN mishu_write.sys_role_info r on r.pkid= rel.role_id
+        LEFT JOIN mishu_write.tb_vip_info v on u.pkid=v.user_id
+        WHERE (login_name = #{login_name} or phone_no = #{phone_no}) AND login_pwd = #{login_pwd}
+    </select>
+    
+    <select id="verifyUserInfo"  resultType="String">
+        SELECT u.pkid
+        FROM mishu_write.sys_user_info u
+        WHERE  phone_no=#{phone_no}
+        <if test="login_name != null and login_name != ''">
+            or login_name=#{login_name}
+        </if>
+    </select>
+
+    <insert id="insertUserInfo" parameterType="com.silita.biaodaa.model.SysUser">
+    insert into mishu_write.sys_user_info
+        (pkid,
+        <if test="login_name !=null and login_name!=''">
+        login_name,
+        </if>
+        login_pwd,
+        <if test="user_name !=null and user_name!=''">
+        user_name,
+        </if>
+        <if test="sex !=null and sex!=''">
+        sex,
+        </if>
+        phone_no,
+        channel,
+        <if test="nike_name !=null and nike_name!=''">
+        nike_name,
+        </if>
+        <if test="cert_type !=null and cert_type!=''">
+        cert_type,
+        </if>
+        <if test="cert_no !=null and cert_no!=''">
+        cert_no,
+        </if>
+        <if test="email !=null and email!=''">
+        email,
+        </if>
+        <if test="birth_year !=null and birth_year!=''">
+        birth_year,
+        </if>
+        <if test="in_city !=null and in_city!=''">
+        in_city,
+        </if>
+        <if test="in_company !=null and in_company!=''">
+        in_company,
+        </if>
+        <if test="position !=null and position!=''">
+        position,
+        </if>
+        <if test="image_url !=null and image_url!=''">
+        image_url,
+        </if>
+        <if test="wx_union_id !=null and wx_union_id!=''">
+        wx_union_id,
+        </if>
+        <if test="wx_open_id !=null and wx_open_id!=''">
+        wx_open_id,
+        </if>
+        <if test="qq_open_id !=null and qq_open_id!=''">
+        qq_open_id,
+        </if>
+        created,
+        create_by,
+        <if test="inviter_code !=null and inviter_code!=''">
+        inviter_code,
+        </if>
+        own_invite_code)
+    VALUES
+        (#{pkid},
+        <if test="login_name !=null and login_name!=''">
+        #{login_name},
+        </if>
+        #{login_pwd},
+        <if test="user_name !=null and user_name!=''">
+        #{user_name},
+        </if>
+        <if test="sex !=null and sex!=''">
+        #{sex},
+        </if>
+        #{phone_no},
+        #{channel},
+        <if test="nike_name !=null and nike_name!=''">
+        #{nike_name},
+        </if>
+        <if test="cert_type !=null and cert_type!=''">
+        #{cert_type},
+        </if>
+        <if test="cert_no !=null and cert_no!=''">
+        #{cert_no},
+        </if>
+        <if test="email !=null and email!=''">
+        #{email},
+        </if>
+        <if test="birth_year !=null and birth_year!=''">
+        #{birth_year},
+        </if>
+        <if test="in_city !=null and in_city!=''">
+        #{in_city},
+        </if>
+        <if test="in_company !=null and in_company!=''">
+        #{in_company},
+        </if>
+        <if test="position !=null and position!=''">
+        #{position},
+        </if>
+        <if test="image_url !=null and image_url!=''">
+        #{image_url},
+        </if>
+        <if test="wx_union_id !=null and wx_union_id!=''">
+        #{wx_union_id},
+        </if>
+        <if test="wx_open_id !=null and wx_open_id!=''">
+        #{wx_open_id},
+        </if>
+        <if test="qq_open_id !=null and qq_open_id!=''">
+        #{qq_open_id},
+        </if>
+        CURRENT_TIMESTAMP,
+        #{create_by},
+        <if test="inviter_code !=null and inviter_code!=''">
+        #{inviter_code},
+        </if>
+        #{own_invite_code})
+    </insert>
+    
+    <insert id="insertUserRole" parameterType="com.silita.biaodaa.model.SysUserRole">
+    insert into mishu_write.sys_user_role
+        (pkid,
+        role_id,
+        user_id,
+        created,
+        create_by)
+    VALUES
+        (#{pkid},
+        (SELECT pkid from mishu_write.sys_role_info where code=#{role_code}),
+        #{user_id},
+        CURRENT_TIMESTAMP,
+        #{create_by})
+    </insert>
+    
+    <select id="verifyInviterCode" parameterType="String" resultType="Integer">
+        SELECT count(1)
+        FROM mishu_write.sys_user_info
+        WHERE own_invite_code=#{inviter_code}
+    </select>
+
 </mapper>

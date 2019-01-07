@@ -1,6 +1,7 @@
 package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.SendMessage;
 import com.silita.biaodaa.common.WeChat.model.WXAccessToken;
 import com.silita.biaodaa.common.WeChat.model.WXUserInfo;
@@ -9,23 +10,24 @@ import com.silita.biaodaa.dao.InvitationBddMapper;
 import com.silita.biaodaa.dao.UserRoleBddMapper;
 import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.model.InvitationBdd;
+import com.silita.biaodaa.model.SysUser;
+import com.silita.biaodaa.model.SysUserRole;
 import com.silita.biaodaa.model.UserTempBdd;
-import com.silita.biaodaa.utils.CommonUtil;
-import com.silita.biaodaa.utils.MyDateUtils;
-import com.silita.biaodaa.utils.PropertiesUtils;
-import com.silita.biaodaa.utils.SignConvertUtil;
+import com.silita.biaodaa.utils.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.Base64.getEncoder;
 
 /**
  * 权限模块 如注册、登录、授权
@@ -33,6 +35,7 @@ import java.util.Map;
  */
 @Service("authorizeService")
 public class AuthorizeService {
+    private Logger logger = Logger.getLogger(this.getClass());
 
     @Autowired
     private InvitationBddMapper invitationBddMapper;
@@ -40,6 +43,9 @@ public class AuthorizeService {
     private UserTempBddMapper userTempBddMapper;
     @Autowired
     private UserRoleBddMapper userRoleBddMapper;
+
+    @Autowired
+    private VipService vipService;
 
     /**
      * 用户注册
@@ -122,6 +128,45 @@ public class AuthorizeService {
     }
 
     /**
+     * 登录用户信息校验
+     * @return
+     */
+    public SysUser memberLogin(SysUser param){
+        List<SysUser> resList = userTempBddMapper.queryUserInfo(param);
+        if(resList!=null && resList.size()==1){
+            //用户校验成功
+            SysUser user = resList.get(0);
+            user.setXtoken(buildToken(user));
+            return user;
+        }else{
+            //用户校验失败
+            logger.debug("用户校验失败[resList:"+resList+"][param:"+param.toString()+"]");
+            return null;
+        }
+    }
+
+    /**
+     * 生成用户token （token版本号.用户信息.sign）
+     * @param sysUser
+     * @return
+     */
+    private String buildToken(SysUser sysUser){
+        String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
+        String tokenVersion = PropertiesUtils.getProperty("token.version");
+
+        Map<String, String> parameters = new HashMap();
+        parameters.put("login_name", sysUser.getLogin_name());
+        parameters.put("user_name", sysUser.getUser_name());
+        parameters.put("pkid", sysUser.getPkid());
+        parameters.put("channel", sysUser.getChannel());
+        parameters.put("phone_no", sysUser.getPhone_no());
+        parameters.put("login_time", String.valueOf(System.currentTimeMillis()));
+        parameters.put("tokenVersion",tokenVersion);
+        return EncryptUtils.encryptToken(tokenVersion,parameters,secret);
+    }
+
+
+    /**
      * 用户登录
      *
      * @param userTempBdd
@@ -147,7 +192,7 @@ public class AuthorizeService {
                 String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                 String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
                 String parameterJson = JSONObject.toJSONString(parameters);
-                String asB64 = Base64.getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
+                String asB64 = getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
                 String xtoken = sign + "." + asB64;
                 vo.setXtoken(xtoken);
 
@@ -194,7 +239,7 @@ public class AuthorizeService {
                 String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                 String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
                 String parameterJson = JSONObject.toJSONString(parameters);
-                String asB64 = Base64.getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
+                String asB64 = getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
                 String xtoken = sign + "." + asB64;
                 vo.setXtoken(xtoken);
             } catch (NoSuchAlgorithmException e) {
@@ -253,7 +298,7 @@ public class AuthorizeService {
                         String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                         String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
                         String parameterJson = JSONObject.toJSONString(parameters);
-                        String asB64 = Base64.getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
+                        String asB64 = getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
                         String xtoken = sign + "." + asB64;
                         vo.setXtoken(xtoken);
                     } catch (Exception e) {
@@ -317,7 +362,7 @@ public class AuthorizeService {
                 String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                 String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
                 String parameterJson = JSONObject.toJSONString(parameters);
-                String asB64 = Base64.getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
+                String asB64 = getEncoder().encodeToString(parameterJson.getBytes("utf-8"));
                 String xtoken = sign + "." + asB64;
                 vo.setXtoken(xtoken);
             } catch (NoSuchAlgorithmException e) {
@@ -332,5 +377,56 @@ public class AuthorizeService {
             return "手机号码不存在！";
         }
         return "";
+    }
+
+    /**
+     * 新用户注册
+     * @param sysUser
+     * @return
+     */
+    public synchronized String registerUser(SysUser sysUser){
+        //判断手机验证码是否有效
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("invitationPhone", sysUser.getPhone_no());
+        params.put("invitationCode", sysUser.getVerifyCode());
+        InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
+        if (null == invitationVo || "1".equals(invitationVo.getInvitationState())) {
+            return Constant.ERR_VERIFY_PHONE_CODE;
+        }
+
+        //验证推荐人邀请码是否有效
+        if(MyStringUtils.isNotNull(sysUser.getInviter_code())) {
+            Integer count = userTempBddMapper.verifyInviterCode(sysUser.getInviter_code());
+            if (count == null && count != 1) {
+                return Constant.ERR_VERIFY_IVITE_CODE;
+            }
+        }
+
+        //验证登录账号（手机号）
+        Map argMap = new HashMap();
+        argMap.put("phone_no",sysUser.getPhone_no());
+        argMap.put("login_name", sysUser.getLogin_name());
+        List<String> vList  = userTempBddMapper.verifyUserInfo(argMap);
+        if(vList!=null && vList.size()>0) {
+            return Constant.ERR_USER_EXIST;
+        }
+
+        String uid = CommonUtil.getUUID();
+        String rId = CommonUtil.getUUID();
+        sysUser.setPkid(uid);
+        sysUser.setCreate_by(sysUser.getClientVersion());
+//        sysUser.setOwn_invite_code(ShareCodeUtils.bulidCode());
+        userTempBddMapper.insertUserInfo(sysUser);
+
+        SysUserRole role = new SysUserRole();
+        role.setPkid(rId);
+        role.setUser_id(uid);
+        role.setRole_code("normal");
+        role.setCreate_by(sysUser.getClientVersion());
+        userTempBddMapper.insertUserRole(role);
+
+        //更新验证码状态
+        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
+        return Constant.SUCCESS_CODE;
     }
 }

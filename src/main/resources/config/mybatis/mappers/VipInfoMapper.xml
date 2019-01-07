@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.UserTempBddMapper">
+
+    <select id="queryInfoById" parameterType="Map" resultType="com.silita.biaodaa.model.VipInfo">
+        select *
+        from mishu_write.tb_vip_info
+        where user_id =#{userId}
+    </select>
+
+</mapper>

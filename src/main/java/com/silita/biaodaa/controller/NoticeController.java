@@ -22,6 +22,7 @@ import java.util.*;
 
 import static com.silita.biaodaa.common.RedisConstantInterface.*;
 import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
+import static com.silita.biaodaa.utils.HttpUtils.parseRequest;
 import static com.silita.biaodaa.utils.RouteUtils.HUNAN_SOURCE;
 import static org.apache.commons.collections.MapUtils.getString;
 
@@ -658,15 +659,6 @@ public class NoticeController extends BaseController {
         }
     }
 
-    //解析http信息
-    private Map<String, String> parseRequest(HttpServletRequest request) {
-        String userId = (String) request.getSession().getAttribute("userId");
-        String ipAddr = request.getHeader("X-real-ip");//获取用户真实ip
-        HashMap map = new HashMap();
-        map.put("userId", userId);
-        map.put("ipAddr", ipAddr);
-        return map;
-    }
 
     /**
      * 查询公告文章列表

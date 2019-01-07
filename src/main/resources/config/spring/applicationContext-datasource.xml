@@ -27,8 +27,8 @@
         <property name="connectionTestStatement" value="SELECT 1"/>
         <!-- 连接池中未使用的链接最大存活时间，当前设置为5分钟 -->
         <property name="idleMaxAgeInSeconds" value="300"/>
-        <property name="partitionCount" value="4"/>
-        <property name="maxConnectionsPerPartition" value="200"/>
+        <property name="partitionCount" value="2"/>
+        <property name="maxConnectionsPerPartition" value="30"/>
         <property name="minConnectionsPerPartition" value="10"/>
         <property name="acquireIncrement" value="5"/>
     </bean>

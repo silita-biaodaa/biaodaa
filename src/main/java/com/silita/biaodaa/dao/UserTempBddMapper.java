@@ -1,7 +1,12 @@
 package com.silita.biaodaa.dao;
 
+import com.silita.biaodaa.model.SysUser;
+import com.silita.biaodaa.model.SysUserRole;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.utils.MyMapper;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * user_temp_bdd Mapper
@@ -105,4 +110,37 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
      * @return
      */
     Integer getTotalByUserPhone(String userphone);
+
+    /**
+     * 查询用户与角色信息
+     * @param param
+     * @return
+     */
+    List<SysUser> queryUserInfo(SysUser param);
+
+    /**
+     * 验证用户是否已存在
+     * @param param
+     * @return
+     */
+    List<String> verifyUserInfo(Map param);
+
+    /**
+     * 新增用户信息
+     * @param sysUser
+     */
+    void insertUserInfo(SysUser sysUser);
+
+    /**
+     * 新增用户角色关联
+     * @param sysUserRole
+     */
+    void insertUserRole(SysUserRole sysUserRole);
+
+    /**
+     * 检验邀请码是否有效
+     * @param inviteCode
+     * @return
+     */
+    Integer verifyInviterCode(String inviteCode);
 }

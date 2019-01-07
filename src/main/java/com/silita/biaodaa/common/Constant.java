@@ -18,4 +18,17 @@ public class Constant {
 
     public static final String SCORE_COMM = "一般";
     public static final String SCORE_SEV = "严重";
+
+    public static final String SUCCESS_CODE="1";
+    public static final String FAIL_CODE="0";
+
+    public static final String STR_ENCODING = "utf-8";
+    public static final String TOKEN_SPLIT="\\.";
+
+    //返回错误码
+    public static final String ERR_USER_EXIST = "E001";
+    public static final String ERR_VERIFY_PHONE_CODE = "E002";
+    public static final String ERR_VERIFY_IVITE_CODE = "E003";//邀请码验证失败
+    public static final String EXCEPTION_CODE="E999";
+    public static final String ERR_VIEW_CODE="E888";
 }

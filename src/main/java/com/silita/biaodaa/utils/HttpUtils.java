@@ -14,11 +14,13 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -166,5 +168,16 @@ public class HttpUtils {
                 }
             }
         }
+    }
+
+
+    //解析http信息
+    public static Map<String, String> parseRequest(HttpServletRequest request) {
+        String userId = (String) request.getSession().getAttribute("userId");
+        String ipAddr = request.getHeader("X-real-ip");//获取用户真实ip
+        HashMap map = new HashMap();
+        map.put("userId", userId);
+        map.put("ipAddr", ipAddr);
+        return map;
     }
 }
