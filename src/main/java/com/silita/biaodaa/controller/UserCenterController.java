@@ -5,20 +5,23 @@ package com.silita.biaodaa.controller;
  */
 
 import com.github.pagehelper.PageInfo;
-import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
-import com.silita.biaodaa.model.ColleCompany;
-import com.silita.biaodaa.model.CollecNotice;
-import com.silita.biaodaa.model.MessagePush;
-import com.silita.biaodaa.model.UserTempBdd;
+import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.service.AuthorizeService;
 import com.silita.biaodaa.service.UserCenterService;
+import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
+import com.silita.biaodaa.utils.RegexUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -31,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.silita.biaodaa.common.Constant.*;
 
 /**
  * 用户信息模块
@@ -42,6 +46,9 @@ public class UserCenterController {
     private static final Logger logger = Logger.getLogger(CompanyController.class);
     @Autowired
     private UserCenterService userCenterService;
+
+    @Autowired
+    private AuthorizeService authorizeService;
 
     /**
      * TODO: 修改用户信息
@@ -69,6 +76,170 @@ public class UserCenterController {
             result.put("msg", "更新账号基本信息失败");
         }
         return result;
+    }
+
+    /**
+     * 过滤不修改的字段
+     * @param sysUser
+     */
+    private void filterParams(SysUser sysUser){
+        sysUser.setCreated(null);
+        sysUser.setCreate_by(null);
+        sysUser.setPhone_no(null);
+        sysUser.setLogin_pwd(null);
+        sysUser.setOwn_invite_code(null);
+        sysUser.setChannel(null);
+    }
+
+    private void clearBlank(SysUser sysUser){
+        if(sysUser.getInviter_code()!=null){
+            sysUser.setInviter_code(sysUser.getInviter_code().trim());
+        }
+        if(sysUser.getLogin_name()!=null){
+            sysUser.setLogin_name(sysUser.getLogin_name().trim());
+        }
+        if(sysUser.getBirth_year()!=null){
+            sysUser.setBirth_year(sysUser.getBirth_year().trim());
+        }
+        if(sysUser.getNike_name()!=null){
+            sysUser.setNike_name(sysUser.getNike_name().trim());
+        }
+        if(sysUser.getEmail()!=null){
+            sysUser.setEmail(sysUser.getEmail().trim());
+        }
+        if(sysUser.getIn_city()!=null){
+            sysUser.setIn_city(sysUser.getIn_city().trim());
+        }
+        if(sysUser.getIn_company()!=null){
+            sysUser.setIn_company(sysUser.getIn_company().trim());
+        }
+        if(sysUser.getPosition()!=null){
+            sysUser.setPosition(sysUser.getPosition().trim());
+        }
+        if(sysUser.getLogin_pwd()!=null){
+            sysUser.setLogin_pwd(sysUser.getLogin_pwd().trim());
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateUserInfo", produces = "application/json;charset=utf-8")
+    public Map<String, Object> updateUserInfo(@RequestBody SysUser sysUser) {
+        Map result = new HashMap();
+        try {
+            sysUser.setPkid(VisitInfoHolder.getUid());
+            clearBlank(sysUser);
+            filterParams(sysUser);
+            String errCode = validateUserInfo(sysUser);
+            if(errCode == null) {
+                Integer records = userCenterService.updateUserInfo(sysUser);
+                if(records ==1) {
+                    SysUser vo = authorizeService.memberLogin(sysUser);
+                    result.put("code", Constant.SUCCESS_CODE);
+                    result.put("msg", "更新用户信息成功！");
+                    result.put("data", vo);
+                }else{
+                    result.put("code", errCode);
+                    result.put("msg", "更新用户失败，请重试！");
+                }
+            }else {
+                result.put("code", errCode);
+                String errMsg = null;
+                if (errCode.equals(Constant.ERR_VERIFY_IVITE_CODE)) {
+                    errMsg = "推荐人邀请码有误或用户已存在推荐人,请确认。";
+                } else if (errCode.equals(Constant.ERR_VERIFY_USER_ID_CODE)){
+                    errMsg = "用户信息获取失败，请重新登录。";
+                }else{
+                    errMsg="输入数据有误。";
+                }
+
+                result.put("msg", errMsg);
+            }
+        } catch (Exception e) {
+            String err = "更新账号基本信息异常！" + e.getMessage();
+            logger.error(err, e);
+            result.put("code", Constant.FAIL_CODE);
+            result.put("msg", err);
+        }
+        return result;
+    }
+
+    /**
+     * 用户数据校验
+     * @param sysUser
+     * @return
+     */
+    private String validateUserInfo(SysUser sysUser){
+        if(MyStringUtils.isNull(sysUser.getPkid())){//用户id
+            return Constant.ERR_VERIFY_USER_ID_CODE;
+        }
+        if(MyStringUtils.isNotNull(sysUser.getInviter_code())){//推荐人邀请码校验
+            if(sysUser.getInviter_code().length()!=6){
+                return Constant.ERR_VERIFY_IVITE_CODE;
+            }else{
+                if(!userCenterService.verifyInviterCode(sysUser)){
+                    return Constant.ERR_VERIFY_IVITE_CODE;
+                }
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getImage_url())){//头像链接
+            if(sysUser.getImage_url().length()>200){
+                return ERR_IMGURL_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getNike_name())){//昵称
+            if(sysUser.getNike_name().length()>50){
+                return ERR_NICE_NAME_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getPhone_no())){//手机号
+            if(!RegexUtils.matchExists(sysUser.getPhone_no()
+                    ,"^0{0,1}(13[0-9]|15[7-9]|153|156|18[7-9]|1[0-9][0-9])[0-9]{8}$")){
+                return ERR_PHONE_NO_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getEmail())){//邮箱
+            if(!RegexUtils.matchExists(sysUser.getEmail()
+                    ,"^[A-Za-z\\d]+([-_.][A-Za-z\\d]+)*@([A-Za-z\\d]+[-.])+[A-Za-z\\d]{1,6}$")){
+                return ERR_EMAIL_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getUser_name())){//用户姓名
+            if(sysUser.getUser_name().length()>100){
+                return ERR_USER_NAME_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getSex())){//性别
+            if(sysUser.getSex()>5){
+                return Constant.ERR_SEX_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getBirth_year())){//生日
+            if(!RegexUtils.matchExists(sysUser.getBirth_year()
+                    ,"^[12][0-9]{3}-[0-1][0-9]-[0-3][0-9]$")){
+                return ERR_BIR_DATE_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getIn_city())){//城市
+            if(sysUser.getIn_city().length()>100){
+                return ERR_CITY_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getIn_company())){//公司名
+            if(sysUser.getIn_company().length()>100){
+                return ERR_COMPANY_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getPosition())){//职位
+            if(sysUser.getPosition().length()>50){
+                return ERR_POS_CODE;
+            }
+        }
+        if(MyStringUtils.isNotNull(sysUser.getLogin_name())){//登录账号名
+            if(sysUser.getLogin_name().length()>50){
+                return ERR_LOGIN_NAME;
+            }
+        }
+        return null;
     }
 
     /**

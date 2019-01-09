@@ -147,9 +147,17 @@
         LEFT JOIN mishu_write.sys_user_role rel on rel.user_id= u.pkid
         LEFT JOIN mishu_write.sys_role_info r on r.pkid= rel.role_id
         LEFT JOIN mishu_write.tb_vip_info v on u.pkid=v.user_id
-        WHERE (login_name = #{login_name} or phone_no = #{phone_no}) AND login_pwd = #{login_pwd}
+        WHERE
+        <choose>
+            <when test="pkid != null and pkid != ''">
+                u.pkid=#{pkid}
+            </when>
+            <otherwise>
+                (login_name = #{login_name} or phone_no = #{phone_no}) AND login_pwd = #{login_pwd}
+            </otherwise>
+        </choose>
     </select>
-    
+
     <select id="verifyUserInfo"  resultType="String">
         SELECT u.pkid
         FROM mishu_write.sys_user_info u
@@ -289,10 +297,81 @@
         #{create_by})
     </insert>
     
-    <select id="verifyInviterCode" parameterType="String" resultType="Integer">
+    <select id="verifyInviterCode" parameterType="com.silita.biaodaa.model.SysUser" resultType="Integer">
         SELECT count(1)
         FROM mishu_write.sys_user_info
         WHERE own_invite_code=#{inviter_code}
+        <if test="pkid !=null and pkid!=''">
+        and pkid !=#{pkid}
+        </if>
     </select>
+
+    <select id="existInviterCodeByUserId" parameterType="String" resultType="String">
+        SELECT inviter_code
+        FROM mishu_write.sys_user_info
+        WHERE pkid =#{pkid}
+    </select>
+
+    <update id="updateSysUser">
+        update mishu_write.sys_user_info
+        SET
+            <if test="login_name !=null and login_name!=''">
+                login_name=#{login_name},
+            </if>
+            <if test="login_pwd !=null and login_pwd!=''">
+              login_pwd=#{login_pwd},
+            </if>
+            <if test="user_name !=null and user_name!=''">
+                user_name=#{user_name},
+            </if>
+            <if test="sex !=null and sex!=''">
+                sex=#{sex},
+            </if>
+            <if test="nike_name !=null and nike_name!=''">
+                nike_name=#{nike_name},
+            </if>
+            <if test="cert_type !=null and cert_type!=''">
+                cert_type=#{cert_type},
+            </if>
+            <if test="cert_no !=null and cert_no!=''">
+                cert_no=#{cert_no},
+            </if>
+            <if test="email !=null and email!=''">
+                email=#{email},
+            </if>
+            <if test="birth_year !=null and birth_year!=''">
+                birth_year=#{birth_year},
+            </if>
+            <if test="in_city !=null and in_city!=''">
+                in_city=#{in_city},
+            </if>
+            <if test="in_company !=null and in_company!=''">
+                in_company=#{in_company},
+            </if>
+            <if test="position !=null and position!=''">
+                position=#{position},
+            </if>
+            <if test="image_url !=null and image_url!=''">
+                image_url=#{image_url},
+            </if>
+            <if test="wx_union_id !=null and wx_union_id!=''">
+                wx_union_id=#{wx_union_id},
+            </if>
+            <if test="wx_open_id !=null and wx_open_id!=''">
+                wx_open_id=#{wx_open_id},
+            </if>
+            <if test="qq_open_id !=null and qq_open_id!=''">
+                qq_open_id=#{qq_open_id},
+            </if>
+            <if test="update_by !=null and update_by!=''">
+              update_by=#{update_by},
+            </if>
+            <if test="inviter_code !=null and inviter_code!=''">
+                inviter_code=#{inviter_code},
+            </if>
+        updated=CURRENT_TIMESTAMP
+        where pkid = #{pkid}
+
+    </update>
 
 </mapper>

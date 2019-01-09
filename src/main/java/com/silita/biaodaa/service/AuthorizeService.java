@@ -138,7 +138,7 @@ public class AuthorizeService {
         if(resList!=null && resList.size()==1){
             //用户校验成功
             SysUser user = resList.get(0);
-            user.setXtoken(buildToken(user));
+            user.setXtoken(TokenUtils.buildToken(user));
             return user;
         }else{
             //用户校验失败
@@ -146,27 +146,6 @@ public class AuthorizeService {
             return null;
         }
     }
-
-    /**
-     * 生成用户token （token版本号.用户信息.sign）
-     * @param sysUser
-     * @return
-     */
-    private String buildToken(SysUser sysUser){
-        String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
-        String tokenVersion = PropertiesUtils.getProperty("token.version");
-
-        Map<String, String> parameters = new HashMap();
-        parameters.put("login_name", sysUser.getLogin_name());
-        parameters.put("user_name", sysUser.getUser_name());
-        parameters.put("pkid", sysUser.getPkid());
-        parameters.put("channel", sysUser.getChannel());
-        parameters.put("phone_no", sysUser.getPhone_no());
-        parameters.put("login_time", String.valueOf(System.currentTimeMillis()));
-        parameters.put("tokenVersion",tokenVersion);
-        return EncryptUtils.encryptToken(tokenVersion,parameters,secret);
-    }
-
 
     /**
      * 用户登录
@@ -398,7 +377,7 @@ public class AuthorizeService {
 
         //验证推荐人邀请码是否有效
         if(MyStringUtils.isNotNull(sysUser.getInviter_code())) {
-            Integer count = userTempBddMapper.verifyInviterCode(sysUser.getInviter_code());
+            Integer count = userTempBddMapper.verifyInviterCode(sysUser);
             if (count == null || count != 1) {
                 return Constant.ERR_VERIFY_IVITE_CODE;
             }

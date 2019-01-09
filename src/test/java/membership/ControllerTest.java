@@ -42,7 +42,7 @@ public class ControllerTest extends ConfigTest {
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new CheckLoginFilter(),"/*").build();  //初始化MockMvc对象
         try {
-//            token = initToken();
+            memberLogin();
         }catch (Exception e){
             logger.error(e,e);
         }
@@ -67,16 +67,17 @@ public class ControllerTest extends ConfigTest {
         System.out.println("-----返回的json = " + responseString);
         JSONObject jobj = JSON.parseObject(responseString);
         JSONObject data = (JSONObject)jobj.get("data");
-        String token = null;
+        String localtoken = null;
         if(data != null) {
-            token = data.getString("xtoken");
-            System.out.println(token);
+            localtoken = data.getString("xtoken");
+            System.out.println(localtoken);
+            token = localtoken;
         }
     }
 
     @Test
     public void memberRegister()throws Exception{ //714241
-        String requestBody = "{\"inviter_code\":\"test1\",\"verifyCode\":\"111259\",\"login_name\":\"\",\"login_pwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phone_no\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"22222\"}";
+        String requestBody = "{\"inviter_code\":\"test12\",\"verifyCode\":\"889779\",\"login_name\":\"\",\"login_pwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phone_no\":\"13319555803\",\"channel\":\"1002\",\"clientVersion\":\"22222\"}";
         String responseString = mockMvc.perform(post("/authorize/memberRegister").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -148,6 +149,37 @@ public class ControllerTest extends ConfigTest {
         System.out.println("-----返回的json = " + responseString);
     }
 
+    @Test
+    public void testUpdateUserInfo()throws Exception {
+        String requestBody = "{\"inviter_code\":\"  \"}";  //,"":""
+//        requestBody = "{\"login_name\":\"login_tes2222\",\"user_name\":\"user_name222\"" +
+//                ",\"sex\":\"1\",\"nike_name\":\"曹fb22\",\"email\":\"222caoliang@fb.com\"" +
+//                ",\"birth_year\":\"2018-10-08\",\"in_city\":\"城市2\",\"in_company\":\"逗比公司2\"" +
+//                ",\"position\":\"逗比总监22\",\"image_url\":\"http://2222sdlki.com\"}";
+        String responseString = mockMvc.perform(post("/userCenter/updateUserInfo").characterEncoding("UTF-8")
+                        .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                        .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testPermssion()throws Exception{
+        String requestBody = "{\"name\":\"123\"}";  //,"":"" /permission
+        String responseString = mockMvc.perform(post("/permission/under/list").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-#####----返回的json = " + responseString);
+    }
 
 
 }

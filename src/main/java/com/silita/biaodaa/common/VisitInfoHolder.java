@@ -16,7 +16,26 @@ public class VisitInfoHolder {
 
     protected static final ThreadLocal<String> uid = new ThreadLocal<>();
 
+    protected static final ThreadLocal<String> role_code = new ThreadLocal<>();
 
+    protected static final ThreadLocal<String> permissions = new ThreadLocal<>();
+
+
+    public static void setRoleCode(String roleCode){
+        VisitInfoHolder.role_code.set(roleCode);
+    }
+
+    public static void setPermissions(String permissions){
+        VisitInfoHolder.permissions.set(permissions);
+    }
+
+    public static String getRoleCode(){
+        return VisitInfoHolder.role_code.get();
+    }
+
+    public static String getPermissions(){
+        return VisitInfoHolder.permissions.get();
+    }
 
     public static String getUserId() {
         return VisitInfoHolder.userId.get();
@@ -43,4 +62,6 @@ public class VisitInfoHolder {
         }
         return uuid;
     }
+
+
 }

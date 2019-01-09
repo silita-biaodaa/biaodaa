@@ -85,6 +85,7 @@ public class AuthorizeController {
                 String msgCode = authorizeService.registerUser(sysUser);
                 if (msgCode.equals(Constant.SUCCESS_CODE)) {
                     result.put("code", Constant.SUCCESS_CODE);
+                    result.put("data",authorizeService.memberLogin(sysUser));
                     result.put("msg", "用户注册成功！");
                 } else {
                     result.put("code", msgCode);

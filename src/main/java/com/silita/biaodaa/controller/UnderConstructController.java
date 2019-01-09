@@ -19,7 +19,7 @@ import java.util.Map;
 public class UnderConstructController extends BaseController {
 
     @Autowired
-    UnderConstructService underConstructService;
+    private UnderConstructService underConstructService;
 
     /**
      * 列表
@@ -27,23 +27,19 @@ public class UnderConstructController extends BaseController {
      * @param param
      */
     @ResponseBody
-    @RequestMapping(value = "/list", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> list(@RequestBody Map<String, Object> param) {
+        return underList(param);
+    }
+
+    Map<String,Object > underList(Map<String, Object> param){
         Map<String, Object> resultMap = new HashMap<>();
         successMsg(resultMap);
         buildReturnMap(resultMap, underConstructService.listUnderConstruct(param));
         return resultMap;
     }
 
-    /**
-     * 查询
-     *
-     * @param param
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/query", method = RequestMethod.POST, produces = "application/json")
-    public Map<String, Object> query(@RequestBody Map<String, Object> param) {
+    Map<String, Object> underQuery(Map<String, Object> param){
         Map<String, Object> resultMap = new HashMap<>();
         List list;
         if ("detail".equals(param.get("type"))) {
@@ -89,5 +85,17 @@ public class UnderConstructController extends BaseController {
         successMsg(resultMap);
         resultMap.put("data", list);
         return resultMap;
+    }
+
+    /**
+     * 查询
+     *
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/query", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> query(@RequestBody Map<String, Object> param) {
+        return underQuery(param);
     }
 }

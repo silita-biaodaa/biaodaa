@@ -11,7 +11,7 @@ public class SysUser {
     private String login_name;
     private String login_pwd;
     private String user_name;
-    private int sex;//0:女；1:男；2：其他
+    private Integer sex;//0:女；1:男；2：其他
     private String phone_no;
     private String channel;
     private String nike_name;

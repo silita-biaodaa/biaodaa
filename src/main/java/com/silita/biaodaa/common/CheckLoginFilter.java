@@ -13,12 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.silita.biaodaa.common.SecurityCheck.checkSigner;
 import static com.silita.biaodaa.utils.EncryptUtils.Base64Decode;
 import static com.silita.biaodaa.utils.HttpUtils.parseRequest;
+import static com.silita.biaodaa.utils.TokenUtils.parseJsonString;
 
 /**
  * Created by zhangxiahui on 17/7/26.
@@ -74,19 +74,6 @@ public class CheckLoginFilter implements Filter {
         return flag;
     }
 
-    private Map<String, String> parseJsonString(String paramJson){
-        JSONObject jsonObject = (JSONObject) JSONObject.parse(paramJson);
-        Map<String, String> paramMap = new HashMap<>();
-        paramMap.put("login_name",jsonObject.getString("login_name"));
-        paramMap.put("user_name",jsonObject.getString("user_name"));
-        paramMap.put("pkid", jsonObject.getString("pkid"));
-        paramMap.put("channel", jsonObject.getString("channel"));
-        paramMap.put("phone_no", jsonObject.getString("phone_no"));
-        paramMap.put("login_time",jsonObject.getString("login_time"));
-        paramMap.put("tokenVersion",jsonObject.getString("tokenVersion"));
-        return paramMap;
-    }
-
     private boolean greenWayVerify(String requestUri, String filterUrl,String xToken){
         boolean greenWay= false;
         if (requestUri.equals("/") || "biaodaaTestToken".equals(xToken)) {
@@ -124,6 +111,7 @@ public class CheckLoginFilter implements Filter {
             String phone = null;
             String userId = null;
             Long date = null;
+            String permissions=null;
             Map<String, String> parameters = new HashedMap();
             boolean isHei = false;
             boolean tokenValid= false;
@@ -151,11 +139,14 @@ public class CheckLoginFilter implements Filter {
                         String sign = sArray[2];
                         paramJson = Base64Decode(paramJson);
                         Map<String,String> paramMap = parseJsonString(paramJson);
-                        tokenValid= SecurityCheck.checkSigner(paramMap,sign);
 
+                        VisitInfoHolder.setPermissions(paramMap.get("permissions"));
+                        VisitInfoHolder.setRoleCode(paramMap.get("role_code"));
                         name = paramMap.get("login_name");
                         phone = paramMap.get("phone_no");
+                        userId = paramMap.get("pkid");
                         date = Long.parseLong(paramMap.get("login_time")!=null ? paramMap.get("login_time"):"0");
+                        tokenValid= SecurityCheck.checkSigner(paramMap,sign);
                     }else{
                         outPrintMsg(response,"{\"code\":0,\"msg\":\"请重新登录!!!\"}");
                         return;

@@ -48,6 +48,24 @@ public class UserCenterService {
     @Autowired
     private MyRedisTemplate myRedisTemplate;
 
+    public Integer updateUserInfo(SysUser sysUser){
+        return  userTempBddMapper.updateSysUser(sysUser);
+    }
+
+    public boolean verifyInviterCode(SysUser sysUser){
+        Integer count = userTempBddMapper.verifyInviterCode(sysUser);
+        if (count == null || count != 1) {
+            return false;
+        }else{
+            String inviterCode  = userTempBddMapper.existInviterCodeByUserId(sysUser.getPkid());
+            if(MyStringUtils.isNotNull(inviterCode)){
+                return false;
+            }else {
+                return true;
+            }
+        }
+    }
+
     public UserTempBdd updateUserTemp(UserTempBdd userTempBdd) {
         userTempBddMapper.updateUserTemp(userTempBdd);
         UserTempBdd vo = userTempBddMapper.getUserTempByUserId(userTempBdd.getUserid());

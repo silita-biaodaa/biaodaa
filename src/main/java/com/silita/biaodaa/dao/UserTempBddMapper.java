@@ -139,8 +139,17 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
 
     /**
      * 检验邀请码是否有效
-     * @param inviteCode
+     * @param sysUser
      * @return
      */
-    Integer verifyInviterCode(String inviteCode);
+    Integer verifyInviterCode(SysUser sysUser);
+
+
+    String existInviterCodeByUserId(String userId);
+
+    /**
+     * 变更用户信息
+     * @param sysUser
+     */
+    Integer updateSysUser(SysUser sysUser);
 }
