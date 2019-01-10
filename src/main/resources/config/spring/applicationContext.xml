@@ -35,9 +35,6 @@
 			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
-	<!-- 启动AspectJ支持   只对扫描过的bean有效-->
-	<aop:aspectj-autoproxy proxy-target-class="true" />
-
 	<import resource="applicationContext-datasource.xml" />
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
