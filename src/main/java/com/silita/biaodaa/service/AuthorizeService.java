@@ -129,6 +129,22 @@ public class AuthorizeService {
         return "";
     }
 
+
+    /**
+     * 更新用户渠道登录记录
+     * @param sysUser
+     */
+    private void updateLoginRecord(SysUser sysUser){
+        try {
+            String hk = Constant.buildLoginChanelKey(sysUser.getPkid(),sysUser.getChannel());
+            Long time = sysUser.getLoginTime();
+            logger.debug("updateLoginRecord:[" + hk + "][" + time + "]");
+            myRedisTemplate.putToHash(Constant.LOGIN_HASH_KEY, hk, time);
+        }catch (Exception e){
+            logger.error(e,e);
+        }
+    }
+
     /**
      * 登录用户信息校验
      * @return
@@ -138,7 +154,10 @@ public class AuthorizeService {
         if(resList!=null && resList.size()==1){
             //用户校验成功
             SysUser user = resList.get(0);
+            Long time = System.currentTimeMillis();
+            user.setLoginTime(time);//设置登录时间
             user.setXtoken(TokenUtils.buildToken(user));
+            updateLoginRecord(user);
             return user;
         }else{
             //用户校验失败
@@ -393,7 +412,6 @@ public class AuthorizeService {
         }
 
 
-        Long idtest = getIdByRedis();
         String uid = CommonUtil.getUUID();
         String rId = CommonUtil.getUUID();
         sysUser.setPkid(uid);
@@ -418,10 +436,11 @@ public class AuthorizeService {
      * @return
      * @throws Exception
      */
-    private String constructShareCode()throws Exception{
+    private String constructShareCode(){
         Long unique = getIdByRedis();
         if(unique ==null){
-            throw new Exception("邀请码生成出错，id不能为空！");
+            logger.error("邀请码生成出错：从redis获取id失败，请检查redis服务！");
+            return null;
         }
         return ShareCodeUtils.idToCode(unique);
     }

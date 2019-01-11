@@ -324,7 +324,7 @@
             <if test="user_name !=null and user_name!=''">
                 user_name=#{user_name},
             </if>
-            <if test="sex !=null and sex!=''">
+            <if test="sex !=null">
                 sex=#{sex},
             </if>
             <if test="nike_name !=null and nike_name!=''">

@@ -2,6 +2,7 @@ package com.silita.biaodaa.common;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
@@ -265,15 +266,70 @@ public class MyRedisTemplate {
             return redisTemplate.opsForHash().increment(key, hashKey, delta);
         } catch (Exception e) {//redis宕机时采用uuid的方式生成唯一id
             logger.error("redis获取唯一Id失败！[key:"+key+"][hashKey:"+hashKey+"]"+e,e);
-            int first = new Random(10).nextInt(8) + 1;
-            int randNo=UUID.randomUUID().toString().hashCode();
-            if (randNo < 0) {
-                randNo=-randNo;
-            }
-            return Long.valueOf(first + String.format("%16d", randNo));
+           return null;
         }
     }
 
+    /**
+     * 插入的hashKey唯一，存在则不进行插入。
+     * @param k
+     * @param hk
+     * @param time
+     * @return
+     */
+    public boolean uniqueInsertToHash(String k,String hk,Long time){
+        BoundHashOperations operations = redisTemplate.boundHashOps(k);
+        return operations.putIfAbsent(hk,time);
+    }
 
+    /**
+     * 更新hash表中的value,不存在则无操作。
+     * @param k
+     * @param hk
+     * @param time
+     * @return true:更新成功
+     */
+    public boolean updateToHash(String k,String hk,Long time){
+        BoundHashOperations operations = redisTemplate.boundHashOps(k);
+        if(operations.hasKey(hk)) {
+            operations.put(hk, time);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void putToHash(String k,String hk,Long time){
+        redisTemplate.boundHashOps(k).put(hk, time);
+    }
+
+    /**
+     * 判断hash表中是否存在hk
+     * @param k
+     * @param hk
+     * @return
+     */
+    public boolean hasHash(String k,String hk){
+        return redisTemplate.boundHashOps(k).hasKey(hk);
+    }
+
+    /**
+     * 删除一个键值对
+     * @param k
+     * @param hk
+     */
+    public void deleteHashKey(String k,String hk){
+        redisTemplate.boundHashOps(k).delete(hk);
+    }
+
+    /**
+     * 获取hash中的值
+     * @param k
+     * @param hk
+     * @return
+     */
+    public Object getHashValue(String k,String hk){
+        return redisTemplate.boundHashOps(k).get(hk);
+    }
 
 }

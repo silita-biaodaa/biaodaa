@@ -87,9 +87,13 @@
             <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
         </property>
         <property name="hashValueSerializer">
-            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+            <ref bean="GenericToStringSerializer"/>
         </property>
         <!--开启事务  -->
         <property name="enableTransactionSupport" value="false"></property>
+    </bean>
+
+    <bean id ="GenericToStringSerializer" class="org.springframework.data.redis.serializer.GenericToStringSerializer">
+        <constructor-arg type="java.lang.Class" value="java.lang.Long"/>
     </bean>
 </beans>

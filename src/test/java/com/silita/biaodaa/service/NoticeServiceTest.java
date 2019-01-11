@@ -2,7 +2,6 @@ package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.silita.biaodaa.common.CheckLoginFilter;
 import com.silita.biaodaa.controller.vo.Page;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,8 +68,7 @@ public class NoticeServiceTest extends ConfigTest {
     @Before()  //这个方法在每个方法执行之前都会执行一遍
     public void setup()
     {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new CheckLoginFilter(),"/*").build();  //初始化MockMvc对象
-
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();  //初始化MockMvc对象
         try {
             token = initToken();
         }catch (Exception e){

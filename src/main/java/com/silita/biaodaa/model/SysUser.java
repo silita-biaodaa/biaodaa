@@ -46,5 +46,6 @@ public class SysUser {
     private String level;
 
     private String verifyCode;//手机验证码
+    private Long loginTime;//登录时间
 
 }

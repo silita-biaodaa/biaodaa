@@ -41,16 +41,15 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <filter>
-        <filter-name>IsLogin</filter-name>
-        <filter-class>com.silita.biaodaa.common.CheckLoginFilter</filter-class>
-    </filter>
+    <!--<filter>-->
+        <!--<filter-name>IsLogin</filter-name>-->
+        <!--<filter-class>com.silita.biaodaa.common.AspectCheckLogin</filter-class>-->
+    <!--</filter>-->
 
-    <filter-mapping>
-        <filter-name>IsLogin</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
+    <!--<filter-mapping>-->
+        <!--<filter-name>IsLogin</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+    <!--</filter-mapping>-->
 
     <!-- springmvc -->
     <servlet>

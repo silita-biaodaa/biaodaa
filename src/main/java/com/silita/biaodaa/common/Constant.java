@@ -1,6 +1,10 @@
 package com.silita.biaodaa.common;
 
 public class Constant {
+    //渠道号
+    public static final String CHANNEL_ANDROID="1001";
+    public static final String CHANNEL_IOS="1002";
+
     public static final String SPLIT_STRING = "@@####@@";
     public static final String DEFAULT_STRING = "___";
 
@@ -51,7 +55,15 @@ public class Constant {
     public static final String info_male = "1";
     public static final String info_others = "2";
 
+    public static final String LOGIN_HASH_KEY="loginRecords";
+    public static final String LOGIN_STATS_HASH_KEY="loginStats";
 
-
+    public static String buildLoginChanelKey(String userid,String channel){
+        StringBuilder sb = new StringBuilder(userid);
+        if(CHANNEL_ANDROID.equals(channel) || CHANNEL_IOS.equals(channel)){
+            channel="appChannel";
+        }
+        return  sb.append("|").append(channel).toString();
+    }
 
 }

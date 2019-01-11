@@ -26,7 +26,7 @@ public class TokenUtils {
         parameters.put("pkid", sysUser.getPkid());
         parameters.put("channel", sysUser.getChannel());
         parameters.put("phone_no", sysUser.getPhone_no());
-        parameters.put("login_time", String.valueOf(System.currentTimeMillis()));
+        parameters.put("login_time", String.valueOf(sysUser.getLoginTime()));
         parameters.put("tokenVersion",tokenVersion);
         parameters.put("role_code",sysUser.getRole_code());
         parameters.put("permissions",sysUser.getPermissions());
