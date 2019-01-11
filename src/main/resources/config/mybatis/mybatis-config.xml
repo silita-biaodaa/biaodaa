@@ -33,7 +33,7 @@
 
         <!-- Enables automatic mapping from classic database column names A_COLUMN
             to camel case classic Java property names aColumn. -->
-        <setting name="mapUnderscoreToCamelCase" value="false" />
+        <setting name="mapUnderscoreToCamelCase" value="true" />
 
         <!-- MyBatis uses local cache to prevent circular references and speed
             up repeated nested queries. By default (SESSION) all queries executed during
