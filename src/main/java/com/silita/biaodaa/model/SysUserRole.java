@@ -7,11 +7,11 @@ import lombok.Setter;
 @Setter
 public class SysUserRole {
     private String pkid;
-    private String role_id;
-    private String user_id;
+    private String roleId;
+    private String userId;
     private String created;
-    private String create_by;
+    private String createBy;
 
-    private String role_code;
+    private String roleCode;
 
 }

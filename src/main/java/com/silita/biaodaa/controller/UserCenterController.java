@@ -84,40 +84,40 @@ public class UserCenterController {
      */
     private void filterParams(SysUser sysUser){
         sysUser.setCreated(null);
-        sysUser.setCreate_by(null);
-        sysUser.setPhone_no(null);
-        sysUser.setLogin_pwd(null);
-        sysUser.setOwn_invite_code(null);
+        sysUser.setCreateBy(null);
+        sysUser.setPhoneNo(null);
+        sysUser.setLoginPwd(null);
+        sysUser.setOwnInviteCode(null);
         sysUser.setChannel(null);
     }
 
     private void clearBlank(SysUser sysUser){
-        if(sysUser.getInviter_code()!=null){
-            sysUser.setInviter_code(sysUser.getInviter_code().trim());
+        if(sysUser.getInviterCode()!=null){
+            sysUser.setInviterCode(sysUser.getInviterCode().trim());
         }
-        if(sysUser.getLogin_name()!=null){
-            sysUser.setLogin_name(sysUser.getLogin_name().trim());
+        if(sysUser.getLoginName()!=null){
+            sysUser.setLoginName(sysUser.getLoginName().trim());
         }
-        if(sysUser.getBirth_year()!=null){
-            sysUser.setBirth_year(sysUser.getBirth_year().trim());
+        if(sysUser.getBirthYear()!=null){
+            sysUser.setBirthYear(sysUser.getBirthYear().trim());
         }
-        if(sysUser.getNike_name()!=null){
-            sysUser.setNike_name(sysUser.getNike_name().trim());
+        if(sysUser.getNikeName()!=null){
+            sysUser.setNikeName(sysUser.getNikeName().trim());
         }
         if(sysUser.getEmail()!=null){
             sysUser.setEmail(sysUser.getEmail().trim());
         }
-        if(sysUser.getIn_city()!=null){
-            sysUser.setIn_city(sysUser.getIn_city().trim());
+        if(sysUser.getInCity()!=null){
+            sysUser.setInCity(sysUser.getInCity().trim());
         }
-        if(sysUser.getIn_company()!=null){
-            sysUser.setIn_company(sysUser.getIn_company().trim());
+        if(sysUser.getInCompany()!=null){
+            sysUser.setInCompany(sysUser.getInCompany().trim());
         }
         if(sysUser.getPosition()!=null){
             sysUser.setPosition(sysUser.getPosition().trim());
         }
-        if(sysUser.getLogin_pwd()!=null){
-            sysUser.setLogin_pwd(sysUser.getLogin_pwd().trim());
+        if(sysUser.getLoginPwd()!=null){
+            sysUser.setLoginPwd(sysUser.getLoginPwd().trim());
         }
     }
 
@@ -172,8 +172,8 @@ public class UserCenterController {
         if(MyStringUtils.isNull(sysUser.getPkid())){//用户id
             return Constant.ERR_VERIFY_USER_ID_CODE;
         }
-        if(MyStringUtils.isNotNull(sysUser.getInviter_code())){//推荐人邀请码校验
-            if(sysUser.getInviter_code().length()!=6){
+        if(MyStringUtils.isNotNull(sysUser.getInviterCode())){//推荐人邀请码校验
+            if(sysUser.getInviterCode().length()!=6){
                 return Constant.ERR_VERIFY_IVITE_CODE;
             }else{
                 if(!userCenterService.verifyInviterCode(sysUser)){
@@ -181,18 +181,18 @@ public class UserCenterController {
                 }
             }
         }
-        if(MyStringUtils.isNotNull(sysUser.getImage_url())){//头像链接
-            if(sysUser.getImage_url().length()>200){
+        if(MyStringUtils.isNotNull(sysUser.getImageUrl())){//头像链接
+            if(sysUser.getImageUrl().length()>200){
                 return ERR_IMGURL_CODE;
             }
         }
-        if(MyStringUtils.isNotNull(sysUser.getNike_name())){//昵称
-            if(sysUser.getNike_name().length()>50){
+        if(MyStringUtils.isNotNull(sysUser.getNikeName())){//昵称
+            if(sysUser.getNikeName().length()>50){
                 return ERR_NICE_NAME_CODE;
             }
         }
-        if(MyStringUtils.isNotNull(sysUser.getPhone_no())){//手机号
-            if(!RegexUtils.matchExists(sysUser.getPhone_no()
+        if(MyStringUtils.isNotNull(sysUser.getPhoneNo())){//手机号
+            if(!RegexUtils.matchExists(sysUser.getPhoneNo()
                     ,"^0{0,1}(13[0-9]|15[7-9]|153|156|18[7-9]|1[0-9][0-9])[0-9]{8}$")){
                 return ERR_PHONE_NO_CODE;
             }
@@ -203,8 +203,8 @@ public class UserCenterController {
                 return ERR_EMAIL_CODE;
             }
         }
-        if(MyStringUtils.isNotNull(sysUser.getUser_name())){//用户姓名
-            if(sysUser.getUser_name().length()>100){
+        if(MyStringUtils.isNotNull(sysUser.getUserName())){//用户姓名
+            if(sysUser.getUserName().length()>100){
                 return ERR_USER_NAME_CODE;
             }
         }
@@ -213,19 +213,19 @@ public class UserCenterController {
                 return Constant.ERR_SEX_CODE;
             }
         }
-        if(MyStringUtils.isNotNull(sysUser.getBirth_year())){//生日
-            if(!RegexUtils.matchExists(sysUser.getBirth_year()
+        if(MyStringUtils.isNotNull(sysUser.getBirthYear())){//生日
+            if(!RegexUtils.matchExists(sysUser.getBirthYear()
                     ,"^[12][0-9]{3}-[0-1][0-9]-[0-3][0-9]$")){
                 return ERR_BIR_DATE_CODE;
             }
         }
-        if(MyStringUtils.isNotNull(sysUser.getIn_city())){//城市
-            if(sysUser.getIn_city().length()>100){
+        if(MyStringUtils.isNotNull(sysUser.getInCity())){//城市
+            if(sysUser.getInCity().length()>100){
                 return ERR_CITY_CODE;
             }
         }
-        if(MyStringUtils.isNotNull(sysUser.getIn_company())){//公司名
-            if(sysUser.getIn_company().length()>100){
+        if(MyStringUtils.isNotNull(sysUser.getInCompany())){//公司名
+            if(sysUser.getInCompany().length()>100){
                 return ERR_COMPANY_CODE;
             }
         }
@@ -234,8 +234,8 @@ public class UserCenterController {
                 return ERR_POS_CODE;
             }
         }
-        if(MyStringUtils.isNotNull(sysUser.getLogin_name())){//登录账号名
-            if(sysUser.getLogin_name().length()>50){
+        if(MyStringUtils.isNotNull(sysUser.getLoginName())){//登录账号名
+            if(sysUser.getLoginName().length()>50){
                 return ERR_LOGIN_NAME;
             }
         }

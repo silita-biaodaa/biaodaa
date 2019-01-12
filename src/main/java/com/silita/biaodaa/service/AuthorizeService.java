@@ -387,7 +387,7 @@ public class AuthorizeService {
     public synchronized String registerUser(SysUser sysUser)throws Exception{
         //判断手机验证码是否有效
         Map<String, Object> params = new HashMap<>(1);
-        params.put("invitationPhone", sysUser.getPhone_no());
+        params.put("invitationPhone", sysUser.getPhoneNo());
         params.put("invitationCode", sysUser.getVerifyCode());
         InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
         if (null == invitationVo || "1".equals(invitationVo.getInvitationState())) {
@@ -395,7 +395,7 @@ public class AuthorizeService {
         }
 
         //验证推荐人邀请码是否有效
-        if(MyStringUtils.isNotNull(sysUser.getInviter_code())) {
+        if(MyStringUtils.isNotNull(sysUser.getInviterCode())) {
             Integer count = userTempBddMapper.verifyInviterCode(sysUser);
             if (count == null || count != 1) {
                 return Constant.ERR_VERIFY_IVITE_CODE;
@@ -404,8 +404,8 @@ public class AuthorizeService {
 
         //验证登录账号（手机号）
         Map argMap = new HashMap();
-        argMap.put("phone_no",sysUser.getPhone_no());
-        argMap.put("login_name", sysUser.getLogin_name());
+        argMap.put("phoneNo",sysUser.getPhoneNo());
+        argMap.put("loginName", sysUser.getLoginName());
         List<String> vList  = userTempBddMapper.verifyUserInfo(argMap);
         if(vList!=null && vList.size()>0) {
             return Constant.ERR_USER_EXIST;
@@ -415,15 +415,15 @@ public class AuthorizeService {
         String uid = CommonUtil.getUUID();
         String rId = CommonUtil.getUUID();
         sysUser.setPkid(uid);
-        sysUser.setCreate_by(sysUser.getClientVersion());
-        sysUser.setOwn_invite_code(constructShareCode());
+        sysUser.setCreateBy(sysUser.getClientVersion());
+        sysUser.setOwnInviteCode(constructShareCode());
         userTempBddMapper.insertUserInfo(sysUser);
 
         SysUserRole role = new SysUserRole();
         role.setPkid(rId);
-        role.setUser_id(uid);
-        role.setRole_code("normal");
-        role.setCreate_by(sysUser.getClientVersion());
+        role.setUserId(uid);
+        role.setRoleCode("normal");
+        role.setCreateBy(sysUser.getClientVersion());
         userTempBddMapper.insertUserRole(role);
 
         //更新验证码状态

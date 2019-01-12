@@ -21,14 +21,14 @@ public class TokenUtils {
         String tokenVersion = PropertiesUtils.getProperty("token.version");
 
         Map<String, String> parameters = new HashMap();
-        parameters.put("login_name", sysUser.getLogin_name());
-        parameters.put("user_name", sysUser.getUser_name());
+        parameters.put("loginName", sysUser.getLoginName());
+        parameters.put("userName", sysUser.getUserName());
         parameters.put("pkid", sysUser.getPkid());
         parameters.put("channel", sysUser.getChannel());
-        parameters.put("phone_no", sysUser.getPhone_no());
-        parameters.put("login_time", String.valueOf(sysUser.getLoginTime()));
+        parameters.put("phoneNo", sysUser.getPhoneNo());
+        parameters.put("loginTime", String.valueOf(sysUser.getLoginTime()));
         parameters.put("tokenVersion",tokenVersion);
-        parameters.put("role_code",sysUser.getRole_code());
+        parameters.put("roleCode",sysUser.getRoleCode());
         parameters.put("permissions",sysUser.getPermissions());
         return EncryptUtils.encryptToken(tokenVersion,parameters,secret);
     }
@@ -42,14 +42,14 @@ public class TokenUtils {
     public static Map<String, String> parseJsonString(String paramJson){
         JSONObject jsonObject = (JSONObject) JSONObject.parse(paramJson);
         Map<String, String> paramMap = new HashMap<>();
-        paramMap.put("login_name",jsonObject.getString("login_name"));
-        paramMap.put("user_name",jsonObject.getString("user_name"));
+        paramMap.put("loginName",jsonObject.getString("loginName"));
+        paramMap.put("userName",jsonObject.getString("userName"));
         paramMap.put("pkid", jsonObject.getString("pkid"));
         paramMap.put("channel", jsonObject.getString("channel"));
-        paramMap.put("phone_no", jsonObject.getString("phone_no"));
-        paramMap.put("login_time",jsonObject.getString("login_time"));
+        paramMap.put("phoneNo", jsonObject.getString("phoneNo"));
+        paramMap.put("loginTime",jsonObject.getString("loginTime"));
         paramMap.put("tokenVersion",jsonObject.getString("tokenVersion"));
-        paramMap.put("role_code",jsonObject.getString("role_code"));
+        paramMap.put("roleCode",jsonObject.getString("roleCode"));
         paramMap.put("permissions",jsonObject.getString("permissions"));
         return paramMap;
     }

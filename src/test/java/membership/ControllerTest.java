@@ -54,7 +54,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void memberLogin()throws Exception{
-        String requestBody = "{\"login_name\":\"\",\"login_pwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phone_no\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
+        String requestBody = "{\"loginName\":\"\",\"loginPwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
         String responseString = mockMvc.perform(post("/authorize/memberLogin").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -76,7 +76,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void memberRegister()throws Exception{ //714241
-        String requestBody = "{\"inviter_code\":\"test12\",\"verifyCode\":\"111259\",\"login_name\":\"\",\"login_pwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phone_no\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"22222\"}";
+        String requestBody = "{\"inviterCode\":\"test12\",\"verifyCode\":\"111259\",\"loginName\":\"\",\"loginPwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"22222\"}";
         String responseString = mockMvc.perform(post("/authorize/memberRegister").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -150,12 +150,12 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void testUpdateUserInfo()throws Exception {
-        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luX25hbWUiOiJsb2dpbl90ZXMyMjIyIiwibG9naW5fdGltZSI6IjE1NDcxODQzNDA4MDgiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZV9ubyI6IjEzMzE5NTU1ODAyIiwicGtpZCI6IjcyZDJjNTNiYTM1MDQxOWRhOTljNTdkM2Y3Nzc1ZDQ0Iiwicm9sZV9jb2RlIjoibm9ybWFsIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMiLCJ1c2VyX25hbWUiOiJ1c2VyX25hbWUyMjIifQ==.BE40341FE564D43268B806363D521F48";
+        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luTmFtZSI6ImxvZ2luX3RlczIyMjIiLCJsb2dpblRpbWUiOiIxNTQ3MjgyNDEzNjc5IiwicGVybWlzc2lvbnMiOiJiaWRfZmlsdGVyIiwicGhvbmVObyI6IjEzMzE5NTU1ODAyIiwicGtpZCI6IjYzZDQ1YjdiMjkzNTQwZjg4MTJkZjEyMzliMTI2ZjViIiwicm9sZUNvZGUiOiJub3JtYWwiLCJ0b2tlblZlcnNpb24iOiIyMDE5MDEwMyIsInVzZXJOYW1lIjoidXNlcl9uYW1lMjIyIn0=.C7BF9CFE95CE8A53873ED524A6844085";
         String requestBody = "{\"sex\":\"0\"}";  //,"":""
-//        requestBody = "{\"login_name\":\"login_tes2222\",\"user_name\":\"user_name222\"" +
-//                ",\"sex\":\"1\",\"nike_name\":\"曹fb22\",\"email\":\"222caoliang@fb.com\"" +
-//                ",\"birth_year\":\"2018-10-08\",\"in_city\":\"城市2\",\"in_company\":\"逗比公司2\"" +
-//                ",\"position\":\"逗比总监22\",\"image_url\":\"http://2222sdlki.com\"}";
+        requestBody = "{\"inviterCode\":\"test12\",\"loginName\":\"login_tes2222\",\"userName\":\"user_name222\"" +
+                ",\"sex\":\"1\",\"nikeName\":\"曹fb22\",\"email\":\"222caoliang@fb.com\"" +
+                ",\"birthYear\":\"2018-10-08\",\"inCity\":\"城市2\",\"inCompany\":\"逗比公司2\"" +
+                ",\"position\":\"逗比总监22\",\"imageUrl\":\"http://2222sdlki.com\"}";
         String responseString = mockMvc.perform(post("/userCenter/updateUserInfo").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)

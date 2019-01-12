@@ -219,12 +219,12 @@ public class AspectCheckLogin {
                         Map<String,String> paramMap = parseJsonString(paramJson);
 
                         VisitInfoHolder.setPermissions(paramMap.get("permissions"));
-                        VisitInfoHolder.setRoleCode(paramMap.get("role_code"));
-                        name = paramMap.get("login_name");
-                        phone = paramMap.get("phone_no");
+                        VisitInfoHolder.setRoleCode(paramMap.get("roleCode"));
+                        name = paramMap.get("loginName");
+                        phone = paramMap.get("phoneNo");
                         userId = paramMap.get("pkid");
                         String chanel = paramMap.get("channel");
-                        date = Long.parseLong(paramMap.get("login_time")!=null ? paramMap.get("login_time"):"0");
+                        date = Long.parseLong(paramMap.get("loginTime")!=null ? paramMap.get("loginTime"):"0");
                         //单用户多渠道登录状态校验
                         if(!verifyLoginByChannel(userId,chanel,date)) {
                             return "用户登录状态异常，请重新登录。";
@@ -240,7 +240,7 @@ public class AspectCheckLogin {
                 }
 
                 String blacklist = PropertiesUtils.getProperty("blacklist");
-                if (blacklist.contains(phone)) {
+                if (blacklist != null && blacklist.contains(phone)) {
                     isHei = true;
                 }
 
@@ -312,9 +312,9 @@ public class AspectCheckLogin {
 //                        Map<String,String> paramMap = parseJsonString(paramJson);
 //
 //                        VisitInfoHolder.setPermissions(paramMap.get("permissions"));
-//                        VisitInfoHolder.setRoleCode(paramMap.get("role_code"));
-//                        name = paramMap.get("login_name");
-//                        phone = paramMap.get("phone_no");
+//                        VisitInfoHolder.setRoleCode(paramMap.get("roleCode"));
+//                        name = paramMap.get("loginName");
+//                        phone = paramMap.get("phoneNo");
 //                        userId = paramMap.get("pkid");
 //                        date = Long.parseLong(paramMap.get("login_time")!=null ? paramMap.get("login_time"):"0");
 //                        tokenValid= SecurityCheck.checkSigner(paramMap,sign);

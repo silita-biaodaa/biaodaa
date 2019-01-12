@@ -60,9 +60,9 @@ public class AuthorizeController {
     }
 
     private String verifyRegisterInfo(SysUser sysUser){
-        if(MyStringUtils.isNull(sysUser.getLogin_name()) && MyStringUtils.isNull(sysUser.getPhone_no())){
+        if(MyStringUtils.isNull(sysUser.getLoginName()) && MyStringUtils.isNull(sysUser.getPhoneNo())){
             return "登录名或手机号不能为空！";
-        }else  if(MyStringUtils.isNull(sysUser.getLogin_pwd()) ){
+        }else  if(MyStringUtils.isNull(sysUser.getLoginPwd()) ){
             return "登录密码不能为空！";
         }else if(MyStringUtils.isNull(sysUser.getChannel())){
             return "渠道号不能为空！";
@@ -121,11 +121,11 @@ public class AuthorizeController {
     public Map<String, Object> memberLogin(@RequestBody SysUser sysUser) {
         Map result = new HashMap();
         result.put("data", null);
-        if(MyStringUtils.isNull(sysUser.getLogin_name()) && MyStringUtils.isNull(sysUser.getPhone_no())){
+        if(MyStringUtils.isNull(sysUser.getLoginName()) && MyStringUtils.isNull(sysUser.getPhoneNo())){
             result.put("code", Constant.FAIL_CODE);
             result.put("msg", "登录用户名/手机号不能为空！");
             return result;
-        }else if(MyStringUtils.isNull(sysUser.getLogin_pwd())){
+        }else if(MyStringUtils.isNull(sysUser.getLoginPwd())){
             result.put("code", Constant.FAIL_CODE);
             result.put("msg", "登录密码不能为空！");
             return result;

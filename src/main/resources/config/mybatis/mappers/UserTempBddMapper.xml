@@ -142,7 +142,7 @@
     </select>
 
     <select id="queryUserInfo" parameterType="com.silita.biaodaa.model.SysUser" resultType="com.silita.biaodaa.model.SysUser">
-        SELECT u.*,r.code as role_code,r.name as role_name,r.permissions,v.vip_name,v.expired_date,v.level
+        SELECT u.*,r.code as roleCode,r.name as roleName,r.permissions,v.vip_name,v.expired_date,v.level
         FROM mishu_write.sys_user_info u
         LEFT JOIN mishu_write.sys_user_role rel on rel.user_id= u.pkid
         LEFT JOIN mishu_write.sys_role_info r on r.pkid= rel.role_id
@@ -153,7 +153,7 @@
                 u.pkid=#{pkid}
             </when>
             <otherwise>
-                (login_name = #{login_name} or phone_no = #{phone_no}) AND login_pwd = #{login_pwd}
+                (login_name = #{loginName} or phone_no = #{phoneNo}) AND login_pwd = #{loginPwd}
             </otherwise>
         </choose>
     </select>
@@ -161,20 +161,20 @@
     <select id="verifyUserInfo"  resultType="String">
         SELECT u.pkid
         FROM mishu_write.sys_user_info u
-        WHERE  phone_no=#{phone_no}
-        <if test="login_name != null and login_name != ''">
-            or login_name=#{login_name}
+        WHERE  phone_no=#{phoneNo}
+        <if test="loginName != null and loginName != ''">
+            or login_name=#{loginName}
         </if>
     </select>
 
     <insert id="insertUserInfo" parameterType="com.silita.biaodaa.model.SysUser">
     insert into mishu_write.sys_user_info
         (pkid,
-        <if test="login_name !=null and login_name!=''">
+        <if test="loginName !=null and loginName!=''">
         login_name,
         </if>
         login_pwd,
-        <if test="user_name !=null and user_name!=''">
+        <if test="userName !=null and userName!=''">
         user_name,
         </if>
         <if test="sex !=null and sex!=''">
@@ -182,104 +182,104 @@
         </if>
         phone_no,
         channel,
-        <if test="nike_name !=null and nike_name!=''">
+        <if test="nikeName !=null and nikeName!=''">
         nike_name,
         </if>
-        <if test="cert_type !=null and cert_type!=''">
+        <if test="certType !=null and certType!=''">
         cert_type,
         </if>
-        <if test="cert_no !=null and cert_no!=''">
+        <if test="certNo !=null and certNo!=''">
         cert_no,
         </if>
         <if test="email !=null and email!=''">
         email,
         </if>
-        <if test="birth_year !=null and birth_year!=''">
+        <if test="birthYear !=null and birthYear!=''">
         birth_year,
         </if>
-        <if test="in_city !=null and in_city!=''">
+        <if test="inCity !=null and inCity!=''">
         in_city,
         </if>
-        <if test="in_company !=null and in_company!=''">
+        <if test="inCompany !=null and inCompany!=''">
         in_company,
         </if>
         <if test="position !=null and position!=''">
         position,
         </if>
-        <if test="image_url !=null and image_url!=''">
+        <if test="imageUrl !=null and imageUrl!=''">
         image_url,
         </if>
-        <if test="wx_union_id !=null and wx_union_id!=''">
+        <if test="wxUnionId !=null and wxUnionId!=''">
         wx_union_id,
         </if>
-        <if test="wx_open_id !=null and wx_open_id!=''">
+        <if test="wxOpenId !=null and wxOpenId!=''">
         wx_open_id,
         </if>
-        <if test="qq_open_id !=null and qq_open_id!=''">
+        <if test="qqOpenId !=null and qqOpenId!=''">
         qq_open_id,
         </if>
         created,
         create_by,
-        <if test="inviter_code !=null and inviter_code!=''">
+        <if test="inviterCode !=null and inviterCode!=''">
         inviter_code,
         </if>
         own_invite_code)
     VALUES
         (#{pkid},
-        <if test="login_name !=null and login_name!=''">
-        #{login_name},
+        <if test="loginName !=null and loginName!=''">
+        #{loginName},
         </if>
-        #{login_pwd},
-        <if test="user_name !=null and user_name!=''">
-        #{user_name},
+        #{loginPwd},
+        <if test="userName !=null and userName!=''">
+        #{userName},
         </if>
         <if test="sex !=null and sex!=''">
         #{sex},
         </if>
-        #{phone_no},
+        #{phoneNo},
         #{channel},
-        <if test="nike_name !=null and nike_name!=''">
-        #{nike_name},
+        <if test="nikeName !=null and nikeName!=''">
+        #{nikeName},
         </if>
-        <if test="cert_type !=null and cert_type!=''">
-        #{cert_type},
+        <if test="certType !=null and certType!=''">
+        #{certType},
         </if>
-        <if test="cert_no !=null and cert_no!=''">
-        #{cert_no},
+        <if test="certNo !=null and certNo!=''">
+        #{certNo},
         </if>
         <if test="email !=null and email!=''">
         #{email},
         </if>
-        <if test="birth_year !=null and birth_year!=''">
-        #{birth_year},
+        <if test="birthYear !=null and birthYear!=''">
+        #{birthYear},
         </if>
-        <if test="in_city !=null and in_city!=''">
-        #{in_city},
+        <if test="inCity !=null and inCity!=''">
+        #{inCity},
         </if>
-        <if test="in_company !=null and in_company!=''">
-        #{in_company},
+        <if test="inCompany !=null and inCompany!=''">
+        #{inCompany},
         </if>
         <if test="position !=null and position!=''">
         #{position},
         </if>
-        <if test="image_url !=null and image_url!=''">
-        #{image_url},
+        <if test="imageUrl !=null and imageUrl!=''">
+        #{imageUrl},
         </if>
-        <if test="wx_union_id !=null and wx_union_id!=''">
-        #{wx_union_id},
+        <if test="wxUnionId !=null and wxUnionId!=''">
+        #{wxUnionId},
         </if>
-        <if test="wx_open_id !=null and wx_open_id!=''">
-        #{wx_open_id},
+        <if test="wxOpenId !=null and wxOpenId!=''">
+        #{wxOpenId},
         </if>
-        <if test="qq_open_id !=null and qq_open_id!=''">
-        #{qq_open_id},
+        <if test="qqOpenId !=null and qqOpenId!=''">
+        #{qqOpenId},
         </if>
         CURRENT_TIMESTAMP,
-        #{create_by},
-        <if test="inviter_code !=null and inviter_code!=''">
-        #{inviter_code},
+        #{createBy},
+        <if test="inviterCode !=null and inviterCode!=''">
+        #{inviterCode},
         </if>
-        #{own_invite_code})
+        #{ownInviteCode})
     </insert>
     
     <insert id="insertUserRole" parameterType="com.silita.biaodaa.model.SysUserRole">
@@ -291,16 +291,16 @@
         create_by)
     VALUES
         (#{pkid},
-        (SELECT pkid from mishu_write.sys_role_info where code=#{role_code}),
-        #{user_id},
+        (SELECT pkid from mishu_write.sys_role_info where code=#{roleCode}),
+        #{userId},
         CURRENT_TIMESTAMP,
-        #{create_by})
+        #{createBy})
     </insert>
     
     <select id="verifyInviterCode" parameterType="com.silita.biaodaa.model.SysUser" resultType="Integer">
         SELECT count(1)
         FROM mishu_write.sys_user_info
-        WHERE own_invite_code=#{inviter_code}
+        WHERE own_invite_code=#{inviterCode}
         <if test="pkid !=null and pkid!=''">
         and pkid !=#{pkid}
         </if>
@@ -315,59 +315,59 @@
     <update id="updateSysUser">
         update mishu_write.sys_user_info
         SET
-            <if test="login_name !=null and login_name!=''">
-                login_name=#{login_name},
+            <if test="loginName !=null and loginName!=''">
+                login_name=#{loginName},
             </if>
-            <if test="login_pwd !=null and login_pwd!=''">
-              login_pwd=#{login_pwd},
+            <if test="loginPwd !=null and loginPwd!=''">
+              login_pwd=#{loginPwd},
             </if>
-            <if test="user_name !=null and user_name!=''">
-                user_name=#{user_name},
+            <if test="userName !=null and userName!=''">
+                user_name=#{userName},
             </if>
             <if test="sex !=null">
                 sex=#{sex},
             </if>
-            <if test="nike_name !=null and nike_name!=''">
-                nike_name=#{nike_name},
+            <if test="nikeName !=null and nikeName!=''">
+                nike_name=#{nikeName},
             </if>
-            <if test="cert_type !=null and cert_type!=''">
-                cert_type=#{cert_type},
+            <if test="certType !=null and certType!=''">
+                cert_type=#{certType},
             </if>
-            <if test="cert_no !=null and cert_no!=''">
-                cert_no=#{cert_no},
+            <if test="certNo !=null and certNo!=''">
+                cert_no=#{certNo},
             </if>
             <if test="email !=null and email!=''">
                 email=#{email},
             </if>
-            <if test="birth_year !=null and birth_year!=''">
-                birth_year=#{birth_year},
+            <if test="birthYear !=null and birthYear!=''">
+                birth_year=#{birthYear},
             </if>
-            <if test="in_city !=null and in_city!=''">
-                in_city=#{in_city},
+            <if test="inCity !=null and inCity!=''">
+                in_city=#{inCity},
             </if>
-            <if test="in_company !=null and in_company!=''">
-                in_company=#{in_company},
+            <if test="inCompany !=null and inCompany!=''">
+                in_company=#{inCompany},
             </if>
             <if test="position !=null and position!=''">
                 position=#{position},
             </if>
-            <if test="image_url !=null and image_url!=''">
-                image_url=#{image_url},
+            <if test="imageUrl !=null and imageUrl!=''">
+                image_url=#{imageUrl},
             </if>
-            <if test="wx_union_id !=null and wx_union_id!=''">
-                wx_union_id=#{wx_union_id},
+            <if test="wxUnionId !=null and wxUnionId!=''">
+                wx_union_id=#{wxUnionId},
             </if>
-            <if test="wx_open_id !=null and wx_open_id!=''">
-                wx_open_id=#{wx_open_id},
+            <if test="wxOpenId !=null and wxOpenId!=''">
+                wx_open_id=#{wxOpenId},
             </if>
-            <if test="qq_open_id !=null and qq_open_id!=''">
-                qq_open_id=#{qq_open_id},
+            <if test="qqOpenId !=null and qqOpenId!=''">
+                qq_open_id=#{qqOpenId},
             </if>
-            <if test="update_by !=null and update_by!=''">
-              update_by=#{update_by},
+            <if test="updateBy !=null and updateBy!=''">
+              update_by=#{updateBy},
             </if>
-            <if test="inviter_code !=null and inviter_code!=''">
-                inviter_code=#{inviter_code},
+            <if test="inviterCode !=null and inviterCode!=''">
+                inviter_code=#{inviterCode},
             </if>
         updated=CURRENT_TIMESTAMP
         where pkid = #{pkid}

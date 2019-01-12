@@ -8,41 +8,41 @@ import java.security.Timestamp;
 @Setter
 public class SysUser {
     private String pkid;
-    private String login_name;
-    private String login_pwd;
-    private String user_name;
+    private String loginName;
+    private String loginPwd;
+    private String userName;
     private Integer sex;//0:女；1:男；2：其他
-    private String phone_no;
+    private String phoneNo;
     private String channel;
-    private String nike_name;
-    private int cert_type;
-    private String cert_no;
+    private String nikeName;
+    private int certType;
+    private String certNo;
     private String email;
-    private String birth_year;
-    private String in_city;
-    private String in_company;
+    private String birthYear;
+    private String inCity;
+    private String inCompany;
     private String position;
-    private String image_url;
-    private String wx_union_id;
-    private String wx_open_id;
-    private String qq_open_id;
+    private String imageUrl;
+    private String wxUnionId;
+    private String wxOpenId;
+    private String qqOpenId;
     private boolean enable;
     private Timestamp created;
-    private String create_by;
+    private String createBy;
     private Timestamp updated;
-    private String update_by;
-    private String inviter_code;
-    private String own_invite_code;
-    private String role_code;
-    private String role_name;
+    private String updateBy;
+    private String inviterCode;
+    private String ownInviteCode;
+    private String roleCode;
+    private String roleName;
     private String permissions;
 
     private String xtoken;
     private String clientVersion;
     private String deviceId;
 
-    private String vip_name;
-    private String expired_date;
+    private String vipName;
+    private String expiredDate;
     private String level;
 
     private String verifyCode;//手机验证码
