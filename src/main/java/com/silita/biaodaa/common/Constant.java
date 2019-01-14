@@ -30,26 +30,27 @@ public class Constant {
     public static final String TOKEN_SPLIT="\\.";
 
     //返回错误码
-    public static final String ERR_USER_EXIST = "E001";
-    public static final String ERR_VERIFY_PHONE_CODE = "E002";//手机验证码
-    public static final String ERR_VERIFY_IVITE_CODE = "E003";//邀请码验证失败
-    public static final String ERR_VERIFY_USER_ID_CODE = "E004";//用户ID获取失败
-    public static final String ERR_VERIFY_USER_PERMISSIONS = "E400";//用户权限不足
+    public static final String ERR_USER_EXIST = "201";
+    public static final String ERR_VERIFY_PHONE_CODE = "202";//手机验证码
+    public static final String ERR_VERIFY_IVITE_CODE = "203";//邀请码验证失败
+    public static final String ERR_VERIFY_USER_ID_CODE = "204";//用户ID获取失败
+    public static final String ERR_VERIFY_USER_PERMISSIONS = "400";//用户权限不足
+    public static final String ERR_VERIFY_USER_TOKEN = "401";//用户登录失效
 
-    public static final String ERR_SEX_CODE = "E100";//性别码错误
-    public static final String ERR_IMGURL_CODE = "E101";//头像链接
-    public static final String ERR_NICE_NAME_CODE = "E102";//昵称值错误
-    public static final String ERR_PHONE_NO_CODE = "E103";//手机号错误
-    public static final String ERR_EMAIL_CODE = "E104";//邮箱错误
-    public static final String ERR_USER_NAME_CODE = "E105";//用户姓名错误
-    public static final String ERR_BIR_DATE_CODE = "E106";//生日
-    public static final String ERR_CITY_CODE = "E107";//城市
-    public static final String ERR_COMPANY_CODE = "E108";//公司
-    public static final String ERR_POS_CODE = "E109";//职位
-    public static final String ERR_LOGIN_NAME = "E110";//登录账号名
+    public static final String ERR_SEX_CODE = "100";//性别码错误
+    public static final String ERR_IMGURL_CODE = "101";//头像链接
+    public static final String ERR_NICE_NAME_CODE = "102";//昵称值错误
+    public static final String ERR_PHONE_NO_CODE = "103";//手机号错误
+    public static final String ERR_EMAIL_CODE = "104";//邮箱错误
+    public static final String ERR_USER_NAME_CODE = "105";//用户姓名错误
+    public static final String ERR_BIR_DATE_CODE = "106";//生日
+    public static final String ERR_CITY_CODE = "107";//城市
+    public static final String ERR_COMPANY_CODE = "108";//公司
+    public static final String ERR_POS_CODE = "109";//职位
+    public static final String ERR_LOGIN_NAME = "110";//登录账号名
 
-    public static final String EXCEPTION_CODE="E999";
-    public static final String ERR_VIEW_CODE="E888";
+    public static final String EXCEPTION_CODE="999";
+    public static final String ERR_VIEW_CODE="888";
 
     public static final String info_female = "0";
     public static final String info_male = "1";

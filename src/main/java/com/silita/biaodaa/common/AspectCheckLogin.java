@@ -151,11 +151,8 @@ public class AspectCheckLogin {
         Object[] args = point.getArgs();
         logger.debug("AspectPermissions [calssName:"+calssName+"][methodName:"+methodName+"][Permissions:"+permissions+"][RoleCode:"+roleCode+"]");
         try {
-            String msg = doFilter(req,point);
-            if(msg!=null){
-                Map resMap = new HashMap();
-                resMap.put("code",0);
-                resMap.put("msg",msg);
+            Map resMap = doFilter(req,point);
+            if(resMap!=null){
                 result =resMap;
             }else {
                 //执行目标方法
@@ -173,8 +170,9 @@ public class AspectCheckLogin {
         return result;
     }
 
-    private String doFilter(HttpServletRequest request,ProceedingJoinPoint point)
+    private Map doFilter(HttpServletRequest request,ProceedingJoinPoint point)
             throws IOException, ServletException {
+        Map resMap = new HashMap();
         String requestUri = request.getRequestURI();
         String ipAddr = parseRequest(request).get("ipAddr");
         String xToken = SecurityCheck.getHeaderValue(request, "X-TOKEN");
@@ -227,16 +225,22 @@ public class AspectCheckLogin {
                         date = Long.parseLong(paramMap.get("loginTime")!=null ? paramMap.get("loginTime"):"0");
                         //单用户多渠道登录状态校验
                         if(!verifyLoginByChannel(userId,chanel,date)) {
-                            return "用户登录状态异常，请重新登录。";
+                            resMap.put("code",Constant.ERR_VERIFY_USER_TOKEN);
+                            resMap.put("msg","用户登录失效，请重新登录。");
+                            return resMap;
                         }
                         //验证签名
                         tokenValid = SecurityCheck.checkSigner(paramMap, sign);
                     }else{
-                        return relogin;
+                        resMap.put("code",Constant.FAIL_CODE);
+                        resMap.put("msg",relogin);
+                        return resMap;
                     }
                 }else{
                     logger.warn("非法token![token:"+token+"][ip:"+ipAddr+"]");
-                    return errMsg;
+                    resMap.put("code",Constant.FAIL_CODE);
+                    resMap.put("msg",errMsg);
+                    return resMap;
                 }
 
                 String blacklist = PropertiesUtils.getProperty("blacklist");
@@ -254,12 +258,17 @@ public class AspectCheckLogin {
 
             if (tokenValid) {
                 if (isHei) {
-                    return errMsg;
+                    resMap.put("code",Constant.FAIL_CODE);
+                    resMap.put("msg",errMsg);
+                    return resMap;
                 }
             }else {
-                return relogin;
+                resMap.put("code",Constant.FAIL_CODE);
+                resMap.put("msg",relogin);
+                return resMap;
             }
         }
+
         return null;
     }
 
@@ -353,7 +362,7 @@ public class AspectCheckLogin {
 //        }
 //    }
 
-    public static final String relogin ="请重新登录！";
+    public static final String relogin ="登录信息已过期，请重新登录！";
     public static final String errMsg ="您的账号疑似非法爬虫，现已冻结，如有疑问，请联系标大大客服(0731-85076077)";
 
     private void printError(HttpServletResponse response) throws IOException {
