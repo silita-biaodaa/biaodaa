@@ -24,7 +24,7 @@ public abstract class BaseController {
 
     public String FAIL_CODE=Constant.FAIL_CODE;
 
-    public String INVALIDATE_PARAM_CODE="9999";
+    public String INVALIDATE_PARAM_CODE=Constant.ERR_VIEW_CODE;
 
     public String INVALIDATE_PARAM_MSG="前端参数有误";
 

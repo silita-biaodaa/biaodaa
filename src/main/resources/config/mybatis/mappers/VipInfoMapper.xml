@@ -13,4 +13,18 @@
         from mishu_write.tb_vip_fee_standard
         where (channel='common' or channel=#{channel}) and state=true
     </select>
+
+    <select id="queryProfitInfo" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbVipProfits">
+    select a.v_id,a.created,a.settings_code,s.desc,s.vip_days
+    from mishu_write.tb_vip_profits a
+    left join mishu_write.tb_vip_profit_settings s on a.settings_code=s.settings_code
+    where v_id=(select v_id from mishu_write.tb_vip_info where user_id=#{userId})
+    </select>
+
+    <select id="queryProfitTotal" parameterType="java.lang.String" resultType="Integer">
+    select sum(vip_days)
+    from mishu_write.tb_vip_profits a
+    left join mishu_write.tb_vip_profit_settings s on a.settings_code=s.settings_code
+    where v_id=(select v_id from mishu_write.tb_vip_info where user_id=#{userId})
+    </select>
 </mapper>

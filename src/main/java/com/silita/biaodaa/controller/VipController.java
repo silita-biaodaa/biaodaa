@@ -1,6 +1,9 @@
 package com.silita.biaodaa.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.Constant;
+import com.silita.biaodaa.common.VisitInfoHolder;
+import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.utils.MyStringUtils;
@@ -49,6 +52,29 @@ public class VipController extends BaseController{
         }catch (Exception e){
             logger.error(e,e);
             errorMsg(result,Constant.EXCEPTION_CODE,e.getMessage());
+        }
+        return result;
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryMyProfits",produces = "application/json;charset=utf-8")
+    public Map<String,Object> queryMyProfits(@RequestBody Map param){
+        Map result = new HashMap();
+        try{
+            Page page = buildPage(param);
+            String userId = VisitInfoHolder.getUid();
+            PageInfo info = vipService.queryProfitInfo(page,userId);
+            Integer total = 0;
+            if(info != null && info.getList() != null){
+                total = vipService.queryProfitTotal(userId);
+            }
+            result.put("totalDays",total);
+            buildReturnMap(result, info);
+            successMsg(result);
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(result, e.getMessage());
         }
         return result;
     }

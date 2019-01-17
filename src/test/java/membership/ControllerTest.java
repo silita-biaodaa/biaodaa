@@ -54,7 +54,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void memberLogin()throws Exception{
-        String requestBody = "{\"loginName\":\"\",\"loginPwd\":\"123456\",\"phoneNo\":\"13319555802\",\"channel\":\"1003\",\"clientVersion\":\"10611\"}";
+        String requestBody = "{\"loginName\":\"\",\"loginPwd\":\"123456\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
         String responseString = mockMvc.perform(post("/authorize/memberLogin").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -237,6 +237,21 @@ public class ControllerTest extends ConfigTest {
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
 //                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-#####----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testQueryMyProfits()throws Exception{
+        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc3MDk4OTA2NTIiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.CC53DE9885C04EB8D399AFE5214AC420";
+        String requestBody = "{\"pageNo\":2,\"pageSize\":8}";
+        String responseString = mockMvc.perform(post("/vip/queryMyProfits").characterEncoding("UTF-8")
+                        .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                        .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
         )
                 .andExpect(status().isOk())    //返回的状态是200
                 .andDo(print())         //打印出请求和相应的内容
