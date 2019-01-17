@@ -35,6 +35,7 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.silita.biaodaa.common.Constant.*;
+import static com.silita.biaodaa.controller.BaseController.bulidUserPwd;
 
 /**
  * 用户信息模块
@@ -121,6 +122,43 @@ public class UserCenterController {
         }
     }
 
+    /**
+     * (新)修改密码
+     *
+     * @param sysUser
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updatePwd", produces = "application/json;charset=utf-8")
+    public Map<String, Object> updatePwd(@RequestBody  SysUser sysUser) {
+        Map result = new HashMap();
+        try {
+            Map paramResult =validateUserPwdInfo(sysUser);
+            if(paramResult!= null){
+                return paramResult;
+            }
+            bulidUserPwd(sysUser);
+            Integer records = userCenterService.updatePwd(sysUser);
+            if(records ==1) {
+                result.put("code", Constant.SUCCESS_CODE);
+                result.put("msg", "密码修改成功！");
+            }else{
+                result.put("code", Constant.FAIL_CODE);
+                result.put("msg", "更新密码失败，请重试！");
+            }
+        } catch (Exception e) {
+            logger.error("更改密码异常！" + e.getMessage(), e);
+            result.put("code", Constant.EXCEPTION_CODE);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 用户信息变更
+     * @param sysUser
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/updateUserInfo", produces = "application/json;charset=utf-8")
     public Map<String, Object> updateUserInfo(@RequestBody SysUser sysUser) {
@@ -164,6 +202,44 @@ public class UserCenterController {
     }
 
     /**
+     * 更新密码数据校验
+     * @param sysUser
+     * @return
+     */
+    private Map validateUserPwdInfo(SysUser sysUser){
+        Map result = new HashMap();
+        if(MyStringUtils.isNull(sysUser.getLoginPwd())){
+            result.put("code",Constant.ERR_LOGIN_PWD);
+            result.put("msg","新密码不能为空.");
+            return result;
+        }
+        if(MyStringUtils.isNull(sysUser.getVerifyCode())){
+            result.put("code",Constant.ERR_VIEW_CODE);
+            result.put("msg","手机验证码为空.");
+            return result;
+        }
+        if(MyStringUtils.isNull(sysUser.getPhoneNo())){
+            result.put("code",Constant.ERR_VIEW_CODE);
+            result.put("msg","手机号为空.");
+            return result;
+        }
+
+        Map<String, Object> params = new HashMap<>(1);
+        params.put("invitationPhone", sysUser.getPhoneNo());
+        params.put("invitationCode", sysUser.getVerifyCode());
+        String eMsg =userCenterService.verifyPhoneCode(params);
+        if(eMsg !=null){
+            result.put("code",Constant.ERR_VERIFY_PHONE_CODE);
+            result.put("msg",eMsg);
+            return result;
+        }
+        //更新验证码状态
+        userCenterService.updateInvitationBddByCodeAndPhone(params);
+
+        return  null;
+    }
+
+    /**
      * 用户数据校验
      * @param sysUser
      * @return
@@ -181,6 +257,7 @@ public class UserCenterController {
                 }
             }
         }
+
         if(MyStringUtils.isNotNull(sysUser.getImageUrl())){//头像链接
             if(sysUser.getImageUrl().length()>200){
                 return ERR_IMGURL_CODE;
@@ -243,7 +320,7 @@ public class UserCenterController {
     }
 
     /**
-     * TODO: 修改密码
+     * 修改密码
      *
      * @param userTempBdd
      * @return

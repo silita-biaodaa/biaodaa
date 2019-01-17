@@ -54,7 +54,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void memberLogin()throws Exception{
-        String requestBody = "{\"loginName\":\"\",\"loginPwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
+        String requestBody = "{\"loginName\":\"\",\"loginPwd\":\"123456\",\"phoneNo\":\"13319555802\",\"channel\":\"1003\",\"clientVersion\":\"10611\"}";
         String responseString = mockMvc.perform(post("/authorize/memberLogin").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -169,7 +169,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void testPermssion()throws Exception{
-//        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luX25hbWUiOiJsb2dpbl90ZXMyMjIyIiwibG9naW5fdGltZSI6IjE1NDcxODI5MzMwMzUiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZV9ubyI6IjEzMzE5NTU1ODAyIiwicGtpZCI6IjcyZDJjNTNiYTM1MDQxOWRhOTljNTdkM2Y3Nzc1ZDQ0Iiwicm9sZV9jb2RlIjoibm9ybWFsIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMiLCJ1c2VyX25hbWUiOiJ1c2VyX25hbWUyMjIifQ==.7B972E11410FDC72ACCF9F1C49894C26";
+        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luTmFtZSI6ImxvZ2luX3RlczIyMjIiLCJsb2dpblRpbWUiOiIxNTQ3NDMwNzk4ODQxIiwicGVybWlzc2lvbnMiOiJiaWRfZmlsdGVyIiwicGhvbmVObyI6IjEzMzE5NTU1ODAyIiwicGtpZCI6IjYzZDQ1YjdiMjkzNTQwZjg4MTJkZjEyMzliMTI2ZjViIiwicm9sZUNvZGUiOiJub3JtYWwiLCJ0b2tlblZlcnNpb24iOiIyMDE5MDEwMyIsInVzZXJOYW1lIjoidXNlcl9uYW1lMjIyIn0=.D39F5396CEA8A371814E8B5E113AC034";
         String requestBody = "{\"name\":\"123\"}";  //,"":"" /permission
         String responseString = mockMvc.perform(post("/permission/under/list").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
@@ -183,4 +183,64 @@ public class ControllerTest extends ConfigTest {
     }
 
 
+    @Test
+    public void testUpdatePwd()throws Exception{
+//        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc0NDYyMzMzNjkiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.EDE5E5A2BE7D0B0A21AA2D77A8DADCC5";
+        String requestBody = "{\"loginPwd\":\"123456\",\"verifyCode\":\"111259\",\"phoneNo\":\"13319555802\",\"channel\":\"1003\"}";  //,"":"" /permission
+        String responseString = mockMvc.perform(post("/userCenter/updatePwd").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+//                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-#####----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testThirdPartyBinding()throws Exception{
+//        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc0NDYyMzMzNjkiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.EDE5E5A2BE7D0B0A21AA2D77A8DADCC5";
+        String requestBody = "{\"inviterCode\":\"test12\",\"imageUrl\":\"http://123k123.com\",\"wxUnionId\":\"\",\"qqOpenId\":\"333333\",\"nikeName\":\"曹123\",\"wxOpenId\":\"\",\"loginPwd\":\"123456\",\"verifyCode\":\"889779\",\"phoneNo\":\"13319555804\",\"channel\":\"1002\"}";  //,"":"" /permission
+        String responseString = mockMvc.perform(post("/authorize/thirdPartyBinding").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+//                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-#####----返回的json = " + responseString);
+    }
+
+
+    @Test
+    public void testQueryFeeStandard()throws Exception{
+        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc2MDkwOTk5NTQiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.DBC514D8D21596A38F2049C9FECC17CB";
+        String requestBody = "{\"channel\":\"1002\"}";
+        String responseString = mockMvc.perform(post("/vip/queryFeeStandard").characterEncoding("UTF-8")
+                        .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                        .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-#####----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testMemberThirdLogin()throws Exception{
+//        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc2MDkwOTk5NTQiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.DBC514D8D21596A38F2049C9FECC17CB";
+        String requestBody = "{\"wxOpenId\":\"\",\"wxUnionId\":\"\",\"qqOpenId\":\"\",\"channel\":\"1002\"}";
+        String responseString = mockMvc.perform(post("/authorize/memberThirdLogin").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+//                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-#####----返回的json = " + responseString);
+    }
 }

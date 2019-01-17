@@ -142,20 +142,24 @@
     </select>
 
     <select id="queryUserInfo" parameterType="com.silita.biaodaa.model.SysUser" resultType="com.silita.biaodaa.model.SysUser">
-        SELECT u.*,r.code as roleCode,r.name as roleName,r.permissions,v.vip_name,v.expired_date,v.level
+        SELECT u.*,r.code as roleCode,r.name as roleName,r.permissions,v.expired_date,v.level
         FROM mishu_write.sys_user_info u
         LEFT JOIN mishu_write.sys_user_role rel on rel.user_id= u.pkid
         LEFT JOIN mishu_write.sys_role_info r on r.pkid= rel.role_id
         LEFT JOIN mishu_write.tb_vip_info v on u.pkid=v.user_id
-        WHERE
-        <choose>
-            <when test="pkid != null and pkid != ''">
-                u.pkid=#{pkid}
-            </when>
-            <otherwise>
-                (login_name = #{loginName} or phone_no = #{phoneNo}) AND login_pwd = #{loginPwd}
-            </otherwise>
-        </choose>
+        <where>
+            <choose>
+                <when test="pkid != null and pkid != ''">
+                    u.pkid=#{pkid}
+                </when>
+                <when test="(wxUnionId != null and wxUnionId !='') or (wxOpenId != null and wxOpenId !='') or (qqOpenId != null and qqOpenId !='')">
+                    wx_union_id = #{wxUnionId} or wx_open_id = #{wxOpenId} or qq_open_id = #{qqOpenId}
+                </when>
+                <otherwise>
+                    (login_name = #{loginName} or phone_no = #{phoneNo}) AND login_pwd = #{loginPwd}
+                </otherwise>
+            </choose>
+        </where>
     </select>
 
     <select id="verifyUserInfo"  resultType="String">
@@ -301,15 +305,41 @@
         SELECT count(1)
         FROM mishu_write.sys_user_info
         WHERE own_invite_code=#{inviterCode}
-        <if test="pkid !=null and pkid!=''">
-        and pkid !=#{pkid}
-        </if>
+        <choose>
+            <when test="pkid !=null and pkid!=''">
+                and pkid !=#{pkid}
+            </when>
+            <when test="wxUnionId !=null and wxUnionId!=''">
+                and (wx_union_id !=#{wxUnionId} or wx_union_id is null)
+            </when>
+            <when test="wxOpenId !=null and wxOpenId !=''">
+                and (wx_open_id !=#{wxOpenId} or wx_open_id is null)
+            </when>
+            <when test="qqOpenId !=null and qqOpenId!=''">
+                and (qq_open_id !=#{qqOpenId} or qq_open_id is null)
+            </when>
+        </choose>
     </select>
 
-    <select id="existInviterCodeByUserId" parameterType="String" resultType="String">
+    <select id="existInviterCodeByUserId" parameterType="com.silita.biaodaa.model.SysUser" resultType="String">
         SELECT inviter_code
         FROM mishu_write.sys_user_info
-        WHERE pkid =#{pkid}
+        <where>
+        <choose>
+            <when test="pkid !=null and pkid!=''">
+                and pkid =#{pkid}
+            </when>
+            <when test="wxUnionId !=null and wxUnionId!=''">
+                and wx_union_id =#{wxUnionId}
+            </when>
+            <when test="wxOpenId !=null and wxOpenId !=''">
+                and wx_open_id =#{wxOpenId}
+            </when>
+            <when test="qqOpenId !=null and qqOpenId!=''">
+                and qq_open_id =#{qqOpenId}
+            </when>
+        </choose>
+        </where>
     </select>
 
     <update id="updateSysUser">
@@ -370,8 +400,44 @@
                 inviter_code=#{inviterCode},
             </if>
         updated=CURRENT_TIMESTAMP
-        where pkid = #{pkid}
-
+        where 1=1
+        <if test="pkid !=null and pkid!=''">
+          and pkid = #{pkid}
+        </if>
+        <if test="phoneNo !=null and phoneNo!=''">
+          and phone_no = #{phoneNo}
+        </if>
     </update>
 
+    <update id="updateSysUserUnionId">
+        update mishu_write.sys_user_info
+        SET
+        <if test="wxUnionId !=null and wxUnionId!=''">
+            wx_union_id=#{wxUnionId},
+        </if>
+        <if test="updateBy !=null and updateBy!=''">
+            update_by=#{updateBy},
+        </if>
+        updated=CURRENT_TIMESTAMP
+        where wx_open_id=#{wxOpenId}
+    </update>
+
+    <update id="updateUserPwd">
+        update mishu_write.sys_user_info
+        SET login_pwd=#{loginPwd},
+        updated=CURRENT_TIMESTAMP
+        where 1=1
+        <if test="pkid !=null and pkid!=''">
+            and pkid = #{pkid}
+        </if>
+        <if test="phoneNo !=null and phoneNo!=''">
+            and phone_no = #{phoneNo}
+        </if>
+    </update>
+
+    <select id="queryUserByPhoneNo" parameterType="String" resultType="com.silita.biaodaa.model.SysUser">
+        SELECT *
+        FROM mishu_write.sys_user_info
+        WHERE phone_no =#{phoneNo}
+    </select>
 </mapper>

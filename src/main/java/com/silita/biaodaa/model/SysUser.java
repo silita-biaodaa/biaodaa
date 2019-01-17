@@ -41,7 +41,6 @@ public class SysUser {
     private String clientVersion;
     private String deviceId;
 
-    private String vipName;
     private String expiredDate;
     private String level;
 

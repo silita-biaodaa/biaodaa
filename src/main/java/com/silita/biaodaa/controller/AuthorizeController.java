@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.silita.biaodaa.controller.BaseController.bulidUserPwd;
+
 /**
  * 用户授权 如注册、登录、授权
  * Created by 91567 on 2018/4/13.
@@ -82,6 +84,7 @@ public class AuthorizeController {
                 result.put("code", Constant.ERR_VIEW_CODE);
                 result.put("msg", errMsg);
             }else {
+                bulidUserPwd(sysUser);
                 String msgCode = authorizeService.registerUser(sysUser);
                 if (msgCode.equals(Constant.SUCCESS_CODE)) {
                     result.put("code", Constant.SUCCESS_CODE);
@@ -132,6 +135,7 @@ public class AuthorizeController {
         }
 
         try {
+            bulidUserPwd(sysUser);
             SysUser userInfo = authorizeService.memberLogin(sysUser);
             if (userInfo != null) {
                 result.put("code", Constant.SUCCESS_CODE);
@@ -180,6 +184,108 @@ public class AuthorizeController {
         } catch (Exception e) {
             logger.error("用户登录异常！" + e.getMessage(), e);
             result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    private String preThirdBinding(SysUser sysUser){
+        if(MyStringUtils.isNull(sysUser.getQqOpenId()) &&
+                MyStringUtils.isNull(sysUser.getWxOpenId()) && MyStringUtils.isNull(sysUser.getWxUnionId())){
+            return Constant.ERR_VIEW_CODE;
+        }
+        if(MyStringUtils.isNull(sysUser.getLoginPwd())){
+            return Constant.ERR_VIEW_CODE;
+        }
+        if(MyStringUtils.isNull(sysUser.getPhoneNo())){
+            return Constant.ERR_VIEW_CODE;
+        }
+        if(MyStringUtils.isNull(sysUser.getChannel())){
+            return Constant.ERR_VIEW_CODE;
+        }
+        if(MyStringUtils.isNull(sysUser.getVerifyCode())){
+            return Constant.ERR_VERIFY_PHONE_CODE;
+        }
+
+        String code = authorizeService.verifyPhoneCode(sysUser);
+        if(code!= null){
+            return code;
+        }
+        code = authorizeService.verifyInviterCode(sysUser);
+        if(code!= null){
+            return code;
+        }
+        return null;
+    }
+
+    private String preThirdLogin(SysUser sysUser){
+        if(MyStringUtils.isNull(sysUser.getQqOpenId()) &&
+                MyStringUtils.isNull(sysUser.getWxOpenId()) && MyStringUtils.isNull(sysUser.getWxUnionId())){
+            return Constant.ERR_VIEW_CODE;
+        }
+        if(MyStringUtils.isNull(sysUser.getChannel())){
+            return Constant.ERR_NULL_CHANNEL;
+        }
+        return null;
+    }
+
+    /**
+     * 第三方登录
+     * @param sysUser
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/memberThirdLogin", produces = "application/json;charset=utf-8")
+    public Map<String, Object> memberThirdLogin(@RequestBody SysUser sysUser) {
+        Map result = new HashMap();
+        try {
+            String errCode = preThirdLogin(sysUser);
+            if(errCode== null) {
+                SysUser vo =authorizeService.memberThirdLogin(sysUser);
+                if(vo!= null ) {
+                    result.put("code", Constant.SUCCESS_CODE);
+                    result.put("msg", "第三方登录成功！");
+                    result.put("data", vo);
+                }else{
+                    result.put("code", Constant.THIRD_USER_NOTEXIST);
+                    result.put("msg", "第三方用户不存在");
+                }
+            }else{
+                result.put("code",errCode);
+                result.put("msg","第三方登录失败！");
+            }
+        } catch (Exception e) {
+            logger.error("第三方登录异常！" + e.getMessage(), e);
+            result.put("code", Constant.EXCEPTION_CODE);
+            result.put("msg", "第三方登录异常."+e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/thirdPartyBinding", produces = "application/json;charset=utf-8")
+    public Map<String, Object> thirdPartyBinding(@RequestBody SysUser sysUser) {
+        Map result = new HashMap();
+        try {
+            String errCode = preThirdBinding(sysUser);
+            if(errCode== null) {
+                bulidUserPwd(sysUser);
+                Integer count =authorizeService.thirdPartyBinding(sysUser);
+                if(count!= null && count==1) {
+                    result.put("code", Constant.SUCCESS_CODE);
+                    result.put("msg", "绑定成功！");
+                    result.put("data", authorizeService.memberLogin(sysUser));
+                }else{
+                    result.put("code", Constant.FAIL_CODE);
+                    result.put("msg", "绑定失败，请重试。");
+                }
+            }else{
+                result.put("code",errCode);
+                result.put("msg","绑定失败！");
+            }
+        } catch (Exception e) {
+            logger.error("第三方绑定异常！" + e.getMessage(), e);
+            result.put("code", Constant.EXCEPTION_CODE);
             result.put("msg", e.getMessage());
         }
         return result;

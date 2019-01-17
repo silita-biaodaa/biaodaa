@@ -4,6 +4,7 @@ public class Constant {
     //渠道号
     public static final String CHANNEL_ANDROID="1001";
     public static final String CHANNEL_IOS="1002";
+    public static final String CHANNEL_PC="1003";
 
     public static final String SPLIT_STRING = "@@####@@";
     public static final String DEFAULT_STRING = "___";
@@ -25,14 +26,15 @@ public class Constant {
 
     public static final String SUCCESS_CODE="1";
     public static final String FAIL_CODE="0";
+    public static final String THIRD_USER_NOTEXIST="2";//第三方用户不存在
 
     public static final String STR_ENCODING = "utf-8";
     public static final String TOKEN_SPLIT="\\.";
 
     //返回错误码
-    public static final String ERR_USER_EXIST = "201";
+    public static final String ERR_USER_EXIST = "201";//用户已存在
     public static final String ERR_VERIFY_PHONE_CODE = "202";//手机验证码
-    public static final String ERR_VERIFY_IVITE_CODE = "203";//邀请码验证失败
+    public static final String ERR_VERIFY_IVITE_CODE = "203";//推荐人邀请码验证失败
     public static final String ERR_VERIFY_USER_ID_CODE = "204";//用户ID获取失败
     public static final String ERR_VERIFY_USER_PERMISSIONS = "400";//用户权限不足
     public static final String ERR_VERIFY_USER_TOKEN = "401";//用户登录失效
@@ -48,9 +50,11 @@ public class Constant {
     public static final String ERR_COMPANY_CODE = "108";//公司
     public static final String ERR_POS_CODE = "109";//职位
     public static final String ERR_LOGIN_NAME = "110";//登录账号名
+    public static final String ERR_LOGIN_PWD = "111";//密码输入有误
+    public static final String ERR_NULL_CHANNEL = "112";//渠道编码不能为空
 
-    public static final String EXCEPTION_CODE="999";
-    public static final String ERR_VIEW_CODE="888";
+    public static final String EXCEPTION_CODE="999";//程序异常
+    public static final String ERR_VIEW_CODE="888";//前端必填字段为空
 
     public static final String info_female = "0";
     public static final String info_male = "1";

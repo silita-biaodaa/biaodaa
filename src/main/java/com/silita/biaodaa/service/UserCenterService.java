@@ -52,12 +52,17 @@ public class UserCenterService {
         return  userTempBddMapper.updateSysUser(sysUser);
     }
 
+    /**
+     * 验证推荐人邀请码
+     * @param sysUser
+     * @return
+     */
     public boolean verifyInviterCode(SysUser sysUser){
         Integer count = userTempBddMapper.verifyInviterCode(sysUser);
         if (count == null || count != 1) {
             return false;
         }else{
-            String inviterCode  = userTempBddMapper.existInviterCodeByUserId(sysUser.getPkid());
+            String inviterCode  = userTempBddMapper.existInviterCodeByUserId(sysUser);
             if(MyStringUtils.isNotNull(inviterCode)){
                 return false;
             }else {
@@ -88,6 +93,24 @@ public class UserCenterService {
             }
         }
         return vo;
+    }
+
+    public Integer updatePwd(SysUser sysUser) {
+        return userTempBddMapper.updateUserPwd(sysUser);
+    }
+
+    public String verifyPhoneCode(Map params){
+        InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
+        if (null == invitationVo) {
+            return "验证码错误或无效！";
+        } else if ("1".equals(invitationVo.getInvitationState())) {
+            return "验证码失效！";
+        }
+        return  null;
+    }
+
+    public void updateInvitationBddByCodeAndPhone(Map params){
+        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
     }
 
     public String updatePassWord(UserTempBdd userTempBdd) {
