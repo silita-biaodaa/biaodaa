@@ -26,4 +26,6 @@ public class InvitationBdd {
 
     //用于区分注册、找回密码等短信类型
     private Integer type;
+
+    private String msgTemplate;//短信模板编码
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbVipRightsChangesMapper">
+    <insert id="saveVipRightsChange" parameterType="com.silita.biaodaa.model.TbVipRightsChanges">
+        INSERT  INTO mishu_write.tb_vip_rights_changes(
+            v_rights_id,
+            v_id,
+            v_fee_std_id,
+            rights_num,
+            mod_type,
+            increase_days,
+            his_expired_date,
+            reason,
+            created,
+            create_by)
+        values(
+            #{vRightsId},
+            #{vId},
+            #{vFeeStdId},
+            #{rightsNum},
+            #{modType},
+            #{increaseDays},
+            #{hisExpiredDate},
+            #{reason},
+            #{created},
+            #{createBy})
+    </insert>
+
+</mapper>

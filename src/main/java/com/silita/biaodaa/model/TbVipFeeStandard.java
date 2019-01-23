@@ -14,6 +14,7 @@ public class TbVipFeeStandard {
     private String feeStdId;
     private String stdCode;
     private double price;
+    private int vipDays;
     private String stdDesc;
     private String altInfo;
     private String discountId;

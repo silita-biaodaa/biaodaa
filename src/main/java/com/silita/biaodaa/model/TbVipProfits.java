@@ -3,8 +3,6 @@ package com.silita.biaodaa.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.security.Timestamp;
-
 /**
  * 用户收益实体
  */
@@ -16,7 +14,7 @@ public class TbVipProfits {
     private String vId;
     private String inviterCode;
     private String hisExpiredDate;
-    private Timestamp created;
+    private String created;
     private String createBy;
     private String desc;
     private String vipDays;

@@ -167,7 +167,7 @@ public class UserCenterController {
             sysUser.setPkid(VisitInfoHolder.getUid());
             clearBlank(sysUser);
             filterParams(sysUser);
-            String errCode = validateUserInfo(sysUser);
+            String errCode = preUpdateUserInfo(sysUser);
             if(errCode == null) {
                 Integer records = userCenterService.updateUserInfo(sysUser);
                 if(records ==1) {
@@ -244,7 +244,7 @@ public class UserCenterController {
      * @param sysUser
      * @return
      */
-    private String validateUserInfo(SysUser sysUser){
+    private String preUpdateUserInfo(SysUser sysUser){
         if(MyStringUtils.isNull(sysUser.getPkid())){//用户id
             return Constant.ERR_VERIFY_USER_ID_CODE;
         }

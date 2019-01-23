@@ -363,6 +363,57 @@ public class AuthorizeService {
     }
 
     /**
+     * 发送短信验证码
+     * @param invitationBdd
+     * @return
+     */
+    public String sendShorMsgVerfiyCode(InvitationBdd invitationBdd){
+        String code = CommonUtil.verificationCode();
+        invitationBdd.setInvitationCode(code);
+        String errMsg = SendMessage.sendShorMsg(code, invitationBdd.getInvitationPhone(),invitationBdd.getMsgTemplate());
+        if(errMsg==null) {
+            invitationBddMapper.insertInvitationBdd(invitationBdd);
+        }
+        return errMsg;
+    }
+
+    /**
+     * 检查手机号是否已注册
+     * @param phoneNo
+     * @return
+     */
+    public boolean isRegisted(String phoneNo){
+        List<SysUser> sysUser = userTempBddMapper.queryUserByPhoneNo(phoneNo);
+        if(sysUser.size()>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 检查是否已拥有推荐人邀请码
+     * @param phoneNo
+     * @return
+             */
+    public String hasInviterCode(String phoneNo){
+        List<SysUser> list = userTempBddMapper.queryUserByPhoneNo(phoneNo);
+        if(list.size()==1){
+            if(MyStringUtils.isNotNull(list.get(0).getInviterCode())){
+                return Constant.ERR_EXISTS_IVITE_CODE;
+            }else{
+                return Constant.HINT_IS_REGIST;
+            }
+        }else{
+            if(list.size()<1){
+                return Constant.HINT_NOT_REGIST;
+            }else{
+                return Constant.ERR_USER_NOT_UNIQUE;
+            }
+        }
+    }
+
+    /**
      * 验证码
      *
      * @param invitationBdd

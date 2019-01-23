@@ -6,6 +6,7 @@ import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.VipService;
+import com.silita.biaodaa.to.ToOpenMember;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,24 @@ public class VipController extends BaseController{
             result.put("totalDays",total);
             buildReturnMap(result, info);
             successMsg(result);
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(result, e.getMessage());
+        }
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/openMemberRights",produces = "application/json;charset=utf-8")
+    public Map<String,Object> openMemberRights(@RequestBody ToOpenMember toOpenMember){
+        Map result = new HashMap();
+        try{
+            String errMsg = vipService.openMemberRights(toOpenMember);
+            if(errMsg==null) {
+                successMsg(result);
+            }else{
+                errorMsg(result, errMsg);
+            }
         }catch (Exception e){
             logger.error(e,e);
             errorMsg(result, e.getMessage());

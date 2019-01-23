@@ -194,9 +194,9 @@ public class AuthorizeController {
                 MyStringUtils.isNull(sysUser.getWxOpenId()) && MyStringUtils.isNull(sysUser.getWxUnionId())){
             return Constant.ERR_VIEW_CODE;
         }
-        if(MyStringUtils.isNull(sysUser.getLoginPwd())){
-            return Constant.ERR_VIEW_CODE;
-        }
+//        if(MyStringUtils.isNull(sysUser.getLoginPwd())){
+//            return Constant.ERR_VIEW_CODE;
+//        }
         if(MyStringUtils.isNull(sysUser.getPhoneNo())){
             return Constant.ERR_VIEW_CODE;
         }
@@ -443,6 +443,85 @@ public class AuthorizeController {
         } catch (Exception e) {
             logger.error("获取验证码信息异常！" + e.getMessage(), e);
             result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
+    private String  preVerifyCode(InvitationBdd invitation){
+        if(MyStringUtils.isNull(invitation.getInvitationPhone())){
+            return "手机号不能为空";
+        }
+        if(MyStringUtils.isNull(invitation.getType())){
+            return "type不能为空";
+        }
+        return  null;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getVerifyCode", produces = "application/json;charset=utf-8")
+    public Map<String, Object> getVerifyCode(@RequestBody InvitationBdd invitation, HttpServletRequest request) {
+        String adder = request.getHeader("X-real-ip");
+        Map result = new HashMap();
+        try {
+            String preMsg = preVerifyCode(invitation);
+            if(preMsg!=null){
+                result.put("code", Constant.ERR_VIEW_CODE);
+                result.put("msg", preMsg);
+                return result;
+            }
+
+            Integer type = invitation.getType();
+            invitation.setInvitationIp(adder);
+            boolean isSendMsg = true;
+            if(type==1){//注册
+                invitation.setMsgTemplate("SMS_104720006");
+                boolean registed = authorizeService.isRegisted(invitation.getInvitationPhone());
+                if(registed){
+                    isSendMsg=false;
+                    result.put("code", Constant.HINT_IS_REGIST);
+                    result.put("msg", "手机号已注册,请登录");
+                }
+            }else if(type==2){//找回密码和修改密码
+                invitation.setMsgTemplate("SMS_104665007");
+                boolean registed =authorizeService.isRegisted(invitation.getInvitationPhone());
+                if(!registed){
+                    isSendMsg=false;
+                    result.put("code", Constant.HINT_NOT_REGIST);
+                    result.put("msg", "手机号还未注册");
+                }
+            }else if(type==3){//绑定
+                invitation.setMsgTemplate("SMS_104720006");
+                String errCode = authorizeService.hasInviterCode(invitation.getInvitationPhone());
+                if(errCode.equals(Constant.ERR_EXISTS_IVITE_CODE)){
+                    result.put("msg", "推荐人邀请码已存在");
+                }else if(errCode.equals(Constant.HINT_IS_REGIST)){
+                    result.put("msg", "用户已注册");
+                }else if(errCode.equals(Constant.HINT_NOT_REGIST)){
+                    result.put("msg", "此用户未注册");
+                }else {
+                    result.put("msg", "用户信息匹配异常");
+                }
+                result.put("code", errCode);
+            }
+
+            if(isSendMsg) {
+                String errMsg = authorizeService.sendShorMsgVerfiyCode(invitation);
+                if (errMsg == null) {
+                    if (MyStringUtils.isNull(result.get("code"))) {
+                        result.put("code", Constant.SUCCESS_CODE);
+                    }
+                    if (MyStringUtils.isNull(result.get("msg"))) {
+                        result.put("msg", "获取验证码信息成功！");
+                    }
+                } else {
+                    result.put("code", Constant.FAIL_CODE);
+                    result.put("msg", errMsg);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("获取验证码信息异常！" + e.getMessage(), e);
+            result.put("code", Constant.EXCEPTION_CODE);
             result.put("msg", e.getMessage());
         }
         return result;

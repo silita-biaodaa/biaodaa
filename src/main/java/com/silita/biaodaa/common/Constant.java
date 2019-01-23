@@ -36,6 +36,8 @@ public class Constant {
     public static final String ERR_VERIFY_PHONE_CODE = "202";//手机验证码
     public static final String ERR_VERIFY_IVITE_CODE = "203";//推荐人邀请码验证失败
     public static final String ERR_VERIFY_USER_ID_CODE = "204";//用户ID获取失败
+    public static final String ERR_EXISTS_IVITE_CODE = "205";//推荐人邀请码已存在
+
     public static final String ERR_VERIFY_USER_PERMISSIONS = "400";//用户权限不足
     public static final String ERR_VERIFY_USER_TOKEN = "401";//用户登录失效
 
@@ -52,6 +54,10 @@ public class Constant {
     public static final String ERR_LOGIN_NAME = "110";//登录账号名
     public static final String ERR_LOGIN_PWD = "111";//密码输入有误
     public static final String ERR_NULL_CHANNEL = "112";//渠道编码不能为空
+
+    public static final String HINT_IS_REGIST = "301";//用户已注册
+    public static final String HINT_NOT_REGIST = "302";//用户还未注册
+    public static final String ERR_USER_NOT_UNIQUE = "303";//用户不唯一
 
     public static final String EXCEPTION_CODE="999";//程序异常
     public static final String ERR_VIEW_CODE="888";//前端必填字段为空

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.biaodaa.dao.VipInfoMapper">
 
-    <select id="queryInfoById" parameterType="Map" resultType="com.silita.biaodaa.model.VipInfo">
+    <select id="queryVipInfoById" parameterType="String" resultType="com.silita.biaodaa.model.TbVipInfo">
         select *
         from mishu_write.tb_vip_info
         where user_id =#{userId}
@@ -14,17 +14,60 @@
         where (channel='common' or channel=#{channel}) and state=true
     </select>
 
+    <select id="queryFeeStandardByCode" parameterType="String" resultType="com.silita.biaodaa.model.TbVipFeeStandard">
+        select *
+        from mishu_write.tb_vip_fee_standard
+        where std_code=#{stdCode} and state=true
+    </select>
+
     <select id="queryProfitInfo" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbVipProfits">
-    select a.v_id,a.created,a.settings_code,s.desc,s.vip_days
-    from mishu_write.tb_vip_profits a
-    left join mishu_write.tb_vip_profit_settings s on a.settings_code=s.settings_code
-    where v_id=(select v_id from mishu_write.tb_vip_info where user_id=#{userId})
+        select a.v_id,date_format(a.created,'%Y-%m-%d %H:%i:%s') as created,a.settings_code,s.desc,s.vip_days
+        from mishu_write.tb_vip_profits a
+        left join mishu_write.tb_vip_profit_settings s on a.settings_code=s.settings_code
+        where v_id=(select v_id from mishu_write.tb_vip_info where user_id=#{userId})
+        ORDER BY a.created DESC
     </select>
 
     <select id="queryProfitTotal" parameterType="java.lang.String" resultType="Integer">
-    select sum(vip_days)
-    from mishu_write.tb_vip_profits a
-    left join mishu_write.tb_vip_profit_settings s on a.settings_code=s.settings_code
-    where v_id=(select v_id from mishu_write.tb_vip_info where user_id=#{userId})
+        select sum(vip_days)
+        from mishu_write.tb_vip_profits a
+        left join mishu_write.tb_vip_profit_settings s on a.settings_code=s.settings_code
+        where v_id=(select v_id from mishu_write.tb_vip_info where user_id=#{userId})
     </select>
+    
+    <update id="updateVipInfo" parameterType="com.silita.biaodaa.model.TbVipInfo">
+        update mishu_write.tb_vip_info
+        set
+        <if test="level !=null and level!=''">
+          level=#{level},
+        </if>
+        <if test="remark !=null and remark!=''">
+          remark=#{remark},
+        </if>
+        <if test="expiredDate !=null and expiredDate!=''">
+          expired_date=#{expiredDate},
+        </if>
+        updated=current_timestamp
+        where user_id=#{userId}
+    </update>
+
+    <insert id="insertVipInfo" parameterType="com.silita.biaodaa.model.TbVipInfo">
+      INSERT INTO  mishu_write.tb_vip_info
+        (v_id,
+        user_id,
+        level,
+        remark,
+        expired_date,
+        created,
+        create_by)
+      values
+        (#{vId},
+        #{userId},
+        #{level},
+        #{remark},
+        #{expiredDate},
+        CURRENT_TIMESTAMP,
+        #{createBy})
+    </insert>
+
 </mapper>

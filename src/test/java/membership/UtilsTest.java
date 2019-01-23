@@ -1,9 +1,12 @@
 package membership;
 
 import com.silita.biaodaa.common.Constant;
+import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.RegexUtils;
 import org.junit.Test;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 import static com.silita.biaodaa.utils.EncryptUtils.Base64Decode;
@@ -34,4 +37,11 @@ public class UtilsTest {
         System.out.println(paramMap.toString());
     }
 
+    @Test
+    public void testDateAdd(){
+        Calendar cal = Calendar.getInstance();
+        System.out.println(cal.getTime());
+        Date newDate = MyDateUtils.addDays(cal.getTime(),30);
+        System.out.println(newDate.toString());
+    }
 }

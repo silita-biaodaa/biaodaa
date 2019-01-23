@@ -254,6 +254,13 @@ public class MyDateUtils {
 		return mydate;
 	}
 
+	public static Date addDays(Date date, int days){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DAY_OF_YEAR,days);
+		return cal.getTime();
+	}
+
 	/**
 	 * 取得昨天的日期,以今天为基准
 	 * @return

@@ -1,18 +1,23 @@
 package com.silita.biaodaa.dao;
 
 import com.silita.biaodaa.model.TbVipFeeStandard;
+import com.silita.biaodaa.model.TbVipInfo;
 import com.silita.biaodaa.model.TbVipProfits;
-import com.silita.biaodaa.model.VipInfo;
 
 import java.util.List;
-import java.util.Map;
 
 public interface VipInfoMapper {
-    VipInfo queryInfoById(Map args);
+    TbVipInfo queryVipInfoById(String userId);
+
+    int updateVipInfo(TbVipInfo tbVipInfo);
+
+    int insertVipInfo(TbVipInfo tbVipInfo);
 
     List<TbVipFeeStandard>  queryFeeStandard(String channel);
 
     List<TbVipProfits>  queryProfitInfo(String userId);
 
     Integer queryProfitTotal(String userId);
+
+    TbVipFeeStandard queryFeeStandardByCode(String stdCode);
 }

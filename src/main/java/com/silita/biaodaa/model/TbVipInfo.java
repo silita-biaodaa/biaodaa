@@ -3,17 +3,21 @@ package com.silita.biaodaa.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 /**
- * Created by dh on 2019/1/4.
+ * 会员信息主表
  */
 @Getter
 @Setter
-public class VipInfo {
+public class TbVipInfo {
     private String vId;
     private String userId;
-    private String level;
+    private int level;
     private String remark;
-    private String expiredDate;
+    private String permissions;
+    private String roleCode;
+    private Date expiredDate;
     private String created;
     private String createBy;
     private String updated;

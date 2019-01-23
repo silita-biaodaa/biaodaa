@@ -2,9 +2,11 @@ package membership;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.ConfigTest;
 import com.silita.biaodaa.service.NoticeService;
+import com.silita.biaodaa.to.ToOpenMember;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +57,7 @@ public class ControllerTest extends ConfigTest {
     @Test
     public void memberLogin()throws Exception{
         String requestBody = "{\"loginName\":\"\",\"loginPwd\":\"123456\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
+        requestBody = "{\"loginName\":\"carefee\",\"loginPwd\":\"8428cd0116f3625394bc2880f6b0689b8f70a9e7\",\"phoneNo\":\"15580062552\",\"channel\":\"1001\",\"clientVersion\":\"10611\"}";
         String responseString = mockMvc.perform(post("/authorize/memberLogin").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -150,9 +153,9 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void testUpdateUserInfo()throws Exception {
-        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luTmFtZSI6ImxvZ2luX3RlczIyMjIiLCJsb2dpblRpbWUiOiIxNTQ3MjgyNDEzNjc5IiwicGVybWlzc2lvbnMiOiJiaWRfZmlsdGVyIiwicGhvbmVObyI6IjEzMzE5NTU1ODAyIiwicGtpZCI6IjYzZDQ1YjdiMjkzNTQwZjg4MTJkZjEyMzliMTI2ZjViIiwicm9sZUNvZGUiOiJub3JtYWwiLCJ0b2tlblZlcnNpb24iOiIyMDE5MDEwMyIsInVzZXJOYW1lIjoidXNlcl9uYW1lMjIyIn0=.C7BF9CFE95CE8A53873ED524A6844085";
-        String requestBody = "{\"sex\":\"0\"}";  //,"":""
-        requestBody = "{\"inviterCode\":\"test12\",\"loginName\":\"login_tes2222\",\"userName\":\"user_name222\"" +
+        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc3ODA2Mzc1MTEiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.5BE6C3353FE092F265DDC2F782979302";
+        String requestBody = "{\"sex\":\"0\"}";  //,"":"" 3AUM6L  test12  1AUM6L
+        requestBody = "{\"inviterCode\":\"3AUM6L\",\"loginName\":\"login_tes2222\",\"userName\":\"user_name222\"" +
                 ",\"sex\":\"1\",\"nikeName\":\"曹fb22\",\"email\":\"222caoliang@fb.com\"" +
                 ",\"birthYear\":\"2018-10-08\",\"inCity\":\"城市2\",\"inCompany\":\"逗比公司2\"" +
                 ",\"position\":\"逗比总监22\",\"imageUrl\":\"http://2222sdlki.com\"}";
@@ -201,7 +204,7 @@ public class ControllerTest extends ConfigTest {
     @Test
     public void testThirdPartyBinding()throws Exception{
 //        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc0NDYyMzMzNjkiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.EDE5E5A2BE7D0B0A21AA2D77A8DADCC5";
-        String requestBody = "{\"inviterCode\":\"test12\",\"imageUrl\":\"http://123k123.com\",\"wxUnionId\":\"\",\"qqOpenId\":\"333333\",\"nikeName\":\"曹123\",\"wxOpenId\":\"\",\"loginPwd\":\"123456\",\"verifyCode\":\"889779\",\"phoneNo\":\"13319555804\",\"channel\":\"1002\"}";  //,"":"" /permission
+        String requestBody = "{\"inviterCode\":\"3AUM6L\",\"imageUrl\":\"http://123k123.com\",\"wxUnionId\":\"oT8cu0oOMNauxx4e4q9UMM6BL123\",\"qqOpenId\":\"\",\"nikeName\":\"曹123\",\"wxOpenId\":\"oT8cu0oOMNauxx4e4q9UMM6BL222\",\"loginPwd\":\"123456\",\"verifyCode\":\"111259\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\"}";  //,"":"" /permission
         String responseString = mockMvc.perform(post("/authorize/thirdPartyBinding").characterEncoding("UTF-8")
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                 .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -246,11 +249,50 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void testQueryMyProfits()throws Exception{
-        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc3MDk4OTA2NTIiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.CC53DE9885C04EB8D399AFE5214AC420";
+        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc3ODA2Mzc1MTEiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.5BE6C3353FE092F265DDC2F782979302";
         String requestBody = "{\"pageNo\":2,\"pageSize\":8}";
         String responseString = mockMvc.perform(post("/vip/queryMyProfits").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-#####----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testGetVerifyCode()throws Exception{ //getVerifyCode  getVerificationCode
+//        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc3ODA2Mzc1MTEiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.5BE6C3353FE092F265DDC2F782979302";
+        String requestBody = "{\"type\":3,\"invitationPhone\":13319555801}";
+        String responseString = mockMvc.perform(post("/authorize/getVerifyCode").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+//                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-#####----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testOpenMemberRights()throws Exception{
+        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc3ODA2Mzc1MTEiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.5BE6C3353FE092F265DDC2F782979302";
+        token="MjAxOTAxMDM=.eyJsb2dpbk5hbWUiOiJjYXJlZmVlIiwibG9naW5UaW1lIjoiMTU0ODIyNTEwODYyOSIsInBlcm1pc3Npb25zIjoiYmlkX2ZpbHRlcix0ZW5kZXJfZmlsdGVyIiwicGhvbmVObyI6IjE1NTgwMDYyNTUyIiwicGtpZCI6IjE1NDY0MTYzNjMiLCJyb2xlQ29kZSI6InN5c19tYW5nZXIiLCJ0b2tlblZlcnNpb24iOiIyMDE5MDEwMyJ9.1D0400A9EB8BDFE65867C456B3604EA5";
+        ToOpenMember toOpenMember= new ToOpenMember();
+        toOpenMember.setChannel("1002");
+        TbVipFeeStandard tbVipFeeStandard = new TbVipFeeStandard();
+        tbVipFeeStandard.setStdCode("quarter");
+        toOpenMember.setFeeStandard(tbVipFeeStandard);
+
+        String requestBody = "{\"pageNo\":2,\"pageSize\":8}";
+        requestBody = JSONObject.toJSONString(toOpenMember);
+        System.out.println("requestBody:"+requestBody);
+        String responseString = mockMvc.perform(post("/vip/openMemberRights").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
                 .header("X-TOKEN",token)
         )
                 .andExpect(status().isOk())    //返回的状态是200

@@ -135,7 +135,7 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
      * 新增用户角色关联
      * @param sysUserRole
      */
-    void insertUserRole(SysUserRole sysUserRole);
+    Integer insertUserRole(SysUserRole sysUserRole);
 
     /**
      * 检验邀请码是否有效
@@ -174,4 +174,11 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
      * @return
      */
     Integer updateSysUserUnionId(SysUser sysUser);
+
+    /**
+     * 删除用户的角色关系
+     * @param sysUserRole
+     * @return
+     */
+    Integer deleteRoleByUserId(SysUserRole sysUserRole);
 }
