@@ -150,8 +150,9 @@ public class AspectCheckLogin {
         String roleCode = VisitInfoHolder.getRoleCode();
         Object[] args = point.getArgs();
         logger.debug("AspectPermissions [calssName:"+calssName+"][methodName:"+methodName+"][Permissions:"+permissions+"][RoleCode:"+roleCode+"]");
+        Map resMap = null;
         try {
-            Map resMap = doFilter(req,point);
+            resMap = doFilter(req,point);
             if(resMap!=null){
                 result =resMap;
             }else {
@@ -161,9 +162,11 @@ public class AspectCheckLogin {
             //返回通知
             logger.debug("The method " + methodName + " end. result<" + result + ">");
         } catch (Throwable e) {
-            //异常通知
-            logger.debug("this method " + methodName + " end.ex message<" + e + ">");
-            throw new RuntimeException(e);
+            logger.error(e,e);
+            resMap = new HashMap();
+            resMap.put("code", Constant.EXCEPTION_CODE);
+            resMap.put("msg","登录校验异常。"+e.getMessage());
+            result =resMap;
         }
         //后置通知
         logger.debug("The method "+ methodName+" end...");

@@ -73,4 +73,20 @@ public class HttpRequestTest {
 		System.out.println(res);
 		//MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMSIsImxvZ2luX25hbWUiOiIxNTU3NjM2MTczNyIsImxvZ2luX3RpbWUiOiIxNTQ3MDI4MjAzMjY0IiwicGVybWlzc2lvbnMiOiJiaWRfZmlsdGVyIiwicGhvbmVfbm8iOiIxNTU3NjM2MTczNyIsInBraWQiOiI4ZTNjZTUzYTJhNjg0NzllYWZiNWM2OWVhOTA1ZjdhNSIsInJvbGVfY29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIiwidXNlcl9uYW1lIjoiMTU1NzYzNjE3MzcifQ==.BC465A8D53F7563CEC859CB5BC0C4B41
 	}
+
+	@Test
+	public void testOpenMember(){
+		//pre.biaodaa.com  127.0.0.1:8080
+		String url="http://pre.biaodaa.com/vip/openMemberRights";
+		String body="{\n" +
+				"  \"channel\": \"1002\",\n" +
+				"  \"feeStandard\": {\n" +
+				"    \"stdCode\": \"quarter\"\n" +
+				"  }\n" +
+				"}";
+		String token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luTmFtZSI6IjE1Mzg2MTk2NzI2IiwibG9naW5UaW1lIjoiMTU0ODIzMDgxOTg2MSIsInBlcm1pc3Npb25zIjoiYmlkX2ZpbHRlcix0ZW5kZXJfZmlsdGVyIiwicGhvbmVObyI6IjE1Mzg2MTk2NzI2IiwicGtpZCI6IjE1NDY1OTkyMDkiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.204EC69D4EEC6441AFB4B382BD1ADB20";
+		String res = Sender.sendPostBdd(url,token,body,"UTF-8");
+		System.out.println(res);
+		//MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMSIsImxvZ2luX25hbWUiOiIxNTU3NjM2MTczNyIsImxvZ2luX3RpbWUiOiIxNTQ3MDI4MjAzMjY0IiwicGVybWlzc2lvbnMiOiJiaWRfZmlsdGVyIiwicGhvbmVfbm8iOiIxNTU3NjM2MTczNyIsInBraWQiOiI4ZTNjZTUzYTJhNjg0NzllYWZiNWM2OWVhOTA1ZjdhNSIsInJvbGVfY29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIiwidXNlcl9uYW1lIjoiMTU1NzYzNjE3MzcifQ==.BC465A8D53F7563CEC859CB5BC0C4B41
+	}
 }

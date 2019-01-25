@@ -47,8 +47,9 @@ public class AspectPermissions {
         String roleCode = VisitInfoHolder.getRoleCode();
         Object[] args = point.getArgs();
         logger.debug("AspectPermissions [calssName:"+calssName+"][methodName:"+methodName+"][Permissions:"+permissions+"][RoleCode:"+roleCode+"]");
+        Map resultMap = null;
         if(MyStringUtils.isNull(roleCode) || !verfifyPermissions(permissions,methodName)){
-            Map resultMap = new HashMap();
+            resultMap = new HashMap();
             resultMap.put("code", Constant.ERR_VERIFY_USER_PERMISSIONS);
             resultMap.put("msg","当前用户没有此功能权限，请购买会员。");
             result =resultMap;
@@ -61,9 +62,11 @@ public class AspectPermissions {
                 //返回通知
                 logger.debug("The method " + methodName + " end. result<" + result + ">");
             } catch (Throwable e) {
-                //异常通知
-                logger.debug("this method " + methodName + " end.ex message<" + e + ">");
-                throw new RuntimeException(e);
+                logger.error(e,e);
+                resultMap = new HashMap();
+                resultMap.put("code", Constant.EXCEPTION_CODE);
+                resultMap.put("msg","会员权限校验异常。"+e.getMessage());
+                result =resultMap;
             }
         }
         //后置通知

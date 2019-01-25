@@ -156,9 +156,12 @@
                     wx_union_id = #{wxUnionId} or wx_open_id = #{wxOpenId} or qq_open_id = #{qqOpenId}
                 </when>
                 <otherwise>
-                    (login_name = #{loginName} or phone_no = #{phoneNo}) AND login_pwd = #{loginPwd}
+                    (login_name = #{loginName} or phone_no = #{phoneNo})
                 </otherwise>
             </choose>
+            <if test="loginPwd !=null and loginPwd!=''">
+              AND login_pwd = #{loginPwd}
+            </if>
         </where>
     </select>
 

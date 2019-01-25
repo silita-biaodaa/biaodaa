@@ -92,6 +92,9 @@ public class VipService {
             if (tbVipInfo != null) {
                 vid = tbVipInfo.getVId();
                 Date hisExpiredDate = tbVipInfo.getExpiredDate();
+                if(hisExpiredDate==null){
+                    hisExpiredDate = new Date();
+                }
                 vipRightsChanges.setHisExpiredDate(hisExpiredDate);
                 Date newExpiredDate = MyDateUtils.addDays(hisExpiredDate, feeStandard.getVipDays());
                 tbVipInfo.setExpiredDate(newExpiredDate);

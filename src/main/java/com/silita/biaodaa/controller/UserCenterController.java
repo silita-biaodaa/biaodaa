@@ -201,6 +201,31 @@ public class UserCenterController {
         return result;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/refreshUserInfo", produces = "application/json;charset=utf-8")
+    public Map<String, Object> refreshUserInfo() {
+        Map result = new HashMap();
+        try {
+            SysUser sysUser = new SysUser();
+            sysUser.setPkid(VisitInfoHolder.getUid());
+            SysUser vo = authorizeService.memberLogin(sysUser);
+            if(vo !=null){
+                result.put("code", Constant.SUCCESS_CODE);
+                result.put("msg", "刷新用户信息成功！");
+                result.put("data", vo);
+            }else{
+                result.put("code", Constant.FAIL_CODE);
+                result.put("msg", "刷新用户信息失败，请重试！");
+            }
+        } catch (Exception e) {
+            String err = "刷新用户信息异常！" + e.getMessage();
+            logger.error(err, e);
+            result.put("code", Constant.FAIL_CODE);
+            result.put("msg", err);
+        }
+        return result;
+    }
+
     /**
      * 更新密码数据校验
      * @param sysUser

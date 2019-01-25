@@ -57,7 +57,7 @@ public class ControllerTest extends ConfigTest {
     @Test
     public void memberLogin()throws Exception{
         String requestBody = "{\"loginName\":\"\",\"loginPwd\":\"123456\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
-        requestBody = "{\"loginName\":\"carefee\",\"loginPwd\":\"8428cd0116f3625394bc2880f6b0689b8f70a9e7\",\"phoneNo\":\"15580062552\",\"channel\":\"1001\",\"clientVersion\":\"10611\"}";
+        requestBody = "{\"loginName\":\"\",\"loginPwd\":\"8428cd0116f3625394bc2880f6b0689b8f70a9e7\",\"phoneNo\":\"15580062552\",\"channel\":\"1001\",\"clientVersion\":\"10611\"}";
         String responseString = mockMvc.perform(post("/authorize/memberLogin").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -299,5 +299,21 @@ public class ControllerTest extends ConfigTest {
                 .andDo(print())         //打印出请求和相应的内容
                 .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
         System.out.println("-#####----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testRefreshUserInfo()throws Exception {
+        token="MjAxOTAxMDM=.eyJsb2dpbk5hbWUiOiJjYXJlZmVlIiwibG9naW5UaW1lIjoiMTU0ODM4MTk1NDQ2NiIsInBlcm1pc3Npb25zIjoiYmlkRmlsdGVyLHRlbmRlckZpbHRlciIsInBob25lTm8iOiIxNTU4MDA2MjU1MiIsInBraWQiOiIxNTQ2NDE2MzYzIiwicm9sZUNvZGUiOiJzeXNfbWFuZ2VyIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMifQ==.246660C7B74F7FEE2234B1A4DADEF57E";
+        String requestBody = "{\"sex\":\"0\"}";  //,"":"" 3AUM6L  test12  1AUM6L
+        requestBody = "";
+        String responseString = mockMvc.perform(post("/userCenter/refreshUserInfo").characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+//                .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-----返回的json = " + responseString);
     }
 }
