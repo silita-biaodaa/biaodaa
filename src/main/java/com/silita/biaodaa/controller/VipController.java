@@ -3,11 +3,13 @@ package com.silita.biaodaa.controller;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.VisitInfoHolder;
-import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.to.ToOpenMember;
 import com.silita.biaodaa.utils.MyStringUtils;
+import com.silita.pay.service.OrderInfoService;
+import com.silita.pay.vo.OrderInfo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,13 @@ public class VipController extends BaseController{
 
     @Autowired
     private VipService vipService;
+
+    @Autowired
+    OrderInfoService orderInfoService;
+
+    private List<OrderInfo> queryOrderList(){
+        return orderInfoService.queryAll(1,5);
+    }
 
     private String preQueryFeeStd(TbVipFeeStandard tbVipFeeStandard){
         if(MyStringUtils.isNull(tbVipFeeStandard.getChannel())){
@@ -85,6 +94,7 @@ public class VipController extends BaseController{
     public Map<String,Object> openMemberRights(@RequestBody ToOpenMember toOpenMember){
         Map result = new HashMap();
         try{
+            toOpenMember.setUserId(VisitInfoHolder.getUid());
             String errMsg = vipService.openMemberRights(toOpenMember);
             if(errMsg==null) {
                 successMsg(result);

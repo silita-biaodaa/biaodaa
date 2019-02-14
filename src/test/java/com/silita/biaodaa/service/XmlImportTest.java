@@ -1,9 +1,7 @@
 package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSON;
-import com.silita.biaodaa.dao.TbCompanyInfoMapper;
 import com.silita.biaodaa.model.TbCompanyInfo;
-import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -16,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.*;
 
 public class XmlImportTest extends ConfigTest {

@@ -21,12 +21,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <packaging>war</packaging>
-
+  <packaging>war</packaging> <!-- 定义生成格式,若要运行web，需改为war -->
   <name>biaodaa</name>
   <groupId>com.biaodaa</groupId>
   <artifactId>biaodaa</artifactId>
-  <version>2.10.33.11</version>
+  <version>2.10.33.30</version>
 
   <properties>
     <spring.version>4.1.6.RELEASE</spring.version>
@@ -232,7 +231,7 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.16.12</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
 
     <!-- disruptor -->
@@ -419,6 +418,54 @@
     </dependency>
     <!--切面相关 end-->
 
+    <!--dubbo start-->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>dubbo</artifactId>
+      <version>2.5.3</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>spring</artifactId>
+          <groupId>org.springframework</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.101tec</groupId>
+      <artifactId>zkclient</artifactId>
+      <version>0.7</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.zookeeper</groupId>
+      <artifactId>zookeeper</artifactId>
+      <version>3.4.13</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- dubbo end-->
+
     <dependency>
       <groupId>com.silita</groupId>
       <artifactId>elasticSearch</artifactId>
@@ -429,6 +476,21 @@
       <artifactId>x-pack-transport</artifactId>
       <version>5.5.2</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.biaodaa</groupId>
+      <artifactId>biaodaa-api</artifactId>
+      <version>1.0.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.biaodaa</groupId>
+      <artifactId>biaodaa-pay-api</artifactId>
+      <version>1.0.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -480,6 +542,7 @@
       </plugin>
 
     </plugins>
+
     <resources>
       <resource>
         <directory>src/main/resources</directory>

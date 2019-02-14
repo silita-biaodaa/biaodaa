@@ -1,13 +1,13 @@
-package com.silita.biaodaa.service;
+package com.silita.biaodaa.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.VisitInfoHolder;
-import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.TbVipRightsChangesMapper;
 import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.dao.VipInfoMapper;
 import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.to.ToOpenMember;
 import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.MyDateUtils;
@@ -22,8 +22,8 @@ import java.util.List;
 /**
  * 会员逻辑
  */
-@Service
-public class VipService {
+@Service("vipService")
+public class VipServiceImpl implements VipService {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -76,8 +76,12 @@ public class VipService {
         return null;
     }
 
+    /**
+     * 开通会员
+     * @param toOpenMember
+     * @return
+     */
     public String openMemberRights(ToOpenMember toOpenMember){
-        toOpenMember.setUserId(VisitInfoHolder.getUid());
         String paramCheck = preOpenMember(toOpenMember);
         if(paramCheck != null){
             return paramCheck;
@@ -144,6 +148,11 @@ public class VipService {
             logger.error(e,e);
             return "服务异常："+e.getMessage();
         }
+    }
+
+    @Override
+    public TbVipFeeStandard queryFeeStdInfoByCode(String stdCode) {
+        return vipInfoMapper.queryFeeStandardByCode(stdCode);
     }
 
 }

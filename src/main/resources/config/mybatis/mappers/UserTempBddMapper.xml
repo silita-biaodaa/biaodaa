@@ -335,6 +335,9 @@
             <when test="pkid !=null and pkid!=''">
                 and pkid =#{pkid}
             </when>
+            <when test="phoneNo !=null and phoneNo!=''">
+                and phone_no =#{phoneNo}
+            </when>
             <when test="wxUnionId !=null and wxUnionId!=''">
                 and wx_union_id =#{wxUnionId}
             </when>

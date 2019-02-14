@@ -7,8 +7,6 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <!-- 加载redis配置文件 -->
-    <context:property-placeholder location="classpath:config/biaodaa.properties" />
 
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig" lazy-init="true">
     <!--新版是maxTotal，旧版是maxActive-->

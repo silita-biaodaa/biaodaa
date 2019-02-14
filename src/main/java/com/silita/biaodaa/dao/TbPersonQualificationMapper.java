@@ -1,7 +1,6 @@
 package com.silita.biaodaa.dao;
 
 import com.silita.biaodaa.model.TbPersonQualification;
-import com.silita.biaodaa.model.TbUnderConstruct;
 import com.silita.biaodaa.utils.MyMapper;
 
 import java.util.List;

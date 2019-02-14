@@ -88,7 +88,14 @@
         <!-- 以字节为单位的最大上传文件的大小 the maximum file size in bytes -->
         <property name="maxUploadSize" value="6000000" />
     </bean>
+	<!-- 加载redis配置文件 -->
+	<context:property-placeholder location="classpath:config/biaodaa.properties" />
 
 	<import resource="applicationContext-redis.xml" />
+
+	<import resource="dubbo-provider.xml" />
+	<import resource="dubbo-consumer.xml" />
+
+
 
 </beans>

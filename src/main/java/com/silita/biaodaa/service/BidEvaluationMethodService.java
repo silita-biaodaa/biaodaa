@@ -1,8 +1,6 @@
 package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSON;
-import com.crm.dao.mapper.CompanyMapper;
-import com.silita.biaodaa.bidCompute.BidComputeHandler;
 import com.silita.biaodaa.bidCompute.algorithm.HeliAlgorithm;
 import com.silita.biaodaa.bidCompute.algorithm.ZongheAlgorithm;
 import com.silita.biaodaa.common.VisitInfoHolder;
@@ -11,9 +9,6 @@ import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.TbBidCompute;
 import com.silita.biaodaa.model.TbBidResult;
 import com.silita.biaodaa.model.TbCompany;
-import com.silita.biaodaa.utils.DoubleUtils;
-import com.silita.biaodaa.utils.MyDateUtils;
-import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.function.DoubleUnaryOperator;
 
 /**
  * 评标办法service

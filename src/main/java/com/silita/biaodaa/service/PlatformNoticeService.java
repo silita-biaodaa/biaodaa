@@ -2,14 +2,16 @@ package com.silita.biaodaa.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.TbPlatformNoticeMapper;
+import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbPlatformNotice;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class PlatformNoticeService {

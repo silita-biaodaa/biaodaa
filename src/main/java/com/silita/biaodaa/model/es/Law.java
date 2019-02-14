@@ -3,9 +3,11 @@ package com.silita.biaodaa.model.es;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
-public class Law {
+public class Law implements Serializable{
 
     /**
      * 主键id

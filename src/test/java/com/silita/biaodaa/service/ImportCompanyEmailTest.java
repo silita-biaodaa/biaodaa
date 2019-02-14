@@ -1,19 +1,10 @@
 package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.common.MyRedisTemplate;
-import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.dao.TbCompanyInfoMapper;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.dao.TbCompanyQualificationMapper;
 import com.silita.biaodaa.es.ElasticseachService;
-import com.silita.biaodaa.model.TbCompanyInfo;
-import com.silita.biaodaa.model.es.CompanyEs;
-import com.silita.biaodaa.utils.CommonUtil;
-import com.silita.biaodaa.utils.MyStringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -24,8 +15,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

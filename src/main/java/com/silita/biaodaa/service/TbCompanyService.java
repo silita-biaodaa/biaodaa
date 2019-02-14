@@ -7,7 +7,6 @@ import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.CompanyQual;
-import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.*;
@@ -21,8 +20,6 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.silita.biaodaa.common.RedisConstantInterface.PRO_OVER_TIME;
 
 /**
  * Created by zhangxiahui on 18/4/4.

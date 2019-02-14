@@ -19,5 +19,11 @@ public interface VipInfoMapper {
 
     Integer queryProfitTotal(String userId);
 
+    /**
+     * 查询收费标准对象
+     * @param stdCode
+     * @return
+     */
     TbVipFeeStandard queryFeeStandardByCode(String stdCode);
+
 }

@@ -9,8 +9,8 @@ public class HttpRequestTest {
 	@Test
 	public void testLogin(){
 		//pre.biaodaa.com  127.0.0.1:8080
-		String url="http://pre.biaodaa.com/authorize/memberLogin";
-		String body="{\"loginPwd\":\"f7c3bc1d808e04732adf679965ccc34ca7ae3441\",\"phoneNo\":\"15111079659\",\"channel\":\"1002\",\"clientVersion\":\"22222\"}";
+		String url="http://127.0.0.1:8080/authorize/memberLogin";
+		String body="{\"loginPwd\":\"cc8d16ccf7f851ae6aba73327230dca5d64d2c21\",\"phoneNo\":\"15111079659\",\"channel\":\"1002\",\"clientVersion\":\"22222\"}";
 		String res = Sender.sendPost(url,body,"UTF-8");
 		System.out.println(res);
 		//MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMSIsImxvZ2luX25hbWUiOiIxNTU3NjM2MTczNyIsImxvZ2luX3RpbWUiOiIxNTQ3MDI4MjAzMjY0IiwicGVybWlzc2lvbnMiOiJiaWRfZmlsdGVyIiwicGhvbmVfbm8iOiIxNTU3NjM2MTczNyIsInBraWQiOiI4ZTNjZTUzYTJhNjg0NzllYWZiNWM2OWVhOTA1ZjdhNSIsInJvbGVfY29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIiwidXNlcl9uYW1lIjoiMTU1NzYzNjE3MzcifQ==.BC465A8D53F7563CEC859CB5BC0C4B41

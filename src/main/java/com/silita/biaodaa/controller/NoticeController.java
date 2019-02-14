@@ -6,7 +6,7 @@ import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.SnatchContent;
 import com.silita.biaodaa.common.VisitInfoHolder;
-import com.silita.biaodaa.controller.vo.Page;
+import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.utils.*;

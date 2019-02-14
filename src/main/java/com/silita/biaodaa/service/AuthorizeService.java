@@ -50,8 +50,6 @@ public class AuthorizeService {
     @Autowired
     private UserCenterService userCenterService;
 
-    @Autowired
-    private VipService vipService;
     /**
      * 用户注册
      *

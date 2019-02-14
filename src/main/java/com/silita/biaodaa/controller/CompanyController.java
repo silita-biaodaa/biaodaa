@@ -1,13 +1,11 @@
 package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
-import com.google.common.base.Preconditions;
-import com.silita.biaodaa.cache.GlobalCache;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.controller.vo.CompanyQual;
-import com.silita.biaodaa.controller.vo.Page;
 import com.silita.biaodaa.es.ElasticseachService;
+import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
@@ -25,10 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.silita.biaodaa.common.RedisConstantInterface.COM_OVER_TIME;
 import static com.silita.biaodaa.common.RedisConstantInterface.LIST_OVER_TIME;
 
 /**
