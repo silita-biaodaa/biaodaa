@@ -80,9 +80,12 @@
 		</tx:attributes>
 	</tx:advice>
 	<aop:config>
-		<aop:pointcut id="testPointcut"
+		<aop:pointcut id="testPointcut1"
 			expression="execution(* com.silita..*Service.*(..))" />
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="testPointcut" />
+		<aop:pointcut id="testPointcut2"
+					  expression="execution(* com.silita..*ServiceImpl.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="testPointcut1" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="testPointcut2" />
 	</aop:config>
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <!-- 以字节为单位的最大上传文件的大小 the maximum file size in bytes -->

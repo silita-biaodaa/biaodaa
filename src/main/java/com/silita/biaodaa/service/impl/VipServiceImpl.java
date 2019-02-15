@@ -2,7 +2,6 @@ package com.silita.biaodaa.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.TbVipRightsChangesMapper;
 import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.dao.VipInfoMapper;
@@ -15,6 +14,7 @@ import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -81,6 +81,7 @@ public class VipServiceImpl implements VipService {
      * @param toOpenMember
      * @return
      */
+    @Transactional
     public String openMemberRights(ToOpenMember toOpenMember){
         String paramCheck = preOpenMember(toOpenMember);
         if(paramCheck != null){
