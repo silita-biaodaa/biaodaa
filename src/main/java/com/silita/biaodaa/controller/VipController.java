@@ -9,7 +9,9 @@ import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.to.ToOpenMember;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.pay.service.OrderInfoService;
+import com.silita.pay.vo.MyPage;
 import com.silita.pay.vo.OrderInfo;
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,10 +37,6 @@ public class VipController extends BaseController{
 
     @Autowired
     OrderInfoService orderInfoService;
-
-    private List<OrderInfo> queryOrderList(){
-        return orderInfoService.queryAll(1,5);
-    }
 
     private String preQueryFeeStd(TbVipFeeStandard tbVipFeeStandard){
         if(MyStringUtils.isNull(tbVipFeeStandard.getChannel())){
@@ -106,5 +104,45 @@ public class VipController extends BaseController{
             errorMsg(result, e.getMessage());
         }
         return result;
+
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/queryOrderList",produces = "application/json;charset=utf-8")
+    public Map<String,Object> queryOrderList(@RequestBody Map param){
+        Map result = new HashMap();
+        int pageNo= MapUtils.getIntValue(param,"pageNo");
+        int pageSize= MapUtils.getIntValue(param,"pageSize");
+        String channelNo= MapUtils.getString(param,"channelNo");
+        Integer orderStatus=MapUtils.getInteger(param,"orderStatus");
+        try {
+            Map pMap = new HashMap();
+            pMap.put("userId",VisitInfoHolder.getUid());
+            pMap.put("channelNo",channelNo);
+            pMap.put("isDelete",0);
+            if(orderStatus!=null) {
+                if(orderStatus==11) {//非支付成功
+                    pMap.put("orderStatus_ne", 9);
+                }else{
+                    pMap.put("orderStatus", orderStatus);
+                }
+            }
+            MyPage<OrderInfo> myPage= orderInfoService.queryOrderPages(pMap, pageNo-1, pageSize);
+            if(myPage!=null){
+                successMsg(result,myPage.getInfoList());
+                result.put("pageNo",myPage.getPageNo()+1);
+                result.put("pageSize",pageSize);
+                result.put("pages",myPage.getPages());
+                result.put("total",myPage.getTotal());
+            }else{
+                errorMsg(result, "订单查询为空");
+            }
+        }catch (Exception e){
+            logger.error(e,e);
+            errorMsg(result, "订单查询异常："+e.getMessage());
+        }
+        return result;
+    }
+
 }

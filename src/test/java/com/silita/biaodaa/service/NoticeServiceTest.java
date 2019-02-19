@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.model.Page;
 import com.silita.pay.service.OrderInfoService;
-import com.silita.pay.vo.OrderInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +41,10 @@ public class NoticeServiceTest extends ConfigTest {
 
     @Test
     public void testDubbo(){
-        List<OrderInfo> list = orderInfoService.queryAll(5,5);
-        for(OrderInfo o: list){
-            System.out.println(o.getOrderNo());
-        }
+//        PageImpl<OrderInfo> list = orderInfoService.queryOrderPages(null,0,5);
+//        for(OrderInfo o: list.getContent()){
+//            System.out.println(o.getOrderNo());
+//        }
     }
 
     @Test

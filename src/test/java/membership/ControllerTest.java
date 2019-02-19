@@ -2,6 +2,7 @@ package membership;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.ConfigTest;
@@ -310,6 +311,21 @@ public class ControllerTest extends ConfigTest {
                 .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
 //                .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
                 .header("X-TOKEN",token)
+        )
+                .andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())         //打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("-----返回的json = " + responseString);
+    }
+
+    @Test
+    public void testQueryOrderList()throws Exception {
+        token="MjAxOTAxMDM=.eyJsb2dpbk5hbWUiOiJjYXJlZmVlIiwibG9naW5UaW1lIjoiMTU0ODM4MTk1NDQ2NiIsInBlcm1pc3Npb25zIjoiYmlkRmlsdGVyLHRlbmRlckZpbHRlciIsInBob25lTm8iOiIxNTU4MDA2MjU1MiIsInBraWQiOiIxNTQ2NDE2MzYzIiwicm9sZUNvZGUiOiJzeXNfbWFuZ2VyIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMifQ==.246660C7B74F7FEE2234B1A4DADEF57E";
+        String requestBody = "{\"pageSize\":\"5\",\"pageNo\":\"1\",\"orderStatus\":\"11\",\"channelNo\":\""+ Constant.CHANNEL_IOS+"\"}";  //,"":"" 3AUM6L  test12  1AUM6L
+        String responseString = mockMvc.perform(post("/vip/queryOrderList").characterEncoding("UTF-8")
+                        .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
+                .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
+                        .header("X-TOKEN",token)
         )
                 .andExpect(status().isOk())    //返回的状态是200
                 .andDo(print())         //打印出请求和相应的内容
