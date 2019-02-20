@@ -2,6 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.biaodaa.dao.UserTempBddMapper">
 
+    <update id="updateRoleByTimeOutVip">
+        update mishu_write.sys_user_role ur
+        set ur.role_id=(select pkid from mishu_write.sys_role_info where code='normal'),ur.created=CURRENT_DATE,ur.create_by='system_auto'
+        where exists (select v.v_id from  mishu_write.tb_vip_info v where v.user_id=ur.user_id and v.expired_date &lt; CURRENT_DATE)
+        and ur.role_id=(select pkid from mishu_write.sys_role_info where code='vip1')
+    </update>
+
     <select id="getUserByUserPhone" parameterType="String" resultType="com.silita.biaodaa.model.UserTempBdd">
         SELECT * FROM mishu_write.user_temp_bdd WHERE userPhone = #{userphone}
     </select>

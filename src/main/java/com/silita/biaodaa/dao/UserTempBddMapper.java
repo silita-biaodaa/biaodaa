@@ -14,6 +14,13 @@ import java.util.Map;
 public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
 
     /**
+     * 更新超时的会员用户角色
+     *  vip用户->普通用户
+     * @return
+     */
+    int updateRoleByTimeOutVip();
+
+    /**
      * 获取用户信息
      *
      * @param userPhone
