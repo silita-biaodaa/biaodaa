@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -97,8 +98,9 @@ public class VipServiceImpl implements VipService {
             if (tbVipInfo != null) {
                 vid = tbVipInfo.getVId();
                 Date hisExpiredDate = tbVipInfo.getExpiredDate();
-                if(hisExpiredDate==null){
-                    hisExpiredDate = new Date();
+                Date today = Calendar.getInstance().getTime();
+                if(hisExpiredDate==null || hisExpiredDate.before(today)){
+                    hisExpiredDate = today;
                 }
                 vipRightsChanges.setHisExpiredDate(hisExpiredDate);
                 Date newExpiredDate = MyDateUtils.addDays(hisExpiredDate, feeStandard.getVipDays());
