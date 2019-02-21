@@ -6,7 +6,7 @@ import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.VipService;
-import com.silita.biaodaa.to.ToOpenMember;
+import com.silita.biaodaa.to.OpenMemberTO;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.pay.service.OrderInfoService;
 import com.silita.pay.vo.MyPage;
@@ -89,7 +89,7 @@ public class VipController extends BaseController{
 
     @ResponseBody
     @RequestMapping(value = "/openMemberRights",produces = "application/json;charset=utf-8")
-    public Map<String,Object> openMemberRights(@RequestBody ToOpenMember toOpenMember){
+    public Map<String,Object> openMemberRights(@RequestBody OpenMemberTO toOpenMember){
         Map result = new HashMap();
         try{
             toOpenMember.setUserId(VisitInfoHolder.getUid());

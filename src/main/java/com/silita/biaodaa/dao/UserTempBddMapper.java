@@ -188,4 +188,11 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
      * @return
      */
     Integer deleteRoleByUserId(SysUserRole sysUserRole);
+
+    /**
+     * 根据推荐人邀请码查询用户
+     * @param inviterCode
+     * @return
+     */
+    SysUser queryUserByInviteCode(String inviterCode);
 }

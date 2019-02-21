@@ -10,6 +10,7 @@ import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.service.AuthorizeService;
 import com.silita.biaodaa.service.UserCenterService;
+import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import com.silita.biaodaa.utils.RegexUtils;
@@ -49,6 +50,9 @@ public class UserCenterController {
 
     @Autowired
     private AuthorizeService authorizeService;
+
+    @Autowired
+    private VipService vipService;
 
     /**
      * TODO: 修改用户信息
@@ -171,6 +175,12 @@ public class UserCenterController {
                 Integer records = userCenterService.updateUserInfo(sysUser);
                 if(records ==1) {
                     SysUser vo = authorizeService.memberLogin(sysUser);
+                    if(MyStringUtils.isNotNull(sysUser.getInviterCode())){
+                        String errMsg = vipService.addUserProfit(vo.getChannel(), null, PROFIT_S_CODE_INVITE, sysUser.getInviterCode());
+                        if (errMsg != null) {
+                            logger.error("会员权益赠送出错[sCode:"+PROFIT_S_CODE_INVITE+"]：" + errMsg);
+                        }
+                    }
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "更新用户信息成功！");
                     result.put("data", vo);

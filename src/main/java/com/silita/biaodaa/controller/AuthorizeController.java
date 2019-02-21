@@ -5,6 +5,7 @@ import com.silita.biaodaa.model.InvitationBdd;
 import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.AuthorizeService;
+import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_FIRST;
+import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_INVITE;
 import static com.silita.biaodaa.controller.BaseController.bulidUserPwd;
 
 /**
@@ -30,6 +33,9 @@ public class AuthorizeController {
 
     @Autowired
     private AuthorizeService authorizeService;
+
+    @Autowired
+    VipService vipService;
 
     /**
      * 注册
@@ -74,6 +80,31 @@ public class AuthorizeController {
         return null;
     }
 
+    /**
+     * 邀请会员权益赠送
+     * @param sysUser
+     */
+    private void inviteProfitDeliver(SysUser sysUser){
+        if(MyStringUtils.isNotNull(sysUser.getInviterCode())) {
+            String errMsg = vipService.addUserProfit(sysUser.getChannel(), null, PROFIT_S_CODE_INVITE, sysUser.getInviterCode());
+            if (errMsg != null) {
+                logger.error("会员权益赠送出错[userId:"+sysUser.getPkid()+"][sCode:"+PROFIT_S_CODE_INVITE+"]：" + errMsg);
+            }
+        }
+    }
+
+    private void firstProfitDeliver(SysUser sysUser){
+        Integer hisCount = vipService.queryUserProfitCount(PROFIT_S_CODE_FIRST,sysUser.getPkid());
+        if(hisCount==0) {
+            String errMsg = vipService.addUserProfit(sysUser.getChannel(), sysUser.getPkid(), PROFIT_S_CODE_FIRST);
+            if (errMsg != null) {
+                logger.error("会员权益赠送出错[userId:"+sysUser.getPkid()+"][sCode:" + PROFIT_S_CODE_FIRST + "]：" + errMsg);
+            }
+        }else{
+            logger.debug("权益赠送取消，已存在权益收益！");
+        }
+    }
+
     @ResponseBody
     @RequestMapping(value = "/memberRegister", produces = "application/json;charset=utf-8")
     public Map<String, Object> memberRegister(@RequestBody SysUser sysUser) {
@@ -87,6 +118,9 @@ public class AuthorizeController {
                 bulidUserPwd(sysUser);
                 String msgCode = authorizeService.registerUser(sysUser);
                 if (msgCode.equals(Constant.SUCCESS_CODE)) {
+                    //会员权益赠送
+                    inviteProfitDeliver(sysUser);
+
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("data",authorizeService.memberLogin(sysUser));
                     result.put("msg", "用户注册成功！");
@@ -138,6 +172,8 @@ public class AuthorizeController {
             bulidUserPwd(sysUser);
             SysUser userInfo = authorizeService.memberLogin(sysUser);
             if (userInfo != null) {
+                //会员权益赠送
+                firstProfitDeliver(userInfo);
                 result.put("code", Constant.SUCCESS_CODE);
                 result.put("msg", "用户登录成功！");
                 result.put("data", userInfo);
@@ -243,6 +279,8 @@ public class AuthorizeController {
             if(errCode== null) {
                 SysUser vo =authorizeService.memberThirdLogin(sysUser);
                 if(vo!= null ) {
+                    //会员权益赠送
+                    firstProfitDeliver(vo);
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "第三方登录成功！");
                     result.put("data", vo);
@@ -271,7 +309,12 @@ public class AuthorizeController {
             if(errCode== null) {
                 bulidUserPwd(sysUser);
                 Integer count =authorizeService.thirdPartyBinding(sysUser);
-                if(count!= null && count==1) {
+                if(count!= null) {
+                    if(count==22) {
+                        //会员权益赠送
+                        inviteProfitDeliver(sysUser);
+                    }
+
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "绑定成功！");
                     result.put("data", authorizeService.memberLogin(sysUser));

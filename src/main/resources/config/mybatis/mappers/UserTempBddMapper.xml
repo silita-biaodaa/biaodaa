@@ -457,11 +457,17 @@
         WHERE phone_no =#{phoneNo}
     </select>
 
-  <delete id="deleteRoleByUserId" >
-      delete ur
-      from mishu_write.sys_user_role ur
-      join mishu_write.sys_role_info r on ur.role_id = r.pkid
-      where  ur.user_id=#{userId} and r.grade &lt;(select grade from mishu_write.sys_role_info where code=#{roleCode})
-  </delete>
+      <delete id="deleteRoleByUserId" >
+          delete ur
+          from mishu_write.sys_user_role ur
+          join mishu_write.sys_role_info r on ur.role_id = r.pkid
+          where  ur.user_id=#{userId} and r.grade &lt;(select grade from mishu_write.sys_role_info where code=#{roleCode})
+      </delete>
+
+    <select id="queryUserByInviteCode" parameterType="String" resultType="com.silita.biaodaa.model.SysUser">
+        SELECT *
+        FROM mishu_write.sys_user_info
+        WHERE own_invite_code =#{inviterCode}
+    </select>
 
 </mapper>

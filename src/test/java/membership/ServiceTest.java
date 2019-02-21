@@ -1,7 +1,11 @@
 package membership;
 
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.dao.UserTempBddMapper;
+import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.service.ConfigTest;
+import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.utils.ShareCodeUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,12 @@ public class ServiceTest extends ConfigTest {
     @Autowired
     MyRedisTemplate myRedisTemplate;
 
+    @Autowired
+    VipService vipService;
+
+    @Autowired
+    UserTempBddMapper userTempBddMapper;
+
     @Test
     public void testShareCode()throws Exception{
         long id =0L;
@@ -30,5 +40,12 @@ public class ServiceTest extends ConfigTest {
 
             System.out.println(id+"--"+ShareCodeUtils.idToCode(id));
         }
+    }
+
+    @Test
+    public void testAddUserProfit(){
+        String inviterCode= "3AUM6L";
+        SysUser u =  userTempBddMapper.queryUserByInviteCode(inviterCode);
+        vipService.addUserProfit(Constant.CHANNEL_ANDROID,u.getPkid(),Constant.PROFIT_S_CODE_INVITE,inviterCode);
     }
 }

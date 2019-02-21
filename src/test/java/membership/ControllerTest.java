@@ -7,7 +7,7 @@ import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.ConfigTest;
 import com.silita.biaodaa.service.NoticeService;
-import com.silita.biaodaa.to.ToOpenMember;
+import com.silita.biaodaa.to.OpenMemberTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class ControllerTest extends ConfigTest {
     @Test
     public void memberLogin()throws Exception{
         String requestBody = "{\"loginName\":\"\",\"loginPwd\":\"123456\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
-        requestBody = "{\"loginName\":\"\",\"loginPwd\":\"8428cd0116f3625394bc2880f6b0689b8f70a9e7\",\"phoneNo\":\"15580062552\",\"channel\":\"1001\",\"clientVersion\":\"10611\"}";
+        requestBody = "{\"loginName\":\"\",\"loginPwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phoneNo\":\"13319555806\",\"channel\":\"1001\",\"clientVersion\":\"10611\"}";
         String responseString = mockMvc.perform(post("/authorize/memberLogin").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -80,7 +80,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void memberRegister()throws Exception{ //714241
-        String requestBody = "{\"inviterCode\":\"test12\",\"verifyCode\":\"111259\",\"loginName\":\"\",\"loginPwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"22222\"}";
+        String requestBody = "{\"inviterCode\":\"3AUM6L\",\"verifyCode\":\"889779\",\"loginName\":\"\",\"loginPwd\":\"7c222fb2927d828af22f592134e8932480637c0d\",\"phoneNo\":\"13319555806\",\"channel\":\"1001\",\"clientVersion\":\"22222\"}";
         String responseString = mockMvc.perform(post("/authorize/memberRegister").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -281,8 +281,8 @@ public class ControllerTest extends ConfigTest {
     @Test
     public void testOpenMemberRights()throws Exception{
         token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luVGltZSI6IjE1NDc3ODA2Mzc1MTEiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDIiLCJwa2lkIjoiODk3ZDg0OTcxOTZkNDEzNWIwZGVjMmI4MmJhNmY0YTIiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.5BE6C3353FE092F265DDC2F782979302";
-        token="MjAxOTAxMDM=.eyJsb2dpbk5hbWUiOiJjYXJlZmVlIiwibG9naW5UaW1lIjoiMTU0ODIyNTEwODYyOSIsInBlcm1pc3Npb25zIjoiYmlkX2ZpbHRlcix0ZW5kZXJfZmlsdGVyIiwicGhvbmVObyI6IjE1NTgwMDYyNTUyIiwicGtpZCI6IjE1NDY0MTYzNjMiLCJyb2xlQ29kZSI6InN5c19tYW5nZXIiLCJ0b2tlblZlcnNpb24iOiIyMDE5MDEwMyJ9.1D0400A9EB8BDFE65867C456B3604EA5";
-        ToOpenMember toOpenMember= new ToOpenMember();
+        token="MjAxOTAxMDM=.eyJsb2dpbk5hbWUiOiJjYXJlZmVlIiwibG9naW5UaW1lIjoiMTU1MDY1MDM5NzM5NiIsInBlcm1pc3Npb25zIjoiIiwicGhvbmVObyI6IjE1NTgwMDYyNTUyIiwicGtpZCI6IjE1NDY0MTYzNjMiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.69963CDBB11E9E18104555C562BCCC49";
+        OpenMemberTO toOpenMember= new OpenMemberTO();
         toOpenMember.setChannel("1002");
         TbVipFeeStandard tbVipFeeStandard = new TbVipFeeStandard();
         tbVipFeeStandard.setStdCode("quarter");
@@ -304,7 +304,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void testRefreshUserInfo()throws Exception {
-        token="MjAxOTAxMDM=.eyJsb2dpbk5hbWUiOiJjYXJlZmVlIiwibG9naW5UaW1lIjoiMTU0ODM4MTk1NDQ2NiIsInBlcm1pc3Npb25zIjoiYmlkRmlsdGVyLHRlbmRlckZpbHRlciIsInBob25lTm8iOiIxNTU4MDA2MjU1MiIsInBraWQiOiIxNTQ2NDE2MzYzIiwicm9sZUNvZGUiOiJzeXNfbWFuZ2VyIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMifQ==.246660C7B74F7FEE2234B1A4DADEF57E";
+        token="MjAxOTAxMDM=.eyJsb2dpbk5hbWUiOiJjYXJlZmVlIiwibG9naW5UaW1lIjoiMTU1MDY1MDM5NzM5NiIsInBlcm1pc3Npb25zIjoiIiwicGhvbmVObyI6IjE1NTgwMDYyNTUyIiwicGtpZCI6IjE1NDY0MTYzNjMiLCJyb2xlQ29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIn0=.69963CDBB11E9E18104555C562BCCC49";
         String requestBody = "{\"sex\":\"0\"}";  //,"":"" 3AUM6L  test12  1AUM6L
         requestBody = "";
         String responseString = mockMvc.perform(post("/userCenter/refreshUserInfo").characterEncoding("UTF-8")
@@ -332,4 +332,7 @@ public class ControllerTest extends ConfigTest {
                 .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
         System.out.println("-----返回的json = " + responseString);
     }
+
+
 }
+

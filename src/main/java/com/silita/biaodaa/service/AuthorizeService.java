@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_INVITE;
 import static java.util.Base64.getEncoder;
 
 /**
@@ -98,7 +99,7 @@ public class AuthorizeService {
             res = userTempBddMapper.updateSysUser(sysUser);
         }else if (userList==null || userList.size()==0){//手机号不存在,新建用户
             createMemberUser(sysUser);
-            res=1;
+            res=22;
         }else{//异常
             logger.error("异常情况，手机号存在多个。[sysUser.getPhoneNo():"+sysUser.getPhoneNo()+"]");
         }
@@ -511,13 +512,12 @@ public class AuthorizeService {
         return  null;
     }
 
-
-
     /**
      * 新用户注册
      * @param sysUser
      * @return
      */
+    @Transactional
     public synchronized String registerUser(SysUser sysUser)throws Exception{
         //判断手机验证码是否有效
         String vMsg = verifyPhoneCode(sysUser);
@@ -537,7 +537,7 @@ public class AuthorizeService {
         if(vList!=null && vList.size()>0) {
             return Constant.ERR_USER_EXIST;
         }
-
+        //创建会员用户
         createMemberUser(sysUser);
         return Constant.SUCCESS_CODE;
     }
@@ -546,7 +546,7 @@ public class AuthorizeService {
      * 创建新用户与角色
      * @param sysUser
      */
-    private void createMemberUser(SysUser sysUser){
+    private SysUser createMemberUser(SysUser sysUser){
         String uid = CommonUtil.getUUID();
         String rId = CommonUtil.getUUID();
         sysUser.setPkid(uid);
@@ -560,6 +560,7 @@ public class AuthorizeService {
         role.setRoleCode("normal");
         role.setCreateBy(sysUser.getClientVersion());
         userTempBddMapper.insertUserRole(role);
+        return  sysUser;
     }
 
     /**

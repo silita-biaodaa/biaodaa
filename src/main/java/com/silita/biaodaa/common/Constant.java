@@ -69,6 +69,13 @@ public class Constant {
     public static final String LOGIN_HASH_KEY="loginRecords";
     public static final String LOGIN_STATS_HASH_KEY="loginStats";
 
+    public static final String ROLE_CODE_NORMAL="normal";
+    public static final String ROLE_CODE_VIP="vip1";
+
+    //活动编码
+    public static final String PROFIT_S_CODE_INVITE="a-inviter";
+    public static final String PROFIT_S_CODE_FIRST="a-first";
+
     public static String buildLoginChanelKey(String userid,String channel){
         StringBuilder sb = new StringBuilder(userid);
         if(CHANNEL_ANDROID.equals(channel) || CHANNEL_IOS.equals(channel)){

@@ -2,6 +2,7 @@ package com.silita.biaodaa.dao;
 
 import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.model.TbVipInfo;
+import com.silita.biaodaa.model.TbVipProfitSettings;
 import com.silita.biaodaa.model.TbVipProfits;
 
 import java.util.List;
@@ -25,5 +26,27 @@ public interface VipInfoMapper {
      * @return
      */
     TbVipFeeStandard queryFeeStandardByCode(String stdCode);
+
+    /**
+     * 获取活动权益
+     * @param channel
+     * @return
+     */
+    TbVipProfitSettings queryProfitSettingsByCode(String channel,String sCode);
+
+    /**
+     * 记录会员收益明细
+     * @param tbVipProfits
+     * @return
+     */
+    int insertVipProfits(TbVipProfits tbVipProfits);
+
+    /**
+     * 查询用户某活动的赠送次数
+     * @param sCode
+     * @param userId
+     * @return
+     */
+    Integer queryUserProfitCount(String sCode,String userId);
 
 }

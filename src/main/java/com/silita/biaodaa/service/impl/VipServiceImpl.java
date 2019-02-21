@@ -2,12 +2,14 @@ package com.silita.biaodaa.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.dao.TbVipRightsChangesMapper;
 import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.dao.VipInfoMapper;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.service.VipService;
-import com.silita.biaodaa.to.ToOpenMember;
+import com.silita.biaodaa.to.OpenMemberTO;
+import com.silita.biaodaa.to.UpdateVipDayTO;
 import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
@@ -19,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_FIRST;
 
 /**
  * 会员逻辑
@@ -36,6 +40,68 @@ public class VipServiceImpl implements VipService {
 
     @Autowired
     private TbVipRightsChangesMapper tbVipRightsChangesMapper;
+
+    /**
+     * 查询用户的活动收益次数
+     * @param sCode
+     * @param userId
+     * @return
+     */
+    public Integer queryUserProfitCount(String sCode,String userId){
+        return vipInfoMapper.queryUserProfitCount(sCode,userId);
+    }
+
+    /**
+     * 增加用户会员权益（活动类）
+     */
+    @Transactional
+    public synchronized String addUserProfit(String channel,String userId, String sCode,String... others){
+        String errMsg= null;
+        if(sCode==null){
+            return "权益编码为空";
+        }
+        String inviterCode = ((others!=null && others.length>0) ? others[0]:null);
+        try {
+            if(userId==null){
+                userId =  userTempBddMapper.queryUserByInviteCode(inviterCode).getPkid();
+            }
+            if(userId==null){
+                return "用户id为空（或根据推荐人邀请码匹配赠送用户id失败）。";
+            }
+            TbVipInfo tbVipInfo = vipInfoMapper.queryVipInfoById(userId);
+            TbVipProfitSettings profitSettings = vipInfoMapper.queryProfitSettingsByCode(channel,sCode);
+            if(PROFIT_S_CODE_FIRST.equals(sCode)) {
+                if(vipInfoMapper.queryUserProfitCount(sCode, userId) > 0){
+                    logger.warn("权益赠送存在疑似并发请求。addUserProfit[sCode:"+sCode+"][userId:"+userId+"]");
+                    return "权益赠送取消，已存在权益收益！";
+                }
+            }
+            if ( profitSettings != null) {
+                //会员天数叠加
+                UpdateVipDayTO to = updateVipInfos(tbVipInfo, userId, profitSettings.getVipDays());
+                if (to.getVipInfoRecord() == 1) {//会员主表更新成功
+                    //会员收益活动明细记录
+                    TbVipProfits tbVipProfits = new TbVipProfits();
+                    tbVipProfits.setVProfitsId(CommonUtil.getUUID());
+                    tbVipProfits.setHisExpiredDate(to.getHisExpiredDate());
+                    tbVipProfits.setSettingsCode(profitSettings.getSettingsCode());
+                    tbVipProfits.setVId(to.getVid());
+                    tbVipProfits.setIncreaseDays(profitSettings.getVipDays());
+                    tbVipProfits.setCreateBy(channel);
+                    tbVipProfits.setInviterCode(inviterCode);
+                    int insertCount = vipInfoMapper.insertVipProfits(tbVipProfits);
+                } else {
+                    errMsg = "会员主表更新失败, 请重试。[userId:" + userId + "]";
+                }
+            }else{
+                errMsg = "会员信息或活动权益配置为空！[userId:" + userId + "][profitSettings:" + profitSettings + "]";
+            }
+        }catch (Exception e){
+            logger.error(e,e);
+            errMsg= "服务异常："+e.getMessage();
+        }
+        return errMsg;
+    }
 
     public List<TbVipFeeStandard> queryFeeStandard(String channel){
         return vipInfoMapper.queryFeeStandard(channel);
@@ -63,7 +129,7 @@ public class VipServiceImpl implements VipService {
         return vipInfoMapper.queryProfitTotal(userId);
     }
 
-    private String preOpenMember(ToOpenMember toOpenMember){
+    private String preOpenMember(OpenMemberTO toOpenMember){
         if(MyStringUtils.isNull(toOpenMember.getUserId())){
             return "用户id不能为空";
         }
@@ -78,12 +144,64 @@ public class VipServiceImpl implements VipService {
     }
 
     /**
+     * 增加vip权益天数,同时检查角色匹配程度
+     * @param tbVipInfo
+     * @param userId
+     * @param addDays
+     * @return
+     */
+    private UpdateVipDayTO updateVipInfos(TbVipInfo tbVipInfo, String userId, int addDays){
+        UpdateVipDayTO updateVipDayTO = new UpdateVipDayTO();
+        int vipInfoRecord = -1;
+        String vid = null;
+        Date hisExpiredDate =null;
+        Date today = Calendar.getInstance().getTime();
+        if (tbVipInfo != null) {
+            vid = tbVipInfo.getVId();
+            hisExpiredDate = tbVipInfo.getExpiredDate();
+            if(hisExpiredDate==null || hisExpiredDate.before(today)){
+                hisExpiredDate = today;
+            }
+            Date newExpiredDate = MyDateUtils.addDays(hisExpiredDate, addDays);
+            tbVipInfo.setExpiredDate(newExpiredDate);
+            vipInfoRecord = vipInfoMapper.updateVipInfo(tbVipInfo);
+        } else {
+            tbVipInfo = new TbVipInfo();
+            vid = CommonUtil.getUUID();
+            tbVipInfo.setVId(vid);
+            tbVipInfo.setUserId(userId);
+            tbVipInfo.setExpiredDate(MyDateUtils.addDays(today, addDays));
+            tbVipInfo.setLevel(1);
+            vipInfoRecord = vipInfoMapper.insertVipInfo(tbVipInfo);
+        }
+
+        updateVipDayTO.setVid(vid);
+        updateVipDayTO.setHisExpiredDate(hisExpiredDate);
+        updateVipDayTO.setVipInfoRecord(vipInfoRecord);
+
+        //检查角色关联关系
+        SysUserRole sysUserRole = new SysUserRole();
+        sysUserRole.setUserId(userId);
+        sysUserRole.setRoleCode("vip1");
+        sysUserRole.setPkid(CommonUtil.getUUID());
+        int delRoleCount = userTempBddMapper.deleteRoleByUserId(sysUserRole);
+        if (delRoleCount > 0) {
+            int roleUpdateCount = userTempBddMapper.insertUserRole(sysUserRole);
+            updateVipDayTO.setRoleUpdateCount(roleUpdateCount);
+        } else {
+            logger.debug("角色无需变更，[userId:" + sysUserRole.getUserId() + "]");
+        }
+
+        return updateVipDayTO;
+    }
+
+    /**
      * 开通会员
      * @param toOpenMember
      * @return
      */
     @Transactional
-    public String openMemberRights(ToOpenMember toOpenMember){
+    public String openMemberRights(OpenMemberTO toOpenMember){
         String paramCheck = preOpenMember(toOpenMember);
         if(paramCheck != null){
             return paramCheck;
@@ -92,60 +210,29 @@ public class VipServiceImpl implements VipService {
             TbVipInfo tbVipInfo = vipInfoMapper.queryVipInfoById(toOpenMember.getUserId());
             TbVipRightsChanges vipRightsChanges = new TbVipRightsChanges();
             TbVipFeeStandard feeStandard = vipInfoMapper.queryFeeStandardByCode(toOpenMember.getFeeStandard().getStdCode());
-            String vid = null;
-
-            int vipInfoRecord = -1;
-            if (tbVipInfo != null) {
-                vid = tbVipInfo.getVId();
-                Date hisExpiredDate = tbVipInfo.getExpiredDate();
-                Date today = Calendar.getInstance().getTime();
-                if(hisExpiredDate==null || hisExpiredDate.before(today)){
-                    hisExpiredDate = today;
-                }
-                vipRightsChanges.setHisExpiredDate(hisExpiredDate);
-                Date newExpiredDate = MyDateUtils.addDays(hisExpiredDate, feeStandard.getVipDays());
-                tbVipInfo.setExpiredDate(newExpiredDate);
-                tbVipInfo.setUpdateBy(toOpenMember.getChannel());
-                vipInfoRecord = vipInfoMapper.updateVipInfo(tbVipInfo);
-            } else {
-                tbVipInfo = new TbVipInfo();
-                vid = CommonUtil.getUUID();
-                tbVipInfo.setVId(vid);
-                tbVipInfo.setUserId(toOpenMember.getUserId());
-                tbVipInfo.setCreateBy(toOpenMember.getChannel());
-                tbVipInfo.setExpiredDate(MyDateUtils.addDays(new Date(), feeStandard.getVipDays()));
-                tbVipInfo.setLevel(1);
-                vipInfoRecord = vipInfoMapper.insertVipInfo(tbVipInfo);
-            }
-
-            int roleUpdateCount = -1;
-            int rightsChangeCount = -1;
-            if (vipInfoRecord == 1) {//会员主表更新成功
-                SysUserRole sysUserRole = new SysUserRole();
-                sysUserRole.setUserId(toOpenMember.getUserId());
-                sysUserRole.setRoleCode("vip1");
-                sysUserRole.setPkid(CommonUtil.getUUID());
-                roleUpdateCount = userTempBddMapper.deleteRoleByUserId(sysUserRole);
-                if (roleUpdateCount > 0) {
-                    roleUpdateCount = userTempBddMapper.insertUserRole(sysUserRole);
+            if(feeStandard!=null) {
+                UpdateVipDayTO to = updateVipInfos(tbVipInfo, toOpenMember.getUserId(), feeStandard.getVipDays());
+                int vipInfoRecord = to.getVipInfoRecord();
+                String vid = to.getVid();
+                if (vipInfoRecord == 1) {//会员主表更新成功
+                    //会员权益记录
+                    vipRightsChanges.setHisExpiredDate(to.getHisExpiredDate());
+                    vipRightsChanges.setVRightsId(CommonUtil.getUUID());
+                    vipRightsChanges.setVId(vid);
+                    vipRightsChanges.setVFeeStdId(feeStandard.getFeeStdId());
+                    vipRightsChanges.setRightsNum(1);
+                    vipRightsChanges.setModType("0");
+                    vipRightsChanges.setIncreaseDays(feeStandard.getVipDays());
+                    int rightsChangeCount = tbVipRightsChangesMapper.saveVipRightsChange(vipRightsChanges);
+                    if (rightsChangeCount != 1) {
+                        logger.warn("会员权益变更信息保存失败。[userId:" + toOpenMember.getUserId() + "]");
+                    }
+                    return null;
                 } else {
-                    logger.debug("角色无需变更，[userId:" + sysUserRole.getUserId() + "]");
+                    return "会员主表更新失败, 请重试。";
                 }
-
-                //会员
-                vipRightsChanges.setVRightsId(CommonUtil.getUUID());
-                vipRightsChanges.setVId(vid);
-                vipRightsChanges.setVFeeStdId(feeStandard.getFeeStdId());
-                vipRightsChanges.setRightsNum(1);
-                vipRightsChanges.setModType("0");
-                vipRightsChanges.setIncreaseDays(feeStandard.getVipDays());
-                rightsChangeCount = tbVipRightsChangesMapper.saveVipRightsChange(vipRightsChanges);
-                if (rightsChangeCount != 1) {
-                    logger.warn("会员权益变更信息保存失败。[userId:" + sysUserRole.getUserId() + "]");
-                }
-                return null;
-            } else {
-                return "会员主表更新失败, 请重试。";
+            }else{
+                return "会员信息或收费标准配置为空！[userId:"+toOpenMember.getUserId()+"][feeStandard:"+feeStandard+"]";
             }
         }catch (Exception e){
             logger.error(e,e);

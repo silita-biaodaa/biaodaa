@@ -2,6 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.biaodaa.dao.VipInfoMapper">
 
+    <select id="queryUserProfitCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM mishu_write.tb_vip_profits
+        WHERE settings_code=#{param1} AND v_id=(SELECT v_id FROM mishu_write.tb_vip_info WHERE user_id=#{param2})
+    </select>
+    
+    <insert id="insertVipProfits" parameterType="com.silita.biaodaa.model.TbVipProfits">
+      insert into  mishu_write.tb_vip_profits
+      (v_profits_id,settings_code,v_id,
+      inviter_code,his_expired_date,created,
+      increase_days,create_by)
+      VALUES
+      (#{vProfitsId},#{settingsCode},#{vId},
+      #{inviterCode},#{hisExpiredDate},current_timestamp,
+      #{increaseDays},#{createBy});
+    </insert>
+
+    <select id="queryProfitSettingsByCode" parameterType="String" resultType="com.silita.biaodaa.model.TbVipProfitSettings">
+        select *
+        from mishu_write.tb_vip_profit_settings
+        where (begin_date &lt;=current_date and  end_date &gt;=current_date )
+          and (channel='common' or channel=#{param1}) and settings_code=#{param2} and state=true
+    </select>
+
     <select id="queryVipInfoById" parameterType="String" resultType="com.silita.biaodaa.model.TbVipInfo">
         select *
         from mishu_write.tb_vip_info
