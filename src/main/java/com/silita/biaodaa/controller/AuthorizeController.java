@@ -118,11 +118,12 @@ public class AuthorizeController {
                 bulidUserPwd(sysUser);
                 String msgCode = authorizeService.registerUser(sysUser);
                 if (msgCode.equals(Constant.SUCCESS_CODE)) {
+                    SysUser vo = authorizeService.memberLogin(sysUser);
                     //会员权益赠送
                     inviteProfitDeliver(sysUser);
-
+                    firstProfitDeliver(vo);
                     result.put("code", Constant.SUCCESS_CODE);
-                    result.put("data",authorizeService.memberLogin(sysUser));
+                    result.put("data",vo);
                     result.put("msg", "用户注册成功！");
                 } else {
                     result.put("code", msgCode);
@@ -310,14 +311,15 @@ public class AuthorizeController {
                 bulidUserPwd(sysUser);
                 Integer count =authorizeService.thirdPartyBinding(sysUser);
                 if(count!= null) {
+                    SysUser vo =authorizeService.memberLogin(sysUser);
                     if(count==22) {
                         //会员权益赠送
                         inviteProfitDeliver(sysUser);
                     }
-
+                    firstProfitDeliver(vo);
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "绑定成功！");
-                    result.put("data", authorizeService.memberLogin(sysUser));
+                    result.put("data", vo);
                 }else{
                     result.put("code", Constant.FAIL_CODE);
                     result.put("msg", "绑定失败，请重试。");
