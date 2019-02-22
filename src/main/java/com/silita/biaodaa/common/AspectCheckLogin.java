@@ -225,7 +225,7 @@ public class AspectCheckLogin {
                         phone = paramMap.get("phoneNo");
                         userId = paramMap.get("pkid");
                         String chanel = paramMap.get("channel");
-                        date = Long.parseLong(paramMap.get("loginTime")!=null ? paramMap.get("loginTime"):"0");
+                        date = Long.parseLong((paramMap.get("loginTime")!=null && !paramMap.get("loginTime").equals("null"))? paramMap.get("loginTime"):"0");
                         //单用户多渠道登录状态校验
                         if(!verifyLoginByChannel(userId,chanel,date)) {
                             resMap.put("code",Constant.ERR_VERIFY_USER_TOKEN);

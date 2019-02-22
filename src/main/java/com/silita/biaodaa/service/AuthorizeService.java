@@ -190,8 +190,7 @@ public class AuthorizeService {
      * @return
      */
     private SysUser sysUserLoginSuccess(SysUser user){
-        Long time = System.currentTimeMillis();
-        user.setLoginTime(time);//设置登录时间
+        user.setLoginTime(System.currentTimeMillis());//设置登录时间
         user.setXtoken(TokenUtils.buildToken(user));
         updateLoginRecord(user);
         return user;
@@ -202,17 +201,34 @@ public class AuthorizeService {
      * @return
      */
     public SysUser memberLogin(SysUser param){
-        List<SysUser> resList = userTempBddMapper.queryUserInfo(param);
-        if(resList!=null && resList.size()==1){
-            //用户校验成功
-            SysUser user = resList.get(0);
+        SysUser user = queryUserInfo(param);
+        if(user!=null){
             return sysUserLoginSuccess(user);
         }else{
-            //用户校验失败
-            logger.debug("用户校验失败[resList:"+resList+"][param:"+param.toString()+"]");
             return null;
         }
     }
+
+    private SysUser queryUserInfo(SysUser param){
+        List<SysUser> resList = userTempBddMapper.queryUserInfo(param);
+        if(resList!=null && resList.size()==1){
+            return resList.get(0);
+        }else{
+            logger.warn("用户信息查询失败[resList:"+resList+"][param:"+param.toString()+"]");
+            return null;
+        }
+    }
+
+    public SysUser refreshUserInfo(SysUser param){
+        SysUser user = queryUserInfo(param);
+        if(user!=null){
+            user.setLoginTime(System.currentTimeMillis());//设置登录时间
+            user.setXtoken(TokenUtils.buildToken(user));
+        }
+        return user;
+    }
+
+
 
     /**
      * 用户登录
@@ -552,6 +568,9 @@ public class AuthorizeService {
         sysUser.setPkid(uid);
         sysUser.setCreateBy(sysUser.getClientVersion());
         sysUser.setOwnInviteCode(constructShareCode());
+        if(MyStringUtils.isNull(sysUser.getNikeName())){
+            sysUser.setNikeName(sysUser.getPhoneNo());
+        }
         userTempBddMapper.insertUserInfo(sysUser);
 
         SysUserRole role = new SysUserRole();

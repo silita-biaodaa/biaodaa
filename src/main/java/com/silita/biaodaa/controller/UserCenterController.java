@@ -217,7 +217,7 @@ public class UserCenterController {
         try {
             SysUser sysUser = new SysUser();
             sysUser.setPkid(VisitInfoHolder.getUid());
-            SysUser vo = authorizeService.memberLogin(sysUser);
+            SysUser vo = authorizeService.refreshUserInfo(sysUser);
             if(vo !=null){
                 result.put("code", Constant.SUCCESS_CODE);
                 result.put("msg", "刷新用户信息成功！");
