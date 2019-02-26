@@ -195,4 +195,8 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
      * @return
      */
     SysUser queryUserByInviteCode(String inviterCode);
+
+    void batchFixInviteCode(List<String> invitCodeList);
+
+    int queryNullInvitCodeCount();
 }

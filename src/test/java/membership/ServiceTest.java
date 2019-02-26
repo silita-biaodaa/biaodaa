@@ -6,6 +6,7 @@ import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.service.ConfigTest;
 import com.silita.biaodaa.service.VipService;
+import com.silita.biaodaa.task.HisUserInfoTask;
 import com.silita.biaodaa.utils.ShareCodeUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class ServiceTest extends ConfigTest {
     @Autowired
     UserTempBddMapper userTempBddMapper;
 
+    @Autowired
+    HisUserInfoTask hisUserInfoTask;
+
     @Test
     public void testShareCode()throws Exception{
         long id =0L;
@@ -47,5 +51,10 @@ public class ServiceTest extends ConfigTest {
         String inviterCode= "3AUM6L";
         SysUser u =  userTempBddMapper.queryUserByInviteCode(inviterCode);
         vipService.addUserProfit(Constant.CHANNEL_ANDROID,u.getPkid(),Constant.PROFIT_S_CODE_INVITE,inviterCode);
+    }
+
+    @Test
+    public void testHisUserInfoTask(){
+        hisUserInfoTask.batchFixInviteCode();
     }
 }

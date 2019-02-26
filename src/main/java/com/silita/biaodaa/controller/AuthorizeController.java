@@ -47,23 +47,26 @@ public class AuthorizeController {
     @RequestMapping(value = "/userRegister", produces = "application/json;charset=utf-8")
     public Map<String, Object> userRegister(@RequestBody UserTempBdd userTempBdd) {
         Map result = new HashMap();
-        result.put("code", 1);
-        result.put("data", null);
+//        result.put("code", 1);
+//        result.put("data", null);
+//
+//        try {
+//            String msg = authorizeService.addUserTemp(userTempBdd);
+//            if ("".equals(msg)) {
+//                result.put("msg", "用户注册成功！");
+//                result.put("data", authorizeService.queryUserTempByUserPhone(userTempBdd));
+//            } else {
+//                result.put("code", 0);
+//                result.put("msg", msg);
+//            }
+//        } catch (Exception e) {
+//            logger.error("用户注册异常！" + e.getMessage(), e);
+//            result.put("code", 0);
+//            result.put("msg", e.getMessage());
+//        }
 
-        try {
-            String msg = authorizeService.addUserTemp(userTempBdd);
-            if ("".equals(msg)) {
-                result.put("msg", "用户注册成功！");
-                result.put("data", authorizeService.queryUserTempByUserPhone(userTempBdd));
-            } else {
-                result.put("code", 0);
-                result.put("msg", msg);
-            }
-        } catch (Exception e) {
-            logger.error("用户注册异常！" + e.getMessage(), e);
-            result.put("code", 0);
-            result.put("msg", e.getMessage());
-        }
+        result.put("code", 0);
+        result.put("msg", "注册用户失败，请更新app版本再注册。");
         return result;
     }
 
@@ -346,27 +349,29 @@ public class AuthorizeController {
     @RequestMapping(value = "/thirdPartyBindingOrRegister", produces = "application/json;charset=utf-8")
     public Map<String, Object> thirdPartyBinding(@RequestBody UserTempBdd userTempBdd) {
         Map result = new HashMap();
-        result.put("code", 1);
-        result.put("data", null);
-
-        try {
-            String msg = authorizeService.updateOrInsetUserTemp(userTempBdd);
-            if ("".equals(msg)) {
-                if (userTempBdd.getType() == 1) {
-                    result.put("msg", "绑定微信成功！");
-                } else if (userTempBdd.getType() == 2) {
-                    result.put("msg", "绑定QQ成功！");
-                }
-                result.put("data", authorizeService.queryUserTempByUserPhone(userTempBdd));
-            } else {
-                result.put("code", 0);
-                result.put("msg", msg);
-            }
-        } catch (Exception e) {
-            logger.error("用户绑定第三方账号异常！" + e.getMessage(), e);
-            result.put("code", 0);
-            result.put("msg", e.getMessage());
-        }
+//        result.put("code", 1);
+//        result.put("data", null);
+//
+//        try {
+//            String msg = authorizeService.updateOrInsetUserTemp(userTempBdd);
+//            if ("".equals(msg)) {
+//                if (userTempBdd.getType() == 1) {
+//                    result.put("msg", "绑定微信成功！");
+//                } else if (userTempBdd.getType() == 2) {
+//                    result.put("msg", "绑定QQ成功！");
+//                }
+//                result.put("data", authorizeService.queryUserTempByUserPhone(userTempBdd));
+//            } else {
+//                result.put("code", 0);
+//                result.put("msg", msg);
+//            }
+//        } catch (Exception e) {
+//            logger.error("用户绑定第三方账号异常！" + e.getMessage(), e);
+//            result.put("code", 0);
+//            result.put("msg", e.getMessage());
+//        }
+        result.put("code", 0);
+        result.put("msg", "第三方绑定失败，请更新app版本再进行操作。");
         return result;
     }
 

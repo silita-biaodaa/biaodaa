@@ -470,4 +470,20 @@
         WHERE own_invite_code =#{inviterCode}
     </select>
 
+    <update id="batchFixInviteCode" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update mishu_write.sys_user_info
+            <set>
+                own_invite_code=#{item}
+            </set>
+            where own_invite_code is null or own_invite_code='' limit 1
+        </foreach>
+    </update>
+
+    <select id="queryNullInvitCodeCount" resultType="int">
+        SELECT count(1)
+        FROM mishu_write.sys_user_info
+        where own_invite_code is null or own_invite_code=''
+    </select>
+
 </mapper>

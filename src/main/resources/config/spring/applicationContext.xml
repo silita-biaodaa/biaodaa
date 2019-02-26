@@ -76,7 +76,8 @@
 	<tx:advice id="txAdvice" transaction-manager="txManager">
 		<tx:attributes>
 			<tx:method name="get*" read-only="true" propagation="NOT_SUPPORTED" />
-			<tx:method name="*" rollback-for="java.lang.Exception" propagation="REQUIRED" />
+            <tx:method name="batch*" rollback-for="java.lang.Exception" propagation="REQUIRED" />
+            <tx:method name="*" rollback-for="java.lang.Exception" propagation="REQUIRED" />
 		</tx:attributes>
 	</tx:advice>
 	<aop:config>

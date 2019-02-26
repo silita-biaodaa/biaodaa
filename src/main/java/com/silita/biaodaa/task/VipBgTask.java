@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
  */
 @EnableScheduling
 @Component
-public class vipBgTask {
-    private static final Logger logger = Logger.getLogger(CompanyController.class);
+public class VipBgTask {
+    private static final Logger logger = Logger.getLogger(VipBgTask.class);
 
     @Autowired
     UserTempBddMapper userTempBddMapper;
 
-    @Scheduled(cron = "30 0 0 * * *")//每天凌晨执行
+    @Scheduled(cron = "10 0 0 * * *")//每天凌晨执行
     public void vipExpiredCheck(){
         logger.info("####vipExpiredCheck start...");
         int count = userTempBddMapper.updateRoleByTimeOutVip();

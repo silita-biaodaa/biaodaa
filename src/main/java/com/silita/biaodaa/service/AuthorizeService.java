@@ -587,7 +587,7 @@ public class AuthorizeService {
      * @return
      * @throws Exception
      */
-    private String constructShareCode(){
+    public String constructShareCode(){
         Long unique = getIdByRedis();
         if(unique ==null){
             logger.error("邀请码生成出错：从redis获取id失败，请检查redis服务！");
@@ -606,5 +606,13 @@ public class AuthorizeService {
             hashKey="defaultMap";
         }
         return myRedisTemplate.incrementHash(rKey,hashKey,1L);
+    }
+
+    public void batchFixInviteCode(List<String> invitCodeList){
+        userTempBddMapper.batchFixInviteCode(invitCodeList);
+    }
+
+    public int queryNullInvitCodeCount(){
+        return userTempBddMapper.queryNullInvitCodeCount();
     }
 }
