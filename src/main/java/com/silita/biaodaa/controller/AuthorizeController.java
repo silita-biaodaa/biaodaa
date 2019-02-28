@@ -618,6 +618,9 @@ public class AuthorizeController {
             }
             user.setSex(sex);
         }
+        if (null != userTempBdd && null != userTempBdd.getUserid()){
+            user.setPkid(userTempBdd.getUserid());
+        }
         return user;
     }
 }
