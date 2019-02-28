@@ -63,16 +63,17 @@ public class AuthorizeService {
         if (userVo != null && !StringUtils.isEmpty(userVo.getUserphone())) {
             return "手机号码已被注册！";
         }
+        userTempBdd.setPassword(userTempBdd.getUserpass());
         //判断验证码是否有效
-        Map<String, Object> params = new HashMap<>(1);
-        params.put("invitationPhone", userTempBdd.getUserphone());
-        params.put("invitationCode", userTempBdd.getInvitationCode());
-        InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
-        if (null == invitationVo) {
-            return "验证码错误或无效！";
-        } else if ("1".equals(invitationVo.getInvitationState())) {
-            return "验证码失效！";
-        }
+//        Map<String, Object> params = new HashMap<>(1);
+//        params.put("invitationPhone", userTempBdd.getUserphone());
+//        params.put("invitationCode", userTempBdd.getInvitationCode());
+//        InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
+//        if (null == invitationVo) {
+//            return "验证码错误或无效！";
+//        } else if ("1".equals(invitationVo.getInvitationState())) {
+//            return "验证码失效！";
+//        }
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
         if (userTempBdd.getLoginchannel().equals("1002") && Integer.parseInt(userTempBdd.getVersion()) > 10100) {
         } else if (userTempBdd.getLoginchannel().equals("1001") && Integer.parseInt(userTempBdd.getVersion()) > 10600) {
@@ -83,8 +84,8 @@ public class AuthorizeService {
         //添加用户及角色
         userTempBddMapper.InsertUserTemp(userTempBdd);
         userRoleBddMapper.insertUserRole(userTempBdd.getUserid());
-        //更新验证码状态
-        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
+//        //更新验证码状态
+//        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
         return "";
     }
 
@@ -134,15 +135,15 @@ public class AuthorizeService {
      */
     public String updateOrInsetUserTemp(UserTempBdd userTempBdd) {
         //判断验证码是否有效
-        Map<String, Object> params = new HashMap<>(1);
-        params.put("invitationPhone", userTempBdd.getUserphone());
-        params.put("invitationCode", userTempBdd.getInvitationCode());
-        InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
-        if (null == invitationVo) {
-            return "验证码错误或无效！";
-        } else if ("1".equals(invitationVo.getInvitationState())) {
-            return "验证码失效！";
-        }
+//        Map<String, Object> params = new HashMap<>(1);
+//        params.put("invitationPhone", userTempBdd.getUserphone());
+//        params.put("invitationCode", userTempBdd.getInvitationCode());
+//        InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
+//        if (null == invitationVo) {
+//            return "验证码错误或无效！";
+//        } else if ("1".equals(invitationVo.getInvitationState())) {
+//            return "验证码失效！";
+//        }
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
         if (userTempBdd.getLoginchannel().equals("1002") && Integer.parseInt(userTempBdd.getVersion()) > 10100) {
         } else if (userTempBdd.getLoginchannel().equals("1001") && Integer.parseInt(userTempBdd.getVersion()) > 10600) {
@@ -164,7 +165,7 @@ public class AuthorizeService {
             }
         }
         //更新验证码状态
-        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
+//        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
         return "";
     }
 
