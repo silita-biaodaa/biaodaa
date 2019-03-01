@@ -324,6 +324,8 @@ public class AuthorizeController {
                 if (count != null) {
                     SysUser vo = authorizeService.memberLogin(sysUser);
                     vo.setUserphone(vo.getPhoneNo());
+                    vo.setImgurl(vo.getImageUrl());
+                    vo.setNickname(vo.getNikeName());
                     if (count == 22) {
                         //会员权益赠送
                         inviteProfitDeliver(sysUser);
