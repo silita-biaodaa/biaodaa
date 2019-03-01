@@ -63,6 +63,7 @@ public class AuthorizeService {
         if (userVo != null && !StringUtils.isEmpty(userVo.getUserphone())) {
             return "手机号码已被注册！";
         }
+        userTempBdd.setPassword(userTempBdd.getUserpass());
         //判断验证码是否有效
         Map<String, Object> params = new HashMap<>(1);
         params.put("invitationPhone", userTempBdd.getUserphone());
@@ -84,40 +85,39 @@ public class AuthorizeService {
         userTempBddMapper.InsertUserTemp(userTempBdd);
         userRoleBddMapper.insertUserRole(userTempBdd.getUserid());
         //更新验证码状态
-        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
+//        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
         return "";
     }
 
     /**
      * 第三方绑定
-     *
      */
-    public Integer thirdPartyBinding(SysUser sysUser){
+    public Integer thirdPartyBinding(SysUser sysUser) {
         Integer res = null;
         List<SysUser> userList = userTempBddMapper.queryUserByPhoneNo(sysUser.getPhoneNo());
-        if(userList != null && userList.size()==1){//手机号已存在
+        if (userList != null && userList.size() == 1) {//手机号已存在
             res = userTempBddMapper.updateSysUser(sysUser);
-        }else if (userList==null || userList.size()==0){//手机号不存在,新建用户
+        } else if (userList == null || userList.size() == 0) {//手机号不存在,新建用户
             createMemberUser(sysUser);
-            res=22;
-        }else{//异常
-            logger.error("异常情况，手机号存在多个。[sysUser.getPhoneNo():"+sysUser.getPhoneNo()+"]");
+            res = 22;
+        } else {//异常
+            logger.error("异常情况，手机号存在多个。[sysUser.getPhoneNo():" + sysUser.getPhoneNo() + "]");
         }
         return res;
     }
 
-    public SysUser memberThirdLogin(SysUser param){
+    public SysUser memberThirdLogin(SysUser param) {
         List<SysUser> list = userTempBddMapper.queryUserInfo(param);
-        if(list!= null && list.size()==1){
+        if (list != null && list.size() == 1) {
             SysUser user = list.get(0);
-            if(MyStringUtils.isNotNull(param.getWxOpenId())
+            if (MyStringUtils.isNotNull(param.getWxOpenId())
                     && MyStringUtils.isNotNull(param.getWxUnionId())
-                    && MyStringUtils.isNull(user.getWxUnionId())){
+                    && MyStringUtils.isNull(user.getWxUnionId())) {
                 user.setWxUnionId(param.getWxUnionId());
                 //更新用户信息
                 Integer updateCount = userTempBddMapper.updateSysUserUnionId(user);
-                if(updateCount!=1){
-                    logger.warn("警告：更新用户unionid失败！[updateCount:"+updateCount+"][unionid:"+user.getWxUnionId()+"] by [openid:"+user.getWxOpenId()+"]");
+                if (updateCount != 1) {
+                    logger.warn("警告：更新用户unionid失败！[updateCount:" + updateCount + "][unionid:" + user.getWxUnionId() + "] by [openid:" + user.getWxOpenId() + "]");
                 }
             }
             return sysUserLoginSuccess(user);
@@ -143,6 +143,7 @@ public class AuthorizeService {
         } else if ("1".equals(invitationVo.getInvitationState())) {
             return "验证码失效！";
         }
+        userTempBdd.setPassword(userTempBdd.getUserpass());
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
         if (userTempBdd.getLoginchannel().equals("1002") && Integer.parseInt(userTempBdd.getVersion()) > 10100) {
         } else if (userTempBdd.getLoginchannel().equals("1001") && Integer.parseInt(userTempBdd.getVersion()) > 10600) {
@@ -164,32 +165,34 @@ public class AuthorizeService {
             }
         }
         //更新验证码状态
-        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
+//        invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
         return "";
     }
 
 
     /**
      * 更新用户渠道登录记录
+     *
      * @param sysUser
      */
-    private void updateLoginRecord(SysUser sysUser){
+    private void updateLoginRecord(SysUser sysUser) {
         try {
-            String hk = Constant.buildLoginChanelKey(sysUser.getPkid(),sysUser.getChannel());
+            String hk = Constant.buildLoginChanelKey(sysUser.getPkid(), sysUser.getChannel());
             Long time = sysUser.getLoginTime();
             logger.debug("updateLoginRecord:[" + hk + "][" + time + "]");
             myRedisTemplate.putToHash(Constant.LOGIN_HASH_KEY, hk, time);
-        }catch (Exception e){
-            logger.error(e,e);
+        } catch (Exception e) {
+            logger.error(e, e);
         }
     }
 
     /**
      * 用户登录成功，填充用户token,用户登录
+     *
      * @param user
      * @return
      */
-    private SysUser sysUserLoginSuccess(SysUser user){
+    private SysUser sysUserLoginSuccess(SysUser user) {
         user.setLoginTime(System.currentTimeMillis());//设置登录时间
         user.setXtoken(TokenUtils.buildToken(user));
         updateLoginRecord(user);
@@ -198,42 +201,42 @@ public class AuthorizeService {
 
     /**
      * 登录用户信息校验
+     *
      * @return
      */
-    public SysUser memberLogin(SysUser param){
+    public SysUser memberLogin(SysUser param) {
         SysUser user = queryUserInfo(param);
-        if(user!=null){
+        if (user != null) {
             return sysUserLoginSuccess(user);
-        }else{
+        } else {
             return null;
         }
     }
 
-    private SysUser queryUserInfo(SysUser param){
+    private SysUser queryUserInfo(SysUser param) {
         List<SysUser> resList = userTempBddMapper.queryUserInfo(param);
-        if(resList!=null && resList.size()==1){
+        if (resList != null && resList.size() == 1) {
             return resList.get(0);
-        }else{
-            logger.warn("用户信息查询失败[resList:"+resList+"][param:"+param.toString()+"]");
+        } else {
+            logger.warn("用户信息查询失败[resList:" + resList + "][param:" + param.toString() + "]");
             return null;
         }
     }
 
-    public SysUser refreshUserInfo(SysUser param){
+    public SysUser refreshUserInfo(SysUser param) {
         SysUser user = null;
         List<SysUser> resList = userTempBddMapper.queryUserInfo(param);
-        if(resList!=null && resList.size()==1) {
+        if (resList != null && resList.size() == 1) {
             user = resList.get(0);
         }
-        if(user!=null){
+        if (user != null) {
             user.setLoginTime(System.currentTimeMillis());//设置登录时间
             user.setXtoken(TokenUtils.buildToken(user));
-        }else{
-            logger.error("刷新用户信息查询失败[resList:"+resList+"][param:"+param.getPkid()+"]");
+        } else {
+            logger.error("刷新用户信息查询失败[resList:" + resList + "][param:" + param.getPkid() + "]");
         }
         return user;
     }
-
 
 
     /**
@@ -257,7 +260,7 @@ public class AuthorizeService {
             parameters.put("password", vo.getUserpass());
             parameters.put("phone", vo.getUserphone());
             parameters.put("userId", vo.getUserid());
-            parameters.put("date",String.valueOf(System.currentTimeMillis()));
+            parameters.put("date", String.valueOf(System.currentTimeMillis()));
             try {
                 String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                 String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
@@ -304,7 +307,7 @@ public class AuthorizeService {
             parameters.put("password", vo.getUserpass());
             parameters.put("phone", vo.getUserphone());
             parameters.put("userId", vo.getUserid());
-            parameters.put("date",String.valueOf(System.currentTimeMillis()));
+            parameters.put("date", String.valueOf(System.currentTimeMillis()));
             try {
                 String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                 String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
@@ -320,7 +323,7 @@ public class AuthorizeService {
     }
 
     public String UpdatePassWdByForgetPassword(UserTempBdd userTempBdd) {
-        if(userTempBddMapper.getTotalByUserPhone(userTempBdd.getUserphone()) == 0) {
+        if (userTempBddMapper.getTotalByUserPhone(userTempBdd.getUserphone()) == 0) {
             return "手机号码不存在！";
         }
         //判断验证码是否有效
@@ -363,7 +366,7 @@ public class AuthorizeService {
                     parameters.put("password", vo.getUserpass());
                     parameters.put("phone", vo.getUserphone());
                     parameters.put("userId", vo.getUserid());
-                    parameters.put("date",String.valueOf(System.currentTimeMillis()));
+                    parameters.put("date", String.valueOf(System.currentTimeMillis()));
                     try {
                         String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                         String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
@@ -385,14 +388,15 @@ public class AuthorizeService {
 
     /**
      * 发送短信验证码
+     *
      * @param invitationBdd
      * @return
      */
-    public String sendShorMsgVerfiyCode(InvitationBdd invitationBdd){
+    public String sendShorMsgVerfiyCode(InvitationBdd invitationBdd) {
         String code = CommonUtil.verificationCode();
         invitationBdd.setInvitationCode(code);
-        String errMsg = SendMessage.sendShorMsg(code, invitationBdd.getInvitationPhone(),invitationBdd.getMsgTemplate());
-        if(errMsg==null) {
+        String errMsg = SendMessage.sendShorMsg(code, invitationBdd.getInvitationPhone(), invitationBdd.getMsgTemplate());
+        if (errMsg == null) {
             invitationBddMapper.insertInvitationBdd(invitationBdd);
         }
         return errMsg;
@@ -400,35 +404,37 @@ public class AuthorizeService {
 
     /**
      * 检查手机号是否已注册
+     *
      * @param phoneNo
      * @return
      */
-    public boolean isRegisted(String phoneNo){
+    public boolean isRegisted(String phoneNo) {
         List<SysUser> sysUser = userTempBddMapper.queryUserByPhoneNo(phoneNo);
-        if(sysUser.size()>0){
+        if (sysUser.size() > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     /**
      * 检查是否已拥有推荐人邀请码
+     *
      * @param phoneNo
      * @return
      */
     public String hasInviterCode(String phoneNo) {
         List<SysUser> list = userTempBddMapper.queryUserByPhoneNo(phoneNo);
-        if(list.size()==1){
-            if(MyStringUtils.isNotNull(list.get(0).getInviterCode())){
+        if (list.size() == 1) {
+            if (MyStringUtils.isNotNull(list.get(0).getInviterCode())) {
                 return Constant.ERR_EXISTS_IVITE_CODE;
-            }else{
+            } else {
                 return Constant.HINT_IS_REGIST;
             }
-        }else{
-            if(list.size()<1){
+        } else {
+            if (list.size() < 1) {
                 return Constant.HINT_NOT_REGIST;
-            }else{
+            } else {
                 return Constant.ERR_USER_NOT_UNIQUE;
             }
         }
@@ -478,7 +484,7 @@ public class AuthorizeService {
             parameters.put("password", vo.getUserpass());
             parameters.put("phone", vo.getUserphone());
             parameters.put("userId", vo.getUserid());
-            parameters.put("date",String.valueOf(System.currentTimeMillis()));
+            parameters.put("date", String.valueOf(System.currentTimeMillis()));
             try {
                 String secret = PropertiesUtils.getProperty("CONTENT_SECRET");
                 String sign = SignConvertUtil.generateMD5Sign(secret, parameters);
@@ -494,7 +500,7 @@ public class AuthorizeService {
     }
 
     public String checkUserPhone(UserTempBdd userTempBdd) {
-        if(userTempBddMapper.getTotalByUserPhone(userTempBdd.getUserphone()) == 0) {
+        if (userTempBddMapper.getTotalByUserPhone(userTempBdd.getUserphone()) == 0) {
             return "手机号码不存在！";
         }
         return "";
@@ -503,10 +509,11 @@ public class AuthorizeService {
 
     /**
      * 校验手机短信校验码
+     *
      * @param sysUser
      * @return
      */
-    public String verifyPhoneCode(SysUser sysUser){
+    public String verifyPhoneCode(SysUser sysUser) {
         //判断手机验证码是否有效
         Map<String, Object> params = new HashMap<>(1);
         params.put("invitationPhone", sysUser.getPhoneNo());
@@ -522,41 +529,43 @@ public class AuthorizeService {
 
     /**
      * 验证推荐人邀请码
+     *
      * @param sysUser
      * @return
      */
-    public String verifyInviterCode(SysUser sysUser){
-        if(MyStringUtils.isNotNull(sysUser.getInviterCode())) {
-            if(!userCenterService.verifyInviterCode(sysUser)){
+    public String verifyInviterCode(SysUser sysUser) {
+        if (MyStringUtils.isNotNull(sysUser.getInviterCode())) {
+            if (!userCenterService.verifyInviterCode(sysUser)) {
                 return Constant.ERR_VERIFY_IVITE_CODE;
             }
         }
-        return  null;
+        return null;
     }
 
     /**
      * 新用户注册
+     *
      * @param sysUser
      * @return
      */
     @Transactional
-    public synchronized String registerUser(SysUser sysUser)throws Exception{
+    public synchronized String registerUser(SysUser sysUser) throws Exception {
         //判断手机验证码是否有效
         String vMsg = verifyPhoneCode(sysUser);
-        if(vMsg!=null){
+        if (vMsg != null) {
             return vMsg;
         }
         //验证推荐人邀请码是否有效
         vMsg = verifyInviterCode(sysUser);
-        if(vMsg!=null){
+        if (vMsg != null) {
             return vMsg;
         }
         //验证登录账号（手机号）
         Map argMap = new HashMap();
-        argMap.put("phoneNo",sysUser.getPhoneNo());
+        argMap.put("phoneNo", sysUser.getPhoneNo());
         argMap.put("loginName", sysUser.getLoginName());
-        List<String> vList  = userTempBddMapper.verifyUserInfo(argMap);
-        if(vList!=null && vList.size()>0) {
+        List<String> vList = userTempBddMapper.verifyUserInfo(argMap);
+        if (vList != null && vList.size() > 0) {
             return Constant.ERR_USER_EXIST;
         }
         //创建会员用户
@@ -566,15 +575,18 @@ public class AuthorizeService {
 
     /**
      * 创建新用户与角色
+     *
      * @param sysUser
      */
-    private SysUser createMemberUser(SysUser sysUser){
+    private SysUser createMemberUser(SysUser sysUser) {
         String uid = CommonUtil.getUUID();
         String rId = CommonUtil.getUUID();
-        sysUser.setPkid(uid);
+        if (null != sysUser && null == sysUser.getPkid()) {
+            sysUser.setPkid(uid);
+        }
         sysUser.setCreateBy(sysUser.getClientVersion());
         sysUser.setOwnInviteCode(constructShareCode());
-        if(MyStringUtils.isNull(sysUser.getNikeName())){
+        if (MyStringUtils.isNull(sysUser.getNikeName())) {
             sysUser.setNikeName(sysUser.getPhoneNo());
         }
         userTempBddMapper.insertUserInfo(sysUser);
@@ -585,17 +597,18 @@ public class AuthorizeService {
         role.setRoleCode("normal");
         role.setCreateBy(sysUser.getClientVersion());
         userTempBddMapper.insertUserRole(role);
-        return  sysUser;
+        return sysUser;
     }
 
     /**
      * 邀请码暂时为实时产生，后续优化成预先产生。
+     *
      * @return
      * @throws Exception
      */
-    public String constructShareCode(){
+    public String constructShareCode() {
         Long unique = getIdByRedis();
-        if(unique ==null){
+        if (unique == null) {
             logger.error("邀请码生成出错：从redis获取id失败，请检查redis服务！");
             return null;
         }
@@ -605,20 +618,20 @@ public class AuthorizeService {
     @Autowired
     private MyRedisTemplate myRedisTemplate;
 
-    private Long getIdByRedis(){
-        String rKey="inviteList";
+    private Long getIdByRedis() {
+        String rKey = "inviteList";
         String hashKey = PropertiesUtils.getProperty("redis.inviteList.key");
-        if(MyStringUtils.isNull(hashKey)){
-            hashKey="defaultMap";
+        if (MyStringUtils.isNull(hashKey)) {
+            hashKey = "defaultMap";
         }
-        return myRedisTemplate.incrementHash(rKey,hashKey,1L);
+        return myRedisTemplate.incrementHash(rKey, hashKey, 1L);
     }
 
-    public void batchFixInviteCode(List<String> invitCodeList){
+    public void batchFixInviteCode(List<String> invitCodeList) {
         userTempBddMapper.batchFixInviteCode(invitCodeList);
     }
 
-    public int queryNullInvitCodeCount(){
+    public int queryNullInvitCodeCount() {
         return userTempBddMapper.queryNullInvitCodeCount();
     }
 }

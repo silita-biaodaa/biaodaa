@@ -208,7 +208,7 @@ public class AspectCheckLogin {
                         //验证签名
                         tokenValid = SecurityCheck.checkSigner(paramMap, sign);
                     } else {
-                        resMap.put("code", Constant.FAIL_CODE);
+                        resMap.put("code", Constant.ERR_VERIFY_USER_TOKEN);
                         resMap.put("msg", relogin);
                         return resMap;
                     }
@@ -245,7 +245,7 @@ public class AspectCheckLogin {
                         return resMap;
                     }
                 } else {
-                    resMap.put("code", Constant.FAIL_CODE);
+                    resMap.put("code", Constant.ERR_VERIFY_USER_TOKEN);
                     resMap.put("msg", relogin);
                     return resMap;
                 }

@@ -62,6 +62,7 @@ public class AuthorizeController {
             } else {
                 result.put("code", 0);
                 result.put("msg", msg);
+                return result;
             }
         } catch (Exception e) {
             logger.error("用户注册异常！" + e.getMessage(), e);
@@ -168,6 +169,7 @@ public class AuthorizeController {
                 String msgCode = authorizeService.registerUser(sysUser);
                 if (msgCode.equals(Constant.SUCCESS_CODE)) {
                     SysUser vo = authorizeService.memberLogin(sysUser);
+                    vo.setUserphone(vo.getPhoneNo());
                     //会员权益赠送
                     inviteProfitDeliver(sysUser);
                     firstProfitDeliver(vo);
@@ -321,6 +323,7 @@ public class AuthorizeController {
                 Integer count = authorizeService.thirdPartyBinding(sysUser);
                 if (count != null) {
                     SysUser vo = authorizeService.memberLogin(sysUser);
+                    vo.setUserphone(vo.getPhoneNo());
                     if (count == 22) {
                         //会员权益赠送
                         inviteProfitDeliver(sysUser);
@@ -371,6 +374,7 @@ public class AuthorizeController {
             } else {
                 result.put("code", 0);
                 result.put("msg", msg);
+                return result;
             }
         } catch (Exception e) {
             logger.error("用户绑定第三方账号异常！" + e.getMessage(), e);
@@ -602,6 +606,9 @@ public class AuthorizeController {
         }
         if (null != userTempBdd && null != userTempBdd.getWxopenid() && !"".equals(userTempBdd.getWxopenid())) {
             user.setWxOpenId(userTempBdd.getWxopenid());
+        }
+        if (null != userTempBdd && null != userTempBdd.getQqopenid() && !"".equals(userTempBdd.getQqopenid())){
+            user.setQqOpenId(userTempBdd.getQqopenid());
         }
         if (null != userTempBdd && null != userTempBdd.getGender() && !"".equals(userTempBdd.getGender())) {
             Integer sex = 0;
