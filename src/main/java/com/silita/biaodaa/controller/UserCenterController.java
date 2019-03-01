@@ -214,17 +214,24 @@ public class UserCenterController {
     @RequestMapping(value = "/refreshUserInfo", produces = "application/json;charset=utf-8")
     public Map<String, Object> refreshUserInfo() {
         Map result = new HashMap();
+        String userId = VisitInfoHolder.getUid();
         try {
-            SysUser sysUser = new SysUser();
-            sysUser.setPkid(VisitInfoHolder.getUid());
-            SysUser vo = authorizeService.refreshUserInfo(sysUser);
-            if(vo !=null){
-                result.put("code", Constant.SUCCESS_CODE);
-                result.put("msg", "刷新用户信息成功！");
-                result.put("data", vo);
+            if(MyStringUtils.isNotNull(userId)) {
+                SysUser sysUser = new SysUser();
+                sysUser.setPkid(userId);
+                logger.info("refreshUserInfo--uid:" + VisitInfoHolder.getUid() + "||" + VisitInfoHolder.getUserId());
+                SysUser vo = authorizeService.refreshUserInfo(sysUser);
+                if (vo != null) {
+                    result.put("code", Constant.SUCCESS_CODE);
+                    result.put("msg", "刷新用户信息成功！");
+                    result.put("data", vo);
+                } else {
+                    result.put("code", Constant.FAIL_CODE);
+                    result.put("msg", "刷新用户信息失败，请重试！");
+                }
             }else{
                 result.put("code", Constant.FAIL_CODE);
-                result.put("msg", "刷新用户信息失败，请重试！");
+                result.put("msg", "刷新用户信息失败:从token中获取用户失败。");
             }
         } catch (Exception e) {
             String err = "刷新用户信息异常！" + e.getMessage();

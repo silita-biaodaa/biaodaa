@@ -2,6 +2,7 @@ package com.silita.biaodaa.common;
 
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.service.LoginInfoService;
+import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
@@ -64,30 +65,6 @@ public class AspectCheckLogin {
         return false;
     }
 
-    /**
-     * 校验token信息
-     * @param tokenStr
-     * @return
-     */
-    private boolean validateToken(String tokenStr){
-        boolean flag = false;
-        //（token版本号.用户信息.sign）
-        if(tokenStr != null && tokenStr.length()>0){
-            String[] sArray = tokenStr.split(Constant.TOKEN_SPLIT);
-//            String tVersion = sArray[0];
-            String paramJson = sArray[1];
-            String sign = sArray[2];
-            try {
-//                tVersion = Base64Decode(tVersion);
-                paramJson = Base64Decode(paramJson);
-                Map<String,String> paramMap = parseJsonString(paramJson);
-                flag= SecurityCheck.checkSigner(paramMap,sign);
-            }catch (Exception e){
-                logger.error(e,e);
-            }
-        }
-        return flag;
-    }
 
     private boolean greenWayVerify(String requestUri, String filterUrl,String xToken){
         boolean greenWay= false;
@@ -148,7 +125,7 @@ public class AspectCheckLogin {
         String methodName = point.getSignature().getName();
         String permissions = VisitInfoHolder.getPermissions();
         String roleCode = VisitInfoHolder.getRoleCode();
-        Object[] args = point.getArgs();
+//        Object[] args = point.getArgs();
         logger.debug("AspectPermissions [calssName:"+calssName+"][methodName:"+methodName+"][Permissions:"+permissions+"][RoleCode:"+roleCode+"]");
         Map resMap = null;
         try {
@@ -180,21 +157,16 @@ public class AspectCheckLogin {
         String ipAddr = parseRequest(request).get("ipAddr");
         String xToken = SecurityCheck.getHeaderValue(request, "X-TOKEN");
         String filterUrl = PropertiesUtils.getProperty("FILTER_URL");
-        //绿色通道检查
-        boolean greenWay =greenWayVerify(requestUri,filterUrl,xToken);
-        logger.debug("requestUri:"+requestUri);
-        if (greenWay) {//无需校验token
-            return null;
-        } else {
+        try {
             String name = null;
             String phone = null;
             String userId = null;
             Long date = null;
-            String permissions=null;
+            String permissions = null;
             Map<String, String> parameters = new HashedMap();
             boolean isHei = false;
-            boolean tokenValid= false;
-            if (xToken != null) {
+            boolean tokenValid = false;
+            if (MyStringUtils.isNotNull(xToken) && !xToken.equals("biaodaaTestToken")) {
                 String[] token = xToken.split("\\.");
                 if (token.length == 2) {//旧token验证逻辑
                     String sign = token[0];
@@ -211,166 +183,83 @@ public class AspectCheckLogin {
                     parameters.put("userId", userId);
                     parameters.put("date", String.valueOf(date));
                     tokenValid = checkSigner(parameters, sign);
-                }else if(token.length ==3){//新版token校验
-                    if(verifyTokenVersion(xToken)){
+                } else if (token.length == 3) {//新版token校验
+                    if (verifyTokenVersion(xToken)) {
                         String[] sArray = xToken.split(Constant.TOKEN_SPLIT);
                         String paramJson = sArray[1];
                         String sign = sArray[2];
                         paramJson = Base64Decode(paramJson);
-                        Map<String,String> paramMap = parseJsonString(paramJson);
+                        Map<String, String> paramMap = parseJsonString(paramJson);
 
                         VisitInfoHolder.setPermissions(paramMap.get("permissions"));
                         VisitInfoHolder.setRoleCode(paramMap.get("roleCode"));
                         name = paramMap.get("loginName");
                         phone = paramMap.get("phoneNo");
                         userId = paramMap.get("pkid");
+
                         String chanel = paramMap.get("channel");
-                        date = Long.parseLong((paramMap.get("loginTime")!=null && !paramMap.get("loginTime").equals("null"))? paramMap.get("loginTime"):"0");
+                        date = Long.parseLong((paramMap.get("loginTime") != null && !paramMap.get("loginTime").equals("null")) ? paramMap.get("loginTime") : "0");
                         //单用户多渠道登录状态校验
-                        if(!verifyLoginByChannel(userId,chanel,date)) {
-                            resMap.put("code",Constant.ERR_VERIFY_USER_TOKEN);
-                            resMap.put("msg","用户登录失效，请重新登录。");
+                        if (!verifyLoginByChannel(userId, chanel, date)) {
+                            resMap.put("code", Constant.ERR_VERIFY_USER_TOKEN);
+                            resMap.put("msg", "用户登录失效，请重新登录。");
                             return resMap;
                         }
                         //验证签名
                         tokenValid = SecurityCheck.checkSigner(paramMap, sign);
-                    }else{
-                        resMap.put("code",Constant.FAIL_CODE);
-                        resMap.put("msg",relogin);
+                    } else {
+                        resMap.put("code", Constant.FAIL_CODE);
+                        resMap.put("msg", relogin);
                         return resMap;
                     }
-                }else{
-                    logger.warn("非法token![token:"+token+"][ip:"+ipAddr+"]");
-                    resMap.put("code",Constant.FAIL_CODE);
-                    resMap.put("msg",errMsg);
+                } else {
+                    logger.warn("非法token![token:" + token + "][ip:" + ipAddr + "]");
+                    resMap.put("code", Constant.FAIL_CODE);
+                    resMap.put("msg", errMsg);
                     return resMap;
+                }
+
+                VisitInfoHolder.setUserId(phone);
+                VisitInfoHolder.setUid(userId);
+            }
+            logger.debug("requestUri:" + requestUri);
+            logger.debug("aspect login:"+phone+"|"+userId);
+
+            //绿色通道检查
+            boolean greenWay = greenWayVerify(requestUri, filterUrl, xToken);
+            if (greenWay) {//无需校验token
+                return null;
+            }else {
+                if ("/foundation/version".equals(requestUri)) {
+                    loginInfoService.saveLoginInfo(name, phone, date);
                 }
 
                 String blacklist = PropertiesUtils.getProperty("blacklist");
                 if (blacklist != null && blacklist.contains(phone)) {
                     isHei = true;
                 }
-
-                if ("/foundation/version".equals(requestUri)) {
-                    loginInfoService.saveLoginInfo(name,phone,date);
-                }
-            }
-
-            VisitInfoHolder.setUserId(phone);
-            VisitInfoHolder.setUid(userId);
-
-            if (tokenValid) {
-                if (isHei) {
-                    resMap.put("code",Constant.FAIL_CODE);
-                    resMap.put("msg",errMsg);
+                if (tokenValid) {
+                    if (isHei) {
+                        resMap.put("code", Constant.FAIL_CODE);
+                        resMap.put("msg", errMsg);
+                        return resMap;
+                    }
+                } else {
+                    resMap.put("code", Constant.FAIL_CODE);
+                    resMap.put("msg", relogin);
                     return resMap;
                 }
-            }else {
-                resMap.put("code",Constant.FAIL_CODE);
-                resMap.put("msg",relogin);
-                return resMap;
             }
+        }catch (Exception e){
+            logger.error(e,e);
         }
-
         return null;
     }
 
-//    public void doFilter(ServletRequest servletRequest,
-//                         ServletResponse servletResponse, FilterChain filterChain)
-//            throws IOException, ServletException {
-//        HttpServletRequest request = (HttpServletRequest) servletRequest;
-//        HttpServletResponse response = (HttpServletResponse) servletResponse;
-//        String requestUri = request.getRequestURI();
-//        String ipAddr = parseRequest(request).get("ipAddr");
-//        String xToken = SecurityCheck.getHeaderValue(request, "X-TOKEN");
-//        String filterUrl = PropertiesUtils.getProperty("FILTER_URL");
-//        //绿色通道检查
-//        boolean greenWay =greenWayVerify(requestUri,filterUrl,xToken);
-//        logger.debug("requestUri:"+requestUri);
-//        if (greenWay) {//无需校验token
-//            filterChain.doFilter(servletRequest, servletResponse);
-//        } else {
-//            String name = null;
-//            String phone = null;
-//            String userId = null;
-//            Long date = null;
-//            String permissions=null;
-//            Map<String, String> parameters = new HashedMap();
-//            boolean isHei = false;
-//            boolean tokenValid= false;
-//            if (xToken != null) {
-//                String[] token = xToken.split("\\.");
-//                if (token.length == 2) {//旧token验证逻辑
-//                    String sign = token[0];
-//                    String json = Base64Decode(token[1]);
-//                    JSONObject jsonObject = (JSONObject) JSONObject.parse(json);
-//                    name = jsonObject.getString("name");
-//                    String password = jsonObject.getString("password");
-//                    phone = jsonObject.getString("phone");
-//                    userId = jsonObject.getString("userId");
-//                    date = jsonObject.getLong("date");
-//                    parameters.put("name", name);
-//                    parameters.put("password", password);
-//                    parameters.put("phone", phone);
-//                    parameters.put("userId", userId);
-//                    parameters.put("date", String.valueOf(date));
-//                    tokenValid = checkSigner(parameters, sign);
-//                }else if(token.length ==3){//新版token校验
-//                    if(verifyTokenVersion(xToken)){
-//                        String[] sArray = xToken.split(Constant.TOKEN_SPLIT);
-//                        String paramJson = sArray[1];
-//                        String sign = sArray[2];
-//                        paramJson = Base64Decode(paramJson);
-//                        Map<String,String> paramMap = parseJsonString(paramJson);
-//
-//                        VisitInfoHolder.setPermissions(paramMap.get("permissions"));
-//                        VisitInfoHolder.setRoleCode(paramMap.get("roleCode"));
-//                        name = paramMap.get("loginName");
-//                        phone = paramMap.get("phoneNo");
-//                        userId = paramMap.get("pkid");
-//                        date = Long.parseLong(paramMap.get("login_time")!=null ? paramMap.get("login_time"):"0");
-//                        tokenValid= SecurityCheck.checkSigner(paramMap,sign);
-//                    }else{
-//                        outPrintMsg(response,"{\"code\":0,\"msg\":\"请重新登录!\"}");
-//                        return;
-//                    }
-//                }else{
-//                    logger.debug("非法token![token:"+token+"][ip:"+ipAddr+"]");
-//                    printError(response);
-//                    return ;
-//                }
-//
-//                String blacklist = PropertiesUtils.getProperty("blacklist");
-//                if (blacklist.contains(phone)) {
-//                    isHei = true;
-//                }
-//
-//                if ("/foundation/version".equals(requestUri)) {
-//                    loginInfoService.saveLoginInfo(name,phone,date);
-//                }
-//            }
-//
-//            VisitInfoHolder.setUserId(phone);
-//            VisitInfoHolder.setUid(userId);
-//
-//            if (tokenValid) {
-//                if (isHei) {
-//                    printError(response);
-//                } else {
-//                    filterChain.doFilter(servletRequest, servletResponse);
-//                }
-//            }else {
-//                outPrintMsg(response,"{\"code\":0,\"msg\":\"请重新登录!!!\"}");
-//            }
-//        }
-//    }
 
     public static final String relogin ="登录信息已过期，请重新登录！";
     public static final String errMsg ="您的账号疑似非法爬虫，现已冻结，如有疑问，请联系标大大客服(0731-85076077)";
 
-    private void printError(HttpServletResponse response) throws IOException {
-        outPrintMsg(response,"{\"code\":0,\"msg\":\""+errMsg+"\"}");
-    }
 
     private void outPrintMsg(HttpServletResponse response,String Msg) throws IOException {
         response.setCharacterEncoding(Constant.STR_ENCODING);
@@ -379,11 +268,4 @@ public class AspectCheckLogin {
         out.print(Msg);
     }
 
-//    public void init(FilterConfig filterConfig) throws ServletException {
-//        ServletContext sc = filterConfig.getServletContext();
-//        XmlWebApplicationContext cxt = (XmlWebApplicationContext) WebApplicationContextUtils.getWebApplicationContext(sc);
-//        if (cxt != null && cxt.getBean("loginInfoService") != null && loginInfoService == null) {
-//            loginInfoService = (LoginInfoService) cxt.getBean("loginInfoService");
-//        }
-//    }
 }

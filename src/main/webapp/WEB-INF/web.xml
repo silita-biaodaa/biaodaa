@@ -43,7 +43,7 @@
 
     <!--<filter>-->
         <!--<filter-name>IsLogin</filter-name>-->
-        <!--<filter-class>com.silita.biaodaa.common.AspectCheckLogin</filter-class>-->
+        <!--<filter-class>com.silita.biaodaa.common.FilterCheckLogin</filter-class>-->
     <!--</filter>-->
 
     <!--<filter-mapping>-->

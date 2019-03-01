@@ -18,11 +18,11 @@ public class HttpRequestTest {
 
 
 	@Test
-	public void test(){
+	public void testrefreshUserInfo(){
 		//pre.biaodaa.com  127.0.0.1:8080
-		String url="http://127.0.0.1:8080/under/query";
-		String body="{}";
-		String token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMiIsImxvZ2luX25hbWUiOiJsb2dpbl90ZXMyMjIyIiwibG9naW5fdGltZSI6IjE1NDcxODQzNDA4MDgiLCJwZXJtaXNzaW9ucyI6ImJpZF9maWx0ZXIiLCJwaG9uZV9ubyI6IjEzMzE5NTU1ODAyIiwicGtpZCI6IjcyZDJjNTNiYTM1MDQxOWRhOTljNTdkM2Y3Nzc1ZDQ0Iiwicm9sZV9jb2RlIjoibm9ybWFsIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMiLCJ1c2VyX25hbWUiOiJ1c2VyX25hbWUyMjIifQ==.BE40341FE564D43268B806363D521F48";
+		String url="http://127.0.0.1:8080/userCenter/refreshUserInfo";
+		String body="";
+		String token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMyIsImxvZ2luTmFtZSI6ImxpanVuODI2MiIsImxvZ2luVGltZSI6IjE1NTEzNTQzNzMwMDIiLCJwZXJtaXNzaW9ucyI6IiIsInBob25lTm8iOiIxNTIwMDUwODk4NSIsInBraWQiOiIwMDEyMzc5NjI0YjQ0Y2NjOThlZmUzOWEwZWNiZDRjNSIsInJvbGVDb2RlIjoibm9ybWFsIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMifQ==.D08B68D0D855AD43D2114D35E38D5503";
 		String res = Sender.sendPostBdd(url,token,body,"UTF-8");
 		System.out.println(res);
 		//MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMSIsImxvZ2luX25hbWUiOiIxNTU3NjM2MTczNyIsImxvZ2luX3RpbWUiOiIxNTQ3MDI4MjAzMjY0IiwicGVybWlzc2lvbnMiOiJiaWRfZmlsdGVyIiwicGhvbmVfbm8iOiIxNTU3NjM2MTczNyIsInBraWQiOiI4ZTNjZTUzYTJhNjg0NzllYWZiNWM2OWVhOTA1ZjdhNSIsInJvbGVfY29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIiwidXNlcl9uYW1lIjoiMTU1NzYzNjE3MzcifQ==.BC465A8D53F7563CEC859CB5BC0C4B41
@@ -32,9 +32,9 @@ public class HttpRequestTest {
 	@Test
 	public void testQueryFeeStandard(){
 		//pre.biaodaa.com  127.0.0.1:8080
-		String url="http://pre.biaodaa.com/vip/queryMyProfits";
+		String url="http://127.0.0.1:8080/vip/queryMyProfits";
 		String body="{\"channel\":\"1002\"}";
-		String token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMSIsImxvZ2luTmFtZSI6IndvODE1OTkzNTkzIiwibG9naW5UaW1lIjoiMTU0NzcxNzI0NzI3MSIsInBob25lTm8iOiIxNTExMTA3OTY1OSIsInBraWQiOiIxNTQ2NTk2MDEzIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMifQ==.A4C4A5AA9C8F2339A67A68E541478984";
+		String token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMyIsImxvZ2luTmFtZSI6ImxpanVuODI2MiIsImxvZ2luVGltZSI6IjE1NTE0MTY5MjEyOTYiLCJwZXJtaXNzaW9ucyI6ImJpZEZpbHRlcix0ZW5kZXJGaWx0ZXIsdW5kZXJRdWVyeSx1bmRlckxpc3QsY29tRmlsdGVyLGNvbVBlcmZvcm1hbmNlLGNvbUxhdyxjb21QaG9uZSxjb21DYXJkIiwicGhvbmVObyI6IjE1MjAwNTA4OTg1IiwicGtpZCI6IjAwMTIzNzk2MjRiNDRjY2M5OGVmZTM5YTBlY2JkNGM1Iiwicm9sZUNvZGUiOiJ2aXAxIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMifQ==.5F42B33B691A3058D12360D1323A0089";
 		String res = Sender.sendPostBdd(url,token,body,"UTF-8");
 		System.out.println(res);
 		//MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMSIsImxvZ2luX25hbWUiOiIxNTU3NjM2MTczNyIsImxvZ2luX3RpbWUiOiIxNTQ3MDI4MjAzMjY0IiwicGVybWlzc2lvbnMiOiJiaWRfZmlsdGVyIiwicGhvbmVfbm8iOiIxNTU3NjM2MTczNyIsInBraWQiOiI4ZTNjZTUzYTJhNjg0NzllYWZiNWM2OWVhOTA1ZjdhNSIsInJvbGVfY29kZSI6Im5vcm1hbCIsInRva2VuVmVyc2lvbiI6IjIwMTkwMTAzIiwidXNlcl9uYW1lIjoiMTU1NzYzNjE3MzcifQ==.BC465A8D53F7563CEC859CB5BC0C4B41

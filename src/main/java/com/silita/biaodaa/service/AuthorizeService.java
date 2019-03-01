@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_INVITE;
+import static com.sun.org.apache.xerces.internal.impl.xpath.regex.CaseInsensitiveMap.get;
 import static java.util.Base64.getEncoder;
 
 /**
@@ -220,10 +221,16 @@ public class AuthorizeService {
     }
 
     public SysUser refreshUserInfo(SysUser param){
-        SysUser user = queryUserInfo(param);
+        SysUser user = null;
+        List<SysUser> resList = userTempBddMapper.queryUserInfo(param);
+        if(resList!=null && resList.size()==1) {
+            user = resList.get(0);
+        }
         if(user!=null){
             user.setLoginTime(System.currentTimeMillis());//设置登录时间
             user.setXtoken(TokenUtils.buildToken(user));
+        }else{
+            logger.error("刷新用户信息查询失败[resList:"+resList+"][param:"+param.getPkid()+"]");
         }
         return user;
     }

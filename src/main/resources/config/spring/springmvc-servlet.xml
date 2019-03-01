@@ -37,17 +37,17 @@
     <mvc:view-controller path="/" view-name="index"/>
     <mvc:resources location="classpath:/config/" mapping="/resources/**"/>
     <!-- 总错误处理 -->
-    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-        <property name="defaultErrorView">
-            <value>/error/error</value>
-        </property>
-        <property name="defaultStatusCode">
-            <value>500</value>
-        </property>
-        <property name="warnLogCategory">
-            <value>org.springframework.web.servlet.handler.SimpleMappingExceptionResolver</value>
-        </property>
-    </bean>
+    <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">-->
+        <!--<property name="defaultErrorView">-->
+            <!--<value>/error/error</value>-->
+        <!--</property>-->
+        <!--<property name="defaultStatusCode">-->
+            <!--<value>500</value>-->
+        <!--</property>-->
+        <!--<property name="warnLogCategory">-->
+            <!--<value>org.springframework.web.servlet.handler.SimpleMappingExceptionResolver</value>-->
+        <!--</property>-->
+    <!--</bean>-->
 
     <!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

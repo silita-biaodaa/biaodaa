@@ -58,7 +58,7 @@ public class ControllerTest extends ConfigTest {
     @Test
     public void memberLogin()throws Exception{
         String requestBody = "{\"loginName\":\"\",\"loginPwd\":\"123456\",\"phoneNo\":\"13319555802\",\"channel\":\"1002\",\"clientVersion\":\"10611\"}";
-        requestBody = "{\"loginName\":\"\",\"loginPwd\":\"e4ba6208ad37b63560e5647de01f494aafb48c6c\",\"phoneNo\":\"18975888331\",\"channel\":\"1001\",\"clientVersion\":\"10611\"}";
+        requestBody = "{\"loginName\":\"\",\"loginPwd\":\"71583d38ce9afd6e50ac4fe0966907d9ca85a9f1\",\"phoneNo\":\"18674884989\",\"channel\":\"1001\",\"clientVersion\":\"10611\"}";
         String responseString = mockMvc.perform(post("/authorize/memberLogin").characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)// contentType(MediaType.APPLICATION_FORM_URLENCODED)//ajax格式 //添加参数(可以添加多个)
                         .content(requestBody.getBytes())//.param("id","3")   //添加参数(可以添加多个)
@@ -304,7 +304,7 @@ public class ControllerTest extends ConfigTest {
 
     @Test
     public void testRefreshUserInfo()throws Exception {
-        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMSIsImxvZ2luVGltZSI6IjE1NTA3OTkzMDg3NjYiLCJwZXJtaXNzaW9ucyI6ImJpZEZpbHRlcix0ZW5kZXJGaWx0ZXIiLCJwaG9uZU5vIjoiMTMzMTk1NTU4MDYiLCJwa2lkIjoiMzQxZDkzZmUyMmVkNDZiMTg0MWUyYmFjZmZjNjMzM2IiLCJyb2xlQ29kZSI6InZpcDEiLCJ0b2tlblZlcnNpb24iOiIyMDE5MDEwMyJ9.1D072965CC974D318711989E1E61140F";
+        token="MjAxOTAxMDM=.eyJjaGFubmVsIjoiMTAwMyIsImxvZ2luTmFtZSI6ImxpanVuODI2MiIsImxvZ2luVGltZSI6IjE1NTEzNTQzNzMwMDIiLCJwZXJtaXNzaW9ucyI6IiIsInBob25lTm8iOiIxNTIwMDUwODk4NSIsInBraWQiOiIwMDEyMzc5NjI0YjQ0Y2NjOThlZmUzOWEwZWNiZDRjNSIsInJvbGVDb2RlIjoibm9ybWFsIiwidG9rZW5WZXJzaW9uIjoiMjAxOTAxMDMifQ==.D08B68D0D855AD43D2114D35E38D5503";
         String requestBody = "{\"sex\":\"0\"}";  //,"":"" 3AUM6L  test12  1AUM6L
         requestBody = "";
         String responseString = mockMvc.perform(post("/userCenter/refreshUserInfo").characterEncoding("UTF-8")

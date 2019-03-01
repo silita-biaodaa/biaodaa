@@ -39,7 +39,7 @@ public class AspectPermissions {
      * @param point
      */
     @Around(value="declearJoinPointExpression()")
-    public Object aroundMethod(ProceedingJoinPoint point) throws UnsupportedEncodingException {
+    public synchronized Object aroundMethod(ProceedingJoinPoint point) throws UnsupportedEncodingException {
         Object result = null;
         String calssName = point.getTarget().getClass().getName();
         String methodName = point.getSignature().getName();

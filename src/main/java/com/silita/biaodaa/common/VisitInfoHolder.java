@@ -14,7 +14,7 @@ public class VisitInfoHolder {
 
     protected static final ThreadLocal<String> userId = new ThreadLocal<>();
 
-    protected static final ThreadLocal<String> uid = new ThreadLocal<>();
+    protected static final  ThreadLocal<String> uid = new ThreadLocal<>();
 
     protected static final ThreadLocal<String> role_code = new ThreadLocal<>();
 
