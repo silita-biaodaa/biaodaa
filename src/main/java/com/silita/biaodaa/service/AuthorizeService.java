@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_INVITE;
-import static com.sun.org.apache.xerces.internal.impl.xpath.regex.CaseInsensitiveMap.get;
 import static java.util.Base64.getEncoder;
 
 /**
@@ -417,8 +416,8 @@ public class AuthorizeService {
      * 检查是否已拥有推荐人邀请码
      * @param phoneNo
      * @return
-             */
-    public String hasInviterCode(String phoneNo){
+     */
+    public String hasInviterCode(String phoneNo) {
         List<SysUser> list = userTempBddMapper.queryUserByPhoneNo(phoneNo);
         if(list.size()==1){
             if(MyStringUtils.isNotNull(list.get(0).getInviterCode())){
