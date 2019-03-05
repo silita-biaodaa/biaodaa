@@ -2,9 +2,9 @@ package com.silita.biaodaa.common;
 
 public class Constant {
     //渠道号
-    public static final String CHANNEL_ANDROID="1001";
-    public static final String CHANNEL_IOS="1002";
-    public static final String CHANNEL_PC="1003";
+    public static final String CHANNEL_ANDROID = "1001";
+    public static final String CHANNEL_IOS = "1002";
+    public static final String CHANNEL_PC = "1003";
 
     public static final String SPLIT_STRING = "@@####@@";
     public static final String DEFAULT_STRING = "___";
@@ -24,12 +24,12 @@ public class Constant {
     public static final String SCORE_COMM = "一般";
     public static final String SCORE_SEV = "严重";
 
-    public static final String SUCCESS_CODE="1";
-    public static final String FAIL_CODE="0";
-    public static final String THIRD_USER_NOTEXIST="2";//第三方用户不存在
+    public static final String SUCCESS_CODE = "1";
+    public static final String FAIL_CODE = "0";
+    public static final String THIRD_USER_NOTEXIST = "2";//第三方用户不存在
 
     public static final String STR_ENCODING = "utf-8";
-    public static final String TOKEN_SPLIT="\\.";
+    public static final String TOKEN_SPLIT = "\\.";
 
     //返回错误码
     public static final String ERR_USER_EXIST = "201";//用户已存在
@@ -59,29 +59,38 @@ public class Constant {
     public static final String HINT_NOT_REGIST = "302";//用户还未注册
     public static final String ERR_USER_NOT_UNIQUE = "303";//用户不唯一
 
-    public static final String EXCEPTION_CODE="999";//程序异常
-    public static final String ERR_VIEW_CODE="888";//前端必填字段为空
+    public static final String EXCEPTION_CODE = "999";//程序异常
+    public static final String ERR_VIEW_CODE = "888";//前端必填字段为空
 
     public static final String info_female = "0";
     public static final String info_male = "1";
     public static final String info_others = "2";
 
-    public static final String LOGIN_HASH_KEY="loginRecords";
-    public static final String LOGIN_STATS_HASH_KEY="loginStats";
+    public static final String LOGIN_HASH_KEY = "loginRecords";
+    public static final String LOGIN_STATS_HASH_KEY = "loginStats";
 
-    public static final String ROLE_CODE_NORMAL="normal";
-    public static final String ROLE_CODE_VIP="vip1";
+    public static final String ROLE_CODE_NORMAL = "normal";
+    public static final String ROLE_CODE_VIP = "vip1";
 
     //活动编码
-    public static final String PROFIT_S_CODE_INVITE="a-inviter";
-    public static final String PROFIT_S_CODE_FIRST="a-first";
+    public static final String PROFIT_S_CODE_INVITE = "a-inviter";
+    public static final String PROFIT_S_CODE_FIRST = "a-first";
 
-    public static String buildLoginChanelKey(String userid,String channel){
+    public static String buildLoginChanelKey(String userid, String channel) {
         StringBuilder sb = new StringBuilder(userid);
-        if(CHANNEL_ANDROID.equals(channel) || CHANNEL_IOS.equals(channel)){
-            channel="appChannel";
+        if (CHANNEL_ANDROID.equals(channel) || CHANNEL_IOS.equals(channel)) {
+            channel = "appChannel";
         }
-        return  sb.append("|").append(channel).toString();
+        return sb.append("|").append(channel).toString();
     }
 
+    /**
+     * 获奖等级:国家级
+     */
+    public static String PRIZE_TYPE_COUNTRY = "gjjhj";
+
+    /**
+     * 获奖等级:省级
+     */
+    public static String PRIZE_TYPE_PROVINCE = "sjhj";
 }
