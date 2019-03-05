@@ -205,7 +205,7 @@ public class UserCenterController {
             String err = "更新账号基本信息异常！" + e.getMessage();
             logger.error(err, e);
             result.put("code", Constant.FAIL_CODE);
-            result.put("msg", err);
+            result.put("msg", "更新账号基本信息异常！");
         }
         return result;
     }

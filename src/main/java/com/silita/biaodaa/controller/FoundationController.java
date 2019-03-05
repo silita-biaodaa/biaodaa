@@ -136,7 +136,7 @@ public class FoundationController extends BaseController {
         } catch (Exception e) {
             logger.error(String.format("反馈意见添加失败！%s", e.getMessage()));
             result.put("code", 0);
-            result.put("msg", e.getMessage());
+            result.put("msg", "反馈意见添加失败！");
         }
         return result;
     }
