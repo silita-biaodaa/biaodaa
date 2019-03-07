@@ -290,8 +290,9 @@
         <if test="( oneName !=null and oneName !='') or ( type==0 and bmSiteStr !=null and bmSiteStr!='') or ( modeStr !=null and modeStr!='') or ( projSumStart !=null and projSumStart!='') or ( projSumEnd !=null and projSumEnd !='') or ( kbDateStart !=null and kbDateStart !='') or ( kbDateEnd !=null and kbDateEnd !='') or ( county != null and county != '')">
             <choose>
                 <when test="( projSumStart !=null and projSumStart!='') and ( projSumEnd !=null and projSumEnd !='')">
-                    join (SELECT t.id AS nid,MIN(t1.block) AS block,t1.`oneOffer` AS oneOffer,t1.source,t1.`oneName` AS oneName
-                    FROM ${snatchurl_tbn}  t
+                    join (SELECT t.id AS nid,MIN(t1.block) AS block,t1.`oneOffer` AS oneOffer,t1.source,t1.`oneName` AS
+                    oneName
+                    FROM ${snatchurl_tbn} t
                     JOIN mishu.${detailTable} t1
                     ON t.id = t1.`snatchUrlId`
                     GROUP BY t.id
@@ -426,6 +427,9 @@
                 and s.type = #{type}
             </otherwise>
         </choose>
+        <if test="gsDate != null and gsDate != ''">
+            and s.openDate = #{gsDate}
+        </if>
         <choose>
             <when test="detailType == null or detailType == ''">
                 <include refid="noticeListTail"/>
@@ -448,7 +452,8 @@
             (
             <choose>
                 <when test="source != null and source != '' and source != 'hunan'">
-                    SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert_others zz WHERE zz.contId
+                    SELECT GROUP_CONCAT(zz.certificate SEPARATOR ',') FROM mishu.snatch_url_cert_others zz WHERE
+                    zz.contId
                     =#{id} and zz.source = #{source}
                 </when>
                 <otherwise>
@@ -651,22 +656,22 @@
         select count(a.id)
         FROM (
         select DISTINCT id
-         from
-         <choose>
-             <when test="source != null and source != '' and source != 'hunan'">
-                 mishu.snatchurl_${source}
-             </when>
-             <otherwise>
-                 mishu.snatchurl
-             </otherwise>
-         </choose>
-         join ((select re.nextid as reid
-                 from mishu.snatchrelation re
-                 where re.mainid=#{id})
-                  union all
-                 (select mainid as reid
-                 from mishu.snatchrelation re
-                 where re.nextid=#{id})) rd on rd.reid=id
+        from
+        <choose>
+            <when test="source != null and source != '' and source != 'hunan'">
+                mishu.snatchurl_${source}
+            </when>
+            <otherwise>
+                mishu.snatchurl
+            </otherwise>
+        </choose>
+        join ((select re.nextid as reid
+        from mishu.snatchrelation re
+        where re.mainid=#{id})
+        union all
+        (select mainid as reid
+        from mishu.snatchrelation re
+        where re.nextid=#{id})) rd on rd.reid=id
         WHERE isshow=0
         ) a
     </select>
@@ -687,11 +692,11 @@
     </select>
 
     <select id="querySnatchurlParam" parameterType="java.util.Map" resultType="java.util.Map">
-      select
+        select
         <include refid="noticeTypeConvert"/>
-      from snatchurl_${source} s
-      where s.id = #{id}
+        from snatchurl_${source} s
+        where s.id = #{id}
         and s.isShow = 0 and s.type = 2
-      limit 1
+        limit 1
     </select>
 </mapper>
