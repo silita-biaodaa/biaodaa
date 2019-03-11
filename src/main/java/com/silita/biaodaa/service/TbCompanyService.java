@@ -1109,14 +1109,15 @@ public class TbCompanyService {
         resultMap.put("branchCompanyTotal", 0);
         resultMap.put("projectTotal", 0);
         //分支机构
-        List<TbCompanyInfo> companyInfoList = elasticseachService.queryBranchCompany(param);
+        List<TbCompanyInfo> companyInfoList = (List<TbCompanyInfo>) elasticseachService.queryBranchCompany(param);
         if (null != companyInfoList && companyInfoList.size() > 0) {
             resultMap.put("branchCompanyTotal", companyInfoList.size());
         }
         //业绩
-        List<Map<String, Object>> projectList = projectService.getProjectCompanyList(MapUtils.getString(param, "comId"));
-        if (null != projectList && projectList.size() > 0) {
-            resultMap.put("projectTotal", projectList.size());
+        Map<String,Object> proMap = projectService.getProjectCompanyList(param);
+        if (null != proMap && null != proMap.get("data")) {
+            List<Map<String,Object>> list = (List<Map<String, Object>>) proMap.get("data");
+            resultMap.put("projectTotal", list.size());
         }
         return resultMap;
     }

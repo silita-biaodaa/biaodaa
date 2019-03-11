@@ -202,6 +202,8 @@ public class CompanyController extends BaseController {
             Page page = new Page();
             page.setPageSize(pageSize);
             page.setCurrentPage(pageNo);
+            param.put("pageNo", pageNo);
+            param.put("pageSize", pageSize);
             PageInfo pageInfo = tbCompanyService.getPersonCacheMap(page, param);
             result.put("data", pageInfo.getList());
             result.put("pageNum", pageInfo.getPageNum());
@@ -492,7 +494,7 @@ public class CompanyController extends BaseController {
             map.put("area", area);
             map.put("proviceCityCounty", proviceCityCounty);
             if (null != map) {
-                myRedisTemplate.setObject("filter_map",map);
+                myRedisTemplate.setObject("filter_map", map);
             }
         }
         return map;
@@ -533,7 +535,13 @@ public class CompanyController extends BaseController {
         resultMap.put("msg", this.SUCCESS_MSG);
         String comId = MapUtils.getString(param, "comId");
         param.put("comId", comId);
-        resultMap.put("data", elasticseachService.queryBranchCompany(param));
+        Object object = elasticseachService.queryBranchCompany(param);
+        if (object instanceof Map) {
+            resultMap = (Map<String, Object>) object;
+            successMsg(resultMap);
+            return resultMap;
+        }
+        resultMap.put("data", object);
         return resultMap;
     }
 

@@ -13,7 +13,9 @@ import com.silita.biaodaa.model.TbCompanyInfo;
 import com.silita.biaodaa.model.es.BranchCompanyEs;
 import com.silita.biaodaa.model.es.CompanyEs;
 import com.silita.biaodaa.service.TbCompanyInfoService;
+import com.silita.biaodaa.utils.CommonUtil;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.search.SearchHit;
@@ -135,18 +137,35 @@ public class ElasticseachService {
         }
     }
 
-    public List<TbCompanyInfo> queryBranchCompany(Map<String, Object> param) {
+    public Object queryBranchCompany(Map<String, Object> param) {
         String comId = MapUtils.getString(param, "comId");
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_WILDCARD, "comId", comId));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "branch_company", "branch_comes", querys, null, null, null);
         List<TbCompanyInfo> list = new ArrayList<>();
-        if(null == response.getHits() || response.getHits().getTotalHits() <= 0){
+        if (null == response.getHits() || response.getHits().getTotalHits() <= 0) {
             return list;
         }
         String result = response.getHits().getAt(0).getSourceAsString();
         JSONObject jsonObject = JSON.parseObject(result);
         list = (List<TbCompanyInfo>) jsonObject.get("branchCompanys");
+
+        if ("page".equals(param.get("type"))) {
+            Integer pageNo = MapUtils.getInteger(param, "pageNo");
+            Integer pageSize = MapUtils.getInteger(param, "pageSize");
+            Integer pages = CommonUtil.getPages(Long.valueOf(response.getHits().getTotalHits()).intValue(), pageSize);
+            Integer start = (pageNo - 1) * pageSize;
+            Integer end = list.size();
+            if (pageNo < pages) {
+                end = start + pageSize;
+            }
+            List resList = list.subList(start, end);
+            Map<String, Object> resultMap = new HashedMap();
+            resultMap.put("total", response.getHits().getTotalHits());
+            resultMap.put("pages", pages);
+            resultMap.put("data", resList);
+            return resultMap;
+        }
         return list;
     }
 }

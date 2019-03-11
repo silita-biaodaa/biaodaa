@@ -44,33 +44,35 @@ public class AspectCheckLogin {
     MyRedisTemplate myRedisTemplate;
 
     @Pointcut("(execution(public * com.silita.biaodaa.controller.*.*(..)))")
-    public void declearJoinPointExpression(){}
+    public void declearJoinPointExpression() {
+    }
 
     /**
      * 验证token版本是否和当前server版本一致
+     *
      * @param xToken
      * @return
      */
-    private boolean verifyTokenVersion(String xToken){
+    private boolean verifyTokenVersion(String xToken) {
         String[] tokens = xToken.split(Constant.TOKEN_SPLIT);
         try {
             String version = Base64Decode(tokens[0]);
             String tokenVersion = PropertiesUtils.getProperty("token.version");
-            if(version.equals(tokenVersion)){
+            if (version.equals(tokenVersion)) {
                 return true;
             }
-        }catch (Exception e){
-            logger.error(e,e);
+        } catch (Exception e) {
+            logger.error(e, e);
         }
         return false;
     }
 
 
-    private boolean greenWayVerify(String requestUri, String filterUrl,String xToken){
-        boolean greenWay= false;
+    private boolean greenWayVerify(String requestUri, String filterUrl, String xToken) {
+        boolean greenWay = false;
         if (requestUri.equals("/") || "biaodaaTestToken".equals(xToken)) {
             greenWay = true;
-        }else {
+        } else {
             if (filterUrl != null) {
                 String[] urls = filterUrl.split(",");
                 for (String url : urls) {
@@ -87,12 +89,13 @@ public class AspectCheckLogin {
 
     /**
      * 单渠道同时只允许用户在一个终端使用
+     *
      * @param userId
      * @param channel
      * @param loginTime
      * @return
      */
-    private boolean verifyLoginByChannel(String userId,String channel,Long loginTime){
+    private boolean verifyLoginByChannel(String userId, String channel, Long loginTime) {
         boolean state = true;
         try {
             String hk = Constant.buildLoginChanelKey(userId, channel);
@@ -107,17 +110,17 @@ public class AspectCheckLogin {
                     myRedisTemplate.putToHash(Constant.LOGIN_HASH_KEY, hk, loginTime);
                     state = true;
                 }
-            }else{
+            } else {
                 state = false;
             }
-        }catch (Exception e){
-            logger.error(e,e);
+        } catch (Exception e) {
+            logger.error(e, e);
         }
         return state;
     }
 
 
-    @Around(value="declearJoinPointExpression()")
+    @Around(value = "declearJoinPointExpression()")
     public Object aroundMethod(ProceedingJoinPoint point) throws UnsupportedEncodingException {
         Object result = null;
         HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -126,31 +129,34 @@ public class AspectCheckLogin {
         String permissions = VisitInfoHolder.getPermissions();
         String roleCode = VisitInfoHolder.getRoleCode();
 //        Object[] args = point.getArgs();
-        logger.debug("AspectPermissions [calssName:"+calssName+"][methodName:"+methodName+"][Permissions:"+permissions+"][RoleCode:"+roleCode+"]");
+        logger.debug("AspectPermissions [calssName:" + calssName + "][methodName:" + methodName + "][Permissions:" + permissions + "][RoleCode:" + roleCode + "]");
         Map resMap = null;
         try {
-            resMap = doFilter(req,point);
-            if(resMap!=null){
-                result =resMap;
-            }else {
+            resMap = doFilter(req, point);
+            if (resMap != null) {
+                result = resMap;
+            } else {
                 //执行目标方法
                 result = point.proceed();
+                if (result instanceof Map) {
+                    resMap = (Map) result;
+                }
             }
             //返回通知
-            logger.debug("The method " + methodName + " end. result<" + result + ">");
+            logger.debug("The method " + methodName + " end. result<" + resMap.get("code") + "---" + resMap.get("msg") + ">");
         } catch (Throwable e) {
-            logger.error(e,e);
+            logger.error(e, e);
             resMap = new HashMap();
             resMap.put("code", Constant.EXCEPTION_CODE);
-            resMap.put("msg","登录校验异常。"+e.getMessage());
-            result =resMap;
+            resMap.put("msg", "登录校验异常。" + e.getMessage());
+            result = resMap;
         }
         //后置通知
-        logger.debug("The method "+ methodName+" end...");
+        logger.debug("The method " + methodName + " end...");
         return result;
     }
 
-    private Map doFilter(HttpServletRequest request,ProceedingJoinPoint point)
+    private Map doFilter(HttpServletRequest request, ProceedingJoinPoint point)
             throws IOException, ServletException {
         Map resMap = new HashMap();
         String requestUri = request.getRequestURI();
@@ -223,13 +229,13 @@ public class AspectCheckLogin {
                 VisitInfoHolder.setUid(userId);
             }
             logger.debug("requestUri:" + requestUri);
-            logger.debug("aspect login:"+phone+"|"+userId);
+            logger.debug("aspect login:" + phone + "|" + userId);
 
             //绿色通道检查
             boolean greenWay = greenWayVerify(requestUri, filterUrl, xToken);
             if (greenWay) {//无需校验token
                 return null;
-            }else {
+            } else {
                 if ("/foundation/version".equals(requestUri)) {
                     loginInfoService.saveLoginInfo(name, phone, date);
                 }
@@ -250,20 +256,20 @@ public class AspectCheckLogin {
                     return resMap;
                 }
             }
-        }catch (Exception e){
-            logger.error(e,e);
+        } catch (Exception e) {
+            logger.error(e, e);
         }
         return null;
     }
 
 
-    public static final String relogin ="登录信息已过期，请重新登录！";
-    public static final String errMsg ="您的账号疑似非法爬虫，现已冻结，如有疑问，请联系标大大客服(0731-85076077)";
+    public static final String relogin = "登录信息已过期，请重新登录！";
+    public static final String errMsg = "您的账号疑似非法爬虫，现已冻结，如有疑问，请联系标大大客服(0731-85076077)";
 
 
-    private void outPrintMsg(HttpServletResponse response,String Msg) throws IOException {
+    private void outPrintMsg(HttpServletResponse response, String Msg) throws IOException {
         response.setCharacterEncoding(Constant.STR_ENCODING);
-        response.setContentType("application/json; charset="+Constant.STR_ENCODING);
+        response.setContentType("application/json; charset=" + Constant.STR_ENCODING);
         PrintWriter out = response.getWriter();
         out.print(Msg);
     }

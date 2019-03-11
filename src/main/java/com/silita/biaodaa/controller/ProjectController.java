@@ -102,10 +102,10 @@ public class ProjectController extends BaseController {
             result.put("data", projectDesignService.getProjectDesignDetail(param));
         } else if ("build".equals(param.get("tabType").toString())) {
             result.put("data", projectBuildService.getProjectDetail(param));
-        }else if ("contract".equals(param.get("tabType").toString())){
-            result.put("data",projectContractService.getProjectContractDetail(param));
-        }else if ("completion".equals(param.get("tabType").toString())){
-            result.put("data",projectCompletionService.getProCompletDetail(param));
+        } else if ("contract".equals(param.get("tabType").toString())) {
+            result.put("data", projectContractService.getProjectContractDetail(param));
+        } else if ("completion".equals(param.get("tabType").toString())) {
+            result.put("data", projectCompletionService.getProCompletDetail(param));
         }
         return result;
     }
@@ -119,11 +119,8 @@ public class ProjectController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/company/list", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> companyProjectList(@RequestBody Map<String, Object> param) {
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("code", this.SUCCESS_CODE);
-        result.put("msg", this.SUCCESS_MSG);
-        String companyId = MapUtils.getString(param, "comId");
-        result.put("data", projectService.getProjectCompanyList(companyId));
+        Map<String, Object> result  = projectService.getProjectCompanyList(param);
+        successMsg(result);
         return result;
     }
 

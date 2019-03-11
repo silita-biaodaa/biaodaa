@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.ObjectUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
@@ -361,13 +362,14 @@ public class ProjectService {
         }
     }
 
-    public List<Map<String, Object>> getProjectCompanyList(String companyId) {
-        List<Map<String, Object>> resultMap = new ArrayList<>();
+    public Map<String, Object> getProjectCompanyList(Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashMap<>();
+        String companyId = MapUtils.getString(param, "comId");
+        List<Map<String, Object>> resultList = new ArrayList<>();
 
         // TODO:获取公司信息
         TbCompany company = tbCompanyMapper.getCompany(companyId);
 
-        Map<String, Object> param = new HashMap<>();
         param.put("comName", company.getComName());
         param.put("orgCode", company.getOrgCode());
 
@@ -378,19 +380,33 @@ public class ProjectService {
         //获取勘察设计的主项目
 //        list.addAll(tbProjectDesignMapper.queryProIdByComId(companyId));
 
-        //TODO: 获取主项目id
         List<String> list = tbProjectCompanyMapper.queryProIdForCom(param);
 
         //去掉重复的proId
         if (null != list && list.size() > 0) {
             Set<String> set = new HashSet(list);
             List<String> proList = new ArrayList<>(set);
-            resultMap = tbProjectMapper.queryProjectListByIds(list);
+            resultList = tbProjectMapper.queryProjectListByIds(proList);
         }
-        if (null != resultMap && resultMap.size() > 0) {
-            for (Map<String, Object> map : resultMap) {
+        if (null != resultList && resultList.size() > 0) {
+            List<Map<String, Object>> resList = resultList;
+            if ("page".equals(param.get("type"))) {
+                Integer pageNo = MapUtils.getInteger(param, "pageNo");
+                Integer pageSize = MapUtils.getInteger(param, "pageSize");
+                Integer pages = CommonUtil.getPages(resultList.size(), pageSize);
+                Integer start = (pageNo - 1) * pageSize;
+                Integer end = list.size();
+                if (pageNo < pages) {
+                    end = start + pageSize;
+                }
+                resList = resultList.subList(start, end);
+                resultMap.put("total",resList.size());
+                resultMap.put("pages",pages);
+            }
+            for (Map<String, Object> map : resList) {
                 this.putProvince(map);
             }
+            resultMap.put("data", resList);
         }
         return resultMap;
     }
