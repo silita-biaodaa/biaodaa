@@ -36,7 +36,7 @@ public class MongodbUtils {
         morphia.mapPackage("com.silita.biaodaa");
         Datastore datastore = morphia.createDatastore(mongoClient, dbName);
         datastore.ensureIndexes();
-        logger.info(String.format("MongoDB连接池初始化完毕！主机列表：%s 数据库名：%s", PropertiesUtils.getProperty("mongodb.hosts"), PropertiesUtils.getProperty("mongodb.dbName")));
+        logger.info(String.format("MongoDB连接池初始化完毕！主机列表：%s 数据库名：%s", PropertiesUtils.getProperty("mongodb.ip"), PropertiesUtils.getProperty("mongodb.dbName")));
         return datastore;
     }
 }
