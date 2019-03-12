@@ -76,6 +76,9 @@ public class PhoneAddressService {
 
     public List<Map<String, Object>> listPhone(Map<String, Object> param) {
         String comName = RegexUtils.setComName(MapUtils.getString(param, "name"));
+        if (MyStringUtils.isNull(comName)){
+            return new ArrayList<>();
+        }
         DBCollection dbCollection = MongodbUtils.init(PropertiesUtils.getProperty("mongodb.ip"),
                 PropertiesUtils.getProperty("mongodb.port"), PropertiesUtils.getProperty("mongodb.dbName")).getDB().getCollection("phone");
         //模糊匹配

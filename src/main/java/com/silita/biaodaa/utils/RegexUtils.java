@@ -169,6 +169,8 @@ public class RegexUtils {
 
         comName = comName.replace("监理", "");
         comName = comName.replace("项目", "");
+        comName = comName.replace("市","");
+        comName  = comName.replace("省","");
         return comName;
     }
 }

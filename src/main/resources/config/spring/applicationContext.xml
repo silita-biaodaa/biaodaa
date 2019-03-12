@@ -59,7 +59,7 @@
 		</property>
 	</bean>
 
-	<bean id="mySqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+	<bean id="mySqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
 		<constructor-arg index="0">
 			<ref bean="sqlSessionFactory" />
 		</constructor-arg>
