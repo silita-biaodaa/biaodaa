@@ -389,13 +389,13 @@ public class ProjectService {
             resultList = tbProjectMapper.queryProjectListByIds(proList);
         }
         if (null != resultList && resultList.size() > 0) {
-            List<Map<String, Object>> resList = resultList;
+            List<Map<String, Object>> resList = new ArrayList<>();
             if ("page".equals(param.get("type"))) {
                 Integer pageNo = MapUtils.getInteger(param, "pageNo");
                 Integer pageSize = MapUtils.getInteger(param, "pageSize");
                 Integer pages = CommonUtil.getPages(resultList.size(), pageSize);
                 Integer start = (pageNo - 1) * pageSize;
-                Integer end = list.size();
+                Integer end = resultList.size();
                 if (pageNo < pages) {
                     end = start + pageSize;
                 }
