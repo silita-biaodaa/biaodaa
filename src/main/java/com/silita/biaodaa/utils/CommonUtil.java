@@ -1095,6 +1095,7 @@ public class CommonUtil {
 
     /**
      * 获取总页数
+     *
      * @param total
      * @param pageSize
      * @return
@@ -1104,8 +1105,10 @@ public class CommonUtil {
         if (total % pageSize == 0) {
             pages = total / pageSize;
         } else {
-            pages = total / pageSize + 1;
+            pages = (total / pageSize) + 1;
         }
         return pages;
-    };
+    }
+
+    ;
 }

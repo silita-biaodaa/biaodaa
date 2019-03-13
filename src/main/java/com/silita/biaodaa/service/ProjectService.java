@@ -400,7 +400,7 @@ public class ProjectService {
                     end = start + pageSize;
                 }
                 resList = resultList.subList(start, end);
-                resultMap.put("total",resList.size());
+                resultMap.put("total",resultList.size());
                 resultMap.put("pages",pages);
             }
             for (Map<String, Object> map : resList) {
