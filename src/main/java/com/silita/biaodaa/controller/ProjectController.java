@@ -1,5 +1,6 @@
 package com.silita.biaodaa.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.service.*;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,15 @@ public class ProjectController extends BaseController {
         if ("project".equals(params.get("tabType").toString())) {
             projectService.getProjectList(params, result);
             return result;
+        }else if ("shuili".equals(params.get("tabType").toString())){
+            PageInfo pageInfo = projectService.getProjectShuiliList(params);
+            buildReturnMap(result,pageInfo);
+            return result;
+        }else if ("jiaotong".equals(params.get("tabType").toString())){
+            PageInfo pageInfo = projectService.getProjectJiaoList(params);
+            buildReturnMap(result,pageInfo);
+            return result;
         }
-        projectService.getObjectListByUnit(params, result);
         return result;
     }
 
@@ -64,7 +72,13 @@ public class ProjectController extends BaseController {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", this.SUCCESS_CODE);
         result.put("msg", this.SUCCESS_MSG);
-        projectService.getProjectDetail(MapUtils.getString(param, "id"), result);
+        if ("shuili".equals(param.get("tabType"))){
+            projectService.getProjectShuiliDetail(MapUtils.getString(param, "id"), result);
+        }else if ("jiaotong".equals(param.get("tabType"))){
+            projectService.getProjectJiaoDetail(MapUtils.getString(param, "id"), result);
+        }else {
+            projectService.getProjectDetail(MapUtils.getString(param, "id"), result);
+        }
         return result;
     }
 

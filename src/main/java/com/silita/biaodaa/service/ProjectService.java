@@ -62,7 +62,6 @@ public class ProjectService {
             Page page = new Page();
             page.setPageSize(pageSize);
             page.setCurrentPage(pageNum);
-
             PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
             List<Map<String, Object>> projectList = tbProjectMapper.queryObject(param);
             if (null != projectList && projectList.size() > 0) {
@@ -84,40 +83,45 @@ public class ProjectService {
     }
 
     /**
-     * 按工程查看业绩列表
-     * created by zhushuai
-     *
-     * @param params
-     * @param result
+     * 水利业绩
+     * @param param
      * @return
      */
-    public Map<String, Object> getObjectListByUnit(Map<String, Object> params, Map<String, Object> result) {
-        Integer pageNum = MapUtils.getInteger(params, "pageNo");
-        Integer pageSize = MapUtils.getInteger(params, "pageSize");
-
-        if (null == params.get("pactType")) {
-            params.put("pactType", "施工");
+    public PageInfo getProjectShuiliList(Map<String,Object> param){
+        if (null == param.get("proType")){
+            param.put("proType","施工");
         }
-
+        Integer pageNo = MapUtils.getInteger(param,"pageNo");
+        Integer pageSize = MapUtils.getInteger(param,"pageSize");
         Page page = new Page();
-        page.setCurrentPage(pageNum);
+        page.setCurrentPage(pageNo);
         page.setPageSize(pageSize);
-
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        List<Map<String, Object>> projectList = tbProjectMapper.queryObjectByUnit(params);
-        if (null != projectList && projectList.size() > 0) {
-            for (Map<String, Object> map : projectList) {
-                this.putProvince(map);
-            }
-        }
-        PageInfo pageInfo = new PageInfo(projectList);
-        result.put("data", pageInfo.getList());
-        result.put("pageNum", pageInfo.getPageNum());
-        result.put("pageSize", pageInfo.getPageSize());
-        result.put("total", pageInfo.getTotal());
-        result.put("pages", pageInfo.getPages());
-        return result;
+        List<Map<String,Object>> list = new ArrayList<>();
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
     }
+
+    /**
+     * 交通业绩
+     * @param param
+     * @return
+     */
+    public PageInfo getProjectJiaoList(Map<String,Object> param){
+        if (null == param.get("source")){
+            param.put("source","省厅录入");
+        }
+        Integer pageNo = MapUtils.getInteger(param,"pageNo");
+        Integer pageSize = MapUtils.getInteger(param,"pageSize");
+        Page page = new Page();
+        page.setCurrentPage(pageNo);
+        page.setPageSize(pageSize);
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
+        List<Map<String,Object>> list = new ArrayList<>();
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
+    }
+
 
     /**
      * 获取项目详情
@@ -139,6 +143,32 @@ public class ProjectService {
         }
         project.setAcreage(projectAnalysisUtil.getNumber(project.getAcreage()));
         result.put("data", project);
+        return result;
+    }
+
+    /**
+     * 获取水利详情
+     * created by zhushuai
+     *
+     * @param proId  项目id
+     * @param result 返回result
+     * @return
+     */
+    public Map<String, Object> getProjectShuiliDetail(String proId, Map<String, Object> result) {
+        result.put("data", null);
+        return result;
+    }
+
+    /**
+     * 获取交通详情
+     * created by zhushuai
+     *
+     * @param proId  项目id
+     * @param result 返回result
+     * @return
+     */
+    public Map<String, Object> getProjectJiaoDetail(String proId, Map<String, Object> result) {
+        result.put("data", null);
         return result;
     }
 
