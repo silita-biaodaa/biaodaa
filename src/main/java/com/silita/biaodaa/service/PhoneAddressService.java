@@ -7,12 +7,12 @@ import com.silita.biaodaa.dao.TbPhoneAddressBookMapper;
 import com.silita.biaodaa.model.TbPhoneAddressBook;
 import com.silita.biaodaa.utils.*;
 import org.apache.commons.collections.MapUtils;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedOutputStream;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -76,7 +76,7 @@ public class PhoneAddressService {
 
     public List<Map<String, Object>> listPhone(Map<String, Object> param) {
         String comName = RegexUtils.setComName(MapUtils.getString(param, "name"));
-        if (MyStringUtils.isNull(comName)){
+        if (MyStringUtils.isNull(comName)) {
             return new ArrayList<>();
         }
         DBCollection dbCollection = MongodbUtils.init(PropertiesUtils.getProperty("mongodb.ip"),
@@ -106,37 +106,23 @@ public class PhoneAddressService {
         return mapList;
     }
 
-    public void export(HttpServletResponse response, Map<String, Object> param) {
+    public HSSFWorkbook export(Map<String, Object> param) {
         List<Map<String, Object>> list = this.listPhone(param);
         if (null == list || list.size() <= 0) {
-            return;
+            return new HSSFWorkbook();
         }
-        response.setContentType("text/plain");// 一下两行关键的设置
-        response.addHeader("Content-Disposition",
-                "attachment;filename=" + param.get("name") + ".txt");// filename指定默认的名字
-        BufferedOutputStream buff = null;
-        StringBuffer write = new StringBuffer();
-        String enter = "\r\n";
-        ServletOutputStream outSTr = null;
-        try {
-            outSTr = response.getOutputStream();// 建立
-            buff = new BufferedOutputStream(outSTr);
-            for (int i = 0; i < list.size(); i++) {
-                write.append(list.get(i).get("phone") + enter);
-                write.append(enter);
-            }
-            buff.write(write.toString().getBytes("UTF-8"));
-            buff.flush();
-            buff.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                buff.close();
-                outSTr.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
+        HSSFSheet sheet = hssfWorkbook.createSheet();
+        HSSFRow row = sheet.createRow(0);
+        String[] heads = {"姓名", "手机号"};
+        for (int i = 0; i < heads.length; i++) {
+            row.createCell(i).setCellValue(heads[i]);
         }
+        for (int j = 0; j < list.size(); j++) {
+            HSSFRow row1 = sheet.createRow(j + 1);
+            row1.createCell(0).setCellValue(MapUtils.getString(list.get(j), "name"));
+            row1.createCell(1).setCellValue(MapUtils.getString(list.get(j), "phone"));
+        }
+        return hssfWorkbook;
     }
 }
