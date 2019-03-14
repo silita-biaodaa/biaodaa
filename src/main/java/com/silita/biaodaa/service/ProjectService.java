@@ -1,11 +1,13 @@
 package com.silita.biaodaa.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.CommonUtil;
+import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
@@ -40,6 +42,8 @@ public class ProjectService {
     MyRedisTemplate myRedisTemplate;
     @Autowired
     ProjectCompletionService projectCompletionService;
+    @Autowired
+    TbProjectShuiliMapper tbProjectShuiliMapper;
 
     private static ProjectAnalysisUtil projectAnalysisUtil = new ProjectAnalysisUtil();
 
@@ -84,40 +88,45 @@ public class ProjectService {
 
     /**
      * 水利业绩
+     *
      * @param param
      * @return
      */
-    public PageInfo getProjectShuiliList(Map<String,Object> param){
-        if (null == param.get("proType")){
-            param.put("proType","施工");
+    public PageInfo getProjectShuiliList(Map<String, Object> param) {
+        if (null == param.get("proType")) {
+            param.put("proType", "施工");
         }
-        Integer pageNo = MapUtils.getInteger(param,"pageNo");
-        Integer pageSize = MapUtils.getInteger(param,"pageSize");
+        if (null == param.get("proWhere")) {
+            param.put("proWhere", "湖南省");
+        }
+        Integer pageNo = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
         Page page = new Page();
         page.setCurrentPage(pageNo);
         page.setPageSize(pageSize);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        List<Map<String,Object>> list = new ArrayList<>();
+        List<Map<String, Object>> list = tbProjectShuiliMapper.queryShuiliProjectList(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
 
     /**
      * 交通业绩
+     *
      * @param param
      * @return
      */
-    public PageInfo getProjectJiaoList(Map<String,Object> param){
-        if (null == param.get("source")){
-            param.put("source","省厅录入");
+    public PageInfo getProjectJiaoList(Map<String, Object> param) {
+        if (null == param.get("source")) {
+            param.put("source", "省厅录入");
         }
-        Integer pageNo = MapUtils.getInteger(param,"pageNo");
-        Integer pageSize = MapUtils.getInteger(param,"pageSize");
+        Integer pageNo = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
         Page page = new Page();
         page.setCurrentPage(pageNo);
         page.setPageSize(pageSize);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        List<Map<String,Object>> list = new ArrayList<>();
+        List<Map<String, Object>> list = new ArrayList<>();
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -155,7 +164,28 @@ public class ProjectService {
      * @return
      */
     public Map<String, Object> getProjectShuiliDetail(String proId, Map<String, Object> result) {
-        result.put("data", null);
+        TbProjectShuili shuili = tbProjectShuiliMapper.queryShuiliDetail(proId);
+        if (null == shuili) {
+            return result;
+        }
+        if (MyStringUtils.isNotNull(shuili.getPersons())) {
+            List<Map<String, Object>> personList = new ArrayList<>();
+            List<Map<String, Object>> persons = (List<Map<String, Object>>) JSONObject.parse(shuili.getPersons());
+            if (null != persons && persons.size() > 0) {
+                for (Map<String, Object> map : persons) {
+                    if (null != map.get("职务") && ("项目负责人".equals(map.get("职务")) || "技术负责人".equals(map.get("职务")))) {
+                        personList.add(map);
+                    }
+                }
+            }
+            shuili.setLeaderPersons(personList);
+            shuili.setPersons(null);
+        }
+        if (MyStringUtils.isNotNull(shuili.getPrizes())) {
+            shuili.setProPrizes((List<Map<String, Object>>) JSONObject.parse(shuili.getPrizes()));
+            shuili.setPrizes(null);
+        }
+        result.put("data", shuili);
         return result;
     }
 
@@ -430,8 +460,8 @@ public class ProjectService {
                     end = start + pageSize;
                 }
                 resList = resultList.subList(start, end);
-                resultMap.put("total",resultList.size());
-                resultMap.put("pages",pages);
+                resultMap.put("total", resultList.size());
+                resultMap.put("pages", pages);
             }
             for (Map<String, Object> map : resList) {
                 this.putProvince(map);

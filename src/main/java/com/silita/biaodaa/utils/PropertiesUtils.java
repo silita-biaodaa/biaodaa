@@ -93,15 +93,4 @@ public class PropertiesUtils {
             }
         });
     }
-
-    public static void main(String[] args) {
-        System.out.println(PropertiesUtils.getProperty("tracker_server"));
-        System.out.println(PropertiesUtils.getProperty("zkConnectString"));
-        System.out.println(PropertiesUtils.getProperty("rootPath"));
-        System.out.println(PropertiesUtils.getProperty("userName"));
-        System.out.println(PropertiesUtils.getProperty("password"));
-        System.out.println(PropertiesUtils.getProperty("zkSessionTimeout"));
-        System.out.println(PropertiesUtils.getProperty("isCheckParentPath"));
-        System.out.println(PropertiesUtils.getProperty("workDir"));
-    }
 }

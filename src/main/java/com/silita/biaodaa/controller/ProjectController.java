@@ -3,6 +3,7 @@ package com.silita.biaodaa.controller;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.service.*;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.elasticsearch.xpack.ml.utils.DomainSplitFunction.params;
 
 /**
  * 业绩
@@ -48,13 +51,13 @@ public class ProjectController extends BaseController {
         if ("project".equals(params.get("tabType").toString())) {
             projectService.getProjectList(params, result);
             return result;
-        }else if ("shuili".equals(params.get("tabType").toString())){
+        } else if ("shuili".equals(params.get("tabType").toString())) {
             PageInfo pageInfo = projectService.getProjectShuiliList(params);
-            buildReturnMap(result,pageInfo);
+            buildReturnMap(result, pageInfo);
             return result;
-        }else if ("jiaotong".equals(params.get("tabType").toString())){
+        } else if ("jiaotong".equals(params.get("tabType").toString())) {
             PageInfo pageInfo = projectService.getProjectJiaoList(params);
-            buildReturnMap(result,pageInfo);
+            buildReturnMap(result, pageInfo);
             return result;
         }
         return result;
@@ -72,11 +75,11 @@ public class ProjectController extends BaseController {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", this.SUCCESS_CODE);
         result.put("msg", this.SUCCESS_MSG);
-        if ("shuili".equals(param.get("tabType"))){
+        if ("shuili".equals(param.get("tabType"))) {
             projectService.getProjectShuiliDetail(MapUtils.getString(param, "id"), result);
-        }else if ("jiaotong".equals(param.get("tabType"))){
+        } else if ("jiaotong".equals(param.get("tabType"))) {
             projectService.getProjectJiaoDetail(MapUtils.getString(param, "id"), result);
-        }else {
+        } else {
             projectService.getProjectDetail(MapUtils.getString(param, "id"), result);
         }
         return result;
@@ -133,8 +136,20 @@ public class ProjectController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/company/list", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> companyProjectList(@RequestBody Map<String, Object> param) {
-        Map<String, Object> result  = projectService.getProjectCompanyList(param);
+        Map<String, Object> result = new HashedMap();
         successMsg(result);
+        if ("shuili".equals(params.get("tabType").toString())) {
+            PageInfo pageInfo = projectService.getProjectShuiliList(params);
+            buildReturnMap(result, pageInfo);
+            return result;
+        } else if ("jiaotong".equals(params.get("tabType").toString())) {
+            PageInfo pageInfo = projectService.getProjectJiaoList(params);
+            buildReturnMap(result, pageInfo);
+            return result;
+        } else {
+            result = projectService.getProjectCompanyList(param);
+            successMsg(result);
+        }
         return result;
     }
 
