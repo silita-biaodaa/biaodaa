@@ -30,17 +30,17 @@
         SELECT
         t.`pkid` AS pkid,
         t.`pro_name` AS proName,
-        t1.`com_name` AS comName,
+        t.`com_id` AS comName,
         t.`pro_org` AS proOrg,
         t.`pro_where` AS proWhere,
         t.`pro_type` AS proType
         FROM
         tb_project_shuili t
-        JOIN tb_company t1
-        ON t.`com_id` = t1.`com_id`
+--         JOIN tb_company t1
+--         ON t.`com_id` = t1.`com_id`
         WHERE 1 = 1
         <if test="comId != null and comId != ''">
-            AND t1.`com_id` = #{comId}
+            AND t.`com_id` = #{comId}
         </if>
         <if test="proName != null and proName != ''">
             AND t.`pro_name` LIKE CONCAT('%', #{proName}, '%')
