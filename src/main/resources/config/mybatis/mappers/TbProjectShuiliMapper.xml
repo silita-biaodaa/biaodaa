@@ -1,80 +1,80 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.biaodaa.dao.TbProjectShuiliMapper" >
-  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectShuili" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="pkid" property="pkid" jdbcType="INTEGER" />
-    <result column="com_id" property="comId" jdbcType="VARCHAR" />
-    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
-    <result column="pro_type" property="proType" jdbcType="VARCHAR" />
-    <result column="pro_org" property="proOrg" jdbcType="VARCHAR" />
-    <result column="pro_where" property="proWhere" jdbcType="VARCHAR" />
-    <result column="pro_status" property="proStatus" jdbcType="VARCHAR" />
-    <result column="contract_amount" property="contractAmount" jdbcType="VARCHAR" />
-    <result column="clearing_amount" property="clearingAmount" jdbcType="VARCHAR" />
-    <result column="worked" property="worked" jdbcType="VARCHAR" />
-    <result column="finished" property="finished" jdbcType="VARCHAR" />
-    <result column="duration" property="duration" jdbcType="VARCHAR" />
-    <result column="major_target" property="majorTarget" jdbcType="VARCHAR" />
-    <result column="contract_content" property="contractContent" jdbcType="VARCHAR" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <!--<result column="updated" property="updated" jdbcType="TIMESTAMP" />-->
-    <result column="persons" property="persons" jdbcType="LONGVARCHAR" />
-    <result column="prizes" property="prizes" jdbcType="LONGVARCHAR" />
-  </resultMap>
+<mapper namespace="com.silita.biaodaa.dao.TbProjectShuiliMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectShuili">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="com_id" property="comId" jdbcType="VARCHAR"/>
+        <result column="pro_name" property="proName" jdbcType="VARCHAR"/>
+        <result column="pro_type" property="proType" jdbcType="VARCHAR"/>
+        <result column="pro_org" property="proOrg" jdbcType="VARCHAR"/>
+        <result column="pro_where" property="proWhere" jdbcType="VARCHAR"/>
+        <result column="pro_status" property="proStatus" jdbcType="VARCHAR"/>
+        <result column="contract_amount" property="contractAmount" jdbcType="VARCHAR"/>
+        <result column="clearing_amount" property="clearingAmount" jdbcType="VARCHAR"/>
+        <result column="worked" property="worked" jdbcType="VARCHAR"/>
+        <result column="finished" property="finished" jdbcType="VARCHAR"/>
+        <result column="duration" property="duration" jdbcType="VARCHAR"/>
+        <result column="major_target" property="majorTarget" jdbcType="VARCHAR"/>
+        <result column="contract_content" property="contractContent" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <!--<result column="updated" property="updated" jdbcType="TIMESTAMP" />-->
+        <result column="persons" property="persons" jdbcType="LONGVARCHAR"/>
+        <result column="prizes" property="prizes" jdbcType="LONGVARCHAR"/>
+    </resultMap>
 
-  <!--业绩水利列表-->
-  <select id="queryShuiliProjectList" parameterType="java.util.Map" resultType="java.util.Map">
-      SELECT
+    <!--业绩水利列表-->
+    <select id="queryShuiliProjectList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
         t.`pkid` AS pkid,
         t.`pro_name` AS proName,
         t1.`com_name` AS comName,
         t.`pro_org` AS proOrg,
         t.`pro_where` AS proWhere,
         t.`pro_type` AS proType
-      FROM
+        FROM
         tb_project_shuili t
         JOIN tb_company t1
-          ON t.`com_id` = t1.`com_id`
-      WHERE 1 = 1
-      <if test="comId != null and comId != ''">
-        AND t1.`com_id` = #{comId}
-      </if>
-      <if test="proName != null and proName != ''">
-        AND t.`pro_name` LIKE CONCAT('%', #{proName}, '%')
-      </if>
-      <if test="proType != null and proType != ''">
-        AND t.`pro_type` = #{proType}
-      </if>
-      <if test="proWhere != null and proWhere != ''">
-        AND t.`pro_where` LIKE CONCAT('%', #{proWhere}, '%')
-      </if>
-      ORDER t.`created` DESC
-  </select>
+        ON t.`com_id` = t1.`com_id`
+        WHERE 1 = 1
+        <if test="comId != null and comId != ''">
+            AND t1.`com_id` = #{comId}
+        </if>
+        <if test="proName != null and proName != ''">
+            AND t.`pro_name` LIKE CONCAT('%', #{proName}, '%')
+        </if>
+        <if test="proType != null and proType != ''">
+            AND t.`pro_type` = #{proType}
+        </if>
+        <if test="proWhere != null and proWhere != ''">
+            AND t.`pro_where` LIKE CONCAT('%', #{proWhere}, '%')
+        </if>
+        ORDER BY t.`created` DESC
+    </select>
 
-  <!--获取详情-->
-  <select id="queryShuiliDetail" parameterType="java.lang.String" resultMap="BaseResultMap">
-    SELECT
-      `pkid`,
-      `com_id`,
-      `pro_name`,
-      `pro_type`,
-      `pro_org`,
-      `pro_where`,
-      `pro_status`,
-      `contract_amount`,
-      `clearing_amount`,
-      `worked`,
-      `finished`,
-      `duration`,
-      `major_target`,
-      `contract_content`,
-      `persons`,
-      `prizes`,
-      `created`
-    FROM tb_project_shuili
-    WHERE pkid = #{pkid}
+    <!--获取详情-->
+    <select id="queryShuiliDetail" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+          `pkid`,
+          `com_id`,
+          `pro_name`,
+          `pro_type`,
+          `pro_org`,
+          `pro_where`,
+          `pro_status`,
+          `contract_amount`,
+          `clearing_amount`,
+          `worked`,
+          `finished`,
+          `duration`,
+          `major_target`,
+          `contract_content`,
+          `persons`,
+          `prizes`,
+          `created`
+        FROM tb_project_shuili
+        WHERE pkid = #{pkid}
   </select>
 </mapper>
