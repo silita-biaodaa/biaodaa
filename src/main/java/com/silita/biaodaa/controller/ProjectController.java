@@ -48,14 +48,14 @@ public class ProjectController extends BaseController {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", this.SUCCESS_CODE);
         result.put("msg", this.SUCCESS_MSG);
-        if ("project".equals(params.get("tabType").toString())) {
+        if ("project".equals(params.get("tabType"))) {
             projectService.getProjectList(params, result);
             return result;
-        } else if ("shuili".equals(params.get("tabType").toString())) {
+        } else if ("shuili".equals(params.get("tabType"))) {
             PageInfo pageInfo = projectService.getProjectShuiliList(params);
             buildReturnMap(result, pageInfo);
             return result;
-        } else if ("jiaotong".equals(params.get("tabType").toString())) {
+        } else if ("jiaotong".equals(params.get("tabType"))) {
             PageInfo pageInfo = projectService.getProjectJiaoList(params);
             buildReturnMap(result, pageInfo);
             return result;
@@ -138,11 +138,11 @@ public class ProjectController extends BaseController {
     public Map<String, Object> companyProjectList(@RequestBody Map<String, Object> param) {
         Map<String, Object> result = new HashedMap();
         successMsg(result);
-        if ("shuili".equals(params.get("tabType").toString())) {
+        if ("shuili".equals(params.get("tabType"))) {
             PageInfo pageInfo = projectService.getProjectShuiliList(params);
             buildReturnMap(result, pageInfo);
             return result;
-        } else if ("jiaotong".equals(params.get("tabType").toString())) {
+        } else if ("jiaotong".equals(params.get("tabType"))) {
             PageInfo pageInfo = projectService.getProjectJiaoList(params);
             buildReturnMap(result, pageInfo);
             return result;

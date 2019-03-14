@@ -93,9 +93,6 @@ public class ProjectService {
      * @return
      */
     public PageInfo getProjectShuiliList(Map<String, Object> param) {
-        if (null == param.get("proType")) {
-            param.put("proType", "施工");
-        }
         if (null == param.get("proWhere")) {
             param.put("proWhere", "湖南省");
         }
@@ -117,9 +114,6 @@ public class ProjectService {
      * @return
      */
     public PageInfo getProjectJiaoList(Map<String, Object> param) {
-        if (null == param.get("source")) {
-            param.put("source", "省厅录入");
-        }
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         Page page = new Page();
