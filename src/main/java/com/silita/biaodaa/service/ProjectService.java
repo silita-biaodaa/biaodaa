@@ -93,9 +93,6 @@ public class ProjectService {
      * @return
      */
     public PageInfo getProjectShuiliList(Map<String, Object> param) {
-        if (null == param.get("proWhere")) {
-            param.put("proWhere", "湖南省");
-        }
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         Page page = new Page();

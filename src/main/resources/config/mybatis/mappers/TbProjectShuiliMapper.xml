@@ -30,17 +30,15 @@
         SELECT
         t.`pkid` AS pkid,
         t.`pro_name` AS proName,
-        t.`com_id` AS comName,
+        t.`com_name` AS comName,
         t.`pro_org` AS proOrg,
         t.`pro_where` AS proWhere,
         t.`pro_type` AS proType
         FROM
         tb_project_shuili t
---         JOIN tb_company t1
---         ON t.`com_id` = t1.`com_id`
         WHERE 1 = 1
-        <if test="comId != null and comId != ''">
-            AND t.`com_id` = #{comId}
+        <if test="comName != null and comName != ''">
+            AND t.`com_name` = #{comName}
         </if>
         <if test="proName != null and proName != ''">
             AND t.`pro_name` LIKE CONCAT('%', #{proName}, '%')
@@ -48,8 +46,8 @@
         <if test="proType != null and proType != ''">
             AND t.`pro_type` = #{proType}
         </if>
-        <if test="proWhere != null and proWhere != ''">
-            AND t.`pro_where` LIKE CONCAT('%', #{proWhere}, '%')
+        <if test="area != null and area != ''">
+            AND t.`pro_where` LIKE CONCAT('%', #{area}, '%')
         </if>
         ORDER BY t.`created` DESC
     </select>
@@ -58,7 +56,7 @@
     <select id="queryShuiliDetail" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT
           `pkid`,
-          `com_id`,
+          `com_name`,
           `pro_name`,
           `pro_type`,
           `pro_org`,
