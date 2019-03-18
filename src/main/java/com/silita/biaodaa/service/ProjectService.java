@@ -443,7 +443,7 @@ public class ProjectService {
             resultList = tbProjectMapper.queryProjectListByIds(proList);
         }
         if (null != resultList && resultList.size() > 0) {
-            List<Map<String, Object>> resList = new ArrayList<>();
+            List<Map<String, Object>> resList = resultList;
             if ("page".equals(param.get("type"))) {
                 Integer pageNo = MapUtils.getInteger(param, "pageNo");
                 Integer pageSize = MapUtils.getInteger(param, "pageSize");
