@@ -439,8 +439,8 @@ public class ProjectService {
             List<String> proList = new ArrayList<>(set);
             resultList = tbProjectMapper.queryProjectListByIds(proList);
         }
+        List<Map<String, Object>> resList = resultList;
         if (null != resultList && resultList.size() > 0) {
-            List<Map<String, Object>> resList = resultList;
             if ("page".equals(param.get("type"))) {
                 Integer pageNo = MapUtils.getInteger(param, "pageNo");
                 Integer pageSize = MapUtils.getInteger(param, "pageSize");
@@ -457,8 +457,8 @@ public class ProjectService {
             for (Map<String, Object> map : resList) {
                 this.putProvince(map);
             }
-            resultMap.put("data", resList);
         }
+        resultMap.put("data", resList);
         return resultMap;
     }
 
