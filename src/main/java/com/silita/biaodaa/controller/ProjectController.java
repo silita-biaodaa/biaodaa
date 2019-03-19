@@ -138,11 +138,11 @@ public class ProjectController extends BaseController {
     public Map<String, Object> companyProjectList(@RequestBody Map<String, Object> param) {
         Map<String, Object> result = new HashedMap();
         successMsg(result);
-        if ("shuili".equals(params.get("tabType"))) {
+        if ("shuili".equals(param.get("tabType"))) {
             PageInfo pageInfo = projectService.getProjectShuiliList(params);
             buildReturnMap(result, pageInfo);
             return result;
-        } else if ("jiaotong".equals(params.get("tabType"))) {
+        } else if ("jiaotong".equals(param.get("tabType"))) {
             PageInfo pageInfo = projectService.getProjectJiaoList(params);
             buildReturnMap(result, pageInfo);
             return result;
