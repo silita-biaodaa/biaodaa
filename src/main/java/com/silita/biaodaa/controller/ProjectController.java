@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.elasticsearch.xpack.ml.utils.DomainSplitFunction.params;
-
 /**
  * 业绩
  */
@@ -139,11 +137,11 @@ public class ProjectController extends BaseController {
         Map<String, Object> result = new HashedMap();
         successMsg(result);
         if ("shuili".equals(param.get("tabType"))) {
-            PageInfo pageInfo = projectService.getProjectShuiliList(params);
+            PageInfo pageInfo = projectService.getProjectShuiliList(param);
             buildReturnMap(result, pageInfo);
             return result;
         } else if ("jiaotong".equals(param.get("tabType"))) {
-            PageInfo pageInfo = projectService.getProjectJiaoList(params);
+            PageInfo pageInfo = projectService.getProjectJiaoList(param);
             buildReturnMap(result, pageInfo);
             return result;
         } else {

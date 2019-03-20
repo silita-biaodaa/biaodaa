@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbTrafficPersonMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbTrafficPerson">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="pro_id" property="proId" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="post" property="post" jdbcType="VARCHAR"/>
+        <result column="begined" property="begined" jdbcType="VARCHAR"/>
+        <result column="ended" property="ended" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--根据项目id查询人员信息-->
+    <select id="queryPersonListByProId" parameterType="java.lang.String" resultMap="BaseResultMap">
+      SELECT
+        `pkid`,
+        `pro_id`,
+        `name`,
+        `post`,
+        `begined`,
+        `ended`
+      FROM
+        .`tb_traffic_person`
+      WHERE
+        pro_id = #{pkid}
+  </select>
+</mapper>

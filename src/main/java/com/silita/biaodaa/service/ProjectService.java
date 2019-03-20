@@ -44,6 +44,10 @@ public class ProjectService {
     ProjectCompletionService projectCompletionService;
     @Autowired
     TbProjectShuiliMapper tbProjectShuiliMapper;
+    @Autowired
+    TbProjectTrafficMapper tbProjectTrafficMapper;
+    @Autowired
+    TbTrafficPersonMapper tbTrafficPersonMapper;
 
     private static ProjectAnalysisUtil projectAnalysisUtil = new ProjectAnalysisUtil();
 
@@ -117,7 +121,7 @@ public class ProjectService {
         page.setCurrentPage(pageNo);
         page.setPageSize(pageSize);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        List<Map<String, Object>> list = new ArrayList<>();
+        List<Map<String, Object>> list = tbProjectTrafficMapper.queryProjectList(param);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -189,7 +193,11 @@ public class ProjectService {
      * @return
      */
     public Map<String, Object> getProjectJiaoDetail(String proId, Map<String, Object> result) {
-        result.put("data", null);
+        TbProjectTraffic projectTraffic = tbProjectTrafficMapper.queryProjectDetail(proId);
+        if (null != projectTraffic){
+            projectTraffic.setPersons(tbTrafficPersonMapper.queryPersonListByProId(proId));
+        }
+        result.put("data", projectTraffic);
         return result;
     }
 

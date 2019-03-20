@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbProjectTrafficMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectTraffic">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="com_name" property="comName" jdbcType="VARCHAR"/>
+        <result column="pro_name" property="proName" jdbcType="VARCHAR"/>
+        <result column="section" property="section" jdbcType="VARCHAR"/>
+        <result column="pro_where" property="proWhere" jdbcType="VARCHAR"/>
+        <result column="source" property="source" jdbcType="VARCHAR"/>
+        <result column="build" property="build" jdbcType="VARCHAR"/>
+        <result column="technical_grade" property="technicalGrade" jdbcType="VARCHAR"/>
+        <result column="contract_amount" property="contractAmount" jdbcType="VARCHAR"/>
+        <result column="clearing_amount" property="clearingAmount" jdbcType="VARCHAR"/>
+        <result column="begined" property="begined" jdbcType="VARCHAR"/>
+        <result column="ended" property="ended" jdbcType="VARCHAR"/>
+        <result column="stake_begin" property="stakeBegin" jdbcType="VARCHAR"/>
+        <result column="stake_end" property="stakeEnd" jdbcType="VARCHAR"/>
+        <result column="assess" property="assess" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+        <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <!--查询公路业绩-->
+    <select id="queryProjectList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        t.`pkid` AS pkid,
+        t.`pro_name` AS proName,
+        t.`com_name` AS comName,
+        t.`section` AS `section`,
+        t.`pro_where` AS proWhere,
+        t.`source` AS source
+        FROM
+        `tb_project_traffic` t
+        WHERE 1 = 1
+        <if test="comName != null and comName != ''">
+            AND t.com_name = #{comName}
+        </if>
+        <if test="proName != null and proName != ''">
+            AND t.pro_name LIKE CONCAT('%', #{proName}, '%')
+        </if>
+        <if test="area != null and area != ''">
+            AND t.pro_where LIKE CONCAT('%', #{area}, '%')
+        </if>
+        <if test="proType != null and proType != ''">
+            AND t.`source` = #{proType}
+        </if>
+        ORDER BY t.`created` DESC
+    </select>
+
+    <!--查询详情-->
+    <select id="queryProjectDetail" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+          `pkid`,
+          `com_name`,
+          `pro_name`,
+          `section`,
+          `pro_where`,
+          `source`,
+          `build`,
+          `technical_grade`,
+          `contract_amount`,
+          `clearing_amount`,
+          `begined`,
+          `ended`,
+          `stake_begin`,
+          `stake_end`,
+          `assess`,
+          `remark`
+        FROM
+          `tb_project_traffic`
+        WHERE pkid = #{pkid}
+    </select>
+</mapper>
