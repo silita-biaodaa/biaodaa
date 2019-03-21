@@ -136,9 +136,14 @@
 
     <sql id="noticeListTail">
         and DATE_ADD(now(),INTERVAL -${queryDays} DAY) &lt; s.openDate
-        <if test="aptMapList==null or aptMapList.size()==0">
-            order by s.openDate desc,s.edit desc,s.biddingType ASC,s.px desc
-        </if>
+        <choose>
+            <when test="aptMapList==null or aptMapList.size()==0">
+                order by s.openDate desc,s.edit desc,s.biddingType ASC,s.px desc
+            </when>
+            <otherwise>
+                ORDER BY s.openDate  DESC
+            </otherwise>
+        </choose>
     </sql>
 
     <sql id="zhongbidaoDetailField">
