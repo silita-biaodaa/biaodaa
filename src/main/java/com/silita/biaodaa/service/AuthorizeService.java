@@ -634,4 +634,28 @@ public class AuthorizeService {
     public int queryNullInvitCodeCount() {
         return userTempBddMapper.queryNullInvitCodeCount();
     }
+
+    public Map<String, Object> getIpAddress(String ip) {
+        Map<String, Object> resultMap = new HashMap<String, Object>() {{
+            put("region", "湖南");
+            put("city", "长沙");
+        }};
+        if (MyStringUtils.isNull(ip)) {
+            return resultMap;
+        }
+        String url = PropertiesUtils.getProperty("api.taobao.ip");
+        String requestUrl = url.replace("Address", ip);
+        String result = HttpUtils.sendGetUrl(requestUrl);
+        if (MyStringUtils.isNotNull(result)) {
+            Map<String, Object> reMap = JSONObject.parseObject(result);
+            if (null != reMap.get("data")) {
+                Map<String, Object> data = (Map<String, Object>) reMap.get("data");
+                resultMap.put("region", data.get("region"));
+                resultMap.put("city", data.get("city"));
+                return resultMap;
+            }
+            return resultMap;
+        }
+        return resultMap;
+    }
 }

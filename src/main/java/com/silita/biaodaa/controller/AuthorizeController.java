@@ -7,7 +7,6 @@ import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.AuthorizeService;
 import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.utils.MyStringUtils;
-import com.silita.biaodaa.utils.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,7 +20,6 @@ import java.util.Map;
 
 import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_FIRST;
 import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_INVITE;
-import static com.silita.biaodaa.controller.BaseController.bulidUserPwd;
 
 /**
  * 用户授权 如注册、登录、授权
@@ -29,7 +27,7 @@ import static com.silita.biaodaa.controller.BaseController.bulidUserPwd;
  */
 @RequestMapping("/authorize")
 @Controller
-public class AuthorizeController {
+public class AuthorizeController extends BaseController {
     private static final Logger logger = Logger.getLogger(CompanyController.class);
 
     @Autowired
@@ -590,6 +588,22 @@ public class AuthorizeController {
         return result;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/address", produces = "application/json;charset=utf-8")
+    public Map<String, Object> getIp(HttpServletRequest request) {
+        String adder = request.getHeader("X-real-ip");
+        Map result = new HashMap();
+        try {
+            logger.info("----------------ip:" + adder + "-------------------------");
+            successMsg(result, authorizeService.getIpAddress(adder));
+            return result;
+        } catch (Exception e) {
+            logger.error("获取ip失败", e);
+        }
+        return result;
+    }
+
+
     private SysUser setUser(UserTempBdd userTempBdd) {
         SysUser user = new SysUser();
         user.setLoginPwd(userTempBdd.getPassword());
@@ -609,7 +623,7 @@ public class AuthorizeController {
         if (null != userTempBdd && null != userTempBdd.getWxopenid() && !"".equals(userTempBdd.getWxopenid())) {
             user.setWxOpenId(userTempBdd.getWxopenid());
         }
-        if (null != userTempBdd && null != userTempBdd.getQqopenid() && !"".equals(userTempBdd.getQqopenid())){
+        if (null != userTempBdd && null != userTempBdd.getQqopenid() && !"".equals(userTempBdd.getQqopenid())) {
             user.setQqOpenId(userTempBdd.getQqopenid());
         }
         if (null != userTempBdd && null != userTempBdd.getGender() && !"".equals(userTempBdd.getGender())) {
@@ -627,7 +641,7 @@ public class AuthorizeController {
             }
             user.setSex(sex);
         }
-        if (null != userTempBdd && null != userTempBdd.getUserid()){
+        if (null != userTempBdd && null != userTempBdd.getUserid()) {
             user.setPkid(userTempBdd.getUserid());
         }
         return user;
