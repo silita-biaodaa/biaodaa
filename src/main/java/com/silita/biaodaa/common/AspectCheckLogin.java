@@ -2,6 +2,7 @@ package com.silita.biaodaa.common;
 
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.service.LoginInfoService;
+import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -239,7 +241,19 @@ public class AspectCheckLogin {
                 if ("/foundation/version".equals(requestUri)) {
                     loginInfoService.saveLoginInfo(name, phone, date);
                 }
-
+                //校验登录失效期
+                if (MyStringUtils.isNotNull(date)) {
+                    String logind = MyDateUtils.longDateToStr(date, "yyyy-MM-dd");
+                    String today = MyDateUtils.getDate("yyyy-MM-dd");
+//                    Long days = MyDateUtils.dateDiff(logind,today,MyDateUtils.datetimePattern,"m");
+                    int days = MyDateUtils.compareTime(logind, today);
+                    String time = PropertiesUtils.getProperty("login.out.days");
+                    if (days > Integer.valueOf(time)) {
+                        resMap.put("code", Constant.ERR_VERIFY_USER_TOKEN);
+                        resMap.put("msg", relogin);
+                        return resMap;
+                    }
+                }
                 String blacklist = PropertiesUtils.getProperty("blacklist");
                 if (blacklist != null && blacklist.contains(phone)) {
                     isHei = true;

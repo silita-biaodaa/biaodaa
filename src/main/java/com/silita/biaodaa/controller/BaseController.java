@@ -100,12 +100,12 @@ public abstract class BaseController {
     }
 
     public static void bulidUserPwd(SysUser sysUser) {
-        if (MyStringUtils.isNotNull(sysUser.getLoginPwd())) {
-            //非app渠道的密码需要加密
-            if (!Constant.CHANNEL_ANDROID.equals(sysUser.getChannel())
-                    && !Constant.CHANNEL_IOS.equals(sysUser.getChannel())) {
-                sysUser.setLoginPwd(DigestUtils.shaHex(sysUser.getLoginPwd()));
-            }
-        }
+//        if (MyStringUtils.isNotNull(sysUser.getLoginPwd())) {
+//            //非app渠道的密码需要加密
+//            if (!Constant.CHANNEL_ANDROID.equals(sysUser.getChannel())
+//                    && !Constant.CHANNEL_IOS.equals(sysUser.getChannel())) {
+//                sysUser.setLoginPwd(DigestUtils.shaHex(sysUser.getLoginPwd()));
+//            }
+//        }
     }
 }
