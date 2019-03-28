@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbAwardHunanMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbAwardHunan">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="com_id" property="comId" jdbcType="VARCHAR"/>
+        <result column="award_name" property="awardName" jdbcType="VARCHAR"/>
+        <result column="proj_name" property="projName" jdbcType="VARCHAR"/>
+        <result column="proj_type" property="projType" jdbcType="VARCHAR"/>
+        <result column="join_type" property="joinType" jdbcType="VARCHAR"/>
+        <result column="years" property="years" jdbcType="VARCHAR"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--获取奖项的最新年份-->
+    <select id="queryYears" parameterType="java.lang.String" resultType="java.lang.String">
+      SELECT years
+      FROM tb_award_hunan t
+      WHERE t.award_name = #{awardName}
+      ORDER BY years DESC
+      LIMIT 1
+  </select>
+
+    <!--查询奖项-->
+    <select id="queryAwardsList" parameterType="java.util.Map" resultType="java.util.Map">
+      SELECT
+        t.`award_name` AS awardName,
+        t.`proj_name` AS projName,
+        t.`proj_type` AS projType,
+        t.`years` AS years,
+        t.`join_type` AS joinType
+      FROM
+        tb_award_hunan t
+      WHERE t.`com_id` = #{comId}
+        AND t.`award_name` = #{awardName}
+        AND t.`proj_type` = #{projType}
+        AND t.`join_type` = #{joinType}
+        AND t.`years` = #{years}
+      LIMIT #{limit}
+  </select>
+
+    <!--查询国家级获奖-->
+    <select id="queryGjhjAwardsList" parameterType="java.util.Map" resultType="java.util.Map">
+      SELECT
+        t.`award_name` AS awardName,
+        t.`proj_name` AS projName,
+        t.`proj_type` AS projType,
+        t.`years` AS years,
+        t.`join_type` AS joinType,
+        t1.`score` AS score
+      FROM
+        tb_award_hunan t
+        JOIN tb_awards t1
+          ON t.`award_name` = t1.`award_name`
+          AND t1.`award_type` = 'gjjhj'
+      WHERE t.`com_id` = #{comId}
+        AND (t.`years` = #{luDate} OR t.`years` = #{zhuangDate} OR t.`years` =#{biaoDate})
+        AND t.`proj_type` = #{projType}
+        AND t.`join_type` = #{joinType}
+      ORDER BY t1.`score` DESC,
+        t.`years` DESC
+      LIMIT 2
+  </select>
+
+    <!--查询省级级获奖-->
+    <select id="querySjhjAwardsList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        res.`award_name` AS awardName,
+        res.`proj_name` AS projName,
+        res.`proj_type` AS projType,
+        res.`years` AS years,
+        res.`join_type` AS joinType,
+        res.`score` AS score
+        FROM
+        (SELECT
+        t.*,
+        t1.`score`
+        FROM
+        tb_award_hunan t
+        JOIN tb_awards t1
+        ON t.`award_name` = t1.`award_name`
+        AND t1.`award_type` = 'sjhj'
+        AND t1.`award_name` != '安全质量标准化示范工程'
+        WHERE t.`com_id` = #{comId}
+        AND (
+        t.`years` = #{years}
+        OR t.`years` = #{years2}
+        )
+        AND t.`proj_type` = #{projType}
+        AND t.`join_type` = #{joinType}
+        ORDER BY t1.`score` DESC,
+        t.`years` DESC) res
+        GROUP BY res.proj_name
+        LIMIT 5
+    </select>
+</mapper>

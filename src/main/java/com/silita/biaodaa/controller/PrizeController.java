@@ -28,7 +28,6 @@ public class PrizeController extends BaseController {
     PrizeService prizeService;
 
     /**
-     * TODO: 人员详情
      *
      * @return
      */

@@ -16,58 +16,69 @@
     <!--查询获奖列表-->
     <select id="queryPrizeList" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
-          t.`projName` AS projName,
-          t.`years` AS years,
-          t1.`companyName` AS comName,
-          t2.`mateName`  AS mateName
+        t.`projName` AS projName,
+        t.`years` AS years,
+        t1.`companyName` AS comName,
+        t2.`mateName` AS mateName
         FROM
-          cert_qyhj t
-          JOIN cert_src t1
-            ON t.`srcUuid` = t1.`uuid`
-          JOIN prize_zh t2
-            ON t.`zhUuid` = t2.`uuid`
+        cert_qyhj t
+        JOIN cert_src t1
+        ON t.`srcUuid` = t1.`uuid`
+        JOIN prize_zh t2
+        ON t.`zhUuid` = t2.`uuid`
         WHERE t.`joinType` = '承建单位'
-          <if test="uuid != null and uuid != ''">
-              AND t.`zhUuid` = #{uuid}
-          </if>
-          <if  test="keywords != null and keywords != ''">
-              AND (
-              t.`projName` LIKE CONCAT('%', #{keywords}, '%')
-              OR t1.`companyName` LIKE CONCAT('%', #{keywords}, '%')
-              )
-          </if>
-          <if test="years != null and years != ''">
-              AND t.`years` LIKE CONCAT('%', #{years}, '%')
-          </if>
+        <if test="uuid != null and uuid != ''">
+            AND t.`zhUuid` = #{uuid}
+        </if>
+        <if test="keywords != null and keywords != ''">
+            AND (
+            t.`projName` LIKE CONCAT('%', #{keywords}, '%')
+            OR t1.`companyName` LIKE CONCAT('%', #{keywords}, '%')
+            )
+        </if>
+        <if test="years != null and years != ''">
+            AND t.`years` LIKE CONCAT('%', #{years}, '%')
+        </if>
         ORDER BY t.`createDate` DESC
     </select>
 
     <!--查询不良记录列表-->
     <select id="queryundesirableList" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
-          t1.`companyName` AS comName,
-          t.`projectName` AS projName,
-          t.`publishSite` AS pubSite,
-          t.`nature` AS nature,
-          t.`publishDate` AS pubDate,
-          t.`badBehaviorContent` AS content
+        t1.`companyName` AS comName,
+        t.`projectName` AS projName,
+        t.`publishSite` AS pubSite,
+        t.`nature` AS nature,
+        t.`publishDate` AS pubDate,
+        t.`badBehaviorContent` AS content
         FROM
-          cert_undesirable t
-          JOIN cert_src t1
-            ON t.`srcUUid` = t1.`uuid`
+        cert_undesirable t
+        JOIN cert_src t1
+        ON t.`srcUUid` = t1.`uuid`
         WHERE 1 = 1
-          <if test="pubDate != null and pubDate != ''">
-              AND t.`publishDate` LIKE CONCAT('%', #{pubDate}, '%')
-          </if>
-          <if test="nature != null and nature != ''">
-              AND t.`nature` = #{nature}
-          </if>
-          <if test="keywords != null and keywords != ''">
-              AND (
-              t.`projectName` LIKE CONCAT('%', #{keywords}, '%')
-              OR t1.`companyName` LIKE CONCAT('%', #{keywords}, '%')
-              )
-          </if>
+        <if test="pubDate != null and pubDate != ''">
+            AND t.`publishDate` LIKE CONCAT('%', #{pubDate}, '%')
+        </if>
+        <if test="nature != null and nature != ''">
+            AND t.`nature` = #{nature}
+        </if>
+        <if test="keywords != null and keywords != ''">
+            AND (
+            t.`projectName` LIKE CONCAT('%', #{keywords}, '%')
+            OR t1.`companyName` LIKE CONCAT('%', #{keywords}, '%')
+            )
+        </if>
         ORDER BY t.`publishDate`
+    </select>
+
+    <!--查询不良行为个数-->
+    <select id="queryUndersiableCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+          COUNT(1)
+        FROM
+        cert_undesirable t
+        WHERE t.`nature` = #{nature}
+        AND t.`validityDate`&lt;= DATE_ADD(NOW(), INTERVAL 720 DAY)
+        AND t.`com_id` = #{comId}
     </select>
 </mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbReviewDiffMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbReviewDiff" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="com_id" property="comId" jdbcType="VARCHAR" />
+    <result column="proj_name" property="projName" jdbcType="VARCHAR" />
+    <result column="issued" property="issued" jdbcType="VARCHAR" />
+    <result column="valided" property="valided" jdbcType="VARCHAR" />
+    <result column="review" property="review" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <!--查询考评不合格情况-->
+  <select id="queryReviewDiff" parameterType="java.util.Map" resultType="java.util.Map">
+      SELECT
+        t.`proj_name` AS projName,
+        t.`remark`,
+        t.`issued`
+      FROM
+      tb_review_diff t
+      WHERE t.`com_id` = #{comId}
+      AND t.`type` = #{type}
+      <choose>
+        <when test="type == 'project'">
+          AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 90 DAY) ;
+        </when>
+        <otherwise>
+          AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 360 DAY) ;
+        </otherwise>
+      </choose>
+  </select>
+</mapper>

@@ -14,6 +14,7 @@ public class Constant {
     public static final String PRIZE_DECORATE = "全国建筑工程装饰奖";
     public static final String PRIZE_LOTUS = "芙蓉奖";
     public static final String PRIZE_SUPER = "省优工程";
+    public static final String PRIZE_SUPER2 = "优质工程";
 
 
     public static final String EXCELL_PROVINCE = "省级优秀";
