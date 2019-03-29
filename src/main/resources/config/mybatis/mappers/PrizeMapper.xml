@@ -81,4 +81,18 @@
         AND t.`validityDate`&lt;= DATE_ADD(NOW(), INTERVAL 720 DAY)
         AND t.`com_id` = #{comId}
     </select>
+
+    <!--查询不良行为个数-->
+    <select id="queryUndersiableList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            t.`projectName` AS projName,
+            t.`publishSite` AS pubSite,
+            t.`nature` AS nature,
+            t.`publishDate` AS pubDate,
+            t.`badBehaviorContent` AS content
+        FROM
+        cert_undesirable t
+        WHERE  t.`validityDate`&lt;= DATE_ADD(NOW(), INTERVAL 720 DAY)
+        AND t.`com_id` = #{comId}
+    </select>
 </mapper>

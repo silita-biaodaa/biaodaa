@@ -58,7 +58,7 @@
           AND t1.`award_type` = 'gjjhj'
       WHERE t.`com_id` = #{comId}
         AND (t.`years` = #{luDate} OR t.`years` = #{zhuangDate} OR t.`years` =#{biaoDate})
-        AND t.`proj_type` = #{projType}
+        AND t.`proj_type` LIKE CONCAT('%',#{projType},'%')
         AND t.`join_type` = #{joinType}
       ORDER BY t1.`score` DESC,
         t.`years` DESC
@@ -89,7 +89,7 @@
         t.`years` = #{years}
         OR t.`years` = #{years2}
         )
-        AND t.`proj_type` = #{projType}
+        AND t.`proj_type` LIKE CONCAT('%',#{projType},'%')
         AND t.`join_type` = #{joinType}
         ORDER BY t1.`score` DESC,
         t.`years` DESC) res

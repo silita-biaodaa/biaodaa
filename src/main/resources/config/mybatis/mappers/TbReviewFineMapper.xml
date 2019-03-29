@@ -24,8 +24,14 @@
           tb_review_fine t
         WHERE t.`com_id` = #{comId}
           AND t.`type` = #{type}
-        <if test="type == 'project'">
-            LIMIT 15
-        </if>
+        <choose>
+            <when test="type == 'project'">
+                LIMIT 15
+            </when>
+            <otherwise>
+                ORDER BY t.`issued` DESC
+                LIMIT 1
+            </otherwise>
+        </choose>
   </select>
 </mapper>

@@ -25,6 +25,9 @@ public class Constant {
     public static final String SCORE_COMM = "一般";
     public static final String SCORE_SEV = "严重";
 
+    public static final String JOIN_TYPE_CAN = "参建单位";
+    public static final String JOIN_TYPE_CHENG = "承建单位";
+
     public static final String SUCCESS_CODE = "1";
     public static final String FAIL_CODE = "0";
     public static final String THIRD_USER_NOTEXIST = "2";//第三方用户不存在

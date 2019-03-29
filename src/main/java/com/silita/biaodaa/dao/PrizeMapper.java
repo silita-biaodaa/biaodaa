@@ -38,4 +38,11 @@ public interface PrizeMapper {
      * @return
      */
     int queryUndersiableCount(Map<String,Object> param);
+
+    /**
+     * 查询不良行为个数
+     * @param param
+     * @return
+     */
+    List<Map<String, Object>> queryUndersiableList(Map<String,Object> param);
 }

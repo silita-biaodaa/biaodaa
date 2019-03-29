@@ -33,15 +33,50 @@ public class ReputationComputerService {
     PrizeMapper prizeMapper;
 
     public Map<String, Object> computer(Map<String, Object> param) {
-        String comId = MapUtils.getString(param, "comId");
-
-        return new HashedMap();
+        //获取最新年份
+        param.put("luDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_LUBAN));
+        param.put("zhuangDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_DECORATE));
+        param.put("biaoDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_BUILD));
+        param.put("years", tbAwardHunanMapper.queryYears(Constant.PRIZE_LOTUS));
+        param.put("years2", tbAwardHunanMapper.queryYears(Constant.PRIZE_SUPER2));
+        Map<String, Object> resultMap = new HashedMap();
+        Map<String, Object> sjMap = new HashedMap();
+        //参建单位
+        Map<String, Object> canMap = this.computerHj(param, Constant.JOIN_TYPE_CAN);
+        Double canTotal = MapUtils.getDouble(canMap, "total") == null ? 0D : MapUtils.getDouble(canMap, "total");
+        resultMap.put("gjhj", canMap.get("gjhjList"));
+        sjMap.put("aqrz", canMap.get("aqrzMap"));
+        sjMap.put("reviewCompany", canMap.get("comList"));
+        sjMap.put("reviewProject", canMap.get("proList"));
+        sjMap.put("awards", canMap.get("sjList"));
+        //承建单位
+        Map<String, Object> chengMap = this.computerHj(param, Constant.JOIN_TYPE_CHENG);
+        Double chengTotal = MapUtils.getDouble(chengMap, "total") == null ? 0D : MapUtils.getDouble(chengMap, "total");
+        //汇总
+        Double reviewFineTotal = MapUtils.getDouble(canMap, "reviewFineTotal") == null ? 0D : MapUtils.getDouble(canMap, "reviewFineTotal");
+        Double comTotal = MapUtils.getDouble(canMap, "comTotal") == null ? 0D : MapUtils.getDouble(canMap, "comTotal");
+        Double reviewDiffTotal = MapUtils.getDouble(canMap, "reviewDiffTotal") == null ? 0D : MapUtils.getDouble(canMap, "reviewDiffTotal");
+        Double underTotal = MapUtils.getDouble(canMap, "underTotal") == null ? 0D : MapUtils.getDouble(canMap, "underTotal");
+        Double aqrzTotal = 0D;
+        if (null != canMap.get("aqrzMap")) {
+            aqrzTotal = MapUtils.getDouble((Map) canMap.get("aqrzMap"), "score");
+        }
+        Double score = DoubleUtils.add(100, DoubleUtils.add(underTotal, aqrzTotal, DoubleUtils.add(DoubleUtils.add(canTotal, chengTotal, reviewDiffTotal), comTotal, reviewFineTotal)), 0D);
+        resultMap.put("score", score);
+        resultMap.put("sjhj", sjMap);
+        return resultMap;
     }
 
 
-    private Map<String,Object> computerHj(Map<String,Object> param){
+    /**
+     * 计算
+     * @param param
+     * @param joinType
+     * @return
+     */
+    private Map<String, Object> computerHj(Map<String, Object> param, String joinType) {
         //获取参建
-        param.put("joinType", "参建单位");
+        param.put("joinType", joinType);
         //国家级
         List<Map<String, Object>> gjhjList = this.computerCountry(param);
         //省级
@@ -50,7 +85,7 @@ public class ReputationComputerService {
         List<Map<String, Object>> sjList = sjhjMap.get("sjList");
         this.doweightPro(gjhjList, sjList, 0D);
         List<Map<String, Object>> proList = sjhjMap.get("proList");
-        this.doweightPro(gjhjList, proList, 0D);
+        this.doweightPro(gjhjList, proList, 0.3);
         List<Map<String, Object>> comList = sjhjMap.get("comList");
         //计算数值
         Integer luCount = 0;
@@ -86,12 +121,31 @@ public class ReputationComputerService {
             }
         }
         Double sjTotal = DoubleUtils.add(mul(fuCount, fuScore), mul(youCount, youScore), 0D);
-        Double reviewFineTotal = mul(proList.size(), 0.3);
-        Double comTotal = mul(comList.size(), 2);
-        Double reviewDiffTotal = this.reviewDiff(param);
-        Map<String,Object> aqrzMap = this.aqrzScore(param);
-        Double underTotal = this.understionScroe(param);
-        return new HashedMap();
+        Double total = DoubleUtils.add(gjTotal, sjTotal, 0D);
+        Map<String, Object> resultMap = new HashedMap();
+        if ("参建单位".equals(joinType)) {
+            total = DoubleUtils.div(total, 2, 2);
+            //省级奖项考评合格
+            Double reviewFineTotal = mul(proList.size(), 0.3);
+            Double comTotal = mul(comList.size(), 2);
+            //安全考评不合格
+            Double reviewDiffTotal = this.reviewDiff(param);
+            //安全认证
+            Map<String, Object> aqrzMap = this.aqrzScore(param);
+            //不良行为
+            Double underTotal = this.undesirableScore(param);
+            resultMap.put("reviewFineTotal", reviewFineTotal);
+            resultMap.put("proList", proList);
+            resultMap.put("comList", comList);
+            resultMap.put("comTotal", comTotal);
+            resultMap.put("reviewDiffTotal", reviewDiffTotal);
+            resultMap.put("aqrzMap", aqrzMap);
+            resultMap.put("underTotal", underTotal);
+            resultMap.put("gjhjList", gjhjList);
+            resultMap.put("sjList", sjList);
+        }
+        resultMap.put("score", total);
+        return resultMap;
     }
 
     /**
@@ -101,9 +155,6 @@ public class ReputationComputerService {
      * @return
      */
     private List<Map<String, Object>> computerCountry(Map<String, Object> param) {
-        param.put("luDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_LUBAN));
-        param.put("zhuangDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_DECORATE));
-        param.put("biaoDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_BUILD));
         List<Map<String, Object>> list = tbAwardHunanMapper.queryGjhjAwardsList(param);
         return list;
     }
@@ -116,8 +167,6 @@ public class ReputationComputerService {
      */
     private Map<String, List<Map<String, Object>>> computerProv(Map<String, Object> param) {
         //获取芙蓉奖省优质工程个数5
-        param.put("years", tbAwardHunanMapper.queryYears(Constant.PRIZE_LOTUS));
-        param.put("years2", tbAwardHunanMapper.queryYears(Constant.PRIZE_SUPER2));
         List<Map<String, Object>> list = tbAwardHunanMapper.querySjhjAwardsList(param);
         //获取评定合格优良工地个数15
         param.put("type", "prject");
@@ -187,17 +236,9 @@ public class ReputationComputerService {
      */
     private Double reviewDiff(Map<String, Object> param) {
         param.put("type", "project");
-        List<Map<String, Object>> list = tbReviewDiffMapper.queryReviewDiff(param);
-        Integer proCount = 0;
-        if (null != list && list.size() > 0) {
-            proCount = list.size();
-        }
+        Integer proCount = tbReviewDiffMapper.queryReviewDiffCount(param);
         param.put("type", "company");
-        list = tbReviewDiffMapper.queryReviewDiff(param);
-        Integer comCount = 0;
-        if (null != list && list.size() > 0) {
-            comCount = list.size();
-        }
+        Integer comCount = tbReviewDiffMapper.queryReviewDiffCount(param);
         return DoubleUtils.add(mul(proCount, -0.3), mul(comCount, -2), 0D);
     }
 
@@ -217,7 +258,7 @@ public class ReputationComputerService {
      * @param param
      * @return
      */
-    private Double understionScroe(Map<String, Object> param) {
+    private Double undesirableScore(Map<String, Object> param) {
         param.put("nature", Constant.SCORE_SEV);
         Integer sevCount = prizeMapper.queryUndersiableCount(param);
         param.put("nature", Constant.SCORE_COMM);
@@ -225,16 +266,18 @@ public class ReputationComputerService {
         return DoubleUtils.add(mul(sevCount, -4), mul(commCount, -2), 0D);
     }
 
-    public static void main(String[] args) {
-//        List<Integer> list = new ArrayList<>();
-//        list.add(1);
-//        list.add(2);
-//        list.add(3);
-//        list.add(4);
-//        list.remove(2);
-//        System.out.println(list);
-        Double d1 = 1D;
-        Double d2 = 0.3;
-        System.out.println(d2.compareTo(d1));
+    /**
+     * 不良行为列表
+     * @param param
+     * @return
+     */
+    public Map<String,Object> listUndesirable(Map<String, Object> param){
+        Map<String,Object> resultMap = new HashedMap();
+        param.put("type","company");
+        resultMap.put("unCompany",tbReviewDiffMapper.queryReviewDiff(param));
+        param.put("type","project");
+        resultMap.put("unProject",tbReviewDiffMapper.queryReviewDiff(param));
+        resultMap.put("undesirable",prizeMapper.queryUndersiableList(param));
+        return resultMap;
     }
 }
