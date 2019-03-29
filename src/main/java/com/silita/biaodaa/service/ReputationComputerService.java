@@ -169,7 +169,7 @@ public class ReputationComputerService {
         //获取芙蓉奖省优质工程个数5
         List<Map<String, Object>> list = tbAwardHunanMapper.querySjhjAwardsList(param);
         //获取评定合格优良工地个数15
-        param.put("type", "prject");
+        param.put("type", "project");
         List<Map<String, Object>> proList = tbReviewFineMapper.queryReviewFineList(param);
         //获取评定合格优良企业
         param.put("type", "company");
