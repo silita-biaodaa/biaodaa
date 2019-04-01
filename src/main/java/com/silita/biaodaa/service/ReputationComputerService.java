@@ -39,16 +39,22 @@ public class ReputationComputerService {
         param.put("biaoDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_BUILD));
         param.put("years", tbAwardHunanMapper.queryYears(Constant.PRIZE_LOTUS));
         param.put("years2", tbAwardHunanMapper.queryYears(Constant.PRIZE_SUPER2));
+        List<Map<String,Object>> gjhjList = new ArrayList<>();
+        List<Map<String,Object>> sjhjList = new ArrayList<>();
         Map<String, Object> resultMap = new HashedMap();
         Map<String, Object> sjMap = new HashedMap();
         //参建单位
         Map<String, Object> canMap = this.computerHj(param, Constant.JOIN_TYPE_CAN);
         Double canTotal = MapUtils.getDouble(canMap, "total") == null ? 0D : MapUtils.getDouble(canMap, "total");
-        resultMap.put("gjhj", canMap.get("gjhjList"));
+        if (null != canMap.get("gjhjList")){
+            gjhjList.addAll((List)canMap.get("gjhjList"));
+        }
         sjMap.put("aqrz", canMap.get("aqrzMap"));
         sjMap.put("reviewCompany", canMap.get("comList"));
         sjMap.put("reviewProject", canMap.get("proList"));
-        sjMap.put("awards", canMap.get("sjList"));
+        if (null != canMap.get("sjList")){
+            sjhjList.addAll((List)canMap.get("sjList"));
+        }
         //承建单位
         Map<String, Object> chengMap = this.computerHj(param, Constant.JOIN_TYPE_CHENG);
         Double chengTotal = MapUtils.getDouble(chengMap, "total") == null ? 0D : MapUtils.getDouble(chengMap, "total");
@@ -61,9 +67,14 @@ public class ReputationComputerService {
         if (null != canMap.get("aqrzMap")) {
             aqrzTotal = MapUtils.getDouble((Map) canMap.get("aqrzMap"), "score");
         }
+        if (null != chengMap.get("sjList")){
+            sjhjList.addAll((List)chengMap.get("sjList"));
+        }
         Double score = DoubleUtils.add(100, DoubleUtils.add(underTotal, aqrzTotal, DoubleUtils.add(DoubleUtils.add(canTotal, chengTotal, reviewDiffTotal), comTotal, reviewFineTotal)), 0D);
         resultMap.put("score", score);
+        sjMap.put("awards", sjhjList);
         resultMap.put("sjhj", sjMap);
+        resultMap.put("gjhj", gjhjList);
         return resultMap;
     }
 
@@ -141,9 +152,9 @@ public class ReputationComputerService {
             resultMap.put("reviewDiffTotal", reviewDiffTotal);
             resultMap.put("aqrzMap", aqrzMap);
             resultMap.put("underTotal", underTotal);
-            resultMap.put("gjhjList", gjhjList);
-            resultMap.put("sjList", sjList);
         }
+        resultMap.put("gjhjList", gjhjList);
+        resultMap.put("sjList", sjList);
         resultMap.put("score", total);
         return resultMap;
     }
