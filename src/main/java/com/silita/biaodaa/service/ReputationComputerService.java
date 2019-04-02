@@ -209,7 +209,6 @@ public class ReputationComputerService {
         if ((null != list1 && list1.size() > 0) && (null != list2 && list2.size() > 0)) {
             List<Integer> listInt = new ArrayList<>();
             List<Integer> proInt = new ArrayList<>();
-            System.out.println("-----------------size:" + list1.size() + "------------------size2:" + list2.size() + "----------");
             for (int i = 0; i < list1.size(); i++) {
                 for (int j = 0; j < list2.size(); j++) {
                     if (list1.get(i).get("projName").toString().equals(list2.get(j).get("projName").toString())) {
@@ -231,12 +230,12 @@ public class ReputationComputerService {
                 }
             }
             if (null != listInt && listInt.size() > 0) {
-                for (Integer index : listInt) {
+                for (int index : listInt) {
                     list1.remove(index);
                 }
             }
             if (null != proInt && proInt.size() > 0) {
-                for (Integer index : proInt) {
+                for (int index : proInt) {
                     list2.remove(index);
                 }
             }
