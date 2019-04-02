@@ -47,12 +47,13 @@
         `com_name`,
         `stat_date`,
         `num`,
-        `type`
+        `type`,
+        `score`
         )
         VALUES
         <foreach collection="list" item="list" separator=",">
             (
-            #{list.comName},#{list.statDate},#{list.num},#{list.type}
+            #{list.comName},#{list.statDate},#{list.num},#{list.type},#{list.score}
             )
         </foreach>
     </insert>
@@ -64,9 +65,10 @@
         `com_name`,
         `stat_date`,
         `num`,
-        `type`
+        `type`,
+        `score`
         )
-        VALUES(#{comName},#{statDate},#{num},#{type})
+        VALUES(#{comName},#{statDate},#{num},#{type},#{score})
     </insert>
 
     <select id="queryCountBidList" parameterType="java.util.Map" resultType="java.util.Map">
@@ -147,4 +149,26 @@
         </choose>
     </select>
 
+    <select id="queryRequCompany" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT t.`com_name`
+        FROM tb_count_bid_info t
+        WHERE t.`stat_date` = #{date}
+        AND t.`TYPE` = #{type}
+        ORDER BY t.`score` DESC
+        LIMIT 3
+    </select>
+
+    <select id="queryCountBidReq" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t.`com_name` AS comName,
+          t.`num` AS num,
+          t.`score` AS score,
+          t.`stat_date` AS statDate
+        FROM
+          tb_count_bid_info t
+        WHERE t.`TYPE` = #{type}
+        AND t.`stat_date` = #{statDate}
+        ORDER BY t.`score` DESC
+        LIMIT 100
+    </select>
 </mapper>

@@ -1,16 +1,17 @@
 package com.silita.biaodaa.service;
 
+import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.dao.TbCountBidInfoMapper;
 import com.silita.biaodaa.dao.TbPlatformNoticeMapper;
+import com.silita.biaodaa.model.es.CompanyEs;
 import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
-import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,35 +33,66 @@ public class CountBidInfoService {
     PlatformNoticeService platformNoticeService;
     @Autowired
     TbPlatformNoticeMapper tbPlatformNoticeMapper;
+    @Autowired
+    TbCompanyMapper tbCompanyMapper;
+    @Autowired
+    ReputationComputerService reputationComputerService;
 
     public void timerCount() {
-        //获取当前日期
-        Date endDate = dateUtils.getBeforeToday();
-        Date startDate = dateUtils.getDayBefore(endDate, 1);
-        List<Date> dateList = dateUtils.getDateList(startDate, endDate);
-        Map<String, Object> param = new HashMap<>();
-        param.put("countNum", 6);
-        param.put("couNum", 3);
-        if (null != dateList && dateList.size() > 0) {
-            for (Date de : dateList) {
-                countCompany(sdf.format(de), sdf.format(dateUtils.getLastDate(de)), 1);
-                param.put("statDate", sdf.format(de));
-                platformNoticeService.insert(getContentTitle(param));
-//                System.out.println("start="+sdf.format(de)+"----end"+sdf.format(dateUtils.getLastDate(de)));
+        String date = MyDateUtils.getDate("yyyy-MM-dd");
+        tbCountBidInfoMapper.delZhongBiaoCountByDate(date);
+        //查询公司
+        Map<String, Object> param = new HashedMap() {{
+            put("regisAddress", "湖南省");
+            put("pageSize", 1000);
+        }};
+        int total = tbCompanyMapper.queryCompanyAddressCount(param);
+        if (total <= 0) {
+            return;
+        }
+        Integer pages = getPage(total, 1000);
+        for (int i = 1; i <= pages; i++) {
+            param.put("page", (i - 1) * 1000);
+            List<CompanyEs> list = tbCompanyMapper.queryCompanyEsList(param);
+            for (CompanyEs es : list) {
+                //建筑工程
+                this.countCompany(es, "建筑工程", 2, date);
+                //市政工程
+                this.countCompany(es, "市政", 3, date);
             }
         }
+        this.addPlatform(date);
     }
 
-    private void countCompany(String startDate, String endDate, Integer type) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("startDate", startDate);
-        param.put("endDate", endDate);
-        param.put("type", type);
-        List<Map<String, Object>> bidCountList = tbCountBidInfoMapper.queryZhongbiaoCount(param);
-        if (null != bidCountList && bidCountList.size() > 0) {
-            tbCountBidInfoMapper.delZhongBiaoCountByDate(startDate);
-            tbCountBidInfoMapper.batchInsertCountBinInfo(bidCountList);
+    private void countCompany(CompanyEs es, String projType, Integer type, String date) {
+        Map<String, Object> param = new HashedMap() {{
+            put("comName", es.getComName());
+            put("statDate", date);
+            put("comId", es.getComId());
+            put("projType", projType);
+        }};
+        Map<String, Object> result = reputationComputerService.computer(param);
+        param.put("score", MapUtils.getDouble(result, "score"));
+        int count = 0;
+        if (null != result.get("gjhj")) {
+            count = count + ((List) result.get("gjhj")).size();
         }
+        Map<String, Object> sjhj = (Map<String, Object>) result.get("sjhj");
+        if (null != sjhj.get("reviewProject")) {
+            count = count + ((List) sjhj.get("reviewProject")).size();
+        }
+        if (null != sjhj.get("aqrz")) {
+            count++;
+        }
+        if (null != sjhj.get("reviewCompany")) {
+            count++;
+        }
+        if (null != sjhj.get("awards")) {
+            count = count + ((List) sjhj.get("awards")).size();
+        }
+        param.put("num", count);
+        param.put("type", type);
+        tbCountBidInfoMapper.insertCountBinInfo(param);
     }
 
 
@@ -88,70 +120,44 @@ public class CountBidInfoService {
         return resultMap;
     }
 
-    public Map<String, Object> getContentTitle(Map<String, Object> valueMap) {
-        String statDate = MapUtils.getString(valueMap, "statDate");
-        int count = tbCountBidInfoMapper.queryCountBidByStat(valueMap);
-        if (count <= 0) {
-            return null;
+    public Map<String,Object> listCountBidReq(Map<String, Object> valueMap){
+        List<Map<String, Object>> countList = tbCountBidInfoMapper.queryCountBidReq(valueMap);
+        Map<String, Object> resultMap = tbPlatformNoticeMapper.queryPlatformInfoByParam(valueMap);
+        if (MapUtils.isEmpty(resultMap)){
+            resultMap = new HashedMap();
         }
-        Map<String, Object> resultMap = new HashMap<>();
-        Map<String, Object> param = new HashMap<>();
-        //中标企业和中标总数量
-        Map<String, Object> result = null;
-        param.put("count", 1);
-        param.put("statDate", statDate);
-        if (null != valueMap.get("endDate")) {
-            param.put("endDate", valueMap.get("endDate"));
-        }
-        result = tbCountBidInfoMapper.queryCountBidNum(param);
-        if (MapUtils.isEmpty(result)) {
-            return resultMap;
-        }
-        String companyCount = result.get("comNameCount").toString();
-        String zhongCount = result.get("sumNum").toString();
-        //中标countNum个以上的企业个数
-        param.put("count", valueMap.get("countNum"));
-        result = tbCountBidInfoMapper.queryCountBidNum(param);
-        String sixCount = result.get("comNameCount").toString();
-        //中标countNum个以上的企业个数
-        param.put("count", valueMap.get("couNum"));
-        result = tbCountBidInfoMapper.queryCountBidNum(param);
-        String threeCount = result.get("comNameCount").toString();
-
-        String content = PropertiesUtils.getProperty("com.content");
-        //title
-        String title = PropertiesUtils.getProperty("notice.title");
-        if (null != valueMap.get("conTitle") && null != valueMap.get("releaseTime")) {
-            title = title.replace("{date}", valueMap.get("conTitle").toString());
-            content = content.replace("{date}", valueMap.get("conTitle").toString()).replace("{comCount}", companyCount).replace("{num}", zhongCount)
-                    .replace("{sixCount}", sixCount).replace("{threCount}", threeCount).replace("{countNum}", valueMap.get("countNum").toString()).replace("{couNum}", valueMap.get("couNum").toString());
-            resultMap.put("title", title);
-            resultMap.put("statDate", valueMap.get("releaseTime"));
-            resultMap.put("remark", content);
-            return resultMap;
-        }
-        title = title.replace("{date}", dateUtils.getTime(statDate, "yyyy-MM-dd", "yyyy年MM月"));
-        content = content.replace("{date}", dateUtils.getTime(statDate, "yyyy-MM-dd", "yyyy年MM月")).replace("{comCount}", companyCount).replace("{num}", zhongCount)
-                .replace("{sixCount}", sixCount).replace("{threCount}", threeCount).replace("{countNum}", valueMap.get("countNum").toString()).replace("{couNum}", valueMap.get("couNum").toString());
-        resultMap.put("title", title);
-        resultMap.put("statDate", statDate);
-        resultMap.put("remark", content);
+        resultMap.put("list",countList);
         return resultMap;
     }
 
-    public void countDates(Map<String, Object> param) {
-        String startDate = MapUtils.getString(param, "startDate");
-        String endDate = MapUtils.getString(param, "endDate");
-        String title = MyDateUtils.getTime(startDate, "yyyy-MM-dd", "yyyy年")
-                + MyDateUtils.getTime(startDate, "yyyy-MM-dd", "M") + "-" + MyDateUtils.getTime(endDate, "yyyy-MM-dd", "M月");
-        Map<String, Object> valueMap = new HashMap<>();
-        valueMap.put("statDate", startDate);
-        valueMap.put("endDate", endDate);
-        valueMap.put("conTitle", title);
-        valueMap.put("releaseTime", startDate + "~" + endDate);
-        valueMap.put("countNum", 20);
-        valueMap.put("couNum", 10);
-        platformNoticeService.insert(getContentTitle(valueMap));
+    public void addPlatform(String date) {
+        Map<String, Object> param = new HashedMap();
+        param.put("date", date);
+        param.put("type", 2);
+        param.put("statDate",date);
+        List<String> list = tbCountBidInfoMapper.queryRequCompany(param);
+        String title = "湖南省2019年建筑工程信誉计分排行榜";
+        String content = "根据湖南省住房和城乡建设厅发布的湘建监督[2018]238号文中的信誉计分规则，进行排名统计；其中" + list.get(0) + "、" + list.get(1) + "、" + list.get(2) + "分列信誉计分排行榜前三名。";
+        param.put("title",title);
+        param.put("remark",content);
+        platformNoticeService.insert(param);
+        param.put("type", 3);
+        list = tbCountBidInfoMapper.queryRequCompany(param);
+        title = "湖南省2019年市政工程信誉计分排行榜";
+        content = "根据湖南省住房和城乡建设厅发布的湘建监督[2018]238号文中的信誉计分规则，进行排名统计；其中" + list.get(0) + "、" + list.get(1) + "、" + list.get(2) + "分列信誉计分排行榜前三名。";
+        param.put("title",title);
+        param.put("remark",content);
+        platformNoticeService.insert(param);
+    }
+
+    private static Integer getPage(Integer total, Integer pageSize) {
+        Integer pages = 0;
+        if (total % pageSize == 0) {
+            pages = total / pageSize;
+        } else {
+            pages = (total / pageSize) + 1;
+        }
+        return pages;
     }
 
 }

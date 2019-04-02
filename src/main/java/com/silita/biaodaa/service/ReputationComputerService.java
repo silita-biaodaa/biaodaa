@@ -39,25 +39,25 @@ public class ReputationComputerService {
         param.put("biaoDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_BUILD));
         param.put("years", tbAwardHunanMapper.queryYears(Constant.PRIZE_LOTUS));
         param.put("years2", tbAwardHunanMapper.queryYears(Constant.PRIZE_SUPER2));
-        List<Map<String,Object>> gjhjList = new ArrayList<>();
-        List<Map<String,Object>> sjhjList = new ArrayList<>();
+        List<Map<String, Object>> gjhjList = new ArrayList<>();
+        List<Map<String, Object>> sjhjList = new ArrayList<>();
         Map<String, Object> resultMap = new HashedMap();
         Map<String, Object> sjMap = new HashedMap();
         //参建单位
         Map<String, Object> canMap = this.computerHj(param, Constant.JOIN_TYPE_CAN);
-        Double canTotal = MapUtils.getDouble(canMap, "total") == null ? 0D : MapUtils.getDouble(canMap, "total");
-        if (null != canMap.get("gjhjList")){
-            gjhjList.addAll((List)canMap.get("gjhjList"));
+        Double canTotal = MapUtils.getDouble(canMap, "score") == null ? 0D : MapUtils.getDouble(canMap, "score");
+        if (null != canMap.get("gjhjList")) {
+            gjhjList.addAll((List) canMap.get("gjhjList"));
         }
         sjMap.put("aqrz", canMap.get("aqrzMap"));
         sjMap.put("reviewCompany", canMap.get("comList"));
         sjMap.put("reviewProject", canMap.get("proList"));
-        if (null != canMap.get("sjList")){
-            sjhjList.addAll((List)canMap.get("sjList"));
+        if (null != canMap.get("sjList")) {
+            sjhjList.addAll((List) canMap.get("sjList"));
         }
         //承建单位
         Map<String, Object> chengMap = this.computerHj(param, Constant.JOIN_TYPE_CHENG);
-        Double chengTotal = MapUtils.getDouble(chengMap, "total") == null ? 0D : MapUtils.getDouble(chengMap, "total");
+        Double chengTotal = MapUtils.getDouble(chengMap, "score") == null ? 0D : MapUtils.getDouble(chengMap, "score");
         //汇总
         Double reviewFineTotal = MapUtils.getDouble(canMap, "reviewFineTotal") == null ? 0D : MapUtils.getDouble(canMap, "reviewFineTotal");
         Double comTotal = MapUtils.getDouble(canMap, "comTotal") == null ? 0D : MapUtils.getDouble(canMap, "comTotal");
@@ -67,8 +67,11 @@ public class ReputationComputerService {
         if (null != canMap.get("aqrzMap")) {
             aqrzTotal = MapUtils.getDouble((Map) canMap.get("aqrzMap"), "score");
         }
-        if (null != chengMap.get("sjList")){
-            sjhjList.addAll((List)chengMap.get("sjList"));
+        if (null != chengMap.get("sjList")) {
+            sjhjList.addAll((List) chengMap.get("sjList"));
+        }
+        if (null != canMap.get("gjhjList")) {
+            gjhjList.addAll((List) chengMap.get("gjhjList"));
         }
         Double score = DoubleUtils.add(100, DoubleUtils.add(underTotal, aqrzTotal, DoubleUtils.add(DoubleUtils.add(canTotal, chengTotal, reviewDiffTotal), comTotal, reviewFineTotal)), 0D);
         resultMap.put("score", score);
@@ -81,12 +84,12 @@ public class ReputationComputerService {
 
     /**
      * 计算
+     *
      * @param param
      * @param joinType
      * @return
      */
     private Map<String, Object> computerHj(Map<String, Object> param, String joinType) {
-        //获取参建
         param.put("joinType", joinType);
         //国家级
         List<Map<String, Object>> gjhjList = this.computerCountry(param);
@@ -122,13 +125,13 @@ public class ReputationComputerService {
         Double fuScore = 0D;
         Integer youCount = 0;
         Double youScore = 0D;
-        for (Map<String, Object> gjMap : gjhjList) {
-            if (Constant.PRIZE_LOTUS.equals(gjMap.get("awardName"))) {
+        for (Map<String, Object> sjMap : sjList) {
+            if (Constant.PRIZE_LOTUS.equals(sjMap.get("awardName"))) {
                 fuCount++;
-                fuScore = MapUtils.getDouble(gjMap, "score");
+                fuScore = MapUtils.getDouble(sjMap, "score");
             } else {
                 youCount++;
-                youScore = MapUtils.getDouble(gjMap, "score");
+                youScore = MapUtils.getDouble(sjMap, "score");
             }
         }
         Double sjTotal = DoubleUtils.add(mul(fuCount, fuScore), mul(youCount, youScore), 0D);
@@ -206,13 +209,14 @@ public class ReputationComputerService {
         if ((null != list1 && list1.size() > 0) && (null != list2 && list2.size() > 0)) {
             List<Integer> listInt = new ArrayList<>();
             List<Integer> proInt = new ArrayList<>();
+            System.out.println("-----------------size:" + list1.size() + "------------------size2:" + list2.size() + "----------");
             for (int i = 0; i < list1.size(); i++) {
                 for (int j = 0; j < list2.size(); j++) {
                     if (list1.get(i).get("projName").toString().equals(list2.get(j).get("projName").toString())) {
                         Double d1 = MapUtils.getDouble(list1.get(i), "score");
                         Double d2;
-                        if (null != list2.get(i).get("score")) {
-                            d2 = MapUtils.getDouble(list2.get(i), "score");
+                        if (null != list2.get(j).get("score")) {
+                            d2 = MapUtils.getDouble(list2.get(j), "score");
                         } else {
                             d2 = d;
                         }
@@ -279,16 +283,17 @@ public class ReputationComputerService {
 
     /**
      * 不良行为列表
+     *
      * @param param
      * @return
      */
-    public Map<String,Object> listUndesirable(Map<String, Object> param){
-        Map<String,Object> resultMap = new HashedMap();
-        param.put("type","company");
-        resultMap.put("unCompany",tbReviewDiffMapper.queryReviewDiff(param));
-        param.put("type","project");
-        resultMap.put("unProject",tbReviewDiffMapper.queryReviewDiff(param));
-        resultMap.put("undesirable",prizeMapper.queryUndersiableList(param));
+    public Map<String, Object> listUndesirable(Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashedMap();
+        param.put("type", "company");
+        resultMap.put("unCompany", tbReviewDiffMapper.queryReviewDiff(param));
+        param.put("type", "project");
+        resultMap.put("unProject", tbReviewDiffMapper.queryReviewDiff(param));
+        resultMap.put("undesirable", prizeMapper.queryUndersiableList(param));
         return resultMap;
     }
 }

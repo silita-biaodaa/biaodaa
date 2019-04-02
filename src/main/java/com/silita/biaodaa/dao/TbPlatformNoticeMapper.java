@@ -50,4 +50,12 @@ public interface TbPlatformNoticeMapper extends MyMapper<TbPlatformNotice> {
      * @return
      */
     Map<String, Object> queryPlatformInfoByStatDate(String statDate);
+
+    /**
+     * 根据发布时间获取详细信息
+     *
+     * @param param
+     * @return
+     */
+    Map<String, Object> queryPlatformInfoByParam(Map<String,Object> param);
 }

@@ -43,16 +43,12 @@ public class PlatformNoticeService {
         }
         String statDate = param.get("statDate").toString();
         String remark = param.get("remark").toString();
-        int count = tbPlatformNoticeMapper.queryPlatformNoticeCount(statDate);
-        if(count > 0){
-            tbPlatformNoticeMapper.updateRemark(param);
-            return;
-        }
         TbPlatformNotice tbPlatformNotice = new TbPlatformNotice();
         tbPlatformNotice.setCountDate(new Date());
         tbPlatformNotice.setReleaseTime(statDate);
         tbPlatformNotice.setRemark(remark);
         tbPlatformNotice.setTitle(param.get("title").toString());
+        tbPlatformNotice.setType(MapUtils.getInteger(param,"type"));
         tbPlatformNoticeMapper.insertPlatformNotice(tbPlatformNotice);
     }
 }

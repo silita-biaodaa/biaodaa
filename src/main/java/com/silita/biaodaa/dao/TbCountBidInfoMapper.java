@@ -52,6 +52,14 @@ public interface TbCountBidInfoMapper extends MyMapper<TbCountBidInfo> {
     List<Map<String, Object>> queryCountBidList(Map<String, Object> map);
 
     /**
+     * 获取详情列表
+     *
+     * @param map
+     * @return
+     */
+    List<Map<String, Object>> queryCountBidReq(Map<String, Object> map);
+
+    /**
      * 获取个数
      *
      * @param map
@@ -66,4 +74,11 @@ public interface TbCountBidInfoMapper extends MyMapper<TbCountBidInfo> {
      * @return
      */
     int queryCountBidByStat(Map<String,Object> param);
+
+    /**
+     *  查询排行榜
+     * @param param
+     * @return
+     */
+    List<String> queryRequCompany(Map<String,Object> param);
 }

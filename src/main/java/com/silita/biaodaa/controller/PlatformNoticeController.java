@@ -31,6 +31,11 @@ public class PlatformNoticeController extends BaseController {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
+        if (null == param.get("type")){
+            param.put("type",1);
+        }else {
+            param.remove("type");
+        }
         return platformNoticeService.getPlatformNoticeList(param, resultMap);
     }
 

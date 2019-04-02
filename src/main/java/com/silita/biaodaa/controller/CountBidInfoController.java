@@ -47,6 +47,12 @@ public class CountBidInfoController extends BaseController {
         if (null != param.get("statDate")) {
             statDate = param.get("statDate").toString();
         }
+        if (null != param.get("type")){
+            if ("2".equals(param.get("type").toString()) || "3".equals(param.get("type").toString())){
+                resultMap.put("data", countBidInfoService.listCountBidReq(param));
+                return resultMap;
+            }
+        }
         param.put("count",3);
         if(statDate.contains("~")){
             String[] str = statDate.split("~");
@@ -66,7 +72,7 @@ public class CountBidInfoController extends BaseController {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
-        countBidInfoService.countDates(param);
+//        countBidInfoService.countDates(param);
         return resultMap;
     }
 }

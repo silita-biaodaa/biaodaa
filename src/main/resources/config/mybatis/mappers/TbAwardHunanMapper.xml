@@ -39,6 +39,8 @@
         AND t.`proj_type` = #{projType}
         AND t.`join_type` = #{joinType}
         AND t.`years` = #{years}
+        AND t.`proj_name` IS NOT NULL
+        AND t.`proj_name` != ''
       LIMIT #{limit}
   </select>
 
@@ -60,6 +62,8 @@
         AND (t.`years` = #{luDate} OR t.`years` = #{zhuangDate} OR t.`years` =#{biaoDate})
         AND t.`proj_type` LIKE CONCAT('%',#{projType},'%')
         AND t.`join_type` = #{joinType}
+        AND t.`proj_name` IS NOT NULL
+        AND t.`proj_name` != ''
       ORDER BY t1.`score` DESC,
         t.`years` DESC
       LIMIT 2
@@ -91,6 +95,8 @@
         )
         AND t.`proj_type` LIKE CONCAT('%',#{projType},'%')
         AND t.`join_type` = #{joinType}
+        AND t.`proj_name` IS NOT NULL
+        AND t.`proj_name` != ''
         ORDER BY t1.`score` DESC,
         t.`years` DESC) res
         GROUP BY res.proj_name

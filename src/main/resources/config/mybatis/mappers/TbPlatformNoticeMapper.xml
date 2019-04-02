@@ -28,8 +28,12 @@
         select t.title AS title
                 ,t.remark AS remark
                 ,t.release_time AS releaseTime
+                ,t.`TYPE` as `type`
         from tb_platform_notice t
         where t.status = 1
+        <if test="type != null and type != ''">
+            AND t.`TYPE` = #{type}
+        </if>
         order by t.cerated desc
     </select>
 
@@ -43,10 +47,11 @@
              `title`,
              `remark`,
              `release_time`,
-             `count_date`
+             `count_date`,
+             `TYPE`
             )
         values (
-              #{title},#{remark},#{releaseTime},#{countDate}
+              #{title},#{remark},#{releaseTime},#{countDate},#{type}
             )
     </insert>
 
@@ -58,5 +63,16 @@
         from tb_platform_notice t
         where t.`status` =1
         and t.release_time = #{statDate}
+    </select>
+
+    <select id="queryPlatformInfoByParam" parameterType="java.util.Map" resultType="java.util.Map">
+        select
+              `title` as title,
+             `remark` as remark,
+             `release_time` as releaseTime
+        from tb_platform_notice t
+        where t.`status` =1
+        and t.release_time = #{statDate}
+        and t.`TYPE` = #{type}
     </select>
 </mapper>
