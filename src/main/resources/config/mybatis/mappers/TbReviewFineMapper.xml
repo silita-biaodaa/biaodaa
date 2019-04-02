@@ -24,10 +24,10 @@
           tb_review_fine t
         WHERE t.`com_id` = #{comId}
           AND t.`type` = #{type}
-          AND t.`proj_name` is not NULL
-          AND t.`proj_name` != ''
         <choose>
             <when test="type == 'project'">
+                AND t.`proj_name` is not NULL
+                AND t.`proj_name` != ''
                 LIMIT 15
             </when>
             <otherwise>

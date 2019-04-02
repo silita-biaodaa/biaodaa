@@ -35,6 +35,8 @@
         AND t.`type` = #{type}
         <choose>
             <when test="type == 'project'">
+                AND t.`proj_name` is not NULL
+                AND t.`proj_name` != ''
                 AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 90 DAY) ;
             </when>
             <otherwise>

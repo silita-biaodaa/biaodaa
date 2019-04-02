@@ -43,8 +43,7 @@ public class ReputationComputerService {
         List<Map<String, Object>> sjhjList = new ArrayList<>();
         Map<String, Object> resultMap = new HashedMap();
         Map<String, Object> sjMap = new HashedMap();
-        //参建单位
-        Map<String, Object> canMap = this.computerHj(param, Constant.JOIN_TYPE_CAN);
+        Map<String, Object> canMap = this.computerHj(param);
         Double canTotal = MapUtils.getDouble(canMap, "score") == null ? 0D : MapUtils.getDouble(canMap, "score");
         if (null != canMap.get("gjhjList")) {
             gjhjList.addAll((List) canMap.get("gjhjList"));
@@ -55,9 +54,6 @@ public class ReputationComputerService {
         if (null != canMap.get("sjList")) {
             sjhjList.addAll((List) canMap.get("sjList"));
         }
-        //承建单位
-        Map<String, Object> chengMap = this.computerHj(param, Constant.JOIN_TYPE_CHENG);
-        Double chengTotal = MapUtils.getDouble(chengMap, "score") == null ? 0D : MapUtils.getDouble(chengMap, "score");
         //汇总
         Double reviewFineTotal = MapUtils.getDouble(canMap, "reviewFineTotal") == null ? 0D : MapUtils.getDouble(canMap, "reviewFineTotal");
         Double comTotal = MapUtils.getDouble(canMap, "comTotal") == null ? 0D : MapUtils.getDouble(canMap, "comTotal");
@@ -67,13 +63,7 @@ public class ReputationComputerService {
         if (null != canMap.get("aqrzMap")) {
             aqrzTotal = MapUtils.getDouble((Map) canMap.get("aqrzMap"), "score");
         }
-        if (null != chengMap.get("sjList")) {
-            sjhjList.addAll((List) chengMap.get("sjList"));
-        }
-        if (null != canMap.get("gjhjList")) {
-            gjhjList.addAll((List) chengMap.get("gjhjList"));
-        }
-        Double score = DoubleUtils.add(100, DoubleUtils.add(underTotal, aqrzTotal, DoubleUtils.add(DoubleUtils.add(canTotal, chengTotal, reviewDiffTotal), comTotal, reviewFineTotal)), 0D);
+        Double score = DoubleUtils.add(100, DoubleUtils.add(underTotal, aqrzTotal, DoubleUtils.add(DoubleUtils.add(canTotal, 0D, reviewDiffTotal), comTotal, reviewFineTotal)), 0D);
         resultMap.put("score", score);
         sjMap.put("awards", sjhjList);
         resultMap.put("sjhj", sjMap);
@@ -86,11 +76,9 @@ public class ReputationComputerService {
      * 计算
      *
      * @param param
-     * @param joinType
      * @return
      */
-    private Map<String, Object> computerHj(Map<String, Object> param, String joinType) {
-        param.put("joinType", joinType);
+    private Map<String, Object> computerHj(Map<String, Object> param) {
         //国家级
         List<Map<String, Object>> gjhjList = this.computerCountry(param);
         //省级
@@ -102,60 +90,93 @@ public class ReputationComputerService {
         this.doweightPro(gjhjList, proList, 0.3);
         List<Map<String, Object>> comList = sjhjMap.get("comList");
         //计算数值
+        Integer canLuCount = 0;
+        Double canLuScore = 0D;
         Integer luCount = 0;
         Double luScore = 0D;
+        Integer canBiaoCount = 0;
+        Double canBiaoScore = 0D;
         Integer biaoCount = 0;
         Double biaoScore = 0D;
+        Integer canZhuangCount = 0;
+        Double canZhuangScore = 0D;
         Integer zhuangCount = 0;
         Double zhuangScore = 0D;
         for (Map<String, Object> gjMap : gjhjList) {
             if (Constant.PRIZE_LUBAN.equals(gjMap.get("awardName"))) {
-                luCount++;
-                luScore = MapUtils.getDouble(gjMap, "score");
+                if (Constant.JOIN_TYPE_CAN.equals(gjMap.get("joinType"))) {
+                    canLuCount++;
+                    canLuScore = DoubleUtils.div(MapUtils.getDouble(gjMap, "score"), 2, 2);
+                } else {
+                    luCount++;
+                    luScore = MapUtils.getDouble(gjMap, "score");
+                }
             } else if (Constant.PRIZE_BUILD.equals(gjMap.get("awardName"))) {
-                biaoCount++;
-                biaoScore = MapUtils.getDouble(gjMap, "score");
+                if (Constant.JOIN_TYPE_CAN.equals(gjMap.get("joinType"))) {
+                    canBiaoCount++;
+                    canBiaoScore = DoubleUtils.div(MapUtils.getDouble(gjMap, "score"), 2, 2);
+                } else {
+                    biaoCount++;
+                    biaoScore = MapUtils.getDouble(gjMap, "score");
+                }
             } else {
-                zhuangCount++;
-                zhuangScore = MapUtils.getDouble(gjMap, "score");
+                if (Constant.JOIN_TYPE_CAN.equals(gjMap.get("joinType"))) {
+                    canZhuangCount++;
+                    canZhuangScore = DoubleUtils.div(MapUtils.getDouble(gjMap, "score"), 2, 2);
+                } else {
+                    zhuangCount++;
+                    zhuangScore = MapUtils.getDouble(gjMap, "score");
+                }
             }
         }
-        Double gjTotal = DoubleUtils.add(mul(luCount, luScore), mul(biaoCount, biaoScore), mul(zhuangCount, zhuangScore));
+        Double gjTotal = DoubleUtils.add(DoubleUtils.add(mul(luCount, luScore), mul(biaoCount, biaoScore), mul(zhuangCount, zhuangScore)),
+                DoubleUtils.add(mul(canLuCount, canLuScore), mul(canBiaoCount, canBiaoScore), mul(canZhuangCount, canZhuangScore)), 0D);
+        Integer canFuCount = 0;
+        Double canFuScore = 0D;
         Integer fuCount = 0;
         Double fuScore = 0D;
+        Integer canYouCount = 0;
+        Double canYouScore = 0D;
         Integer youCount = 0;
         Double youScore = 0D;
         for (Map<String, Object> sjMap : sjList) {
             if (Constant.PRIZE_LOTUS.equals(sjMap.get("awardName"))) {
-                fuCount++;
-                fuScore = MapUtils.getDouble(sjMap, "score");
+                if (Constant.JOIN_TYPE_CAN.equals(sjMap.get("joinType"))) {
+                    canFuCount++;
+                    canFuScore = DoubleUtils.div(MapUtils.getDouble(sjMap, "score"), 2, 2);
+                } else {
+                    fuCount++;
+                    fuScore = MapUtils.getDouble(sjMap, "score");
+                }
             } else {
-                youCount++;
-                youScore = MapUtils.getDouble(sjMap, "score");
+                if (Constant.JOIN_TYPE_CAN.equals(sjMap.get("joinType"))) {
+                    canYouCount++;
+                    canYouScore = DoubleUtils.div(MapUtils.getDouble(sjMap, "score"), 2, 2);
+                } else {
+                    youCount++;
+                    youScore = MapUtils.getDouble(sjMap, "score");
+                }
             }
         }
-        Double sjTotal = DoubleUtils.add(mul(fuCount, fuScore), mul(youCount, youScore), 0D);
+        Double sjTotal = DoubleUtils.add(mul(fuCount, fuScore), mul(youCount, youScore), DoubleUtils.add(mul(canFuCount, canFuScore), mul(canYouCount, canYouScore), 0D));
         Double total = DoubleUtils.add(gjTotal, sjTotal, 0D);
         Map<String, Object> resultMap = new HashedMap();
-        if ("参建单位".equals(joinType)) {
-            total = DoubleUtils.div(total, 2, 2);
-            //省级奖项考评合格
-            Double reviewFineTotal = mul(proList.size(), 0.3);
-            Double comTotal = mul(comList.size(), 2);
-            //安全考评不合格
-            Double reviewDiffTotal = this.reviewDiff(param);
-            //安全认证
-            Map<String, Object> aqrzMap = this.aqrzScore(param);
-            //不良行为
-            Double underTotal = this.undesirableScore(param);
-            resultMap.put("reviewFineTotal", reviewFineTotal);
-            resultMap.put("proList", proList);
-            resultMap.put("comList", comList);
-            resultMap.put("comTotal", comTotal);
-            resultMap.put("reviewDiffTotal", reviewDiffTotal);
-            resultMap.put("aqrzMap", aqrzMap);
-            resultMap.put("underTotal", underTotal);
-        }
+        //省级奖项考评合格
+        Double reviewFineTotal = mul(proList.size(), 0.3);
+        Double comTotal = mul(comList.size(), 2);
+        //安全考评不合格
+        Double reviewDiffTotal = this.reviewDiff(param);
+        //安全认证
+        Map<String, Object> aqrzMap = this.aqrzScore(param);
+        //不良行为
+        Double underTotal = this.undesirableScore(param);
+        resultMap.put("reviewFineTotal", reviewFineTotal);
+        resultMap.put("proList", proList);
+        resultMap.put("comList", comList);
+        resultMap.put("comTotal", comTotal);
+        resultMap.put("reviewDiffTotal", reviewDiffTotal);
+        resultMap.put("aqrzMap", aqrzMap);
+        resultMap.put("underTotal", underTotal);
         resultMap.put("gjhjList", gjhjList);
         resultMap.put("sjList", sjList);
         resultMap.put("score", total);
@@ -209,7 +230,6 @@ public class ReputationComputerService {
         if ((null != list1 && list1.size() > 0) && (null != list2 && list2.size() > 0)) {
             List<Integer> listInt = new ArrayList<>();
             List<Integer> proInt = new ArrayList<>();
-            System.out.println("-----------------size:" + list1.size() + "------------------size2:" + list2.size() + "----------");
             for (int i = 0; i < list1.size(); i++) {
                 for (int j = 0; j < list2.size(); j++) {
                     if (list1.get(i).get("projName").toString().equals(list2.get(j).get("projName").toString())) {
@@ -231,12 +251,12 @@ public class ReputationComputerService {
                 }
             }
             if (null != listInt && listInt.size() > 0) {
-                for (Integer index : listInt) {
+                for (int index : listInt) {
                     list1.remove(index);
                 }
             }
             if (null != proInt && proInt.size() > 0) {
-                for (Integer index : proInt) {
+                for (int index : proInt) {
                     list2.remove(index);
                 }
             }

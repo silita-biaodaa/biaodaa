@@ -37,7 +37,6 @@
       WHERE t.`com_id` = #{comId}
         AND t.`award_name` = #{awardName}
         AND t.`proj_type` = #{projType}
-        AND t.`join_type` = #{joinType}
         AND t.`years` = #{years}
         AND t.`proj_name` IS NOT NULL
         AND t.`proj_name` != ''
@@ -61,7 +60,6 @@
       WHERE t.`com_id` = #{comId}
         AND (t.`years` = #{luDate} OR t.`years` = #{zhuangDate} OR t.`years` =#{biaoDate})
         AND t.`proj_type` LIKE CONCAT('%',#{projType},'%')
-        AND t.`join_type` = #{joinType}
         AND t.`proj_name` IS NOT NULL
         AND t.`proj_name` != ''
       ORDER BY t1.`score` DESC,
@@ -94,7 +92,6 @@
         OR t.`years` = #{years2}
         )
         AND t.`proj_type` LIKE CONCAT('%',#{projType},'%')
-        AND t.`join_type` = #{joinType}
         AND t.`proj_name` IS NOT NULL
         AND t.`proj_name` != ''
         ORDER BY t1.`score` DESC,
