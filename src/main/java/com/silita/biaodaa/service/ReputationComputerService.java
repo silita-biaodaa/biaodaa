@@ -252,12 +252,20 @@ public class ReputationComputerService {
             }
             if (null != listInt && listInt.size() > 0) {
                 for (int index : listInt) {
-                    list1.remove(index);
+                    if (index >= list1.size()){
+                        list1.remove(list1.size()-1);
+                    }else {
+                        list1.remove(index);
+                    }
                 }
             }
             if (null != proInt && proInt.size() > 0) {
                 for (int index : proInt) {
-                    list2.remove(index);
+                    if (index >= list2.size()){
+                        list2.remove(list2.size()-1);
+                    }else {
+                        list2.remove(index);
+                    }
                 }
             }
         }
