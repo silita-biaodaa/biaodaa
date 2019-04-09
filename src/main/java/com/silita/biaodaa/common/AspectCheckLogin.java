@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -255,7 +254,7 @@ public class AspectCheckLogin {
                     }
                 }
                 String blacklist = PropertiesUtils.getProperty("blacklist");
-                if (blacklist != null && blacklist.contains(phone)) {
+                if (null != blacklist && null != phone && blacklist.contains(phone)) {
                     isHei = true;
                 }
                 if (tokenValid) {
