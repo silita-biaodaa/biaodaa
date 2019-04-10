@@ -591,11 +591,20 @@ public class AuthorizeController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/address", produces = "application/json;charset=utf-8")
     public Map<String, Object> getIp(HttpServletRequest request) {
-        String adder = request.getHeader("X-real-ip");
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
         Map result = new HashMap();
         try {
-            logger.info("----------------ip:" + adder + "-------------------------");
-            successMsg(result, authorizeService.getIpAddress(adder));
+            logger.info("----------------ip:" + ip + "-------------------------");
+            successMsg(result, authorizeService.getIpAddress(ip));
             return result;
         } catch (Exception e) {
             logger.error("获取ip失败", e);

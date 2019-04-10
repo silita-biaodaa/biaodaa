@@ -144,14 +144,15 @@ public class HttpUtils {
         HttpGet httpGet = new HttpGet(url);
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
-            httpGet.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36");
-            logger.info("---------send begin---------url:"+url);
+            httpGet.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36");
+            logger.info("---------send begin---------url:" + url);
             HttpResponse httpResponse = httpClient.execute(httpGet);
-            logger.info("---------send begin--------------");
+            logger.info("---------send end--------------");
             if (httpResponse.getStatusLine().getStatusCode() == 200) {
                 String resultStr = EntityUtils.toString(httpResponse.getEntity());
+                logger.info("send result:" + resultStr);
                 return resultStr;
-            }else if(httpResponse.getStatusLine().getStatusCode() == 403){
+            } else if (httpResponse.getStatusLine().getStatusCode() == 403) {
                 logger.info("------status code 403 重新调用--------------------");
                 return sendGetUrl(url);
             }
