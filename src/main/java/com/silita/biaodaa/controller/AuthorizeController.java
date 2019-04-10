@@ -601,6 +601,9 @@ public class AuthorizeController extends BaseController {
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
+        if (ip.length() > 2){
+            ip = ip.split(",")[0];
+        }
         Map result = new HashMap();
         try {
             logger.info("----------------ip:" + ip + "-------------------------");
