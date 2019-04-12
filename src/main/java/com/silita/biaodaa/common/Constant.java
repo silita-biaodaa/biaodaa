@@ -84,6 +84,10 @@ public class Constant {
         StringBuilder sb = new StringBuilder(userid);
         if (CHANNEL_ANDROID.equals(channel) || CHANNEL_IOS.equals(channel)) {
             channel = "appChannel";
+        }else if(CHANNEL_PC.equals(channel)) {
+            channel = "webChannel";
+        }else {
+            channel = "wapChannel";
         }
         return sb.append("|").append(channel).toString();
     }

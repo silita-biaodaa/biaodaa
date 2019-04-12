@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_INVITE;
 import static java.util.Base64.getEncoder;
 
 /**
@@ -207,6 +206,7 @@ public class AuthorizeService {
     public SysUser memberLogin(SysUser param) {
         SysUser user = queryUserInfo(param);
         if (user != null) {
+            user.setChannel(param.getChannel());
             return sysUserLoginSuccess(user);
         } else {
             return null;
@@ -657,5 +657,31 @@ public class AuthorizeService {
             return resultMap;
         }
         return resultMap;
+    }
+
+    public Map<String, Object> getOppenid(String code) {
+        String token = PropertiesUtils.getProperty("wechat.token");
+        token = token.replace("CODE", code);
+        String result = HttpUtils.sendGetUrl(token);
+        if (MyStringUtils.isNotNull(result)) {
+            Map<String, Object> tokenMap = JSONObject.parseObject(result);
+            if (null == tokenMap.get("access_token") && null == tokenMap.get("openid")){
+                return null;
+            }
+            String accessToken = tokenMap.get("access_token").toString();
+            String oppenid = tokenMap.get("openid").toString();
+            String uuid = PropertiesUtils.getProperty("wechat.uuid");
+            uuid = uuid.replace("ACCESS_TOKEN", accessToken).replace("OPENID", oppenid);
+            result = HttpUtils.sendGetUrl(uuid);
+            if (MyStringUtils.isNotNull(result)) {
+                tokenMap = JSONObject.parseObject(result);
+                String unionid = tokenMap.get("unionid").toString();
+                Map<String, Object> resultMap = new HashedMap();
+                resultMap.put("openid", oppenid);
+                resultMap.put("unionid", unionid);
+                return resultMap;
+            }
+        }
+        return null;
     }
 }

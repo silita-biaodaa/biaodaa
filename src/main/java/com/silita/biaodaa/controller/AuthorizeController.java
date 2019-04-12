@@ -7,6 +7,7 @@ import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.AuthorizeService;
 import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.utils.MyStringUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -601,7 +602,7 @@ public class AuthorizeController extends BaseController {
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        if (ip.length() > 2){
+        if (ip.length() > 2) {
             ip = ip.split(",")[0];
         }
         Map result = new HashMap();
@@ -615,47 +616,12 @@ public class AuthorizeController extends BaseController {
         return result;
     }
 
-
-    private SysUser setUser(UserTempBdd userTempBdd) {
-        SysUser user = new SysUser();
-        user.setLoginPwd(userTempBdd.getPassword());
-        user.setPhoneNo(userTempBdd.getUserphone());
-        user.setChannel(userTempBdd.getLoginchannel());
-        user.setClientVersion(userTempBdd.getVersion());
-        user.setVerifyCode(userTempBdd.getInvitationCode());
-        if (null != userTempBdd && null != userTempBdd.getImgurl() && !"".equals(userTempBdd.getImgurl())) {
-            user.setImageUrl(userTempBdd.getImgurl());
-        }
-        if (null != userTempBdd && null != userTempBdd.getNickname() && !"".equals(userTempBdd.getNickname())) {
-            user.setNikeName(userTempBdd.getNickname());
-        }
-        if (null != userTempBdd && null != userTempBdd.getWxUnionid() && !"".equals(userTempBdd.getWxUnionid())) {
-            user.setWxUnionId(userTempBdd.getWxUnionid());
-        }
-        if (null != userTempBdd && null != userTempBdd.getWxopenid() && !"".equals(userTempBdd.getWxopenid())) {
-            user.setWxOpenId(userTempBdd.getWxopenid());
-        }
-        if (null != userTempBdd && null != userTempBdd.getQqopenid() && !"".equals(userTempBdd.getQqopenid())) {
-            user.setQqOpenId(userTempBdd.getQqopenid());
-        }
-        if (null != userTempBdd && null != userTempBdd.getGender() && !"".equals(userTempBdd.getGender())) {
-            Integer sex = 0;
-            switch (userTempBdd.getGender()) {
-                case "女":
-                    sex = 0;
-                    break;
-                case "男":
-                    sex = 1;
-                    break;
-                default:
-                    sex = 0;
-                    break;
-            }
-            user.setSex(sex);
-        }
-        if (null != userTempBdd && null != userTempBdd.getUserid()) {
-            user.setPkid(userTempBdd.getUserid());
-        }
-        return user;
+    @ResponseBody
+    @RequestMapping(value = "/openid", produces = "application/json;charset=utf-8")
+    public Map<String, Object> getOpenid(@RequestBody Map<String, Object> param) {
+        Map result = new HashMap();
+        String code = MapUtils.getString(param, "code");
+        successMsg(result, authorizeService.getOppenid(code));
+        return result;
     }
 }

@@ -207,11 +207,11 @@ public class AspectCheckLogin {
                         String chanel = paramMap.get("channel");
                         date = Long.parseLong((paramMap.get("loginTime") != null && !paramMap.get("loginTime").equals("null")) ? paramMap.get("loginTime") : "0");
                         //单用户多渠道登录状态校验
-                        if (!verifyLoginByChannel(userId, chanel, date)) {
-                            resMap.put("code", Constant.ERR_VERIFY_USER_TOKEN);
-                            resMap.put("msg", "用户登录失效，请重新登录。");
-                            return resMap;
-                        }
+//                        if (!verifyLoginByChannel(userId, chanel, date)) {
+//                            resMap.put("code", Constant.ERR_VERIFY_USER_TOKEN);
+//                            resMap.put("msg", "用户登录失效，请重新登录。");
+//                            return resMap;
+//                        }
                         //验证签名
                         tokenValid = SecurityCheck.checkSigner(paramMap, sign);
                     } else {
