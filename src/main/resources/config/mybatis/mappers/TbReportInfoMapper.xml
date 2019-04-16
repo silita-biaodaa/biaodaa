@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbReportInfoMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbReportInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="rep_title" property="repTitle" jdbcType="VARCHAR"/>
+        <result column="std_code" property="stdCode" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="pattern" property="pattern" jdbcType="VARCHAR"/>
+        <result column="pay_status" property="payStatus" jdbcType="INTEGER"/>
+        <result column="report_path" property="reportPath" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+        <result column="rep_condition" property="repCondition" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <!--添加-->
+    <insert id="insert" parameterType="com.silita.biaodaa.model.TbReportInfo" useGeneratedKeys="true"
+            keyProperty="pkid">
+        INSERT INTO `tb_report_info` (
+        <if test="orderNo != null and orderNo != ''">
+            `order_no`,
+        </if>
+        <if test="userId != null and userId != ''">
+            `user_id`,
+        </if>
+        <if test="repTitle != null and repTitle != ''">
+            `rep_title`,
+        </if>
+        <if test="rep_condition != null and rep_condition != ''">
+            `rep_condition`,
+        </if>
+        <if test="stdCode != null and stdCode != ''">
+            `std_code`,
+        </if>
+        <if test="email != null and email != ''">
+            `email`,
+        </if>
+        <if test="phone != null and phone != ''">
+            `phone`,
+        </if>
+        <if test="pattern != null and pattern != ''">
+            `pattern`,
+        </if>
+        <if test="payStatus != null and payStatus != ''">
+            `pay_status`,
+        </if>
+        <if test="reportPath != null and reportPath != ''">
+            `report_path`,
+        </if>
+        `created`
+        )
+        VALUES
+        (
+        <if test="orderNo != null and orderNo != ''">
+            #{order_no},
+        </if>
+        <if test="userId != null and userId != ''">
+            #{user_id},
+        </if>
+        <if test="repTitle != null and repTitle != ''">
+            #{rep_title},
+        </if>
+        <if test="rep_condition != null and rep_condition != ''">
+            #{rep_condition},
+        </if>
+        <if test="stdCode != null and stdCode != ''">
+            #{std_code},
+        </if>
+        <if test="email != null and email != ''">
+            #{email},
+        </if>
+        <if test="phone != null and phone != ''">
+            #{phone},
+        </if>
+        <if test="pattern != null and pattern != ''">
+            #{pattern},
+        </if>
+        <if test="payStatus != null and payStatus != ''">
+            #{pay_status},
+        </if>
+        <if test="reportPath != null and reportPath != ''">
+            #{report_path},
+        </if>
+        now()
+        ) ;
+    </insert>
+</mapper>

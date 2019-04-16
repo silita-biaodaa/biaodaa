@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -407,16 +408,21 @@ public class CompanyController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/province", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/province", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> getProvince() {
         Map<String, Object> result = new HashMap<>();
-        result.put("code", 0);
-        result.put("msg", "获取地区列表失败!");
+        result.put("code", 1);
+        result.put("msg", "获取地区列表成功!");
         try {
-            List<Map<String, Object>> list = tbCompanyService.getProvince();
+            List<Map<String, Object>> list = myRedisTemplate.getList("filter_province");
+            if (null != list && list.size() > 0) {
+                result.put("data", list);
+                return result;
+            }
+            list = tbCompanyService.getProvince();
             result.put("data", list);
-            result.put("code", 1);
-            result.put("msg", "获取地区列表成功!");
+            myRedisTemplate.setObject("filter_province", list);
+            return result;
         } catch (IllegalArgumentException e) {
             logger.error("获取地区列表异常" + e.getMessage(), e);
             result.put("code", 0);
@@ -428,6 +434,33 @@ public class CompanyController extends BaseController {
         }
         return result;
     }
+
+    /**
+     * 返回资质列表
+     *
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/filter/qual", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> getQual(@RequestBody Map<String, Object> param) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            result = this.getQualMap(MapUtils.getString(param, "code"));
+            result.put("code", 1);
+            result.put("msg", "获取资质列表成功!");
+        } catch (IllegalArgumentException e) {
+            logger.error("获取资质列表异常" + e.getMessage(), e);
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        } catch (Exception e) {
+            logger.error("获取资质列表异常" + e.getMessage(), e);
+            result.put("code", 0);
+            result.put("msg", e.getMessage());
+        }
+        return result;
+    }
+
 
     /**
      * 获取公司详情根据名称
@@ -495,6 +528,45 @@ public class CompanyController extends BaseController {
             map.put("proviceCityCounty", proviceCityCounty);
             if (null != map) {
                 myRedisTemplate.setObject("filter_map", map);
+            }
+        }
+        return map;
+    }
+
+    /**
+     * 封装资质
+     *
+     * @return
+     */
+    private Map<String, Object> getQualMap(String code) {
+        String key = myRedisTemplate.buildKey(code);
+        Map<String, Object> map = (Map<String, Object>) myRedisTemplate.getObject(key);
+        if (MapUtils.isEmpty(map)) {
+            map = new HashMap<>();
+            List<CompanyQual> companyQual = tbCompanyService.getCompanyQual();
+            Iterator<CompanyQual> qualIterator = companyQual.iterator();
+            while (qualIterator.hasNext()) {
+                CompanyQual comQual = qualIterator.next();
+                if ("城市园林绿化".equals(comQual.getName())) {
+                    qualIterator.remove();
+                }
+                if ("hunan".equals(code) && "其他".equals(comQual.getName())) {
+                    Iterator<CompanyQual> iterator = comQual.getList().iterator();
+                    while (iterator.hasNext()) {
+                        CompanyQual childQual = iterator.next();
+                        if (!"文物保护工程施工".equals(childQual.getName())) {
+                            iterator.remove();
+                        }
+                    }
+                } else {
+                    if ("其他".equals(comQual.getName()) || "公路养护".equals(comQual.getName())) {
+                        qualIterator.remove();
+                    }
+                }
+            }
+            map.put("data", companyQual);
+            if (null != map) {
+                myRedisTemplate.setObject(key, map);
             }
         }
         return map;
