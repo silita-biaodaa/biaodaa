@@ -26,4 +26,11 @@ public interface AptitudeDictionaryMapper extends MyMapper<AptitudeDictionary> {
      * @return
      */
     List<Map<String, String>> getIndustry();
+
+    /**
+     * 查询详情
+     * @param majorUUid
+     * @return
+     */
+    AptitudeDictionary queryQualDetail(String majorUUid);
 }

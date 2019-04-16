@@ -38,6 +38,12 @@
         where (channel='common' or channel=#{channel}) and state=true
     </select>
 
+    <select id="queryFeeStandardReport" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbVipFeeStandard">
+         select *
+        from mishu_write.tb_vip_fee_standard
+        where channel=#{channel} and state=true
+    </select>
+
     <select id="queryFeeStandardByCode" parameterType="String" resultType="com.silita.biaodaa.model.TbVipFeeStandard">
         select *
         from mishu_write.tb_vip_fee_standard

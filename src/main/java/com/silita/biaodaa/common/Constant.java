@@ -101,4 +101,19 @@ public class Constant {
      * 获奖等级:省级
      */
     public static String PRIZE_TYPE_PROVINCE = "sjhj";
+
+    /**
+     * 报告生成格式:pdf
+     */
+    public static String REPORT_PATTERN_PDF = "pdf";
+
+    /**
+     * 支付状态：查询状态
+     */
+    public static Integer PAY_STATUS_QUERY = 0;
+
+    /**
+     * 报告
+     */
+    public static String REPORT_CHANNEL = "report";
 }

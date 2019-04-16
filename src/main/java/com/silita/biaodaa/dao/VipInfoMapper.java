@@ -49,4 +49,10 @@ public interface VipInfoMapper {
      */
     Integer queryUserProfitCount(String sCode,String userId);
 
+    /**
+     * 查询报告编码
+     * @param channel
+     * @return
+     */
+    List<TbVipFeeStandard>  queryFeeStandardReport(String channel);
 }

@@ -33,7 +33,7 @@
         <if test="repTitle != null and repTitle != ''">
             `rep_title`,
         </if>
-        <if test="rep_condition != null and rep_condition != ''">
+        <if test="repCondition != null and repCondition != ''">
             `rep_condition`,
         </if>
         <if test="stdCode != null and stdCode != ''">
@@ -48,7 +48,7 @@
         <if test="pattern != null and pattern != ''">
             `pattern`,
         </if>
-        <if test="payStatus != null and payStatus != ''">
+        <if test="payStatus != null">
             `pay_status`,
         </if>
         <if test="reportPath != null and reportPath != ''">
@@ -62,16 +62,16 @@
             #{order_no},
         </if>
         <if test="userId != null and userId != ''">
-            #{user_id},
+            #{userId},
         </if>
         <if test="repTitle != null and repTitle != ''">
-            #{rep_title},
+            #{repTitle},
         </if>
-        <if test="rep_condition != null and rep_condition != ''">
-            #{rep_condition},
+        <if test="repCondition != null and repCondition != ''">
+            #{repCondition},
         </if>
         <if test="stdCode != null and stdCode != ''">
-            #{std_code},
+            #{stdCode},
         </if>
         <if test="email != null and email != ''">
             #{email},
@@ -82,13 +82,30 @@
         <if test="pattern != null and pattern != ''">
             #{pattern},
         </if>
-        <if test="payStatus != null and payStatus != ''">
-            #{pay_status},
+        <if test="payStatus != null">
+            #{payStatus},
         </if>
         <if test="reportPath != null and reportPath != ''">
-            #{report_path},
+            #{reportPath},
         </if>
         now()
         ) ;
     </insert>
+
+    <!--查询已支付的报告历史记录-->
+    <select id="queryReportList" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT
+          t.`pkid` AS pkid,
+--           IFNULL(DATE(t.`updated`),DATE(t.`created`)) AS payDate,
+          t.`rep_condition` AS repCondition,
+          t.`rep_title` AS title,
+          t1.`price` AS price,
+          t.`user_id` AS userId
+        FROM
+          tb_report_info t
+          LEFT JOIN mishu_write.`tb_vip_fee_standard` t1
+            ON t.`std_code` = t1.`std_code`
+            AND t.`user_id` = #{userId}
+        ORDER BY t.`updated` DESC
+    </select>
 </mapper>
