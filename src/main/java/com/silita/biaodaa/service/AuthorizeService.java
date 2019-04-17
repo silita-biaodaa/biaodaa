@@ -652,6 +652,7 @@ public class AuthorizeService {
                 Map<String, Object> data = (Map<String, Object>) reMap.get("data");
                 resultMap.put("region", data.get("region"));
                 resultMap.put("city", data.get("city"));
+                resultMap.put("ip",ip);
                 return resultMap;
             }
             return resultMap;
