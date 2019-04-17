@@ -96,16 +96,18 @@
     <select id="queryReportList" resultType="java.util.Map" parameterType="java.util.Map">
         SELECT
           t.`pkid` AS pkid,
---           IFNULL(DATE(t.`updated`),DATE(t.`created`)) AS payDate,
+          IFNULL(DATE(t.`updated`),DATE(t.`created`)) AS payDate,
           t.`rep_condition` AS repCondition,
           t.`rep_title` AS title,
           t1.`price` AS price,
-          t.`user_id` AS userId
+          t.`user_id` AS userId,
+          t.`report_path` AS reportPath
         FROM
           tb_report_info t
           LEFT JOIN mishu_write.`tb_vip_fee_standard` t1
             ON t.`std_code` = t1.`std_code`
-            AND t.`user_id` = #{userId}
+        WHERE  t.`user_id` = #{userId}
+            AND t.`pay_status` = 9
         ORDER BY t.`updated` DESC
     </select>
 </mapper>

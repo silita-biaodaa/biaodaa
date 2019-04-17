@@ -45,31 +45,27 @@ public class ReportService {
         //设置资质名称
         setQualName(param);
         param.put("pkid", reportInfo.getPkid());
-        param.put("title",PropertiesUtils.getProperty("report.title"));
-        param.put("reportPath",PropertiesUtils.getProperty("report.path"));
+        param.put("title", PropertiesUtils.getProperty("report.title"));
+        param.put("reportPath", PropertiesUtils.getProperty("report.path"));
         //收费标准码
-        param.put("price",vipInfoMapper.queryFeeStandardReport(Constant.REPORT_CHANNEL));
+        param.put("price", vipInfoMapper.queryFeeStandardReport(Constant.REPORT_CHANNEL));
         return param;
     }
 
-    public PageInfo listHistory(Map<String, Object> param){
-        Integer pageNo = MapUtils.getInteger(param,"pageNo");
-        Integer pageSize = MapUtils.getInteger(param,"pageSize");
+    public PageInfo listHistory(Map<String, Object> param) {
+        Integer pageNo = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
         Page page = new Page();
         page.setCurrentPage(pageNo);
         page.setPageSize(pageSize);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        List<Map<String,Object>> list = tbReportInfoMapper.queryReportList(param);
-        for (Map<String,Object> map : list){
-            String reqCondition = MapUtils.getString(map,"repCondition");
-            Map<String,Object> condition = JSONObject.parseObject(reqCondition);
-            setQualName(condition);
-            condition.put("pkid",map.get("pkid"));
-            condition.put("title",map.get("title"));
-            condition.put("userId",map.get("userId"));
-            condition.put("price",map.get("price"));
-            list.add(condition);
-            list.remove(map);
+        List<Map<String, Object>> list = tbReportInfoMapper.queryReportList(param);
+        for (int i = 0; i < list.size(); i++) {
+            String reqCondition = MapUtils.getString(list.get(i), "repCondition");
+            Map<String, Object> condition = JSONObject.parseObject(reqCondition);
+            setMap(list.get(i),condition);
+            setQualName(list.get(i));
+            list.get(i).remove("repCondition");
         }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -113,7 +109,7 @@ public class ReportService {
         return gradeName;
     }
 
-    private void setQualName(Map<String,Object> param){
+    private void setQualName(Map<String, Object> param) {
         String qualCode = MapUtils.getString(param, "qualCode");
         if (StringUtils.isNotEmpty(qualCode)) {
             String[] qualCodeStr = qualCode.split(",");
@@ -125,5 +121,18 @@ public class ReportService {
             }
             param.put("qualName", qualName.toString());
         }
+    }
+
+    private void setMap(Map<String, Object> target,Map<String, Object> soure){
+        target.put("reginAddress",soure.get("reginAddress"));
+        target.put("qualCode",soure.get("qualCode"));
+        target.put("rangType",soure.get("rangType"));
+        target.put("projSource",soure.get("projSource"));
+        target.put("projName",soure.get("projName"));
+        target.put("buildStart",soure.get("buildStart"));
+        target.put("buildEnd",soure.get("buildEnd"));
+        target.put("amountStart",soure.get("amountStart"));
+        target.put("amountEnd",soure.get("amountEnd"));
+        soure.remove("repCondition");
     }
 }
