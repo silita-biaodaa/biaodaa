@@ -1,4 +1,4 @@
-package com.silita.biaodaa.service;
+package com.silita.biaodaa.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
@@ -11,6 +11,7 @@ import com.silita.biaodaa.dao.VipInfoMapper;
 import com.silita.biaodaa.model.AptitudeDictionary;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbReportInfo;
+import com.silita.biaodaa.service.ReportService;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,8 +24,8 @@ import java.util.Map;
 /**
  * Created by zhushuai on 2019/4/16.
  */
-@Service
-public class ReportService {
+@Service("reportService")
+public class ReportServiceImpl implements ReportService{
 
     @Autowired
     TbReportInfoMapper tbReportInfoMapper;
@@ -33,6 +34,7 @@ public class ReportService {
     @Autowired
     VipInfoMapper vipInfoMapper;
 
+    @Override
     public Map<String, Object> saveCondition(Map<String, Object> param) {
         TbReportInfo reportInfo = new TbReportInfo();
         reportInfo.setUserId(VisitInfoHolder.getUid());
@@ -48,10 +50,40 @@ public class ReportService {
         param.put("title", PropertiesUtils.getProperty("report.title"));
         param.put("reportPath", PropertiesUtils.getProperty("report.path"));
         //收费标准码
-        param.put("price", vipInfoMapper.queryFeeStandardReport(Constant.REPORT_CHANNEL));
+        param.put("price", vipInfoMapper.queryFeeStandardReport(Constant.REPORT_CHANNEL_COMMON).addAll(vipInfoMapper.queryFeeStandardReport(Constant.REPORT_CHANNEL_VIP)));
         return param;
     }
 
+    @Override
+    public void saveReportOrder(Map<String, Object> param) {
+        TbReportInfo reportInfo = new TbReportInfo();
+        reportInfo.setPkid(MapUtils.getInteger(param,"pkid"));
+        reportInfo.setPayStatus(MapUtils.getInteger(param,"payStatus"));
+        reportInfo.setOrderNo(MapUtils.getString(param,"orderNo"));
+        if (null != param.get("email")){
+            reportInfo.setEmail(MapUtils.getString(param,"email"));
+        }
+        if (null != param.get("phone")){
+            reportInfo.setPhone(MapUtils.getString(param,"phone"));
+        }
+        tbReportInfoMapper.updateReportOrder(reportInfo);
+    }
+
+    @Override
+    public void updateReportOrderPayStatus(String orderNo,String resultCode) {
+        int orderStatus;
+        if ("SUCCESS".equalsIgnoreCase(resultCode)) {
+            orderStatus = 9;//支付成功
+        } else {
+            orderStatus = 3;//支付失败
+        }
+        TbReportInfo reportInfo = new TbReportInfo();
+        reportInfo.setPayStatus(orderStatus);
+        reportInfo.setOrderNo(orderNo);
+        tbReportInfoMapper.updateReportOrder(reportInfo);
+    }
+
+    @Override
     public PageInfo listHistory(Map<String, Object> param) {
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
@@ -63,7 +95,7 @@ public class ReportService {
         for (int i = 0; i < list.size(); i++) {
             String reqCondition = MapUtils.getString(list.get(i), "repCondition");
             Map<String, Object> condition = JSONObject.parseObject(reqCondition);
-            setMap(list.get(i),condition);
+            setMap(list.get(i), condition);
             setQualName(list.get(i));
             list.get(i).remove("repCondition");
         }
@@ -123,16 +155,16 @@ public class ReportService {
         }
     }
 
-    private void setMap(Map<String, Object> target,Map<String, Object> soure){
-        target.put("reginAddress",soure.get("reginAddress"));
-        target.put("qualCode",soure.get("qualCode"));
-        target.put("rangType",soure.get("rangType"));
-        target.put("projSource",soure.get("projSource"));
-        target.put("projName",soure.get("projName"));
-        target.put("buildStart",soure.get("buildStart"));
-        target.put("buildEnd",soure.get("buildEnd"));
-        target.put("amountStart",soure.get("amountStart"));
-        target.put("amountEnd",soure.get("amountEnd"));
+    private void setMap(Map<String, Object> target, Map<String, Object> soure) {
+        target.put("reginAddress", soure.get("reginAddress"));
+        target.put("qualCode", soure.get("qualCode"));
+        target.put("rangType", soure.get("rangType"));
+        target.put("projSource", soure.get("projSource"));
+        target.put("projName", soure.get("projName"));
+        target.put("buildStart", soure.get("buildStart"));
+        target.put("buildEnd", soure.get("buildEnd"));
+        target.put("amountStart", soure.get("amountStart"));
+        target.put("amountEnd", soure.get("amountEnd"));
         soure.remove("repCondition");
     }
 }

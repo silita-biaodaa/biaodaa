@@ -1,5 +1,6 @@
 package membership;
 
+import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.service.ConfigTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,8 @@ import java.util.Map;
 public class RedisTempldateTest extends ConfigTest {
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    MyRedisTemplate myRedisTemplate;
 
     @Test
     public void testHash(){
@@ -62,5 +65,19 @@ public class RedisTempldateTest extends ConfigTest {
             t.put("k"+i,"123123"+i);
         }
         redisTemplate.opsForHash().putAll("hi",t);
+    }
+
+    @Test
+    public void testRedisPush(){
+        String value = "201902010101";
+        for (int i =0;i<5;i++){
+            value = value+i;
+            myRedisTemplate.lpush("order_list",value);
+        }
+    }
+
+    @Test
+    public void testRedisPop(){
+        System.out.println(myRedisTemplate.lpop("order_list"));
     }
 }

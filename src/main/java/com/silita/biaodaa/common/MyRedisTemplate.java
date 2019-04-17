@@ -248,6 +248,49 @@ public class MyRedisTemplate {
         return obj;
     }
 
+    /**
+     * 设置redis队列（顺序）
+     * @param key
+     * @param value
+     */
+    public void lpush(String key,Object value){
+        ShardedJedis jedis = null;
+        try {
+            String bKey = buildKey(key);
+            jedis =getJedis();
+            jedis.lpush(bKey.getBytes(), ObjectTranscoder.serialize(value));
+        } catch (Exception e) {
+            logger.error("setObject error : "+e);
+        }finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    /**
+     *  消费redis队列（）
+     * @param key
+     * @return
+     */
+    public Object lpop(String key){
+        Object obj = null;
+        ShardedJedis jedis = null;
+        try {
+            String bKey = buildKey(key);
+            jedis =getJedis();
+            byte[] in = jedis.lpop(bKey.getBytes());
+            obj = ObjectTranscoder.deserialize(in);
+        } catch (Exception e) {
+            logger.error("setObject error : "+e);
+        }finally {
+            if(jedis != null) {
+                jedis.close();
+            }
+        }
+        return obj;
+    }
+
     @Autowired
     RedisTemplate redisTemplate;
 

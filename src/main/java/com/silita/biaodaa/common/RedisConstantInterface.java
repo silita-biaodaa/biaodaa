@@ -23,6 +23,8 @@ public interface RedisConstantInterface {
 
 	String NOTIC_LAW = "notic_law_";  //公告缓存
 
+	String ORDER_LIST = "order_list"; //订单
+
 	int DETAIL_OVER_TIME = 30*60;
 
 	int LIST_OVER_TIME = 3600;

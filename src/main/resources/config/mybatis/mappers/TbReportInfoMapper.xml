@@ -110,4 +110,31 @@
             AND t.`pay_status` = 9
         ORDER BY t.`updated` DESC
     </select>
+
+    <!--修改报告订单-->
+    <update id="updateReportOrder" parameterType="com.silita.biaodaa.model.TbReportInfo">
+        UPDATE
+          `tb_report_info`
+        SET
+          `order_no` = #{orderNo},
+          <if test="email != null and email != ''">
+              `email` = #{email},
+          </if>
+          <if test="phone != null and phone != ''">
+              `phone` = #{phone},
+          </if>
+          `pay_status` = #{payStatus},
+          `updated` = now()
+        WHERE `pkid` = #{pkid}
+    </update>
+
+    <!--修改报告订单支付状态-->
+    <update id="updateReportOrderPayStatus" parameterType="com.silita.biaodaa.model.TbReportInfo">
+        UPDATE
+        `tb_report_info`
+        SET
+        `pay_status` = #{payStatus},
+        `updated` = now()
+        WHERE `order_no` = #{orderNo}
+    </update>
 </mapper>

@@ -23,4 +23,18 @@ public interface TbReportInfoMapper extends MyMapper<TbReportInfo> {
      * @return
      */
     List<Map<String,Object>> queryReportList(Map<String,Object> param);
+
+    /**
+     * 修改报告订单
+     * @param reportInfo
+     * @return
+     */
+    int updateReportOrder(TbReportInfo  reportInfo);
+
+    /**
+     * 修改报告订单状态
+     * @param reportInfo
+     * @return
+     */
+    int updateReportOrderPayStatus(TbReportInfo  reportInfo);
 }

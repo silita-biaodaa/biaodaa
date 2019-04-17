@@ -115,5 +115,6 @@ public class Constant {
     /**
      * 报告
      */
-    public static String REPORT_CHANNEL = "report";
+    public static String REPORT_CHANNEL_COMMON = "report_com";
+    public static String REPORT_CHANNEL_VIP = "report_vip";
 }
