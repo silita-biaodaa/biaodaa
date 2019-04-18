@@ -11,6 +11,7 @@ import com.silita.biaodaa.dao.VipInfoMapper;
 import com.silita.biaodaa.model.AptitudeDictionary;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbReportInfo;
+import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.ReportService;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +52,10 @@ public class ReportServiceImpl implements ReportService{
         param.put("title", PropertiesUtils.getProperty("report.title"));
         param.put("reportPath", PropertiesUtils.getProperty("report.path"));
         //收费标准码
-        param.put("price", vipInfoMapper.queryFeeStandardReport(Constant.REPORT_CHANNEL_COMMON).addAll(vipInfoMapper.queryFeeStandardReport(Constant.REPORT_CHANNEL_VIP)));
+        List<TbVipFeeStandard> list = new ArrayList<>();
+        list.addAll(vipInfoMapper.queryFeeStandardReport(Constant.REPORT_CHANNEL_COMMON));
+        list.addAll(vipInfoMapper.queryFeeStandardReport(Constant.REPORT_CHANNEL_VIP));
+        param.put("price", list);
         return param;
     }
 
@@ -141,7 +146,7 @@ public class ReportServiceImpl implements ReportService{
         return gradeName;
     }
 
-    private void setQualName(Map<String, Object> param) {
+    public void setQualName(Map<String, Object> param) {
         String qualCode = MapUtils.getString(param, "qualCode");
         if (StringUtils.isNotEmpty(qualCode)) {
             String[] qualCodeStr = qualCode.split(",");

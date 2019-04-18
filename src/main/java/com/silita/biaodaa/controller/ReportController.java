@@ -3,7 +3,9 @@ package com.silita.biaodaa.controller;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.service.ReportService;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +35,9 @@ public class ReportController extends BaseController {
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     public Map<String, Object> queryReport(@RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashedMap();
+        String qualCode = MapUtils.getString(param, "qualCode");
+        String code = serQualCode(qualCode);
+        param.put("qualCode", StringUtils.strip(code, ","));
         successMsg(resultMap, reportService.saveCondition(param));
         return resultMap;
     }

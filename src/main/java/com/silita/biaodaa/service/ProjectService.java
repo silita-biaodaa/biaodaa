@@ -194,7 +194,7 @@ public class ProjectService {
      */
     public Map<String, Object> getProjectJiaoDetail(String proId, Map<String, Object> result) {
         TbProjectTraffic projectTraffic = tbProjectTrafficMapper.queryProjectDetail(proId);
-        if (null != projectTraffic){
+        if (null != projectTraffic) {
             projectTraffic.setPersons(tbTrafficPersonMapper.queryPersonListByProId(proId));
         }
         result.put("data", projectTraffic);
@@ -216,35 +216,15 @@ public class ProjectService {
         PageInfo pageInfo = null;
         //施工图审查
         if ("design".equals(tabType)) {
-            if (null != MapUtils.getString(params, "pageNo")) {
-                pageInfo = getProjectDesignByPage(params);
-            } else {
-                resultList = tbProjectDesignMapper.queryProjectDesignByProId(proId);
-            }
+            pageInfo = getProjectDesignByPage(params);
         } else if ("contract".equals(tabType)) {
-            if (null != MapUtils.getString(params, "pageNo")) {
-                pageInfo = getContractListByPages(params);
-            } else {
-                resultList = this.getContractList(params);
-            }
+            pageInfo = getContractListByPages(params);
         } else if ("zhaotoubiao".equals(tabType)) {
-            if (null != MapUtils.getString(params, "pageNo")) {
-                pageInfo = getZhaotoubiaoListByPage(params);
-            } else {
-                resultList = this.getZhaotoubiaoList(proId);
-            }
+            pageInfo = getZhaotoubiaoListByPage(params);
         } else if ("build".equals(tabType)) {
-            if (null != MapUtils.getString(params, "pageNo")) {
-                pageInfo = getProjectBuildDetailPages(params);
-            } else {
-                resultList = this.getProjectBuildDetail(params);
-            }
+            pageInfo = getProjectBuildDetailPages(params);
         } else if ("completion".equals(tabType)) {
-            if (null != MapUtils.getString(params, "pageNo")) {
-                pageInfo = projectCompletionService.getProjectCompletListPages(params);
-            } else {
-                resultList = projectCompletionService.getProjectCompletList(params);
-            }
+            pageInfo = projectCompletionService.getProjectCompletListPages(params);
         }
         if (null != pageInfo && (null != pageInfo.getList() && pageInfo.getList().size() > 0)) {
             result.put("data", pageInfo.getList());
@@ -263,17 +243,6 @@ public class ProjectService {
 
 
     /**
-     * 获取项目下的合同备案列表
-     * created by zhushuai
-     *
-     * @param params
-     * @return
-     */
-    private List<TbProjectContract> getContractList(Map<String, Object> params) {
-        return getContrList(params);
-    }
-
-    /**
      * 获取项目下的合同备案列表(分页)
      * created by zhushuai
      *
@@ -287,56 +256,9 @@ public class ProjectService {
         page.setPageSize(pageSize);
         page.setCurrentPage(pageIndex);
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
-        List<TbProjectContract> list = this.getContractList(params);
+        List<TbProjectContract> list = this.getContrList(params);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
-    }
-
-    /**
-     * 获取项目下的合同备案
-     * created by zhushuai
-     *
-     * @param params
-     * @return
-     */
-    private List<TbProjectContract> getContrList(Map<String, Object> params) {
-        String proId = MapUtils.getString(params, "proId");
-        List<TbProjectContract> list = tbProjectContractMapper.queryProjectContractListByProId(proId);
-        if (null != list && list.size() > 0) {
-            Map<String, Object> param = new HashMap<>();
-            param.put("proId", proId);
-            List<String> roleList = new ArrayList<>();
-            roleList.add("发包单位");
-            roleList.add("承包单位");
-            param.put("roleList", roleList);
-            param.put("type", "contract");
-            List<TbProjectCompany> projectCompanyList = null;
-            for (TbProjectContract projectContract : list) {
-                param.put("pid", projectContract.getPkid());
-                projectCompanyList = tbProjectCompanyMapper.queryProComList(param);
-                if (null != projectCompanyList && projectCompanyList.size() > 0) {
-                    for (TbProjectCompany company : projectCompanyList) {
-                        if ("发包单位".equals(company.getRole())) {
-                            projectContract.setLetContractComName(company.getComName());
-                        } else if ("承包单位".equals(company.getRole())) {
-                            projectContract.setContractComName(company.getComName());
-                        }
-                    }
-                }
-            }
-        }
-        return list;
-    }
-
-    /**
-     * 招投标列表
-     *
-     * @param proId
-     * @return
-     */
-    private List<TbProjectZhaotoubiao> getZhaotoubiaoList(String proId) {
-        List<TbProjectZhaotoubiao> list = tbProjectZhaotoubiaoMapper.queryZhaotoubiaoListByProId(proId);
-        return list;
     }
 
     /**
@@ -356,18 +278,6 @@ public class ProjectService {
         List<TbProjectZhaotoubiao> list = tbProjectZhaotoubiaoMapper.queryZhaotoubiaoListByProId(proId);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
-    }
-
-    /**
-     * 施工许可
-     *
-     * @param params
-     * @return
-     */
-    private List<TbProjectBuild> getProjectBuildDetail(Map params) {
-        String proId = MapUtils.getString(params, "proId");
-        List<TbProjectBuild> proBuildList = tbProjectBuildMapper.queryProjectBuildByProId(proId);
-        return proBuildList;
     }
 
     /**
@@ -406,6 +316,42 @@ public class ProjectService {
         List<TbProjectDesign> list = tbProjectDesignMapper.queryProjectDesignByProId(proId);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
+    }
+
+    /**
+     * 获取项目下的合同备案
+     * created by zhushuai
+     *
+     * @param params
+     * @return
+     */
+    private List<TbProjectContract> getContrList(Map<String, Object> params) {
+        String proId = MapUtils.getString(params, "proId");
+        List<TbProjectContract> list = tbProjectContractMapper.queryProjectContractListByProId(proId);
+        if (null != list && list.size() > 0) {
+            Map<String, Object> param = new HashMap<>();
+            param.put("proId", proId);
+            List<String> roleList = new ArrayList<>();
+            roleList.add("发包单位");
+            roleList.add("承包单位");
+            param.put("roleList", roleList);
+            param.put("type", "contract");
+            List<TbProjectCompany> projectCompanyList = null;
+            for (TbProjectContract projectContract : list) {
+                param.put("pid", projectContract.getPkid());
+                projectCompanyList = tbProjectCompanyMapper.queryProComList(param);
+                if (null != projectCompanyList && projectCompanyList.size() > 0) {
+                    for (TbProjectCompany company : projectCompanyList) {
+                        if ("发包单位".equals(company.getRole())) {
+                            projectContract.setLetContractComName(company.getComName());
+                        } else if ("承包单位".equals(company.getRole())) {
+                            projectContract.setContractComName(company.getComName());
+                        }
+                    }
+                }
+            }
+        }
+        return list;
     }
 
     /**
@@ -468,6 +414,15 @@ public class ProjectService {
         }
         resultMap.put("data", resList);
         return resultMap;
+    }
+
+    /**
+     * 获取公司下的业绩
+     * @param param
+     * @return
+     */
+    public List<Map<String,Object>> listCompanyProject(Map<String, Object> param){
+        return null;
     }
 
     public void analysisData() {

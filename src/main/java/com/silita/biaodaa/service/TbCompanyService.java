@@ -306,29 +306,7 @@ public class TbCompanyService {
 
     public PageInfo filterCompany(Page page, Map<String, Object> param, String levelRank) {
         //判断是否*****级以上
-        param.put("zzLevel", "default");
-        if (null != param.get("qualCode") && StringUtils.isNotEmpty(param.get("qualCode").toString())) {
-            String qualCode = param.get("qualCode").toString();
-            String[] qualCodes = qualCode.split(",");
-            List<String> rangeList = new ArrayList<>();
-            String zzLevel = null;
-            List<Map> rangeMapList = new ArrayList<>();
-            Map rangeMap = null;
-            for (String str : qualCodes) {
-                rangeList = new ArrayList<>();
-                rangeMap = new HashMap();
-                if (str.contains("/")) {
-                    zzLevel = str.substring(analysisUtil.getIndex(str, "/") + 1, str.length());
-                } else {
-                    zzLevel = "default";
-                }
-                rangeList.addAll(this.getQualCode(str, zzLevel));
-                rangeMap.put("rangeList", rangeList);
-                rangeMapList.add(rangeMap);
-            }
-            param.put("zzLevel", "level");
-            param.put("range", rangeMapList);
-        }
+        setQualCode(param);
         //地区
         if (null != param.get("regisAddress")) {
             getRegisAddress(param);
@@ -385,10 +363,42 @@ public class TbCompanyService {
         return pageInfo;
     }
 
-    public String getAreaCode(String name) {
-        return tbCompanyMapper.getAreaCode(name);
+    private void setQualCode(Map<String, Object> param){
+        //判断是否*****级以上
+        param.put("zzLevel", "default");
+        if (null != param.get("qualCode") && StringUtils.isNotEmpty(param.get("qualCode").toString())) {
+            String qualCode = param.get("qualCode").toString();
+            String[] qualCodes = qualCode.split(",");
+            List<String> rangeList = new ArrayList<>();
+            String zzLevel = null;
+            List<Map> rangeMapList = new ArrayList<>();
+            Map rangeMap = null;
+            for (String str : qualCodes) {
+                rangeList = new ArrayList<>();
+                rangeMap = new HashMap();
+                if (str.contains("/")) {
+                    zzLevel = str.substring(analysisUtil.getIndex(str, "/") + 1, str.length());
+                } else {
+                    zzLevel = "default";
+                }
+                rangeList.addAll(this.getQualCode(str, zzLevel));
+                rangeMap.put("rangeList", rangeList);
+                rangeMapList.add(rangeMap);
+            }
+            param.put("zzLevel", "level");
+            param.put("range", rangeMapList);
+        }
     }
 
+    public List<TbCompany>  filterCompanyList( Map<String, Object> param) {
+        this.setQualCode(param);
+        //地区
+        if (null != param.get("regisAddress")) {
+            getRegisAddress(param);
+        }
+        List<TbCompany> list = tbCompanyMapper.filterCompany(param);
+        return list;
+    }
 
     public List<Map<String, Object>> getArea() {
         List<Map<String, Object>> areaList = new ArrayList<>();

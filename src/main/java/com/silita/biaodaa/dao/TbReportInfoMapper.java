@@ -37,4 +37,11 @@ public interface TbReportInfoMapper extends MyMapper<TbReportInfo> {
      * @return
      */
     int updateReportOrderPayStatus(TbReportInfo  reportInfo);
+
+    /**
+     * 根据订单号查询详情
+     * @param orderNo
+     * @return
+     */
+    TbReportInfo queryReportDetailOrderNo(String orderNo);
 }

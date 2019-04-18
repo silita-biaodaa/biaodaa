@@ -294,19 +294,7 @@ public class CompanyController extends BaseController {
             }
 
 
-            String code = "";
-            if (null != qualCode) {
-                String[] qualCodes = qualCode.split(",");
-                String[] qual = null;
-                if (qualCodes != null && qualCodes.length > 0) {
-                    for (String str : qualCodes) {
-                        qual = MyStringUtils.splitParam(str);
-                        if (null != qual && qual.length > 0) {
-                            code = code + qual[qual.length - 1] + ",";
-                        }
-                    }
-                }
-            }
+            String code = serQualCode(qualCode);
             Map<String, Object> param = new HashMap<>();
             param.put("regisAddress", params.get("regisAddress"));
             param.put("indestry", indestry);

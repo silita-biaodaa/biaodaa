@@ -123,6 +123,9 @@
           <if test="phone != null and phone != ''">
               `phone` = #{phone},
           </if>
+          <if test="stdCode != null and stdCode != ''">
+              `std_code` = #{stdCode},
+          </if>
           `pay_status` = #{payStatus},
           `updated` = now()
         WHERE `pkid` = #{pkid}
@@ -137,4 +140,13 @@
         `updated` = now()
         WHERE `order_no` = #{orderNo}
     </update>
+
+    <!--根据订单号查询详情-->
+    <select id="queryReportDetailOrderNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+          *
+        FROM
+          tb_report_info t
+        WHERE t.`order_no` = #{orderNo}
+    </select>
 </mapper>

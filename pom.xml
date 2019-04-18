@@ -25,7 +25,7 @@
   <name>biaodaa</name>
   <groupId>com.biaodaa</groupId>
   <artifactId>biaodaa</artifactId>
-  <version>3.3.4</version>
+  <version>3.3.5</version>
 
   <properties>
     <spring.version>4.1.6.RELEASE</spring.version>
@@ -505,6 +505,23 @@
       <version>${morphia.version}</version>
     </dependency>
 
+    <!--pdf start-->
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>itextpdf</artifactId>
+      <version>5.5.11</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf.tool</groupId>
+      <artifactId>xmlworker</artifactId>
+      <version>5.5.11</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>itext-asian</artifactId>
+      <version>5.2.0</version>
+    </dependency>
+    <!--pdf end-->
   </dependencies>
 
   <build>

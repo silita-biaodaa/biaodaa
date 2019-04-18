@@ -5,7 +5,6 @@ import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.utils.MyStringUtils;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.MapUtils;
 
 import java.util.Map;
@@ -97,6 +96,23 @@ public abstract class BaseController {
         }
         params.put("pageNo", pageNo);
         return buildPage(params);
+    }
+
+    protected String serQualCode(String qualCode){
+        String code = "";
+        if (null != qualCode) {
+            String[] qualCodes = qualCode.split(",");
+            String[] qual = null;
+            if (qualCodes != null && qualCodes.length > 0) {
+                for (String str : qualCodes) {
+                    qual = MyStringUtils.splitParam(str);
+                    if (null != qual && qual.length > 0) {
+                        code = code + qual[qual.length - 1] + ",";
+                    }
+                }
+            }
+        }
+        return code;
     }
 
     public static void bulidUserPwd(SysUser sysUser) {
