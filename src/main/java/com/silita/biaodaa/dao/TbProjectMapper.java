@@ -47,4 +47,11 @@ public interface TbProjectMapper extends MyMapper {
 
 
     void update(Map<String,Object> param);
+
+    /**
+     * 多条件查询企业下的业绩
+     * @param param
+     * @return
+     */
+    List<Map<String,Object>> queryListCompanyProject(Map<String,Object> param);
 }

@@ -422,6 +422,20 @@ public class ProjectService {
      * @return
      */
     public List<Map<String,Object>> listCompanyProject(Map<String, Object> param){
+        String projName = MapUtils.getString(param,"projName");
+        if (MyStringUtils.isNotNull(projName)){
+            projName = projName.replaceAll("，",",");
+            String[] projs = projName.split(",");
+            List<String> list = Arrays.asList(projs);
+            param.put("list",list);
+        }
+        if("project".equals(param.get("projSource"))){
+            return tbProjectMapper.queryListCompanyProject(param);
+        }else if ("jiaotong".equals(param.get("projSource"))){
+
+        }else if ("shuili".equals(param.get("projSource"))){
+
+        }
         return null;
     }
 

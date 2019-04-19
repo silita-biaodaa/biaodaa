@@ -27,7 +27,7 @@ import java.util.Map;
  * Created by zhushuai on 2019/4/16.
  */
 @Service("reportService")
-public class ReportServiceImpl implements ReportService{
+public class ReportServiceImpl implements ReportService {
 
     @Autowired
     TbReportInfoMapper tbReportInfoMapper;
@@ -62,20 +62,20 @@ public class ReportServiceImpl implements ReportService{
     @Override
     public void saveReportOrder(Map<String, Object> param) {
         TbReportInfo reportInfo = new TbReportInfo();
-        reportInfo.setPkid(MapUtils.getInteger(param,"pkid"));
-        reportInfo.setPayStatus(MapUtils.getInteger(param,"payStatus"));
-        reportInfo.setOrderNo(MapUtils.getString(param,"orderNo"));
-        if (null != param.get("email")){
-            reportInfo.setEmail(MapUtils.getString(param,"email"));
+        reportInfo.setPkid(MapUtils.getInteger(param, "pkid"));
+        reportInfo.setPayStatus(MapUtils.getInteger(param, "payStatus"));
+        reportInfo.setOrderNo(MapUtils.getString(param, "orderNo"));
+        if (null != param.get("email")) {
+            reportInfo.setEmail(MapUtils.getString(param, "email"));
         }
-        if (null != param.get("phone")){
-            reportInfo.setPhone(MapUtils.getString(param,"phone"));
+        if (null != param.get("phone")) {
+            reportInfo.setPhone(MapUtils.getString(param, "phone"));
         }
         tbReportInfoMapper.updateReportOrder(reportInfo);
     }
 
     @Override
-    public void updateReportOrderPayStatus(String orderNo,String resultCode) {
+    public void updateReportOrderPayStatus(String orderNo, String resultCode) {
         int orderStatus;
         if ("SUCCESS".equalsIgnoreCase(resultCode)) {
             orderStatus = 9;//支付成功
@@ -146,6 +146,7 @@ public class ReportServiceImpl implements ReportService{
         return gradeName;
     }
 
+    @Override
     public void setQualName(Map<String, Object> param) {
         String qualCode = MapUtils.getString(param, "qualCode");
         if (StringUtils.isNotEmpty(qualCode)) {
@@ -154,9 +155,15 @@ public class ReportServiceImpl implements ReportService{
             for (String str : qualCodeStr) {
                 String[] qua = str.split("/");
                 AptitudeDictionary aptitudeDictionary = aptitudeDictionaryMapper.queryQualDetail(qua[0]);
-                qualName.append(aptitudeDictionary.getAptitudename() + aptitudeDictionary.getMajorname() + this.setQualGrade(qua[1])).append(",");
+                if (null != aptitudeDictionary){
+                    if (qua.length == 2) {
+                        qualName.append(aptitudeDictionary.getAptitudename() + aptitudeDictionary.getMajorname() + this.setQualGrade(qua[1])).append(",");
+                    } else {
+                        qualName.append(aptitudeDictionary.getAptitudename()).append(",");
+                    }
+                }
             }
-            param.put("qualName", qualName.toString());
+            param.put("qualName", StringUtils.strip(qualName.toString(), ","));
         }
     }
 
@@ -170,6 +177,7 @@ public class ReportServiceImpl implements ReportService{
         target.put("buildEnd", soure.get("buildEnd"));
         target.put("amountStart", soure.get("amountStart"));
         target.put("amountEnd", soure.get("amountEnd"));
+        target.put("price", soure.get("price"));
         soure.remove("repCondition");
     }
 }

@@ -2,6 +2,7 @@ package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.VisitInfoHolder;
+import com.silita.biaodaa.service.PDFService;
 import com.silita.biaodaa.service.ReportService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -24,6 +25,8 @@ public class ReportController extends BaseController {
 
     @Autowired
     ReportService reportService;
+    @Autowired
+    PDFService pdfService;
 
     /**
      * 综合查询并返回查询条件
@@ -38,7 +41,7 @@ public class ReportController extends BaseController {
         String qualCode = MapUtils.getString(param, "qualCode");
         String code = serQualCode(qualCode);
         param.put("qualCode", StringUtils.strip(code, ","));
-        successMsg(resultMap, reportService.saveCondition(param));
+        successMsg(resultMap, pdfService.buildPdf("123"));
         return resultMap;
     }
 

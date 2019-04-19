@@ -75,4 +75,9 @@
           `tb_project_traffic`
         WHERE pkid = #{pkid}
     </select>
+
+    <!--多条件查询企业业绩-->
+    <select id="queryListCompanyProject" parameterType="java.util.Map" resultType="java.util.Map">
+
+    </select>
 </mapper>

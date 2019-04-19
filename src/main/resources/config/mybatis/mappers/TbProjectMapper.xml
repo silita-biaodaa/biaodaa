@@ -140,4 +140,41 @@
                 pro_id = #{proId}
             </if>
     </update>
+
+    <!--多条件查询企业下的业绩-->
+    <select id="queryListCompanyProject" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+            t.`pro_name` AS proName,
+            t.`pro_type` AS proType,
+            t2.`build_end` AS buildEnd,
+            t3.`amount` AS amount
+        FROM
+        tb_project t
+        JOIN tb_project_company t1
+        ON t.`pro_id` = t1.`pro_id`
+        JOIN tb_project_completion t2
+        ON t.`pro_id` = t2.`pro_id`
+        JOIN tb_project_contract t3
+        ON t.`pro_id` = t3.`pro_id`
+        WHERE t1.`com_name` = #{comName}
+        <if test="list != null and list.size() > 0">
+            AND
+            <foreach collection="list" item="list" separator="and">
+                t.`pro_name` LIKE CONCAT('%',#{list},'%')
+            </foreach>
+        </if>
+        <if test="buildStart != null and buildStart != ''">
+            AND t2.`build_end` &gt;= #{buildStart}
+        </if>
+        <if test="buildEnd != null and buildEnd != ''">
+            AND t2.`build_end` &lt;= #{buildEnd}
+        </if>
+        <if test="amountStart != null">
+            AND t3.`amount` &gt;= #{amountStart}
+        </if>
+        <if test="amountEnd != null">
+            AND t3.`amount` &lt;= #{amountEnd}
+        </if>
+        GROUP BY t.`pro_id`
+    </select>
 </mapper>
