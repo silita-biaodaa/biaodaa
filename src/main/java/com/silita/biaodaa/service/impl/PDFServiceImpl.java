@@ -275,7 +275,13 @@ public class PDFServiceImpl implements PDFService {
             header.addElement(paragrah);
             table.addCell(header);
             header = new PdfPHeaderCell();
-            paragrah = new Paragraph("类别", font);
+            if ("project".equals(param.get("projSource"))) {
+                paragrah = new Paragraph("类别", font);
+            } else if ("shuili".equals(param.get("projSource"))) {
+                paragrah = new Paragraph("结算金额", font);
+            } else if ("jiaotong".equals(param.get("projSource"))) {
+                paragrah = new Paragraph("标段名称", font);
+            }
             paragrah.setAlignment(Element.ALIGN_CENTER);
             header.addElement(paragrah);
             table.addCell(header);

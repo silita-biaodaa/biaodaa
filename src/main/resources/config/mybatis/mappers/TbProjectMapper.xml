@@ -144,37 +144,47 @@
     <!--多条件查询企业下的业绩-->
     <select id="queryListCompanyProject" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
-            t.`pro_name` AS proName,
-            t.`pro_type` AS proType,
-            t2.`build_end` AS buildEnd,
-            t3.`amount` AS amount
+            t4.`pro_name` AS proName,
+            t4.`pro_type` AS proType,
+            t1.`amount` AS amount,
+            t3.`build_end` AS buildEnd
         FROM
-        tb_project t
-        JOIN tb_project_company t1
-        ON t.`pro_id` = t1.`pro_id`
-        JOIN tb_project_completion t2
-        ON t.`pro_id` = t2.`pro_id`
-        JOIN tb_project_contract t3
-        ON t.`pro_id` = t3.`pro_id`
-        WHERE t1.`com_name` = #{comName}
+        tb_project_company t
+        JOIN tb_project_contract t1
+        ON t1.`pkid` = t.`pid`
+        AND t.`role` = '承包单位'
+        AND t.`type` = 'contract'
+        JOIN tb_project t4
+        ON t.`pro_id` = t4.`pro_id`
+        LEFT JOIN tb_project_completion t3
+        ON t4.`pro_id` = t3.`pro_id`
+        WHERE AND (
+        t1.`type` = '专业承包'
+        OR t1.`type` = '工程总承包'
+        OR t1.`type` = '施工分包'
+        OR t1.`type` = '施工劳务'
+        OR t1.`type` = '施工总包'
+        OR t1.`type` = '设计施工一体化'
+        )
+        AND t.`com_name` =  #{comName}
         <if test="list != null and list.size() > 0">
             AND
             <foreach collection="list" item="list" separator="and">
-                t.`pro_name` LIKE CONCAT('%',#{list},'%')
+                t4.`pro_name` LIKE CONCAT('%',#{list},'%')
             </foreach>
         </if>
-        <if test="buildStart != null and buildStart != ''">
-            AND t2.`build_end` &gt;= #{buildStart}
-        </if>
-        <if test="buildEnd != null and buildEnd != ''">
-            AND t2.`build_end` &lt;= #{buildEnd}
-        </if>
         <if test="amountStart != null">
-            AND t3.`amount` &gt;= #{amountStart}
+            AND t1.`amount` &gt;= #{amountStart}
         </if>
         <if test="amountEnd != null">
-            AND t3.`amount` &lt;= #{amountEnd}
+            AND t1.`amount` &lt;= #{amountEnd}
         </if>
-        GROUP BY t.`pro_id`
+        <if test="buildStart != null and buildStart != ''">
+            AND t3.`build_end` &gt;= #{buildStart}
+        </if>
+        <if test="buildEnd != null and buildEnd != ''">
+            AND t3.`build_end` &lt;= #{buildEnd}
+        </if>
+        GROUP BY t4.`pro_name`
     </select>
 </mapper>

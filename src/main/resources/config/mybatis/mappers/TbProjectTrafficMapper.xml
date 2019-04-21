@@ -78,6 +78,32 @@
 
     <!--多条件查询企业业绩-->
     <select id="queryListCompanyProject" parameterType="java.util.Map" resultType="java.util.Map">
-
+        SELECT
+            t.`pro_name` AS proName,
+            t.`contract_amount` AS amount,
+            t.`section` AS proType,
+            t.`ended` AS buildEnd
+        FROM
+        tb_project_traffic t
+        WHERE
+        AND t.`com_name` = #{comName}
+        <if test="list != null and list.size() > 0">
+            AND
+            <foreach collection="list" item="list" separator="and">
+                t.`pro_name` LIKE CONCAT('%',#{list},'%')
+            </foreach>
+        </if>
+        <if test="amountStart != null">
+            AND t.`contract_amount` &gt;= #{amountStart}
+        </if>
+        <if test="amountEnd != null">
+            AND t.`contract_amount` &lt;= #{amountEnd}
+        </if>
+        <if test="buildStart != null and buildStart != ''">
+            AND t.`ended` &gt;= #{buildStart}
+        </if>
+        <if test="buildEnd != null and buildEnd != ''">
+            AND t.`ended` &lt;= #{buildEnd}
+        </if>
     </select>
 </mapper>
