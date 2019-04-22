@@ -22,11 +22,4 @@ public interface TbProjectShuiliMapper extends MyMapper<TbProjectShuili> {
      * @return
      */
     TbProjectShuili queryShuiliDetail(String proId);
-
-    /**
-     * 多条件查询企业业绩
-     * @param param
-     * @return
-     */
-    List<Map<String,Object>> queryListCompanyProject(Map<String,Object> param);
 }

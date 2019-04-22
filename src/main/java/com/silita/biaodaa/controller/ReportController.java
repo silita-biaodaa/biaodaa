@@ -2,7 +2,6 @@ package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.VisitInfoHolder;
-import com.silita.biaodaa.service.PDFService;
 import com.silita.biaodaa.service.ReportService;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -25,8 +24,6 @@ public class ReportController extends BaseController {
 
     @Autowired
     ReportService reportService;
-    @Autowired
-    PDFService pdfService;
 
     /**
      * 综合查询并返回查询条件

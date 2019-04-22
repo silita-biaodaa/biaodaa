@@ -158,7 +158,7 @@
         ON t.`pro_id` = t4.`pro_id`
         LEFT JOIN tb_project_completion t3
         ON t4.`pro_id` = t3.`pro_id`
-        WHERE AND (
+        WHERE  (
         t1.`type` = '专业承包'
         OR t1.`type` = '工程总承包'
         OR t1.`type` = '施工分包'

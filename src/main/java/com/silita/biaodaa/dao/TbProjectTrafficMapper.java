@@ -21,11 +21,4 @@ public interface TbProjectTrafficMapper extends MyMapper<TbProjectTraffic> {
      * @return
      */
     TbProjectTraffic queryProjectDetail(String pkid);
-
-    /**
-     * 多条件查询企业业绩
-     * @param param
-     * @return
-     */
-    List<Map<String,Object>> queryListCompanyProject(Map<String,Object> param);
 }
