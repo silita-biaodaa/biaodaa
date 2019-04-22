@@ -71,6 +71,9 @@ public class ReportServiceImpl implements ReportService {
         if (null != param.get("phone")) {
             reportInfo.setPhone(MapUtils.getString(param, "phone"));
         }
+        if (null != param.get("stdCode")){
+            reportInfo.setStdCode(MapUtils.getString(param, "stdCode"));
+        }
         tbReportInfoMapper.updateReportOrder(reportInfo);
     }
 
@@ -85,7 +88,7 @@ public class ReportServiceImpl implements ReportService {
         TbReportInfo reportInfo = new TbReportInfo();
         reportInfo.setPayStatus(orderStatus);
         reportInfo.setOrderNo(orderNo);
-        tbReportInfoMapper.updateReportOrder(reportInfo);
+        tbReportInfoMapper.updateReportOrderPayStatus(reportInfo);
     }
 
     @Override
@@ -168,9 +171,9 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private void setMap(Map<String, Object> target, Map<String, Object> soure) {
-        target.put("reginAddress", soure.get("reginAddress"));
+        target.put("regisAddress", soure.get("regisAddress"));
         target.put("qualCode", soure.get("qualCode"));
-        target.put("rangType", soure.get("rangType"));
+        target.put("rangeType", soure.get("rangeType"));
         target.put("projSource", soure.get("projSource"));
         target.put("projName", soure.get("projName"));
         target.put("buildStart", soure.get("buildStart"));

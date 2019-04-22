@@ -44,4 +44,11 @@ public interface TbReportInfoMapper extends MyMapper<TbReportInfo> {
      * @return
      */
     TbReportInfo queryReportDetailOrderNo(String orderNo);
+
+    /**
+     * 修改pdf路径
+     * @param tbReportInfo
+     * @return
+     */
+    int updateReportPath(TbReportInfo tbReportInfo);
 }

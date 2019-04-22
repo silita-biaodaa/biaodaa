@@ -8,6 +8,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.SendMessage;
 import com.silita.biaodaa.dao.TbReportInfoMapper;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.TbReportInfo;
@@ -17,12 +18,15 @@ import com.silita.biaodaa.service.ReportService;
 import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
+import com.silita.biaodaa.utils.OSSUtils;
+import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +96,19 @@ public class PDFServiceImpl implements PDFService {
                     }
                     //生成pdf
                     conditionMap.put("comList", compayList);
-                    this.create(conditionMap, order);
+                    String orderFile = this.create(conditionMap, order);
+                    //上传OSS
+                    String ossFile = order + ".pdf";
+                    String resultUrl = OSSUtils.uploadOSS(new File(orderFile), ossFile);
+                    TbReportInfo tbReportInfo = new TbReportInfo();
+                    tbReportInfo.setOrderNo(order);
+                    tbReportInfo.setReportPath(resultUrl);
+                    tbReportInfoMapper.updateReportPath(tbReportInfo);
+                    //发送短信
+                    TbReportInfo resultReport = tbReportInfoMapper.queryReportDetailOrderNo(order);
+                    SendMessage.sendReport(resultReport.getPhone(),resultUrl);
+                    //发送邮件
+
                     return true;
                 }
                 // TODO: 2019/4/19 退款
@@ -102,19 +118,20 @@ public class PDFServiceImpl implements PDFService {
 
         } catch (Exception e) {
             e.printStackTrace();
-//            myRedisTemplate.lpush("order_list", order);
+            myRedisTemplate.lpush("order_list", order);
         }
         return false;
     }
 
-    private void create(Map<String, Object> param, String orderNo) throws Exception {
+    private String create(Map<String, Object> param, String orderNo) throws Exception {
         // 创建一个文档（默认大小A4，边距36, 36, 36, 36）
         Document document = new Document(PageSize.A4);
         // 设置边距，单位都是像素，换算大约1厘米=28.33像素
         document.setMargins(50, 50, 50, 50);
 
         // 创建writer，通过writer将文档写入磁盘
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream("E://" + orderNo + ".pdf"));
+        String orderFile = PropertiesUtils.getProperty("report.server") + orderNo + ".pdf";
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(orderFile));
 
         // 定义字体
         FontFactoryImp ffi = new FontFactoryImp();
@@ -129,7 +146,7 @@ public class PDFServiceImpl implements PDFService {
         p1.setLeading(50);
         document.add(p1);
         //设置logo
-        Image image = Image.getInstance("E:\\logo.png");
+        Image image = Image.getInstance(PropertiesUtils.getProperty("logo.path"));
         image.setAlignment(Element.ALIGN_CENTER);
         image.scaleAbsolute(200, 80);
         //Add to document
@@ -144,7 +161,7 @@ public class PDFServiceImpl implements PDFService {
         title.setLeading(80);
         document.add(title);
         //设置二维码
-        Image image1 = Image.getInstance("E:\\pic-erweima.png");
+        Image image1 = Image.getInstance(PropertiesUtils.getProperty("code.path"));
         image1.setAlignment(Element.ALIGN_CENTER);
         image1.scaleAbsolute(200, 200);
         document.add(image1);
@@ -328,6 +345,7 @@ public class PDFServiceImpl implements PDFService {
         // 关闭文档，才能输出
         document.close();
         writer.close();
+        return orderFile;
     }
 
     private String setPlatform(Map<String, Object> param) {

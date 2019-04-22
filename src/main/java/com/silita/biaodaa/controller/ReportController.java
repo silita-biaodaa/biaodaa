@@ -58,6 +58,7 @@ public class ReportController extends BaseController {
         param.put("userId", VisitInfoHolder.getUid());
         PageInfo pageInfo = reportService.listHistory(param);
         buildReturnMap(resultMap, pageInfo);
+        successMsg(resultMap);
         return resultMap;
     }
 }

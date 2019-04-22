@@ -141,6 +141,16 @@
         WHERE `order_no` = #{orderNo}
     </update>
 
+    <!--修改pdf路径-->
+    <update id="updateReportPath" parameterType="com.silita.biaodaa.model.TbReportInfo">
+        UPDATE
+        `tb_report_info`
+        SET
+        `report_path` = #{reportPath},
+        `updated` = now()
+        WHERE `order_no` = #{orderNo}
+    </update>
+
     <!--根据订单号查询详情-->
     <select id="queryReportDetailOrderNo" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT

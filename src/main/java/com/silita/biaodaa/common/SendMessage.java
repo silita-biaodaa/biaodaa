@@ -136,14 +136,15 @@ public class SendMessage {
      * @param phone
      * @return
      */
-    public static String sendReport(String phone) {
+    public static String sendReport(String phone,String path) {
         IClientProfile profile = DefaultProfile.getProfile(regionId, accessKeyId, secret);
         try {
             DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", "Sms", "sms.aliyuncs.com");
             IAcsClient client = new DefaultAcsClient(profile);
             SingleSendSmsRequest request = new SingleSendSmsRequest();
-            request.setSignName("标大大biaodaa");
-            request.setTemplateCode("SMS_104665007");
+            request.setSignName("标大大");
+            request.setTemplateCode("SMS_164085155");
+            request.setParamString("{\"path\":\"" + path + "\"}");
             //短信模板中的变量；数字需要转换为字符串；个人用户每个变量长度必须小于15个字符。 例如:短信模板为：“接受短信验证码${no}”,此参数传递{“no”:”123456”}，用户将接收到[短信签名]接受短信验证码123456
             request.setRecNum(phone);
             SingleSendSmsResponse httpResponse = client.getAcsResponse(request);
