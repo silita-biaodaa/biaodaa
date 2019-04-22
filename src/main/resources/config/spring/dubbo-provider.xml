@@ -26,4 +26,17 @@
     <!-- 声明需要暴露的服务接口（注意是接口,不是实现类） -->
     <dubbo:service interface="com.silita.biaodaa.service.VipService" ref="vipService" />
 
+
+    <!-- 这里是具体实现类,id和上面的暴露的服务接口ref要一致,dubbo就是通过这个来注册对应的服务 -->
+    <bean id="reportService" class="com.silita.biaodaa.service.impl.ReportServiceImpl"></bean>
+
+    <!-- 声明需要暴露的服务接口（注意是接口,不是实现类） -->
+    <dubbo:service interface="com.silita.biaodaa.service.ReportService" ref="reportService" />
+
+    <!-- 这里是具体实现类,id和上面的暴露的服务接口ref要一致,dubbo就是通过这个来注册对应的服务 -->
+    <bean id="redisService" class="com.silita.biaodaa.service.impl.RedisServiceImpl"></bean>
+
+    <!-- 声明需要暴露的服务接口（注意是接口,不是实现类） -->
+    <dubbo:service interface="com.silita.biaodaa.service.RedisService" ref="redisService" />
+
 </beans>

@@ -41,7 +41,7 @@ public class ReportController extends BaseController {
         String qualCode = MapUtils.getString(param, "qualCode");
         String code = serQualCode(qualCode);
         param.put("qualCode", StringUtils.strip(code, ","));
-        successMsg(resultMap, pdfService.buildPdf("123"));
+        successMsg(resultMap, reportService.saveCondition(param));
         return resultMap;
     }
 
