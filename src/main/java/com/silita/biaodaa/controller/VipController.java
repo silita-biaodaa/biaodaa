@@ -5,6 +5,7 @@ import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbVipFeeStandard;
+import com.silita.biaodaa.service.ReportService;
 import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.to.OpenMemberTO;
 import com.silita.biaodaa.utils.MyStringUtils;
@@ -34,6 +35,8 @@ public class VipController extends BaseController{
 
     @Autowired
     private VipService vipService;
+    @Autowired
+    private ReportService reportService;
 
     @Autowired
     OrderInfoService orderInfoService;
@@ -130,6 +133,7 @@ public class VipController extends BaseController{
             }
             MyPage<OrderInfo> myPage= orderInfoService.queryOrderPages(pMap, pageNo-1, pageSize);
             if(myPage!=null){
+                setReport(myPage);
                 successMsg(result,myPage.getInfoList());
                 result.put("pageNo",myPage.getPageNo()+1);
                 result.put("pageSize",pageSize);
@@ -145,4 +149,13 @@ public class VipController extends BaseController{
         return result;
     }
 
+    private void setReport(MyPage<OrderInfo> page){
+        List<OrderInfo> list = page.getInfoList();
+        for (OrderInfo orderInfo : list) {
+            if ("report_com".equals(orderInfo.getStdCode()) || "report_vip".equals(orderInfo.getStdCode())) {
+                orderInfo.setReport(reportService.getReportMap(orderInfo.getOrderNo()));
+            }
+        }
+        page.setInfoList(list);
+    }
 }

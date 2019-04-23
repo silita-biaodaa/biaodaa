@@ -13,8 +13,10 @@ import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbReportInfo;
 import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.ReportService;
+import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,7 +73,7 @@ public class ReportServiceImpl implements ReportService {
         if (null != param.get("phone")) {
             reportInfo.setPhone(MapUtils.getString(param, "phone"));
         }
-        if (null != param.get("stdCode")){
+        if (null != param.get("stdCode")) {
             reportInfo.setStdCode(MapUtils.getString(param, "stdCode"));
         }
         tbReportInfoMapper.updateReportOrder(reportInfo);
@@ -158,7 +160,7 @@ public class ReportServiceImpl implements ReportService {
             for (String str : qualCodeStr) {
                 String[] qua = str.split("/");
                 AptitudeDictionary aptitudeDictionary = aptitudeDictionaryMapper.queryQualDetail(qua[0]);
-                if (null != aptitudeDictionary){
+                if (null != aptitudeDictionary) {
                     if (qua.length == 2) {
                         qualName.append(aptitudeDictionary.getAptitudename() + aptitudeDictionary.getMajorname() + this.setQualGrade(qua[1])).append(",");
                     } else {
@@ -168,6 +170,22 @@ public class ReportServiceImpl implements ReportService {
             }
             param.put("qualName", StringUtils.strip(qualName.toString(), ","));
         }
+    }
+
+    @Override
+    public Map<String, Object> getReportMap(String orderNo) {
+        TbReportInfo reportInfo = tbReportInfoMapper.queryReportDetailOrderNo(orderNo);
+        if (null != reportInfo) {
+            Map<String, Object> resultMap = new HashedMap();
+            resultMap.put("pkid", reportInfo.getPkid());
+            resultMap.put("repTitle", reportInfo.getRepTitle());
+            resultMap.put("reportPath", reportInfo.getReportPath());
+            resultMap.put("email", reportInfo.getEmail());
+            resultMap.put("payDate", MyDateUtils.getDate(reportInfo.getUpdated(), "yyyy-MM-dd"));
+            resultMap.put("pattern",reportInfo.getPattern());
+            return resultMap;
+        }
+        return null;
     }
 
     private void setMap(Map<String, Object> target, Map<String, Object> soure) {
