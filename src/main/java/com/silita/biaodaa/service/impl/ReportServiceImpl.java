@@ -80,7 +80,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public void updateReportOrderPayStatus(String orderNo, String resultCode) {
+    public void updateReportOrderPayStatus(String orderNo, String resultCode,String transactionId) {
         int orderStatus;
         if ("SUCCESS".equalsIgnoreCase(resultCode)) {
             orderStatus = 9;//支付成功
@@ -90,6 +90,8 @@ public class ReportServiceImpl implements ReportService {
         TbReportInfo reportInfo = new TbReportInfo();
         reportInfo.setPayStatus(orderStatus);
         reportInfo.setOrderNo(orderNo);
+        //微信订单号
+        reportInfo.setTransactionId(transactionId);
         tbReportInfoMapper.updateReportOrderPayStatus(reportInfo);
     }
 
@@ -173,8 +175,8 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Map<String, Object> getReportMap(String orderNo) {
-        TbReportInfo reportInfo = tbReportInfoMapper.queryReportDetailOrderNo(orderNo);
+    public Map<String, Object> getReportMap(Map<String,Object> param) {
+        TbReportInfo reportInfo = tbReportInfoMapper.queryReportDetailOrderPayStatus(param);
         if (null != reportInfo) {
             Map<String, Object> resultMap = new HashedMap();
             resultMap.put("pkid", reportInfo.getPkid());

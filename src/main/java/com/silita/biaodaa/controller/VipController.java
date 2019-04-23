@@ -13,6 +13,7 @@ import com.silita.pay.service.OrderInfoService;
 import com.silita.pay.vo.MyPage;
 import com.silita.pay.vo.OrderInfo;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +135,7 @@ public class VipController extends BaseController{
             }
             MyPage<OrderInfo> myPage= orderInfoService.queryOrderPages(pMap, pageNo-1, pageSize);
             if(myPage!=null){
-                setReport(myPage);
+                setReport(myPage,orderStatus);
                 successMsg(result,myPage.getInfoList());
                 result.put("pageNo",myPage.getPageNo()+1);
                 result.put("pageSize",pageSize);
@@ -149,11 +151,22 @@ public class VipController extends BaseController{
         return result;
     }
 
-    private void setReport(MyPage<OrderInfo> page){
+    private void setReport(MyPage<OrderInfo> page,Integer orderStatus){
+        List<OrderInfo> resuList = new ArrayList<>();
         List<OrderInfo> list = page.getInfoList();
+        Map<String,Object> param = new HashedMap(){{
+           put("payStatus",orderStatus);
+        }};
         for (OrderInfo orderInfo : list) {
             if ("report_com".equals(orderInfo.getStdCode()) || "report_vip".equals(orderInfo.getStdCode())) {
-                orderInfo.setReport(reportService.getReportMap(orderInfo.getOrderNo()));
+                param.put("orderNo",orderInfo.getOrderNo());
+                Map<String,Object> map = reportService.getReportMap(param);
+                if (MapUtils.isNotEmpty(map)){
+                    orderInfo.setReport(map);
+                    resuList.add(orderInfo);
+                }
+            }else {
+                resuList.add(orderInfo);
             }
         }
         page.setInfoList(list);

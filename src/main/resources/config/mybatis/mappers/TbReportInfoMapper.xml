@@ -18,6 +18,7 @@
         <result column="created" property="created" jdbcType="TIMESTAMP"/>
         <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
         <result column="rep_condition" property="repCondition" jdbcType="LONGVARCHAR"/>
+        <result column="transaction_id" property="transactionId" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--添加-->
@@ -137,6 +138,9 @@
         `tb_report_info`
         SET
         `pay_status` = #{payStatus},
+        <if test="transactionId != null and transactionId != ''">
+            `transaction_id` = #{transactionId},
+        </if>
         `updated` = now()
         WHERE `order_no` = #{orderNo}
     </update>
@@ -158,5 +162,15 @@
         FROM
           tb_report_info t
         WHERE t.`order_no` = #{orderNo}
+    </select>
+
+    <!--根据订单号查询详情-->
+    <select id="queryReportDetailOrderPayStatus" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        tb_report_info t
+        WHERE t.`order_no` = #{orderNo}
+        AND `pay_status` = #{payStatus}
     </select>
 </mapper>
