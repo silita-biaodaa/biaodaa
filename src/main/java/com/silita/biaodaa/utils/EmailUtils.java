@@ -48,7 +48,7 @@ public class EmailUtils {
             }
             Email email = new SimpleEmail();
             email.setHostName("smtp.mxhichina.com");
-            email.setSmtpPort(25);
+            email.setSmtpPort(465);
             email.setAuthenticator(new DefaultAuthenticator(senderName, senderPass));
             email.setSSLOnConnect(true);
             email.setFrom(senderName);
