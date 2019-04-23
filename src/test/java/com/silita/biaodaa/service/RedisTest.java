@@ -54,4 +54,21 @@ public class RedisTest extends ConfigTest {
         }
     }
 
+    @Test
+    public void push() {
+        String topic = "order_list";
+        for (int i = 1; i < 100; i++) {
+            redisTemplate.convertAndSend(topic,i+"只猪");
+        }
+    }
+
+    @Test
+    public void pop() {
+        String topic = "orderber_list";
+        List<String> list = (List<String>) redisTemplate.lpop(topic);
+        for (String str : list){
+            System.out.println(str);
+        }
+    }
+
 }
