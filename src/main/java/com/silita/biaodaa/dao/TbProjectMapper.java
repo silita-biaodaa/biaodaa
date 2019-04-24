@@ -11,28 +11,32 @@ public interface TbProjectMapper extends MyMapper {
     /**
      * 按工程查询业绩列表
      * created by zhushuai
+     *
      * @param params
      * @return
      */
-    List<Map<String,Object>> queryObject(Map<String,Object> params);
+    List<Map<String, Object>> queryObject(Map<String, Object> params);
 
     /**
      * 按单位查询业绩列表
      * created by zhushuai
+     *
      * @param params
      * @return
      */
-    List<Map<String,Object>> queryObjectByUnit(Map<String,Object> params);
+    List<Map<String, Object>> queryObjectByUnit(Map<String, Object> params);
 
     /**
      * 根据区域名称和Path
+     *
      * @param
      * @return
      */
-    List<Map<String,Object>> queryNameAndPath();
+    List<Map<String, Object>> queryNameAndPath();
 
     /**
      * 获取项目详情
+     *
      * @param proId 项目Id
      * @return
      */
@@ -40,18 +44,20 @@ public interface TbProjectMapper extends MyMapper {
 
     /**
      * 根据Id获取详情
+     *
      * @param list
      * @return
      */
-    List<Map<String,Object>> queryProjectListByIds(List<String> list);
+    List<Map<String, Object>> queryProjectListByIds(List<String> list);
 
 
-    void update(Map<String,Object> param);
+    void update(Map<String, Object> param);
 
     /**
-     * 多条件查询企业下的业绩
+     * 企业下的业绩
+     *
      * @param param
      * @return
      */
-    List<Map<String,Object>> queryListCompanyProject(Map<String,Object> param);
+    List<Map<String, Object>> queryListCompanyPro(Map<String, Object> param);
 }

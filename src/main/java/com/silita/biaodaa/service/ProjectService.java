@@ -370,29 +370,14 @@ public class ProjectService {
     public Map<String, Object> getProjectCompanyList(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         String companyId = MapUtils.getString(param, "comId");
-        List<Map<String, Object>> resultList = new ArrayList<>();
 
         // TODO:获取公司信息
         TbCompany company = tbCompanyMapper.getCompany(companyId);
 
         param.put("comName", company.getComName());
-        param.put("orgCode", company.getOrgCode());
 
-        //获取施工下的主项目
-//        List<String> list = tbProjectBuildMapper.queryProIdByComId(companyId);
-        //获取监理下的主项目
-//        list.addAll(tbProjectSupervisionMapper.queryProIdByComId(companyId));
-        //获取勘察设计的主项目
-//        list.addAll(tbProjectDesignMapper.queryProIdByComId(companyId));
+        List<Map<String, Object>> resultList =tbProjectMapper.queryListCompanyPro(param);
 
-        List<String> list = tbProjectCompanyMapper.queryProIdForCom(param);
-
-        //去掉重复的proId
-        if (null != list && list.size() > 0) {
-            Set<String> set = new HashSet(list);
-            List<String> proList = new ArrayList<>(set);
-            resultList = tbProjectMapper.queryProjectListByIds(proList);
-        }
         List<Map<String, Object>> resList = resultList;
         if (null != resultList && resultList.size() > 0) {
             if ("page".equals(param.get("type"))) {
