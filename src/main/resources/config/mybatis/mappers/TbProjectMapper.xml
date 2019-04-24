@@ -4,25 +4,57 @@
 
     <!--按工程查询业绩列表-->
     <select id="queryObject" parameterType="java.util.Map" resultType="java.util.Map">
-        SELECT
-            t.`pro_id` AS proId,
-            t.`pro_no` AS proNo,
-            t.`pro_name` AS proName,
-            t.`pro_where` AS proWhere,
-            t.`pro_org` AS proOrg,
-            t.`pro_type` AS proType,
-            t.`pro_address` AS proAddress,
-            t.`pro_scope` AS scope,
-            t2.`build_end` AS buildEnd,
-            t3.`amount` AS amount
-        FROM
-        tb_project_company t1
-        JOIN tb_project_contract t3
-        ON t3.`pkid` = t1.`pid`
-        JOIN tb_project t
-        ON t1.`pro_id` = t.`pro_id`
-        LEFT JOIN tb_project_completion t2
-        ON t.`pro_id` = t2.`pro_id`
+        <!--SELECT-->
+            <!--t.`pro_id` AS proId,-->
+            <!--t.`pro_no` AS proNo,-->
+            <!--t.`pro_name` AS proName,-->
+            <!--t.`pro_where` AS proWhere,-->
+            <!--t.`pro_org` AS proOrg,-->
+            <!--t.`pro_type` AS proType,-->
+            <!--t.`pro_address` AS proAddress,-->
+            <!--t.`pro_scope` AS scope,-->
+            <!--t2.`build_end` AS buildEnd,-->
+            <!--t3.`amount` AS amount-->
+        <!--FROM-->
+        <!--tb_project_company t1-->
+        <!--JOIN tb_project_contract t3-->
+        <!--ON t3.`pkid` = t1.`pid`-->
+        <!--JOIN tb_project t-->
+        <!--ON t1.`pro_id` = t.`pro_id`-->
+        <!--LEFT JOIN tb_project_completion t2-->
+        <!--ON t.`pro_id` = t2.`pro_id`-->
+        <!--where 1=1-->
+        <!--<if test="proName != null and proName != ''">-->
+            <!--AND (t.`pro_name` LIKE  CONCAT('%',#{proName},'%')  OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))-->
+        <!--</if>-->
+        <!--<if test="proType != null and proName != ''">-->
+            <!--AND t.`pro_type` = #{proType}-->
+        <!--</if>-->
+        <!--<if test="area != null and area != ''">-->
+            <!--AND t.`pro_where` LIKE CONCAT(#{area},'%')-->
+        <!--</if>-->
+        <!--<if test="amountStart != null and amountStart != ''">-->
+            <!--AND CAST(t3.`amount` AS SIGNED) &gt;= #{amountStart}-->
+        <!--</if>-->
+        <!--<if test="amountEnd != null and amountEnd != ''">-->
+            <!--AND CAST(t3.`amount` AS SIGNED) &lt;= #{amountEnd}-->
+        <!--</if>-->
+        <!--<if test="buildStart != null and buildStart != ''">-->
+            <!--AND t2.`build_end` &gt;= #{buildStart}-->
+        <!--</if>-->
+        <!--<if test="buildEnd != null and buildEnd != ''">-->
+            <!--AND t2.`build_end` &lt;= #{buildEnd}-->
+        <!--</if>-->
+        <!--ORDER BY t.`pro_no` DESC-->
+        SELECT t.`pro_id` AS proId
+        ,t.`pro_no` AS proNo
+        ,t.`pro_name` AS proName
+        ,t.`pro_where` AS proWhere
+        ,t.`pro_org` AS proOrg
+        ,t.`pro_type` AS proType
+        ,t.`pro_address` AS proAddress
+        ,t.`pro_scope` AS scope
+        FROM tb_project t
         where 1=1
         <if test="proName != null and proName != ''">
             AND (t.`pro_name` LIKE  CONCAT('%',#{proName},'%')  OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))
@@ -30,20 +62,11 @@
         <if test="proType != null and proName != ''">
             AND t.`pro_type` = #{proType}
         </if>
+        <!--<if test="proOrg != null and proOrg != ''">-->
+        <!--AND t.`pro_org` LIKE CONCAT('%',#{proOrg},'%')-->
+        <!--</if>-->
         <if test="area != null and area != ''">
             AND t.`pro_where` LIKE CONCAT(#{area},'%')
-        </if>
-        <if test="amountStart != null and amountStart != ''">
-            AND CAST(t3.`amount` AS SIGNED) &gt;= #{amountStart}
-        </if>
-        <if test="amountEnd != null and amountEnd != ''">
-            AND CAST(t3.`amount` AS SIGNED) &lt;= #{amountEnd}
-        </if>
-        <if test="buildStart != null and buildStart != ''">
-            AND t2.`build_end` &gt;= #{buildStart}
-        </if>
-        <if test="buildEnd != null and buildEnd != ''">
-            AND t2.`build_end` &lt;= #{buildEnd}
         </if>
         ORDER BY t.`pro_no` DESC
     </select>
@@ -179,7 +202,7 @@
         ON t1.`pro_id` = t.`pro_id`
         LEFT JOIN tb_project_completion t2
         ON t.`pro_id` = t2.`pro_id`
-        WHERE t1.`com_name` = #{comNamez}
+        WHERE t1.`com_name` = #{comName}
         <if test="proName != null and proName != ''">
             AND t.`pro_name` = CONCAT('%',#{proName},'%')
         </if>
