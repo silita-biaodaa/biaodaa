@@ -72,6 +72,7 @@ public class ReportController extends BaseController {
     @RequestMapping(value = "/send/again", method = RequestMethod.POST)
     public Map<String, Object> againSend(@RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashedMap();
+        reportService.updateReportEmail(MapUtils.getString(param, "email"), MapUtils.getInteger(param, "pkid"));
         redisService.saveRedisMQ(MapUtils.getString(param, "orderNo"));
         successMsg(resultMap);
         return resultMap;

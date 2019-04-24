@@ -96,6 +96,14 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public void updateReportEmail(String email, Integer pkid) {
+        TbReportInfo reportInfo = new TbReportInfo();
+        reportInfo.setPkid(pkid);
+        reportInfo.setEmail(email);
+        tbReportInfoMapper.updateReportEmail(reportInfo);
+    }
+
+    @Override
     public PageInfo listHistory(Map<String, Object> param) {
         Integer pageNo = MapUtils.getInteger(param, "pageNo");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");

@@ -132,6 +132,17 @@
         WHERE `pkid` = #{pkid}
     </update>
 
+    <!--修改报告邮箱-->
+    <update id="updateReportEmail" parameterType="com.silita.biaodaa.model.TbReportInfo">
+        UPDATE
+        `tb_report_info`
+        SET
+        <if test="email != null and email != ''">
+            `email` = #{email}
+        </if>
+        WHERE `pkid` = #{pkid}
+    </update>
+
     <!--修改报告订单支付状态-->
     <update id="updateReportOrderPayStatus" parameterType="com.silita.biaodaa.model.TbReportInfo">
         UPDATE
