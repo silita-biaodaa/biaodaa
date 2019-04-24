@@ -96,11 +96,20 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public void updateReportEmail(String email, Integer pkid) {
-        TbReportInfo reportInfo = new TbReportInfo();
-        reportInfo.setPkid(pkid);
-        reportInfo.setEmail(email);
-        tbReportInfoMapper.updateReportEmail(reportInfo);
+    public boolean updateReportEmail(Map<String,Object> param) {
+        //有没有生成报告
+        String email = MapUtils.getString(param, "email");
+        Integer pkid = MapUtils.getInteger(param, "pkid");
+        String orderNo = MapUtils.getString(param, "orderNo");
+        TbReportInfo report = tbReportInfoMapper.queryReportDetailOrderNo(orderNo);
+        if (null != report && StringUtils.isEmpty(report.getReportPath())){
+            TbReportInfo reportInfo = new TbReportInfo();
+            reportInfo.setPkid(pkid);
+            reportInfo.setEmail(email);
+            tbReportInfoMapper.updateReportEmail(reportInfo);
+            return true;
+        }
+        return false;
     }
 
     @Override
