@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @RequestMapping("/vip")
 @Controller
-public class VipController extends BaseController{
+public class VipController extends BaseController {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -43,69 +43,69 @@ public class VipController extends BaseController{
     @Autowired
     OrderInfoService orderInfoService;
 
-    private String preQueryFeeStd(TbVipFeeStandard tbVipFeeStandard){
-        if(MyStringUtils.isNull(tbVipFeeStandard.getChannel())){
+    private String preQueryFeeStd(TbVipFeeStandard tbVipFeeStandard) {
+        if (MyStringUtils.isNull(tbVipFeeStandard.getChannel())) {
             return Constant.ERR_NULL_CHANNEL;
         }
         return null;
     }
 
     @ResponseBody
-    @RequestMapping(value = "/queryFeeStandard",produces = "application/json;charset=utf-8")
-    public Map<String,Object> queryFeeStandard(@RequestBody TbVipFeeStandard tbVipFeeStandard){
+    @RequestMapping(value = "/queryFeeStandard", produces = "application/json;charset=utf-8")
+    public Map<String, Object> queryFeeStandard(@RequestBody TbVipFeeStandard tbVipFeeStandard) {
         Map result = new HashMap();
-        try{
+        try {
             String errCode = preQueryFeeStd(tbVipFeeStandard);
-            if(errCode==null) {
+            if (errCode == null) {
                 List<TbVipFeeStandard> list = vipService.queryFeeStandard(tbVipFeeStandard.getChannel());
-                successMsg(result,list);
-            }else{
-                errorMsg(result,errCode,"必填参数出错。");
+                successMsg(result, list);
+            } else {
+                errorMsg(result, errCode, "必填参数出错。");
             }
-        }catch (Exception e){
-            logger.error(e,e);
-            errorMsg(result,Constant.EXCEPTION_CODE,e.getMessage());
+        } catch (Exception e) {
+            logger.error(e, e);
+            errorMsg(result, Constant.EXCEPTION_CODE, e.getMessage());
         }
         return result;
     }
 
 
     @ResponseBody
-    @RequestMapping(value = "/queryMyProfits",produces = "application/json;charset=utf-8")
-    public Map<String,Object> queryMyProfits(@RequestBody Map param){
+    @RequestMapping(value = "/queryMyProfits", produces = "application/json;charset=utf-8")
+    public Map<String, Object> queryMyProfits(@RequestBody Map param) {
         Map result = new HashMap();
-        try{
+        try {
             Page page = buildPage(param);
             String userId = VisitInfoHolder.getUid();
-            PageInfo info = vipService.queryProfitInfo(page,userId);
+            PageInfo info = vipService.queryProfitInfo(page, userId);
             Integer total = 0;
-            if(info != null && info.getList() != null){
+            if (info != null && info.getList() != null) {
                 total = vipService.queryProfitTotal(userId);
             }
-            result.put("totalDays",total);
+            result.put("totalDays", total);
             buildReturnMap(result, info);
             successMsg(result);
-        }catch (Exception e){
-            logger.error(e,e);
+        } catch (Exception e) {
+            logger.error(e, e);
             errorMsg(result, e.getMessage());
         }
         return result;
     }
 
     @ResponseBody
-    @RequestMapping(value = "/openMemberRights",produces = "application/json;charset=utf-8")
-    public Map<String,Object> openMemberRights(@RequestBody OpenMemberTO toOpenMember){
+    @RequestMapping(value = "/openMemberRights", produces = "application/json;charset=utf-8")
+    public Map<String, Object> openMemberRights(@RequestBody OpenMemberTO toOpenMember) {
         Map result = new HashMap();
-        try{
+        try {
             toOpenMember.setUserId(VisitInfoHolder.getUid());
             String errMsg = vipService.openMemberRights(toOpenMember);
-            if(errMsg==null) {
+            if (errMsg == null) {
                 successMsg(result);
-            }else{
+            } else {
                 errorMsg(result, errMsg);
             }
-        }catch (Exception e){
-            logger.error(e,e);
+        } catch (Exception e) {
+            logger.error(e, e);
             errorMsg(result, e.getMessage());
         }
         return result;
@@ -114,61 +114,71 @@ public class VipController extends BaseController{
 
 
     @ResponseBody
-    @RequestMapping(value = "/queryOrderList",produces = "application/json;charset=utf-8")
-    public Map<String,Object> queryOrderList(@RequestBody Map param){
+    @RequestMapping(value = "/queryOrderList", produces = "application/json;charset=utf-8")
+    public Map<String, Object> queryOrderList(@RequestBody Map param) {
         Map result = new HashMap();
-        int pageNo= MapUtils.getIntValue(param,"pageNo");
-        int pageSize= MapUtils.getIntValue(param,"pageSize");
-        String channelNo= MapUtils.getString(param,"channelNo");
-        Integer orderStatus=MapUtils.getInteger(param,"orderStatus");
+        int pageNo = MapUtils.getIntValue(param, "pageNo");
+        int pageSize = MapUtils.getIntValue(param, "pageSize");
+        String channelNo = MapUtils.getString(param, "channelNo");
+        Integer orderStatus = MapUtils.getInteger(param, "orderStatus");
         try {
             Map pMap = new HashMap();
-            pMap.put("userId",VisitInfoHolder.getUid());
-            pMap.put("channelNo",channelNo);
-            pMap.put("isDelete",0);
-            if(orderStatus!=null) {
-                if(orderStatus==11) {//非支付成功
+            pMap.put("userId", VisitInfoHolder.getUid());
+            pMap.put("channelNo", channelNo);
+            pMap.put("isDelete", 0);
+            if (orderStatus != null) {
+                if (orderStatus == 11) {//非支付成功
                     pMap.put("orderStatus_ne", 9);
-                }else{
+                } else {
                     pMap.put("orderStatus", orderStatus);
                 }
             }
-            MyPage<OrderInfo> myPage= orderInfoService.queryOrderPages(pMap, pageNo-1, pageSize);
-            if(myPage!=null){
-                setReport(myPage,orderStatus);
-                successMsg(result,myPage.getInfoList());
-                result.put("pageNo",myPage.getPageNo()+1);
-                result.put("pageSize",pageSize);
-                result.put("pages",myPage.getPages());
-                result.put("total",myPage.getTotal());
-            }else{
+            MyPage<OrderInfo> myPage = orderInfoService.queryOrderPages(pMap, pageNo - 1, pageSize);
+            if (myPage != null) {
+                myPage.setInfoList(setReport(myPage, orderStatus));
+                successMsg(result, myPage.getInfoList());
+                result.put("pageNo", myPage.getPageNo() + 1);
+                result.put("pageSize", pageSize);
+                result.put("pages", setPages(myPage.getInfoList().size(), pageSize));
+                result.put("total", myPage.getInfoList().size());
+            } else {
                 errorMsg(result, "订单查询为空");
             }
-        }catch (Exception e){
-            logger.error(e,e);
-            errorMsg(result, "订单查询异常："+e.getMessage());
+        } catch (Exception e) {
+            logger.error(e, e);
+            errorMsg(result, "订单查询异常：" + e.getMessage());
         }
         return result;
     }
 
-    private void setReport(MyPage<OrderInfo> page,Integer orderStatus){
+    private List<OrderInfo> setReport(MyPage<OrderInfo> page, Integer orderStatus) {
         List<OrderInfo> resuList = new ArrayList<>();
         List<OrderInfo> list = page.getInfoList();
-        Map<String,Object> param = new HashedMap(){{
-           put("payStatus",orderStatus);
+        Map<String, Object> param = new HashedMap() {{
+            put("payStatus", orderStatus);
         }};
         for (OrderInfo orderInfo : list) {
             if ("report_com".equals(orderInfo.getStdCode()) || "report_vip".equals(orderInfo.getStdCode())) {
-                param.put("orderNo",orderInfo.getOrderNo());
-                Map<String,Object> map = reportService.getReportMap(param);
-                if (MapUtils.isNotEmpty(map)){
+                param.put("orderNo", orderInfo.getOrderNo());
+                Map<String, Object> map = reportService.getReportMap(param);
+                if (null != map) {
                     orderInfo.setReport(map);
                     resuList.add(orderInfo);
                 }
-            }else {
+            } else {
                 resuList.add(orderInfo);
             }
         }
-        page.setInfoList(list);
+        return resuList;
+    }
+
+    private int setPages(Integer total, Integer pageSize) {
+        int pages = 0;
+        if (total % pageSize == 0) {
+            pages = total / pageSize;
+        } else {
+            pages = (total / pageSize) + 1;
+        }
+        return pages;
     }
 }
