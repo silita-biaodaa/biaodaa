@@ -102,7 +102,7 @@ public class ReportServiceImpl implements ReportService {
         Integer pkid = MapUtils.getInteger(param, "pkid");
         String orderNo = MapUtils.getString(param, "orderNo");
         TbReportInfo report = tbReportInfoMapper.queryReportDetailOrderNo(orderNo);
-        if (null != report && StringUtils.isEmpty(report.getReportPath())){
+        if (null != report && StringUtils.isNotEmpty(report.getReportPath())){
             TbReportInfo reportInfo = new TbReportInfo();
             reportInfo.setPkid(pkid);
             reportInfo.setEmail(email);
