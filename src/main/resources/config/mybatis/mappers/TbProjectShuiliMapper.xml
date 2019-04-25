@@ -33,7 +33,9 @@
         t.`com_name` AS comName,
         t.`pro_org` AS proOrg,
         t.`pro_where` AS proWhere,
-        t.`pro_type` AS proType
+        t.`pro_type` AS proType,
+        t.contract_amount AS amount,
+        t.finished AS build
         FROM
         tb_project_shuili t
         WHERE 1 = 1
@@ -48,6 +50,18 @@
         </if>
         <if test="area != null and area != ''">
             AND t.`pro_where` LIKE CONCAT('%', #{area}, '%')
+        </if>
+        <if test="amountStart != null and amountStart != ''">
+            AND CAST(t.`contract_amount` AS SIGNED INTEGER) &gt;= #{amountStart}
+        </if>
+        <if test="amountEnd != null and amountEnd != ''">
+            AND CAST(t.`contract_amount` AS SIGNED INTEGER) &lt;= #{amountEnd}
+        </if>
+        <if test="buildStart != null and buildStart != ''">
+            AND t.`finished` &gt;= #{buildStart}
+        </if>
+        <if test="buildEnd != null and buildEnd != ''">
+            AND t.`finished` &lt;= #{buildEnd}
         </if>
         ORDER BY t.`created` DESC
     </select>

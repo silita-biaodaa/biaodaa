@@ -33,7 +33,9 @@
         t.`com_name` AS comName,
         t.`section` AS `section`,
         t.`pro_where` AS proWhere,
-        t.`source` AS source
+        t.`source` AS source,
+        t.`contract_amount` AS amount,
+        t.`ended` AS buildEnd
         FROM
         `tb_project_traffic` t
         WHERE 1 = 1
@@ -48,6 +50,18 @@
         </if>
         <if test="proType != null and proType != ''">
             AND t.`source` = #{proType}
+        </if>
+        <if test="amountStart != null and amountStart != ''">
+            AND CAST(t.`contract_amount` AS SIGNED INTEGER) &gt;= #{amountStart}
+        </if>
+        <if test="amountEnd != null and amountEnd != ''">
+            AND CAST(t.`contract_amount` AS SIGNED INTEGER) &lt;= #{amountEnd}
+        </if>
+        <if test="buildStart != null and buildStart != ''">
+            AND t.`ended` &gt;= #{buildStart}
+        </if>
+        <if test="buildEnd != null and buildEnd != ''">
+            AND t.`ended` &lt;= #{buildEnd}
         </if>
         ORDER BY t.`created` DESC
     </select>

@@ -14,6 +14,7 @@ import com.silita.pay.vo.MyPage;
 import com.silita.pay.vo.OrderInfo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -124,7 +125,9 @@ public class VipController extends BaseController {
         try {
             Map pMap = new HashMap();
             pMap.put("userId", VisitInfoHolder.getUid());
-            pMap.put("channelNo", channelNo);
+            if (StringUtils.isNotEmpty(channelNo)) {
+                pMap.put("channelNo", channelNo);
+            }
             pMap.put("isDelete", 0);
             if (orderStatus != null) {
                 if (orderStatus == 11) {//非支付成功
