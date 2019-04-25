@@ -176,7 +176,7 @@
         ON t.`pro_id` = t2.`pro_id`
         WHERE t1.`com_name` = #{comName}
         <if test="proName != null and proName != ''">
-            AND t.`pro_name` = CONCAT('%',#{proName},'%')
+            AND t.`pro_name` LIKE CONCAT('%',#{proName},'%')
         </if>
         GROUP BY t1.`pro_id`
     </select>
