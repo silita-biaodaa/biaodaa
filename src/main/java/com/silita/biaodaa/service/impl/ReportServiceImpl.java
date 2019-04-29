@@ -217,7 +217,6 @@ public class ReportServiceImpl implements ReportService {
         target.put("buildEnd", soure.get("buildEnd"));
         target.put("amountStart", soure.get("amountStart"));
         target.put("amountEnd", soure.get("amountEnd"));
-        target.put("price", soure.get("price"));
         soure.remove("repCondition");
     }
 }
