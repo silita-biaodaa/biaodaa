@@ -99,6 +99,10 @@
                 mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS oneName,
                 (SELECT outdd.pbMode from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
                 mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS pbMode ,
+                (SELECT outdd.pbMode from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
+                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS pbMode ,
+                (SELECT outdd.oneOffer from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
+                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS oneOffer,
             </when>
             <otherwise>
                 (SELECT outdd.projSum from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM
@@ -107,6 +111,8 @@
                 mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id )) AS oneName,
                 (SELECT outdd.pbMode from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM
                 mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id )) AS pbMode,
+                (SELECT outdd.oneOffer from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM
+                mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id)) AS oneOffer,
             </otherwise>
         </choose>
         d.projType, d.projDq, d.projXs,
