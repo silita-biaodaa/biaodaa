@@ -80,29 +80,33 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public void updateReportOrderPayStatus(String orderNo, String resultCode,String transactionId) {
-        int orderStatus;
-        if ("SUCCESS".equals(resultCode)) {
-            orderStatus = 9;//支付成功
-        } else {
-            orderStatus = 3;//支付失败
+    public void updateReportOrderPayStatus(String orderNo, String resultCode, String transactionId) {
+        try {
+            int orderStatus;
+            if ("SUCCESS".equals(resultCode)) {
+                orderStatus = 9;//支付成功
+            } else {
+                orderStatus = 3;//支付失败
+            }
+            TbReportInfo reportInfo = new TbReportInfo();
+            reportInfo.setPayStatus(orderStatus);
+            reportInfo.setOrderNo(orderNo);
+            //微信订单号
+            reportInfo.setTransactionId(transactionId);
+            tbReportInfoMapper.updateReportOrderPayStatus(reportInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        TbReportInfo reportInfo = new TbReportInfo();
-        reportInfo.setPayStatus(orderStatus);
-        reportInfo.setOrderNo(orderNo);
-        //微信订单号
-        reportInfo.setTransactionId(transactionId);
-        tbReportInfoMapper.updateReportOrderPayStatus(reportInfo);
     }
 
     @Override
-    public boolean updateReportEmail(Map<String,Object> param) {
+    public boolean updateReportEmail(Map<String, Object> param) {
         //有没有生成报告
         String email = MapUtils.getString(param, "email");
         Integer pkid = MapUtils.getInteger(param, "pkid");
         String orderNo = MapUtils.getString(param, "orderNo");
         TbReportInfo report = tbReportInfoMapper.queryReportDetailOrderNo(orderNo);
-        if (null != report && StringUtils.isNotEmpty(report.getReportPath())){
+        if (null != report && StringUtils.isNotEmpty(report.getReportPath())) {
             TbReportInfo reportInfo = new TbReportInfo();
             reportInfo.setPkid(pkid);
             reportInfo.setEmail(email);
@@ -192,7 +196,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Map<String, Object> getReportMap(Map<String,Object> param) {
+    public Map<String, Object> getReportMap(Map<String, Object> param) {
         TbReportInfo reportInfo = tbReportInfoMapper.queryReportDetailOrderPayStatus(param);
         if (null != reportInfo) {
             Map<String, Object> resultMap = new HashedMap();
@@ -201,7 +205,7 @@ public class ReportServiceImpl implements ReportService {
             resultMap.put("reportPath", reportInfo.getReportPath());
             resultMap.put("email", reportInfo.getEmail());
             resultMap.put("payDate", MyDateUtils.getDate(reportInfo.getUpdated(), "yyyy-MM-dd"));
-            resultMap.put("pattern",reportInfo.getPattern());
+            resultMap.put("pattern", reportInfo.getPattern());
             return resultMap;
         }
         return null;
