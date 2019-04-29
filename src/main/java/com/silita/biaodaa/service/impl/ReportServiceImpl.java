@@ -82,7 +82,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void updateReportOrderPayStatus(String orderNo, String resultCode,String transactionId) {
         int orderStatus;
-        if ("SUCCESS".equalsIgnoreCase(resultCode)) {
+        if ("SUCCESS".equals(resultCode)) {
             orderStatus = 9;//支付成功
         } else {
             orderStatus = 3;//支付失败
