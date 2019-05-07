@@ -117,4 +117,10 @@ public class Constant {
      */
     public static String REPORT_CHANNEL_COMMON = "report_com";
     public static String REPORT_CHANNEL_VIP = "report_vip";
+
+    public static Integer QUESTION_TYPE_RADIO = 1;
+    public static Integer QUESTION_TYPE_CHECKBOX = 2;
+    public static Integer QUESTION_TYPE_JUDGE = 3;
+    public static Integer QUESTION_TYPE_CASE = 4;
+    public static Integer QUESTION_TYPE_ANSWER = 5;
 }

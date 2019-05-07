@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbQuestionWorkMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbQuestionWork">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="question_id" property="questionId" jdbcType="INTEGER"/>
+        <result column="sub_type" property="subType" jdbcType="INTEGER"/>
+        <result column="work_type" property="workType" jdbcType="INTEGER"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询非案例题-->
+    <select id="queryWorkQuestionList" parameterType="java.util.Map" resultType="java.util.Map">
+         SELECT
+          t1.`pkid` AS pkid,
+          t1.`case_id` AS caseId,
+          t1.`subject` AS `subject`,
+          t1.`question` AS question,
+          t1.`answer` AS answer,
+          t1.`sub_type` AS subType
+        FROM
+          tb_question_work t
+          JOIN tb_question_info t1
+            ON t.`question_id` = t1.`pkid`
+        WHERE t.`user_id` = #{userId}
+          AND t.`work_type` = #{workType}
+          AND t1.`case_id` IS NULL
+  </select>
+
+    <!--查询案例题-->
+    <select id="queryWorkCaseQuestionList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t1.`pkid` AS pkid,
+          t2.`case_name` AS caseName,
+          t1.`subject` AS `subject`,
+          t1.`question` AS question,
+          t1.`answer` AS answer,
+          t1.`sub_type` AS subType
+        FROM
+          tb_question_work t
+          JOIN tb_question_info t1
+            ON t.`question_id` = t1.`pkid`
+          JOIN tb_question_case t2
+            ON t1.`case_id` = t2.`pkid`
+        WHERE t.`user_id` = #{userId}
+          AND t.`work_type` = #{workType}
+          AND t1.`case_id` IS NOT NULL
+        ORDER BY t2.`pkid` ASC
+    </select>
+
+    <!--查询是否存在-->
+    <select id="queryQuestionWorkExist" parameterType="com.silita.biaodaa.model.TbQuestionWork" resultType="java.lang.Integer">
+      SELECT COUNT(1) FROM `tb_question_work` WHERE `user_id` = #{userId} AND `question_id` = #{questionId} AND `work_type` = #{workType}
+    </select>
+
+    <!--添加-->
+    <insert id="insertQuestionWork" parameterType="com.silita.biaodaa.model.TbQuestionWork">
+        INSERT INTO `tb_question_work` (
+          `user_id`,
+          `question_id`,
+          `sub_type`,
+          `work_type`,
+          `updated`
+        )
+        VALUES
+          (
+            #{userId},
+            #{questionId},
+            #{subType},
+            #{workType},
+            now()
+          ) ;
+    </insert>
+
+    <!--删除-->
+    <delete id="deleteQuestionWork" parameterType="com.silita.biaodaa.model.TbQuestionWork">
+        DELETE
+        FROM
+          `tb_question_work`
+        WHERE `user_id` = #{userId} AND `question_id` = #{questionId} AND `work_type` = #{workType}
+    </delete>
+</mapper>

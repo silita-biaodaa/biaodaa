@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbQuestionCaseMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbQuestionCase" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="case_name" property="caseName" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <insert id="insert" parameterType="com.silita.biaodaa.model.TbQuestionCase">
+      INSERT INTO `tb_question_case` ( `case_name`, `updated`)
+      VALUES
+        (#{caseName}, now()) ;
+  </insert>
+
+  <select id="queryCaseCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+    SELECT pkid FROM tb_question_case t WHERE t.`case_name` = #{caseName}
+  </select>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbQuestionTypeMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbQuestionType">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.silita.biaodaa.model.TbQuestionType">
+      INSERT INTO `tb_question_type` (
+        `parent_id`,
+        `name`,
+        `level`,
+        `updated`
+      )
+      VALUES
+        (
+          #{parentId},#{name},#{level},now()
+        ) ;
+  </insert>
+</mapper>

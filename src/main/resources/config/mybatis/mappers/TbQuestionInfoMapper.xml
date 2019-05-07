@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbQuestionInfoMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbQuestionInfo">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="case_id" property="caseId" jdbcType="INTEGER"/>
+        <result column="question_type" property="questionType" jdbcType="INTEGER"/>
+        <result column="sub_type" property="subType" jdbcType="INTEGER"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+        <result column="subject" property="subject" jdbcType="LONGVARCHAR"/>
+        <result column="question" property="question" jdbcType="LONGVARCHAR"/>
+        <result column="answer" property="answer" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <!--查询题目类别-->
+    <select id="queryQuestionType" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        t.`pkid` AS pkid
+        ,t.`parent_id` AS parentId
+        ,t.`name` AS `name`
+        FROM
+        tb_question_type t
+        WHERE 1 = 1
+        <if test="level != null">
+            AND t.`level` = #{level}
+        </if>
+        <if test="parentId != null">
+            AND t.`parent_id` = #{parentId}
+        </if>
+    </select>
+
+    <!--题目个数-->
+    <select id="queryQuestionCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+      SELECT
+        COUNT(1)
+      FROM
+        tb_question_info t
+      WHERE (
+          t.`question_type` = #{questionType}
+          OR t.`question_type` = 0
+        )
+        AND t.`sub_type` = #{subType}
+      ORDER BY t.`question_type` ASC
+  </select>
+
+    <!-- 案例题目个数(包括简答)-->
+    <select id="queryQuestionCaseCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+      SELECT
+        COUNT(1)
+      FROM
+        tb_question_info t
+      WHERE (
+          t.`question_type` = #{questionType}
+          OR t.`question_type` = 0
+        )
+        AND t.`case_id` IS NOT NULL
+      ORDER BY t.`question_type` ASC
+  </select>
+
+    <!--查询题目列表-->
+    <select id="queryQuestionList" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT
+      t.`pkid` AS pkid,
+      t.`case_id` AS caseId,
+      t.`subject` AS `subject`,
+      t.`question` AS question,
+      t.`answer` AS answer,
+      t.`sub_type` AS subType
+    FROM
+      tb_question_info t
+    WHERE (
+        t.`question_type` = #{questionType}
+        OR t.`question_type` = 0
+      )
+      AND t.`sub_type` = #{subType}
+  </select>
+
+    <!--案例题目列表-->
+    <select id="queryCaseQuestionList" parameterType="java.util.Map" resultType="java.util.Map">
+    SELECT
+      t.`pkid` AS pkid,
+      t1.`case_name` AS caseName,
+      t.`subject` AS `subject`,
+      t.`question` AS question,
+      t.`answer` AS answer,
+      t.`sub_type` AS subType
+    FROM
+      tb_question_info t
+      JOIN tb_question_case t1
+        ON t.`case_id` = t1.`pkid`
+    WHERE (
+        t.`question_type` = #{questionType}
+        OR t.`question_type` = 0
+      )
+      AND t.`case_id` IS NOT NULL
+      ORDER BY t1.`pkid` ASC
+  </select>
+</mapper>
