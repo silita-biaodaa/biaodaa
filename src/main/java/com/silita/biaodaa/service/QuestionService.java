@@ -51,7 +51,7 @@ public class QuestionService {
         if (null != parentList && parentList.size() > 0) {
             myRedisTemplate.setObject("question_type", parentList);
         }
-        return list;
+        return parentList;
     }
 
     /**
@@ -100,13 +100,7 @@ public class QuestionService {
         } else {
             questionList = tbQuestionInfoMapper.queryQuestionList(param);
         }
-        String question = "";
-        for (Map<String, Object> map : questionList) {
-            if (null != map.get("question")) {
-                question = MapUtils.getString(map, "question");
-                map.put("question", com.alibaba.fastjson.JSONObject.parse(question));
-            }
-        }
+        setQuestion(questionList);
         if (null != questionList && questionList.size() > 0) {
             myRedisTemplate.setObject(key, questionList);
         }
@@ -125,6 +119,7 @@ public class QuestionService {
         list = tbQuestionWorkMapper.queryWorkQuestionList(param);
         //案例题
         list.addAll(tbQuestionWorkMapper.queryWorkCaseQuestionList(param));
+        setQuestion(list);
         return list;
     }
 
@@ -157,5 +152,17 @@ public class QuestionService {
         questionWork.setSubType(MapUtils.getInteger(param, "subType"));
         questionWork.setQuestionId(MapUtils.getInteger(param, "pkid"));
         tbQuestionWorkMapper.deleteQuestionWork(questionWork);
+    }
+
+    private void setQuestion(List<Map<String,Object>> list){
+        if (null != list && list.size() > 0){
+            String question = "";
+            for (Map<String, Object> map : list) {
+                if (null != map.get("question")) {
+                    question = MapUtils.getString(map, "question");
+                    map.put("question", com.alibaba.fastjson.JSONObject.parse(question));
+                }
+            }
+        }
     }
 }
