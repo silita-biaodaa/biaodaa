@@ -95,7 +95,7 @@ public class QuestionService {
         }
         Integer subType = MapUtils.getInteger(param, "subType");
         List<Map<String, Object>> questionList = null;
-        if (Constant.QUESTION_TYPE_CASE == subType) {
+        if (Constant.QUESTION_TYPE_CASE.intValue() == subType.intValue()) {
             questionList = tbQuestionInfoMapper.queryCaseQuestionList(param);
         } else {
             questionList = tbQuestionInfoMapper.queryQuestionList(param);

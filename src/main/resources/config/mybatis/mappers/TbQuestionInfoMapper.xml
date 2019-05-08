@@ -15,6 +15,28 @@
         <result column="answer" property="answer" jdbcType="LONGVARCHAR"/>
     </resultMap>
 
+    <insert id="insert" parameterType="com.silita.biaodaa.model.TbQuestionInfo">
+        INSERT INTO `tb_question_info` (
+        `case_id`,
+        `subject`,
+        `question`,
+        `answer`,
+        `question_type`,
+        `sub_type`,
+        `updated`
+        )
+        VALUES
+        (
+        #{caseId},
+        #{subject},
+        #{question},
+        #{answer},
+        #{questionType},
+        #{subType},
+        now()
+        ) ;
+    </insert>
+
     <!--查询题目类别-->
     <select id="queryQuestionType" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT

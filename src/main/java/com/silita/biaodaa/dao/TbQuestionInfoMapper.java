@@ -42,4 +42,6 @@ public interface TbQuestionInfoMapper extends MyMapper<TbQuestionInfo> {
      * @return
      */
     List<Map<String,Object>> queryCaseQuestionList(Map<String,Object> param);
+
+    int insert(TbQuestionInfo questionInfo);
 }

@@ -7,6 +7,7 @@ import com.silita.biaodaa.dao.TbQuestionTypeMapper;
 import com.silita.biaodaa.model.TbQuestionCase;
 import com.silita.biaodaa.model.TbQuestionInfo;
 import com.silita.biaodaa.model.TbQuestionType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -79,17 +80,23 @@ public class QuestionTest extends ConfigTest {
                 XSSFCell sixCell = row.getCell(6);
                 if (null != sixCell) {
                     sixCell.setCellType(XSSFCell.CELL_TYPE_STRING);
-                    list.add(sixCell.getStringCellValue());
+                    if (StringUtils.isNotEmpty(sixCell.getStringCellValue())) {
+                        list.add(sixCell.getStringCellValue());
+                    }
                 }
                 XSSFCell sevenCell = row.getCell(7);
                 if (null != sevenCell) {
                     sevenCell.setCellType(XSSFCell.CELL_TYPE_STRING);
-                    list.add(sevenCell.getStringCellValue());
+                    if (StringUtils.isNotEmpty(sevenCell.getStringCellValue())) {
+                        list.add(sevenCell.getStringCellValue());
+                    }
                 }
                 XSSFCell eightCell = row.getCell(8);
                 if (null != eightCell) {
                     eightCell.setCellType(XSSFCell.CELL_TYPE_STRING);
-                    list.add(eightCell.getStringCellValue());
+                    if (StringUtils.isNotEmpty(eightCell.getStringCellValue())){
+                        list.add(eightCell.getStringCellValue());
+                    }
                 }
                 if (null != list && list.size() > 0) {
                     questionInfo.setQuestion(JSONObject.toJSONString(list));
@@ -148,22 +155,30 @@ public class QuestionTest extends ConfigTest {
                 XSSFCell threeCell = row.getCell(3);
                 if (null != threeCell){
                     threeCell.setCellType(XSSFCell.CELL_TYPE_STRING);
-                    list.add(threeCell.getStringCellValue());
+                    if (StringUtils.isNotEmpty(threeCell.getStringCellValue())) {
+                        list.add(threeCell.getStringCellValue());
+                    }
                 }
                 XSSFCell fourCell = row.getCell(4);
                 if (null != fourCell){
                     fourCell.setCellType(XSSFCell.CELL_TYPE_STRING);
-                    list.add(fourCell.getStringCellValue());
+                    if (StringUtils.isNotEmpty(fourCell.getStringCellValue())) {
+                        list.add(fourCell.getStringCellValue());
+                    }
                 }
                 XSSFCell fiveCell = row.getCell(5);
                 if (null != fiveCell) {
                     fiveCell.setCellType(XSSFCell.CELL_TYPE_STRING);
-                    list.add(fiveCell.getStringCellValue());
+                    if (StringUtils.isNotEmpty(fiveCell.getStringCellValue())) {
+                        list.add(fiveCell.getStringCellValue());
+                    }
                 }
                 XSSFCell sixCell = row.getCell(6);
                 if (null != sixCell) {
                     sixCell.setCellType(XSSFCell.CELL_TYPE_STRING);
-                    list.add(sixCell.getStringCellValue());
+                    if (StringUtils.isNotEmpty(sixCell.getStringCellValue())) {
+                        list.add(sixCell.getStringCellValue());
+                    }
                 }
                 if (null != list && list.size() > 0){
                     questionInfo.setQuestion(JSONObject.toJSONString(list));
