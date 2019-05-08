@@ -75,6 +75,7 @@ public class QuestionController extends BaseController {
     @RequestMapping(value = "/work/list", method = RequestMethod.POST)
     public Map<String, Object> listError(@RequestBody Map<String,Object> param) {
         Map<String, Object> resultMap = new HashedMap();
+        param.put("userId",VisitInfoHolder.getUid());
         successMsg(resultMap, questionService.getListQuestionWork(param));
         return resultMap;
     }
