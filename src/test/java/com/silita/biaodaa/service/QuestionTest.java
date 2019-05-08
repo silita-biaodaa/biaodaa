@@ -1,11 +1,29 @@
 package com.silita.biaodaa.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.silita.biaodaa.dao.TbQuestionCaseMapper;
+import com.silita.biaodaa.dao.TbQuestionInfoMapper;
+import com.silita.biaodaa.dao.TbQuestionTypeMapper;
+import com.silita.biaodaa.model.TbQuestionCase;
+import com.silita.biaodaa.model.TbQuestionInfo;
+import com.silita.biaodaa.model.TbQuestionType;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by zhushuai on 2019/5/6.
  */
 public class QuestionTest extends ConfigTest {
 
-    /*@Autowired
+    @Autowired
     TbQuestionTypeMapper tbQuestionTypeMapper;
     @Autowired
     TbQuestionInfoMapper tbQuestionInfoMapper;
@@ -33,7 +51,7 @@ public class QuestionTest extends ConfigTest {
         }
     }
 
-    @Test
+    @org.junit.Test
     public void importExcel() {
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(new File("E:\\朱帅\\耀邦\\题库\\题库(1).xlsx")));
@@ -68,7 +86,7 @@ public class QuestionTest extends ConfigTest {
                     sevenCell.setCellType(XSSFCell.CELL_TYPE_STRING);
                     list.add(sevenCell.getStringCellValue());
                 }
-                XSSFCell eightCell = row.getCell(7);
+                XSSFCell eightCell = row.getCell(8);
                 if (null != eightCell) {
                     eightCell.setCellType(XSSFCell.CELL_TYPE_STRING);
                     list.add(eightCell.getStringCellValue());
@@ -83,11 +101,11 @@ public class QuestionTest extends ConfigTest {
         }
     }
 
-    @Test
+    @org.junit.Test
     public void caseExcel() {
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(new File("E:\\朱帅\\耀邦\\题库\\题库(1).xlsx")));
-            XSSFSheet sheet = workbook.getSheet("土建案例");
+            XSSFSheet sheet = workbook.getSheet("管理");
             int rows = sheet.getLastRowNum();
             XSSFRow row;
             for (int i = 1; i <= rows; i++) {
@@ -106,7 +124,7 @@ public class QuestionTest extends ConfigTest {
         }
     }
 
-    @Test
+    @org.junit.Test
     public void caseQuesExcel() {
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(new File("E:\\朱帅\\耀邦\\题库\\题库(1).xlsx")));
@@ -157,7 +175,7 @@ public class QuestionTest extends ConfigTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }*/
+    }
 
     private int setSubType(String value) {
         int type = 0;
