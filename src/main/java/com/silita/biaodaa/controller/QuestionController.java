@@ -1,7 +1,9 @@
 package com.silita.biaodaa.controller;
 
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.service.QuestionService;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -76,6 +78,15 @@ public class QuestionController extends BaseController {
     public Map<String, Object> listError(@RequestBody Map<String,Object> param) {
         Map<String, Object> resultMap = new HashedMap();
         param.put("userId",VisitInfoHolder.getUid());
+        Integer workType = MapUtils.getInteger(param,"workType");
+        if (Constant.WORK_TYPE_ERROR.intValue() == workType){
+            Map<String,Object> dataMap = new HashedMap(2);
+            dataMap.put("list",questionService.getListQuestionWork(param));
+            param.put("workType",2);
+            dataMap.put("collect",questionService.getListQuestionWork(param));
+            successMsg(resultMap, dataMap);
+            return resultMap;
+        }
         successMsg(resultMap, questionService.getListQuestionWork(param));
         return resultMap;
     }

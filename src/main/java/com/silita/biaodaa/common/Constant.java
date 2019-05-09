@@ -123,4 +123,5 @@ public class Constant {
     public static Integer QUESTION_TYPE_JUDGE = 3;
     public static Integer QUESTION_TYPE_CASE = 4;
     public static Integer QUESTION_TYPE_ANSWER = 5;
+    public static Integer WORK_TYPE_ERROR = 1;
 }
