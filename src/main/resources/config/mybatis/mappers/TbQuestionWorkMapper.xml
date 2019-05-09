@@ -28,6 +28,7 @@
             ON t.`question_id` = t1.`pkid`
         WHERE t.`user_id` = #{userId}
           AND t.`work_type` = #{workType}
+          AND t.`question_type` = #{questionType}
           AND t1.`case_id` IS NULL
   </select>
 
@@ -49,12 +50,13 @@
         WHERE t.`user_id` = #{userId}
           AND t.`work_type` = #{workType}
           AND t1.`case_id` IS NOT NULL
+          AND t.`question_type` = #{questionType}
         ORDER BY t2.`pkid` ASC
     </select>
 
     <!--查询是否存在-->
     <select id="queryQuestionWorkExist" parameterType="com.silita.biaodaa.model.TbQuestionWork" resultType="java.lang.Integer">
-      SELECT COUNT(1) FROM `tb_question_work` WHERE `user_id` = #{userId} AND `question_id` = #{questionId} AND `work_type` = #{workType}
+      SELECT COUNT(1) FROM `tb_question_work` WHERE `user_id` = #{userId} AND `question_id` = #{questionId} AND `work_type` = #{workType} AND `question_type` = #{questionType}
     </select>
 
     <!--添加-->
@@ -64,6 +66,7 @@
           `question_id`,
           `sub_type`,
           `work_type`,
+          `question_type`,
           `updated`
         )
         VALUES
@@ -72,6 +75,7 @@
             #{questionId},
             #{subType},
             #{workType},
+            #{questionType},
             now()
           ) ;
     </insert>
@@ -81,6 +85,6 @@
         DELETE
         FROM
           `tb_question_work`
-        WHERE `user_id` = #{userId} AND `question_id` = #{questionId} AND `work_type` = #{workType}
+        WHERE `user_id` = #{userId} AND `question_id` = #{questionId} AND `work_type` = #{workType} AND `question_type` = #{questionType}
     </delete>
 </mapper>

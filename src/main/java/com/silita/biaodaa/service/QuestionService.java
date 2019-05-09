@@ -134,6 +134,7 @@ public class QuestionService {
         questionWork.setWorkType(MapUtils.getInteger(param, "workType"));
         questionWork.setSubType(MapUtils.getInteger(param, "subType"));
         questionWork.setQuestionId(MapUtils.getInteger(param, "pkid"));
+        questionWork.setQuestionType(MapUtils.getInteger(param,"questionType"));
         if (tbQuestionWorkMapper.queryQuestionWorkExist(questionWork) > 0) {
             return;
         }
@@ -151,6 +152,7 @@ public class QuestionService {
         questionWork.setWorkType(MapUtils.getInteger(param, "workType"));
         questionWork.setSubType(MapUtils.getInteger(param, "subType"));
         questionWork.setQuestionId(MapUtils.getInteger(param, "pkid"));
+        questionWork.setQuestionType(MapUtils.getInteger(param,"questionType"));
         tbQuestionWorkMapper.deleteQuestionWork(questionWork);
     }
 
