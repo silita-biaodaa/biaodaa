@@ -174,6 +174,7 @@ public class ProjectService {
                 }
             }
             shuili.setLeaderPersons(personList);
+            shuili.setMainPersons(persons);
             shuili.setPersons(null);
         }
         if (MyStringUtils.isNotNull(shuili.getPrizes())) {

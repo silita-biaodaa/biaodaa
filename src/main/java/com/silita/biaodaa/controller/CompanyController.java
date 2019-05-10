@@ -292,7 +292,10 @@ public class CompanyController extends BaseController {
             if (MyStringUtils.isNull(rangeType)) {
                 rangeType = "or";
             }
-
+            Integer isVip = MapUtils.getInteger(params,"isVip");
+            if (isVip == null){
+                isVip = 0;
+            }
 
             String code = serQualCode(qualCode);
             Map<String, Object> param = new HashMap<>();
@@ -303,6 +306,7 @@ public class CompanyController extends BaseController {
             param.put("qualCode", StringUtils.strip(code, ","));
             param.put("keyWord", keyWord);
             param.put("rangeType", rangeType);
+            param.put("isVip",isVip);
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
@@ -573,6 +577,11 @@ public class CompanyController extends BaseController {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
+        Integer isVip = MapUtils.getInteger(param,"isVip");
+        if (isVip == null){
+            isVip = 0;
+            param.put("isVip",isVip);
+        }
         List<TbCompany> companyList = tbCompanyService.getHostCompanyList(param);
         Map<String, String> typeMap = new HashMap<>();
         typeMap.put("collType", "company");

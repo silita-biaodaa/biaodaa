@@ -305,6 +305,7 @@ public class TbCompanyService {
     }
 
     public PageInfo filterCompany(Page page, Map<String, Object> param, String levelRank) {
+        Integer isVip = MapUtils.getInteger(param,"isVip");
         //判断是否*****级以上
         setQualCode(param);
         //地区
@@ -333,7 +334,11 @@ public class TbCompanyService {
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
 //                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
-                    company.setPhone(this.solPhone(companyInfo.getPhone(), "replace"));
+                    if (1 == isVip.intValue()){
+                        company.setPhone(this.solPhone(companyInfo.getPhone(), "show"));
+                    }else {
+                        company.setPhone(this.solPhone(companyInfo.getPhone(), "replace"));
+                    }
                 }
                 if (null == company.getRegisCapital() && null != companyInfo.getRegisCapital()) {
                     company.setRegisCapital(companyInfo.getRegisCapital());
@@ -894,6 +899,7 @@ public class TbCompanyService {
      * @return
      */
     public List<TbCompany> getHostCompanyList(Map<String, Object> param) {
+        Integer isVip = MapUtils.getInteger(param,"isVip");
         if (null != PropertiesUtils.getProperty("company.size")) {
             param.put("limit", Integer.parseInt(PropertiesUtils.getProperty("company.size")));
         }
@@ -904,8 +910,11 @@ public class TbCompanyService {
                 companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), CommonUtil.getCode(company.getRegisAddress()));
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
-//                        company.setPhone(companyInfo.getPhone().split(";")[0].trim());
-                        company.setPhone(this.solPhone(companyInfo.getPhone(), "replace"));
+                        if (1 == isVip.intValue()){
+                            company.setPhone(this.solPhone(companyInfo.getPhone(), "show"));
+                        }else {
+                            company.setPhone(this.solPhone(companyInfo.getPhone(), "replace"));
+                        }
                     }
                     if (null != companyInfo.getRegisCapital()) {
                         company.setRegisCapital(companyInfo.getRegisCapital());
