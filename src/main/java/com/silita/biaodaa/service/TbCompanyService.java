@@ -1005,6 +1005,9 @@ public class TbCompanyService {
         if (null != companyInfo && null != companyInfo.getOrgCode()) {
             tbCompany.setOrgCode(companyInfo.getOrgCode());
         }
+        if (null != companyInfo && null != companyInfo.getRegisCapital()){
+            tbCompany.setRegisCapital(companyInfo.getRegisCapital());
+        }
         return tbCompany;
     }
 
