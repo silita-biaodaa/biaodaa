@@ -22,7 +22,7 @@
         <if test="proName != null and proName != ''">
             AND (t.`pro_name` LIKE  CONCAT('%',#{proName},'%')  OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))
         </if>
-        <if test="proType != null and proName != ''">
+        <if test="proType != null and proType != ''">
             AND t.`pro_type` = #{proType}
         </if>
         <if test="amountStart != null and amountStart != ''">
