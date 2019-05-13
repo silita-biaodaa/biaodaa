@@ -78,8 +78,9 @@
         FROM
         cert_undesirable t
         WHERE t.`nature` = #{nature}
-        AND t.`validityDate`&lt;= DATE_ADD(NOW(), INTERVAL 720 DAY)
+        AND t.`validityDate` &gt;= date(NOW())
         AND t.`com_id` = #{comId}
+        AND (t.`persionName` IS NULL OR t.`persionName` = '')
     </select>
 
     <!--查询不良行为个数-->
@@ -92,7 +93,8 @@
             t.`badBehaviorContent` AS content
         FROM
         cert_undesirable t
-        WHERE  t.`validityDate`&lt;= DATE_ADD(NOW(), INTERVAL 720 DAY)
+        WHERE  t.`validityDate`&gt;= date(NOW())
         AND t.`com_id` = #{comId}
+        AND (t.`persionName` IS NULL OR t.`persionName` = '')
     </select>
 </mapper>

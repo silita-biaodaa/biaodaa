@@ -329,4 +329,14 @@
         select uuid from cert_src where uuid is not null
         and companyName=#{companyName}
     </select>
+
+    <select id="queryCompanyChangsha" resultType="java.util.Map">
+        SELECT t.`com_name`,
+            t.`range` AS qualCode,
+            t.`regis_address`
+        FROM tb_company t
+        WHERE t.`range` LIKE '%/3%'
+        AND t.`city` LIKE '长沙%'
+        ORDER BY t.`px` DESC
+    </select>
 </mapper>

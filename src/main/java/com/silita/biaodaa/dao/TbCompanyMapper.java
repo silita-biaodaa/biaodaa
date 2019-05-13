@@ -206,4 +206,10 @@ public interface TbCompanyMapper extends MyMapper<TbCompany> {
      * @return
      */
     List<String> getCertSrcUuidByName(String companyName);
+
+    /**
+     * 查询长沙
+     * @return
+     */
+    List<Map<String,Object>> queryCompanyChangsha();
 }
