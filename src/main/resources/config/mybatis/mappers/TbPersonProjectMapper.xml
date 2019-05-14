@@ -132,4 +132,19 @@
      where 1=1
      and t.innerid = #{innerId}
   </select>
+
+  <!--查询竣工备案人员-->
+  <select id="queryCompletionProjectPersons" parameterType="java.util.Map" resultType="java.util.Map">
+      select
+        t.`name` as `name`,
+        t.`role` as role,
+        t.`category` as category,
+        t.`cert_no` as certNo,
+        t.`id_card` as idCard
+      from
+        tb_person_project t
+      where t.`pid` = #{pid}
+        and t.`pro_id` = #{proId}
+        and t.`type` = 'completion';
+  </select>
 </mapper>

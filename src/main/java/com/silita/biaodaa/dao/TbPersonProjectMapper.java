@@ -75,4 +75,11 @@ public interface TbPersonProjectMapper extends MyMapper<TbPersonProject> {
      * @return
      */
     List<TbPersonProject> queryPersonProjectByInnerid(String innerId);
+
+    /**
+     * 查询竣工备案人员
+     * @param param
+     * @return
+     */
+    List<Map<String,Object>> queryCompletionProjectPersons(Map<String,Object> param);
 }

@@ -8,6 +8,7 @@
         <id column="pkid" property="pkid" jdbcType="INTEGER"/>
         <result column="com_name" property="comName" jdbcType="VARCHAR"/>
         <result column="pro_name" property="proName" jdbcType="VARCHAR"/>
+        <result column="pro_type" property="proType" jdbcType="VARCHAR"/>
         <result column="section" property="section" jdbcType="VARCHAR"/>
         <result column="pro_where" property="proWhere" jdbcType="VARCHAR"/>
         <result column="source" property="source" jdbcType="VARCHAR"/>
@@ -30,6 +31,7 @@
         SELECT
         t.`pkid` AS pkid,
         t.`pro_name` AS proName,
+        t.`pro_type` AS proType,
         t.`com_name` AS comName,
         t.`section` AS `section`,
         t.`pro_where` AS proWhere,
@@ -72,6 +74,7 @@
           `pkid`,
           `com_name`,
           `pro_name`,
+          `pro_type`,
           `section`,
           `pro_where`,
           `source`,

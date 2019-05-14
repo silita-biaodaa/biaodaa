@@ -2,6 +2,7 @@ package com.silita.biaodaa.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.dao.TbPersonProjectMapper;
 import com.silita.biaodaa.dao.TbProjectCompanyMapper;
 import com.silita.biaodaa.dao.TbProjectCompletionMapper;
 import com.silita.biaodaa.model.Page;
@@ -21,6 +22,8 @@ public class ProjectCompletionService {
     TbProjectCompletionMapper tbProjectCompletionMapper;
     @Autowired
     TbProjectCompanyMapper tbProjectCompanyMapper;
+    @Autowired
+    TbPersonProjectMapper tbPersonProjectMapper;
 
     /**
      * 获取竣工备案列表
@@ -39,8 +42,8 @@ public class ProjectCompletionService {
      * @return
      */
     public PageInfo getProjectCompletListPages(Map<String, Object> param) {
-        Integer pageIndex = MapUtils.getInteger(param,"pageNo");
-        Integer pageSize = MapUtils.getInteger(param,"pageSize");
+        Integer pageIndex = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
         String proId = MapUtils.getString(param, "proId");
         Page page = new Page();
         page.setPageSize(pageSize);
@@ -64,10 +67,13 @@ public class ProjectCompletionService {
         }
 
         //TODO: 企业信息
-        param.put("pid",param.get("pkid"));
-        param.put("type","completion");
+        param.put("pid", param.get("pkid"));
+        param.put("type", "completion");
         List<TbProjectCompany> companyList = tbProjectCompanyMapper.queryProComList(param);
         projectCompletion.setCompanys(companyList);
+        //人员信息
+        param.put("pid", param.get("pkid"));
+        projectCompletion.setPersons(tbPersonProjectMapper.queryCompletionProjectPersons(param));
         return projectCompletion;
     }
 }
