@@ -94,4 +94,11 @@
         where t.com_id = #{comId}
         GROUP BY t.`pro_id`
     </select>
+
+    <!--查询施工单位个数-->
+    <select id="queryProjectBuildCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+         SELECT COUNT(1) AS total
+          FROM tb_project_build t
+          WHERE t.`pro_id` = #{proId}
+    </select>
 </mapper>

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.biaodaa.dao.TbProjectZhaotoubiaoMapper" >
-  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectZhaotoubiao" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="pkid" property="pkid" jdbcType="VARCHAR" />
-    <result column="pro_id" property="proId" jdbcType="VARCHAR" />
-    <result column="zhongbiao_code" property="zhongbiaoCode" jdbcType="VARCHAR" />
-    <result column="prov_zhongbiao_code" property="provZhongbiaoCode" jdbcType="VARCHAR" />
-    <result column="zhaobiao_type" property="zhaobiaoType" jdbcType="VARCHAR" />
-    <result column="zhaobiao_way" property="zhaobiaoWay" jdbcType="VARCHAR" />
-    <result column="zhongbiao_date" property="zhongbiaoDate" jdbcType="VARCHAR" />
-    <result column="zhongbiao_amount" property="zhongbiaoAmount" jdbcType="VARCHAR" />
-    <result column="zhaobiao_agency_company" property="zhaobiaoAgencyCompany" jdbcType="VARCHAR" />
-    <result column="zhaobiao_company_code" property="zhaobiaoCompanyCode" jdbcType="VARCHAR" />
-    <result column="zhongbiao_company" property="zhongbiaoCompany" jdbcType="VARCHAR" />
-    <result column="zhongbiao_company_code" property="zhongbiaoCompanyCode" jdbcType="VARCHAR" />
-    <result column="record_date" property="recordDate" jdbcType="VARCHAR" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="acreage" property="acreage" jdbcType="VARCHAR"/>
-    <result column="pro_scope" property="proScope" jdbcType="VARCHAR"/>
-  </resultMap>
+<mapper namespace="com.silita.biaodaa.dao.TbProjectZhaotoubiaoMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbProjectZhaotoubiao">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="VARCHAR"/>
+        <result column="pro_id" property="proId" jdbcType="VARCHAR"/>
+        <result column="zhongbiao_code" property="zhongbiaoCode" jdbcType="VARCHAR"/>
+        <result column="prov_zhongbiao_code" property="provZhongbiaoCode" jdbcType="VARCHAR"/>
+        <result column="zhaobiao_type" property="zhaobiaoType" jdbcType="VARCHAR"/>
+        <result column="zhaobiao_way" property="zhaobiaoWay" jdbcType="VARCHAR"/>
+        <result column="zhongbiao_date" property="zhongbiaoDate" jdbcType="VARCHAR"/>
+        <result column="zhongbiao_amount" property="zhongbiaoAmount" jdbcType="VARCHAR"/>
+        <result column="zhaobiao_agency_company" property="zhaobiaoAgencyCompany" jdbcType="VARCHAR"/>
+        <result column="zhaobiao_company_code" property="zhaobiaoCompanyCode" jdbcType="VARCHAR"/>
+        <result column="zhongbiao_company" property="zhongbiaoCompany" jdbcType="VARCHAR"/>
+        <result column="zhongbiao_company_code" property="zhongbiaoCompanyCode" jdbcType="VARCHAR"/>
+        <result column="record_date" property="recordDate" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="acreage" property="acreage" jdbcType="VARCHAR"/>
+        <result column="pro_scope" property="proScope" jdbcType="VARCHAR"/>
+    </resultMap>
 
-  <!--获取项目下的招投标列表-->
-  <select id="queryZhaotoubiaoListByProId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <!--获取项目下的招投标列表-->
+    <select id="queryZhaotoubiaoListByProId" resultMap="BaseResultMap" parameterType="java.lang.String">
      select t.`pkid`
             ,t.`pro_id`
             ,t.`zhongbiao_code`
@@ -72,5 +72,12 @@
         select t.*
         from tb_project_zhaotoubiao t
         where t.pkid = #{pkid}
+    </select>
+
+    <!--查询招投标个数-->
+    <select id="queryProjectZhaotoubiaoCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+          select COUNT(1) AS total
+          from tb_project_zhaotoubiao t
+          where t.pro_id = #{proId}
     </select>
 </mapper>

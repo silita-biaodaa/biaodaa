@@ -165,4 +165,19 @@ public class ProjectController extends BaseController {
         projectService.analysisData();
         return result;
     }
+
+    /**
+     * 详情个数
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/detail/count", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> countDetail(@RequestBody Map<String, Object> param) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", this.SUCCESS_CODE);
+        result.put("msg", this.SUCCESS_MSG);
+        successMsg(result,projectService.getProjectDetailCount(param));
+        return result;
+    }
 }

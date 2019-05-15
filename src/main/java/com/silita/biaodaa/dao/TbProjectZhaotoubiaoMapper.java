@@ -28,7 +28,7 @@ public interface TbProjectZhaotoubiaoMapper extends MyMapper<TbProjectZhaotoubia
     TbProjectZhaotoubiao queryZhaobiaoDetailByProId(Map<String, Object> params);
 
     /**
-     * 获取招中标详情从施工表
+     * 获取招投标详情从施工表
      *
      * @param param
      * @return
@@ -42,4 +42,11 @@ public interface TbProjectZhaotoubiaoMapper extends MyMapper<TbProjectZhaotoubia
      * @return
      */
     TbProjectZhaotoubiao queryZhaotouDetailByPkid(String pkid);
+
+    /**
+     * 查询招投标个数
+     * @param param
+     * @return
+     */
+    int queryProjectZhaotoubiaoCount(Map<String,Object> param);
 }

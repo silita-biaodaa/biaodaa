@@ -92,7 +92,6 @@
 
     </select>
 
-
     <select id="queryProjectDesignDetailByPkid" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT
               t.*
@@ -151,5 +150,15 @@
         left join tb_project t1 on t.pro_id = t1.pro_id
         where t.pkid = #{pkid}
         limit 1
+    </select>
+
+    <!--查询施工图审查个数-->
+    <select id="queryProjectDesignCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+          COUNT(1) AS total
+        FROM
+          tb_project_design t
+        WHERE t.`pro_id` = #{proId}
+        GROUP BY t.`sgtxh`
     </select>
 </mapper>

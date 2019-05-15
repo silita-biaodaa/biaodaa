@@ -11,10 +11,14 @@ import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.silita.biaodaa.common.RedisConstantInterface.PROJECT_LIST;
 import static com.silita.biaodaa.common.RedisConstantInterface.PRO_OVER_TIME;
@@ -48,6 +52,8 @@ public class ProjectService {
     TbProjectTrafficMapper tbProjectTrafficMapper;
     @Autowired
     TbTrafficPersonMapper tbTrafficPersonMapper;
+    @Autowired
+    TbProjectCompletionMapper tbProjectCompletionMapper;
 
     private static ProjectAnalysisUtil projectAnalysisUtil = new ProjectAnalysisUtil();
 
@@ -377,7 +383,7 @@ public class ProjectService {
 
         param.put("comName", company.getComName());
 
-        List<Map<String, Object>> resultList =tbProjectMapper.queryListCompanyPro(param);
+        List<Map<String, Object>> resultList = tbProjectMapper.queryListCompanyPro(param);
 
         List<Map<String, Object>> resList = resultList;
         if (null != resultList && resultList.size() > 0) {
@@ -399,6 +405,17 @@ public class ProjectService {
             }
         }
         resultMap.put("data", resList);
+        return resultMap;
+    }
+
+    public Map<String, Object> getProjectDetailCount(Map<String, Object> param) {
+        Map<String, Object> resultMap = new HashedMap();
+        //施工图审查
+        resultMap.put("desin", tbProjectDesignMapper.queryProjectDesignCount(param));
+        resultMap.put("contract", tbProjectContractMapper.queryProjectConstractCount(param));
+        resultMap.put("zhaotoubiao", tbProjectZhaotoubiaoMapper.queryProjectZhaotoubiaoCount(param));
+        resultMap.put("build", tbProjectBuildMapper.queryProjectBuildCount(param));
+        resultMap.put("completion", tbProjectCompletionMapper.queryProjectCompletionCount(param));
         return resultMap;
     }
 

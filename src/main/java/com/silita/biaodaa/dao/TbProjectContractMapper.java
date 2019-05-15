@@ -26,4 +26,11 @@ public interface TbProjectContractMapper extends MyMapper<TbProjectContract> {
      * @return
      */
     TbProjectContract queryProjectContractDetail(Map<String,Object> param);
+
+    /**
+     * 查询合同备案个数
+     * @param param
+     * @return
+     */
+    int queryProjectConstractCount(Map<String,Object> param);
 }

@@ -89,4 +89,11 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @return
      */
     TbProjectDesign queryProjectDesignById(String pkid);
+
+    /**
+     * 查询施工图审查个数
+     * @param param
+     * @return
+     */
+    int queryProjectDesignCount(Map<String,Object> param);
 }

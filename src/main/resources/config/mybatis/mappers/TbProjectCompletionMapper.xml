@@ -34,4 +34,11 @@
     where t.pro_id = #{proId}
     and t.pkid = #{pkid}
   </select>
+
+  <!--查询竣工备案个数-->
+  <select id="queryProjectCompletionCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+      select COUNT(1) AS total
+      from tb_project_completion t
+      where t.pro_id = #{proId}
+  </select>
 </mapper>

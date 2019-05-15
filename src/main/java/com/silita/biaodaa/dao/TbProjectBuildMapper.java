@@ -62,4 +62,11 @@ public interface TbProjectBuildMapper extends MyMapper<TbProjectBuild> {
      * @return
      */
     List<String> queryProIdByComId(String comId);
+
+    /**
+     * 查询施工单位个数
+     * @param param
+     * @return
+     */
+    int queryProjectBuildCount(Map<String,Object> param);
 }

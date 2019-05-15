@@ -21,4 +21,11 @@ public interface TbProjectCompletionMapper extends MyMapper<TbProjectCompletion>
      * @return
      */
     TbProjectCompletion queryProCompleDetail(Map<String,Object> param);
+
+    /**
+     * 查询竣工备案个数
+     * @param param
+     * @return
+     */
+    int queryProjectCompletionCount(Map<String,Object> param);
 }
