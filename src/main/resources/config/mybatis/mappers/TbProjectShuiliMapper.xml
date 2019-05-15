@@ -63,6 +63,7 @@
         <if test="buildEnd != null and buildEnd != ''">
             AND t.`finished` &lt;= #{buildEnd}
         </if>
+        AND t.`pro_type` != '删除的'
         ORDER BY t.`created` DESC
     </select>
 
