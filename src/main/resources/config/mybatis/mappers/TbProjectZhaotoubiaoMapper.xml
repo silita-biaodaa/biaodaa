@@ -76,7 +76,7 @@
 
     <!--查询招投标个数-->
     <select id="queryProjectZhaotoubiaoCount" parameterType="java.util.Map" resultType="java.lang.Integer">
-          select COUNT(1) AS total
+          select IFNULL(COUNT(1),0) AS total
           from tb_project_zhaotoubiao t
           where t.pro_id = #{proId}
     </select>

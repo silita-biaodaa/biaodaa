@@ -95,5 +95,5 @@ public interface TbProjectDesignMapper extends MyMapper<TbProjectDesign> {
      * @param param
      * @return
      */
-    int queryProjectDesignCount(Map<String,Object> param);
+    Integer queryProjectDesignCount(Map<String,Object> param);
 }

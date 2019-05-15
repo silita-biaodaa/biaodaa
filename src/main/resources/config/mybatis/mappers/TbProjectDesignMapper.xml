@@ -155,7 +155,7 @@
     <!--查询施工图审查个数-->
     <select id="queryProjectDesignCount" parameterType="java.util.Map" resultType="java.lang.Integer">
         SELECT
-          COUNT(1) AS total
+          IFNULL(COUNT(1),0) AS total
         FROM
           tb_project_design t
         WHERE t.`pro_id` = #{proId}

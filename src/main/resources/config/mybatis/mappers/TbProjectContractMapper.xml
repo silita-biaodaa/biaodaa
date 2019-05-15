@@ -36,7 +36,7 @@
 
   <!--查询合同备案个数-->
   <select id="queryProjectConstractCount" parameterType="java.util.Map" resultType="java.lang.Integer">
-        SELECT COUNT(1) AS total
+        SELECT IFNULL(COUNT(1),0) AS total
         FROM tb_project_contract t
         WHERE t.`pro_id` = #{proId}
   </select>

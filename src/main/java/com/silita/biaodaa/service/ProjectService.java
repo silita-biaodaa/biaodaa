@@ -411,7 +411,11 @@ public class ProjectService {
     public Map<String, Object> getProjectDetailCount(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashedMap();
         //施工图审查
-        resultMap.put("desin", tbProjectDesignMapper.queryProjectDesignCount(param));
+        Integer desinCount = tbProjectDesignMapper.queryProjectDesignCount(param);
+        if (null == desinCount) {
+            desinCount = 0;
+        }
+        resultMap.put("desin", desinCount);
         resultMap.put("contract", tbProjectContractMapper.queryProjectConstractCount(param));
         resultMap.put("zhaotoubiao", tbProjectZhaotoubiaoMapper.queryProjectZhaotoubiaoCount(param));
         resultMap.put("build", tbProjectBuildMapper.queryProjectBuildCount(param));
