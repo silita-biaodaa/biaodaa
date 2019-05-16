@@ -3,6 +3,7 @@ package com.silita.biaodaa.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.VisitInfoHolder;
+import com.silita.biaodaa.dao.TbPersonMapper;
 import com.silita.biaodaa.dao.TbPersonQualificationMapper;
 import com.silita.biaodaa.dao.TbUnderConstructMapper;
 import com.silita.biaodaa.model.Page;
@@ -29,6 +30,8 @@ public class UnderConstructService {
     TbUnderConstructMapper tbUnderConstructMapper;
     @Autowired
     TbPersonQualificationMapper tbPersonQualificationMapper;
+    @Autowired
+    TbPersonMapper tbPersonMapper;
 
 
     public PageInfo listUnderConstruct(Map<String, Object> param) {
@@ -46,9 +49,9 @@ public class UnderConstructService {
 
     public List getUnderConstruct(Map<String, Object> param) {
         List<TbUnderConstruct> list = new ArrayList<>();
-        if(null != param.get("innerid")){
+        if (null != param.get("innerid")) {
             list = tbUnderConstructMapper.queryUnderListInnerid(param.get("innerid").toString());
-        }else {
+        } else {
             //获取身份证id
             TbUnderConstruct underConstruct = tbUnderConstructMapper.queryUnderConstructDetail(param.get("pkid").toString());
             list = tbUnderConstructMapper.queryUnderListIdCard(underConstruct.getIdCard());
@@ -56,6 +59,9 @@ public class UnderConstructService {
         if (null != list && list.size() > 0) {
             for (TbUnderConstruct under : list) {
                 under.setIdCard(this.setIdCard(under));
+                if (null != under.getInnerid()) {
+                    under.setSex(tbPersonMapper.queryPersonSexInnerId(under.getInnerid()));
+                }
             }
         }
         return list;
@@ -68,7 +74,7 @@ public class UnderConstructService {
         String idCard = MapUtils.getString(param, "idCard");
         String clictUrl = null;
         try {
-            clictUrl = url + "?opt=" + opt + "&name=" + URLDecoder.decode(name,"UTF-8");
+            clictUrl = url + "?opt=" + opt + "&name=" + URLDecoder.decode(name, "UTF-8");
             if (!MyStringUtils.isNull(idCard)) {
                 clictUrl = clictUrl + "&sfz=" + idCard;
             }
@@ -76,7 +82,7 @@ public class UnderConstructService {
             e.printStackTrace();
         }
         String result = HttpUtils.sendGetUrl(clictUrl);
-        if(MyStringUtils.isNull(result)){
+        if (MyStringUtils.isNull(result)) {
             return new ArrayList();
         }
         Map resultMap = JsonUtils.json2Map(result);
@@ -121,14 +127,15 @@ public class UnderConstructService {
 
     /**
      * 获取innerid
+     *
      * @param under
      */
-    private void getInnerid(TbUnderConstruct under){
+    private void getInnerid(TbUnderConstruct under) {
         String idCard = setIdCard(under);
-        Map<String,Object> param = new HashMap<String,Object>(){{
-            put("name",under.getName());
-            put("idCard",idCard);
-            put("tableCode",RouteUtils.HUNAN_SOURCE);
+        Map<String, Object> param = new HashMap<String, Object>() {{
+            put("name", under.getName());
+            put("idCard", idCard);
+            put("tableCode", RouteUtils.HUNAN_SOURCE);
         }};
         under.setInnerid(tbPersonQualificationMapper.queryPersonInnerid(param));
     }

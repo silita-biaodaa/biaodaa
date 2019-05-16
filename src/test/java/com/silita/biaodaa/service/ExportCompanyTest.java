@@ -31,8 +31,6 @@ public class ExportCompanyTest extends ConfigTest{
     TbCompanyService tbCompanyService;
     @Autowired
     TbCompanyInfoMapper tbCompanyInfoMapper;
-    @Autowired
-    ReportServiceImpl reportService;
 
     @org.junit.Test
     public void test(){
@@ -50,7 +48,18 @@ public class ExportCompanyTest extends ConfigTest{
             if (null != companyInfo && null != companyInfo.getRegisDate()){
                 map.put("date",companyInfo.getRegisDate());
             }
-            reportService.setQualName(map);
+            if (null != companyInfo && null != companyInfo.getEmail()){
+                map.put("email",companyInfo.getEmail());
+            }
+            if (null != companyInfo && null != companyInfo.getStatus()){
+                map.put("status",companyInfo.getStatus());
+            }
+            if (null != companyInfo && null != companyInfo.getProvince()){
+                map.put("province",companyInfo.getProvince());
+            }
+            if (null != companyInfo && null != companyInfo.getCity()){
+                map.put("city",companyInfo.getCity());
+            }
             comList.add(map);
         }
 
@@ -59,23 +68,39 @@ public class ExportCompanyTest extends ConfigTest{
         Row row = sheet.createRow(0); // 创建一个行
         row.setHeightInPoints(30); //设置这一行的高度
         createCell(wb, row, (short) 0, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "企业名称"); //要充满屏幕又要中间
-        createCell(wb, row, (short) 1, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "资质"); //要充满屏幕又要中间
+        createCell(wb, row, (short) 1, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "法定代表人"); //要充满屏幕又要中间
         createCell(wb, row, (short) 2, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "电话"); //要充满屏幕又要中间
-        createCell(wb, row, (short) 3, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "注册时间"); //要充满屏幕又要中间
+        createCell(wb, row, (short) 3, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "邮箱"); //要充满屏幕又要中间
+        createCell(wb, row, (short) 4, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "注册时间"); //要充满屏幕又要中间
+        createCell(wb, row, (short) 5, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "经营状态"); //要充满屏幕又要中间
+        createCell(wb, row, (short) 6, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "所属省份"); //要充满屏幕又要中间
+        createCell(wb, row, (short) 7, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, "所属市区"); //要充满屏幕又要中间
         for (int i = 0; i < comList.size(); i++) {
             row = sheet.createRow(i + 1); // 创建一个行
             row.setHeightInPoints(30); //设置这一行的高度
             createCell(wb, row, 0, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("com_name").toString()); //要充满屏幕又要中间
-            createCell(wb, row, 1, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("qualName").toString()); //要充满屏幕又要中间
+            createCell(wb, row, 1, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("legal_person").toString()); //要充满屏幕又要中间
             if (null != comList.get(i).get("phone")){
                 createCell(wb, row, 2, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("phone").toString()); //要充满屏幕又要中间
             }
+            if (null != comList.get(i).get("email")){
+                createCell(wb, row, 3, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("email").toString()); //要充满屏幕又要中间
+            }
             if (null != comList.get(i).get("date")){
-                createCell(wb, row, 3, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("date").toString()); //要充满屏幕又要中间
+                createCell(wb, row, 4, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("date").toString()); //要充满屏幕又要中间
+            }
+            if (null != comList.get(i).get("status")){
+                createCell(wb, row, 5, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("status").toString()); //要充满屏幕又要中间
+            }
+            if (null != comList.get(i).get("province")){
+                createCell(wb, row, 6, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("province").toString()); //要充满屏幕又要中间
+            }
+            if (null != comList.get(i).get("city")){
+                createCell(wb, row, 7, CellStyle.ALIGN_FILL, CellStyle.VERTICAL_CENTER, comList.get(i).get("city").toString()); //要充满屏幕又要中间
             }
         }
         try {
-            FileOutputStream fileOut = new FileOutputStream("e:\\公司.xls");
+            FileOutputStream fileOut = new FileOutputStream("e:\\陕西.xls");
             wb.write(fileOut);
             fileOut.close();
         } catch (Exception e) {

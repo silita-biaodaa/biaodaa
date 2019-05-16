@@ -55,4 +55,9 @@
         </if>
         AND t.`valid_date` &gt;= date(now())
     </select>
+
+    <!--根据innerid查询人员性别-->
+    <select id="queryPersonSexInnerId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT t.`sex` FROM tb_person_hunan t WHERE t.`innerid` = #{innerId} LIMIT 1;
+    </select>
 </mapper>

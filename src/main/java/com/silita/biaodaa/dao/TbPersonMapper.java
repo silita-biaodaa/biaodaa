@@ -25,4 +25,11 @@ public interface TbPersonMapper {
      * @return
      */
     List<TbPersonQualification> queryPersonDetailByParam(Map<String, Object> param);
+
+    /**
+     * 根据innerid查询人员性别
+     * @param innerId
+     * @return
+     */
+    String queryPersonSexInnerId(String innerId);
 }
