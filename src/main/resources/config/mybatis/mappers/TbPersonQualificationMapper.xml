@@ -44,7 +44,7 @@
             and q.category = #{category}
         </if>
         <if test="keyWord!=null and keyWord!=''">
-            and q.name = #{keyWord}
+            and (q.name = #{keyWord} or q.com_name like CONCAT('%',#{keyWord},'%'))
         </if>
         <choose>
             <when test="tableCode=='hunan'">
