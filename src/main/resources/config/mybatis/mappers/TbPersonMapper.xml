@@ -53,7 +53,7 @@
         <if test="type != null and type != ''">
             and t.type = #{type}
         </if>
-        AND t.`valid_date` &gt;= DATE_FORMAT(NOW(),'%Y年%m月%d日')
+--         AND t.`valid_date` &gt;= DATE_FORMAT(NOW(),'%Y年%m月%d日')
     </select>
 
     <!--根据innerid查询人员性别-->
