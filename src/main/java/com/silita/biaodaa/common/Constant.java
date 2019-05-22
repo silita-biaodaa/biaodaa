@@ -63,6 +63,8 @@ public class Constant {
     public static final String HINT_NOT_REGIST = "302";//用户还未注册
     public static final String ERR_USER_NOT_UNIQUE = "303";//用户不唯一
 
+    public static final String ERR_COMMTENT_MINGAN = "501";//敏感词汇
+
     public static final String EXCEPTION_CODE = "999";//程序异常
     public static final String ERR_VIEW_CODE = "888";//前端必填字段为空
 
@@ -124,4 +126,9 @@ public class Constant {
     public static Integer QUESTION_TYPE_CASE = 4;
     public static Integer QUESTION_TYPE_ANSWER = 5;
     public static Integer WORK_TYPE_ERROR = 1;
+
+    /**
+     * 评论状态
+     */
+    public static Integer COMMENT_STATES_PINGBI = 3;
 }

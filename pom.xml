@@ -505,6 +505,14 @@
       <version>${morphia.version}</version>
     </dependency>
 
+    <!--评论敏感词检索-->
+    <dependency>
+      <groupId>com.odianyun.util</groupId>
+      <artifactId>sensitive-words</artifactId>
+      <version>1.0.2</version>
+      <scope>compile</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
