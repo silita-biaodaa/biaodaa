@@ -60,6 +60,8 @@ public class CommentController extends BaseController{
     @ResponseBody
     @RequestMapping(value = "/push", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> push(@RequestBody Map<String, Object> param) {
+        String userId = VisitInfoHolder.getUid();
+        param.put("userId",userId);
         return commentService.pushComment(param);
     }
 

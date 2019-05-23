@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbCommentInfoMapper">
+
+    <!--查询所有父级评论-->
+    <select id="queryCommentList" parameterType="java.util.Map" resultType="java.util.Map">
+      SELECT
+        t.`pkid` AS pkid,
+        t.`comm_content` AS commContent,
+        t.`image` AS image,
+        t.`in_company` AS company,
+        t.`nick_name` AS nickName,
+        t.`post` AS post,
+        t.`related_id` AS relatedId,
+        t.`related_type` AS relatedType,
+        t.`user_id` AS userId,
+        t.`state` AS state,
+        (
+          CASE
+            WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
+            THEN DATE_FORMAT(t.`updated`, '%m-%d %H:%i')
+            ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d %H:%i')
+          END
+        ) AS pushd
+      FROM
+        tb_comment_info t
+      WHERE t.`is_pub` = 1
+        AND (t.`state` = 1 OR t.`state` = 3)
+        AND t.`related_id` = #{relatedId}
+        AND t.`related_type` = #{relatedType}
+      ORDER BY t.`updated` DESC
+  </select>
+
+    <!--查询与我相关父级评论-->
+    <select id="queryUserCommentList" parameterType="java.util.Map" resultType="java.util.Map">
+      SELECT
+        t.`pkid` AS pkid,
+        t.`comm_content` AS commContent,
+        t.`image` AS image,
+        t.`in_company` AS company,
+        t.`nick_name` AS nickName,
+        t.`post` AS post,
+        t.`related_id` AS relatedId,
+        t.`related_type` AS relatedType,
+        t.`user_id` AS userId,
+        t.`state` AS state,
+        (
+          CASE
+            WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
+            THEN DATE_FORMAT(t.`updated`, '%m-%d %H:%i')
+            ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d %H:%i')
+          END
+        ) AS pushd
+      FROM
+        tb_comment_info t
+      LEFT JOIN tb_reply_comment t1
+          ON t.`user_id` = t1.`comment_id`
+      WHERE (
+        (t.`state` = 1
+          OR t.`state` = 3)
+        OR (t1.`state` = 1
+          OR t1.`state` = 3)
+      )
+      AND (
+        t.`user_id` = #{userId}
+        OR t1.`to_uid` = #{userId}
+        OR t1.`reply_uid` = #{userId}
+      )
+      AND (
+        t.`related_id` = #{relatedId}
+        OR t.`related_type` = #{relatedType}
+        OR t1.`related_id` = #{relatedId}
+        OR t1.`related_type` = #{relatedType}
+      )
+      AND (t.`is_pub` = 1
+        OR t1.`is_pub` = 1)
+      GROUP BY t.`pkid`
+      ORDER BY t.`updated` DESC
+  </select>
+
+    <!--添加评论-->
+    <insert id="insert" parameterType="com.silita.biaodaa.dao.TbCommentInfoMapper">
+        INSERT INTO `tb_comment_info` (
+        <if test="nickName != null and nickName != ''">
+            `nick_name`,
+        </if>
+        <if test="post != null and post != ''">
+            `post`,
+        </if>
+        <if test="inCompany != null and inCompany != ''">
+            `in_company`,
+        </if>
+        <if test="image != null and image != ''">
+            `image`,
+        </if>
+        <if test="userId != null and userId != ''">
+            `user_id`,
+        </if>
+        <if test="commContent != null and commContent != ''">
+            `comm_content`,
+        </if>
+        <if test="relatedId != null and relatedId != ''">
+            `related_id`,
+        </if>
+        <if test="relatedType != null and relatedType != ''">
+            `related_type`,
+        </if>
+        <if test="isPub != null and isPub != ''">
+            `is_pub`,
+        </if>
+        <if test="state != null and state != ''">
+            `state`,
+        </if>
+        `updated`
+        )
+        VALUES
+        (
+        <if test="nickName != null and nickName != ''">
+            #{nickName},
+        </if>
+        <if test="post != null and post != ''">
+            #{post},
+        </if>
+        <if test="inCompany != null and inCompany != ''">
+            #{inCompany},
+        </if>
+        <if test="image != null and image != ''">
+            #{image},
+        </if>
+        <if test="userId != null and userId != ''">
+            #{userId},
+        </if>
+        <if test="commContent != null and commContent != ''">
+            #{commContent},
+        </if>
+        <if test="relatedId != null and relatedId != ''">
+            #{relatedId},
+        </if>
+        <if test="relatedType != null and relatedType != ''">
+            #{relatedType},
+        </if>
+        <if test="isPub != null and isPub != ''">
+            #{isPub},
+        </if>
+        <if test="state != null and state != ''">
+            #{state},
+        </if>
+        now()
+        ) ;
+    </insert>
+</mapper>

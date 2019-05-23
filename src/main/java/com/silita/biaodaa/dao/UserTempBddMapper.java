@@ -199,4 +199,11 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
     void batchFixInviteCode(List<String> invitCodeList);
 
     int queryNullInvitCodeCount();
+
+    /**
+     * 查询用户详情
+     * @param pkid
+     * @return
+     */
+    SysUser queryUserDetailById(String pkid);
 }

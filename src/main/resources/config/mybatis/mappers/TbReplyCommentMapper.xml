@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbReplyCommentMapper">
+
+    <!--查询公告/企业所有的回复-->
+    <select id="queryReplyCommtentRelated" parameterType="java.util.Map" resultType="java.util.Map">
+      SELECT
+        t.`pkid` AS pkid,
+        t.`comment_id` AS commentId,
+        t.`related_id` AS relatedId,
+        t.`related_type` AS relatedType,
+        t.`reply_content` AS replyContent,
+        t.`reply_uid` AS replyUid,
+        t.`re_company` AS reCompany,
+        t.`re_image` AS reImage,
+        t.`re_nike_name` AS reNikename,
+        t.`re_post` AS rePost,
+        t.`to_uid` AS toUid,
+        t.`to_nike_name` AS toNikename,
+        (
+          CASE
+            WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
+            THEN DATE_FORMAT(t.`updated`, '%m-%d %H:%i')
+            ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d %H:%i')
+          END
+        ) AS pushd
+      FROM
+        tb_reply_comment t
+      WHERE t.`related_id` = #{relatedId}
+        AND t.`related_type` = #{relatedType}
+      ORDER BY t.`pkid` ASC
+  </select>
+
+    <!--添加回复-->
+    <insert id="insert" parameterType="com.silita.biaodaa.dao.TbReplyCommentMapper">
+        INSERT INTO `tb_reply_comment` (
+        <if test="commentId != null and commentId != ''">
+            `comment_id`,
+        </if>
+        <if test="relatedId != null and relatedId != ''">
+            `related_id`,
+        </if>
+        <if test="relatedType != null and relatedType != ''">
+            `related_type`,
+        </if>
+        <if test="toUid != null and toUid != ''">
+            `to_uid`,
+        </if>
+        <if test="toNikeName != null and toNikeName != ''">
+            `to_nike_name`,
+        </if>
+        <if test="replyUid != null and replyUid != ''">
+            `reply_uid`,
+        </if>
+        <if test="reNikeName != null and reNikeName != ''">
+            `re_nike_name`,
+        </if>
+        <if test="reCompany != null and reCompany != ''">
+            `re_company`,
+        </if>
+        <if test="rePost != null and rePost != ''">
+            `re_post`,
+        </if>
+        <if test="reImage != null and reImage != ''">
+            `re_image`,
+        </if>
+        <if test="isPub != null and isPub != ''">
+            `is_pub`,
+        </if>
+        <if test="state != null and state != ''">
+            `state`,
+        </if>
+        <if test="replyContent != null and replyContent != ''">
+            `reply_content`,
+        </if>
+        `updated`
+        )
+        VALUES
+        (
+        <if test="commentId != null and commentId != ''">
+            #{commentId},
+        </if>
+        <if test="relatedId != null and relatedId != ''">
+            #{relatedId},
+        </if>
+        <if test="relatedType != null and relatedType != ''">
+            #{relatedType},
+        </if>
+        <if test="toUid != null and toUid != ''">
+            #{toUid},
+        </if>
+        <if test="toNikeName != null and toNikeName != ''">
+            #{toNikeName},
+        </if>
+        <if test="replyUid != null and replyUid != ''">
+            #{replyUid},
+        </if>
+        <if test="reNikeName != null and reNikeName != ''">
+            #{reNikeName},
+        </if>
+        <if test="reCompany != null and reCompany != ''">
+            #{reCompany},
+        </if>
+        <if test="rePost != null and rePost != ''">
+            #{rePost},
+        </if>
+        <if test="reImage != null and reImage != ''">
+            #{reImage},
+        </if>
+        <if test="isPub != null and isPub != ''">
+            #{isPub},
+        </if>
+        <if test="state != null and state != ''">
+            #{state},
+        </if>
+        <if test="replyContent != null and replyContent != ''">
+            #{replyContent},
+        </if>
+        now()
+        ) ;
+
+    </insert>
+</mapper>

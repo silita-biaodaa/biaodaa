@@ -172,6 +172,13 @@
         </where>
     </select>
 
+    <!--查询用户详情-->
+    <select id="queryUserDetailById" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.SysUser">
+        SELECT u.*
+        FROM mishu_write.sys_user_info u
+        WHERE u.pkid=#{pkid}
+    </select>
+
     <select id="verifyUserInfo"  resultType="String">
         SELECT u.pkid
         FROM mishu_write.sys_user_info u
