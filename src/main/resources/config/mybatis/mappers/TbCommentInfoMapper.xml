@@ -28,6 +28,9 @@
         AND (t.`state` = 1 OR t.`state` = 3)
         AND t.`related_id` = #{relatedId}
         AND t.`related_type` = #{relatedType}
+        <if test="source != null and source != ''">
+            AND t.`source` = #{source}
+        </if>
       ORDER BY t.`updated` DESC
   </select>
 
@@ -74,6 +77,9 @@
       )
       AND (t.`is_pub` = 1
         OR t1.`is_pub` = 1)
+      <if test="source != null and source != ''">
+            AND (t.`source` = #{source} OR t1.`source` = #{source})
+      </if>
       GROUP BY t.`pkid`
       ORDER BY t.`updated` DESC
   </select>
@@ -104,6 +110,9 @@
         </if>
         <if test="relatedType != null and relatedType != ''">
             `related_type`,
+        </if>
+        <if test="source != null and source != ''">
+            `source`,
         </if>
         <if test="isPub != null and isPub != ''">
             `is_pub`,
@@ -138,6 +147,9 @@
         </if>
         <if test="relatedType != null and relatedType != ''">
             #{relatedType},
+        </if>
+        <if test="source != null and source != ''">
+            #{source},
         </if>
         <if test="isPub != null and isPub != ''">
             #{isPub},

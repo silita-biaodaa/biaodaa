@@ -77,6 +77,11 @@ public class CommentService {
         return pageInfo;
     }
 
+    /**
+     * 评论/回复评论
+     * @param param
+     * @return
+     */
     public Map<String, Object> pushComment(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashedMap();
         resultMap.put("code", Constant.SUCCESS_CODE);
@@ -127,13 +132,14 @@ public class CommentService {
                 String content = null;
                 String replyContent = null;
                 for (Map<String, Object> comment : comments) {
+                    replys = new ArrayList<>();
                     content = MapUtils.getString(comment, "commContent");
                     comment.put("commContent", EmojiParser.parseToUnicode(content));
                     for (Map<String, Object> reply : replyComments) {
                         replyContent = MapUtils.getString(reply, "replyContent");
                         reply.put("replyContent", EmojiParser.parseToUnicode(replyContent));
-                        if (comment.get("userId").toString().equals(reply.get("commentId"))
-                                && !Constant.COMMENT_STATES_PINGBI.equals(comment.get("state"))) {
+                        if (comment.get("pkid").toString().equals(reply.get("commentId").toString())
+                                && !Constant.COMMENT_STATES_PINGBI.toString().equals(comment.get("state"))) {
                             replys.add(reply);
                             replyContent = null;
                             continue;

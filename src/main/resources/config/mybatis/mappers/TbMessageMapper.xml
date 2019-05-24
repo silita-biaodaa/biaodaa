@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbMessageMapper">
+
+    <!--我的消息列表-->
+    <select id="queryMessageList" parameterType="java.util.Map" resultType="java.util.Map">
+      SELECT
+        t.`pkid` AS pkid,
+        t.`reply_id` AS replyId,
+        t.`msg_title` AS msgTitle,
+        t.`msg_type` AS msgType,
+        (
+          CASE
+            WHEN DATE_FORMAT(t.`pushd`, '%Y') = DATE_FORMAT(NOW(), '%Y')
+            THEN DATE_FORMAT(t.`pushd`, '%m-%d %H:%i')
+            ELSE DATE_FORMAT(t.`pushd`, '%Y-%m-%d %H:%i')
+          END
+        ) AS pushd,
+        t.`is_read` AS isRead
+      FROM
+        tb_message t
+      WHERE t.`user_id` = #{userId}
+      ORDER BY t.`created` DESC
+  </select>
+
+    <!--添加消息-->
+    <insert id="insert" parameterType="com.silita.biaodaa.model.TbMessage">
+        INSERT INTO `tb_message` (
+        <if test="replyId != null and replyId != ''">
+            `reply_id`,
+        </if>
+        <if test="userId != null and userId != ''">
+            `user_id`,
+        </if>
+        <if test="msgTitle != null and msgTitle != ''">
+            `msg_title`,
+        </if>
+        <if test="msgType != null and msgType != ''">
+            `msg_type`,
+        </if>
+        <if test="pushd != null and pushd != ''">
+            `pushd`,
+        </if>
+        <if test="isRead != null">
+            `is_read`,
+        </if>
+        `created`
+        )
+        VALUES
+        (
+        <if test="replyId != null and replyId != ''">
+            #{replyId},
+        </if>
+        <if test="userId != null and userId != ''">
+            #{userId},
+        </if>
+        <if test="msgTitle != null and msgTitle != ''">
+            #{msgTitle},
+        </if>
+        <if test="msgType != null and msgType != ''">
+            #{msgType},
+        </if>
+        <if test="pushd != null and pushd != ''">
+            #{pushd},
+        </if>
+        <if test="isRead != null">
+            #{isRead},
+        </if>
+        now()
+        ) ;
+
+    </insert>
+</mapper>

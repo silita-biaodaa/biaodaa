@@ -28,6 +28,9 @@
         tb_reply_comment t
       WHERE t.`related_id` = #{relatedId}
         AND t.`related_type` = #{relatedType}
+        <if test="source != null and source != ''">
+            AND t.`source` = #{source}
+        </if>
       ORDER BY t.`pkid` ASC
   </select>
 
@@ -42,6 +45,9 @@
         </if>
         <if test="relatedType != null and relatedType != ''">
             `related_type`,
+        </if>
+        <if test="source != null and source != ''">
+            `source`,
         </if>
         <if test="toUid != null and toUid != ''">
             `to_uid`,
@@ -85,6 +91,9 @@
         </if>
         <if test="relatedType != null and relatedType != ''">
             #{relatedType},
+        </if>
+        <if test="source != null and source != ''">
+            #{source},
         </if>
         <if test="toUid != null and toUid != ''">
             #{toUid},
