@@ -61,6 +61,18 @@ public class CommentService {
     }
 
     /**
+     * 查询单个评论
+     *
+     * @param param
+     * @return
+     */
+    public Map<String,Object> singleComment(Map<String, Object> param) {
+        List<Map<String, Object>> commentList = tbCommentInfoMapper.querySingleCommentList(param);
+        this.setReplyComment(commentList, param);
+        return commentList.get(0);
+    }
+
+    /**
      * 与我相关评论
      *
      * @param param

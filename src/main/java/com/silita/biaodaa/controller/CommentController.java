@@ -66,6 +66,20 @@ public class CommentController extends BaseController {
     }
 
     /**
+     * 单个评论
+     *
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/single", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> single(@RequestBody Map<String, Object> param) {
+        Map<String, Object> result = new HashedMap();
+        successMsg(result, commentService.singleComment(param));
+        return result;
+    }
+
+    /**
      * 评论
      *
      * @param param

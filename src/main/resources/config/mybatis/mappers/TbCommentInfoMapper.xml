@@ -4,7 +4,7 @@
 
     <!--查询所有父级评论-->
     <select id="queryCommentList" parameterType="java.util.Map" resultType="java.util.Map">
-      SELECT
+        SELECT
         t.`pkid` AS pkid,
         t.`comm_content` AS commContent,
         t.`image` AS image,
@@ -16,27 +16,27 @@
         t.`user_id` AS userId,
         t.`state` AS state,
         (
-          CASE
-            WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
-            THEN DATE_FORMAT(t.`updated`, '%m-%d %H:%i')
-            ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d %H:%i')
-          END
+        CASE
+        WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
+        THEN DATE_FORMAT(t.`updated`, '%m-%d %H:%i')
+        ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d %H:%i')
+        END
         ) AS pushd
-      FROM
+        FROM
         tb_comment_info t
-      WHERE t.`is_pub` = 1
+        WHERE t.`is_pub` = 1
         AND (t.`state` = 1 OR t.`state` = 3)
         AND t.`related_id` = #{relatedId}
         AND t.`related_type` = #{relatedType}
         <if test="source != null and source != ''">
             AND t.`source` = #{source}
         </if>
-      ORDER BY t.`updated` DESC
-  </select>
+        ORDER BY t.`updated` DESC
+    </select>
 
-    <!--查询与我相关父级评论-->
-    <select id="queryUserCommentList" parameterType="java.util.Map" resultType="java.util.Map">
-      SELECT
+    <!--查询单条父级评论根据主键id-->
+    <select id="querySingleCommentList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
         t.`pkid` AS pkid,
         t.`comm_content` AS commContent,
         t.`image` AS image,
@@ -48,41 +48,66 @@
         t.`user_id` AS userId,
         t.`state` AS state,
         (
-          CASE
-            WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
-            THEN DATE_FORMAT(t.`updated`, '%m-%d %H:%i')
-            ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d %H:%i')
-          END
+        CASE
+        WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
+        THEN DATE_FORMAT(t.`updated`, '%m-%d %H:%i')
+        ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d %H:%i')
+        END
         ) AS pushd
-      FROM
+        FROM
         tb_comment_info t
-      LEFT JOIN tb_reply_comment t1
-          ON t.`user_id` = t1.`comment_id`
-      WHERE (
+        WHERE t.`pkid` = #{commentId}
+    </select>
+
+    <!--查询与我相关父级评论-->
+    <select id="queryUserCommentList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        t.`pkid` AS pkid,
+        t.`comm_content` AS commContent,
+        t.`image` AS image,
+        t.`in_company` AS company,
+        t.`nick_name` AS nickName,
+        t.`post` AS post,
+        t.`related_id` AS relatedId,
+        t.`related_type` AS relatedType,
+        t.`user_id` AS userId,
+        t.`state` AS state,
+        (
+        CASE
+        WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
+        THEN DATE_FORMAT(t.`updated`, '%m-%d %H:%i')
+        ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d %H:%i')
+        END
+        ) AS pushd
+        FROM
+        tb_comment_info t
+        LEFT JOIN tb_reply_comment t1
+        ON t.`user_id` = t1.`comment_id`
+        WHERE (
         (t.`state` = 1
-          OR t.`state` = 3)
+        OR t.`state` = 3)
         OR (t1.`state` = 1
-          OR t1.`state` = 3)
-      )
-      AND (
+        OR t1.`state` = 3)
+        )
+        AND (
         t.`user_id` = #{userId}
         OR t1.`to_uid` = #{userId}
         OR t1.`reply_uid` = #{userId}
-      )
-      AND (
+        )
+        AND (
         t.`related_id` = #{relatedId}
         OR t.`related_type` = #{relatedType}
         OR t1.`related_id` = #{relatedId}
         OR t1.`related_type` = #{relatedType}
-      )
-      AND (t.`is_pub` = 1
+        )
+        AND (t.`is_pub` = 1
         OR t1.`is_pub` = 1)
-      <if test="source != null and source != ''">
+        <if test="source != null and source != ''">
             AND (t.`source` = #{source} OR t1.`source` = #{source})
-      </if>
-      GROUP BY t.`pkid`
-      ORDER BY t.`updated` DESC
-  </select>
+        </if>
+        GROUP BY t.`pkid`
+        ORDER BY t.`updated` DESC
+    </select>
 
     <!--添加评论-->
     <insert id="insert" parameterType="com.silita.biaodaa.dao.TbCommentInfoMapper">

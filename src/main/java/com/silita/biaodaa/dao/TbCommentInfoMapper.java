@@ -19,6 +19,13 @@ public interface TbCommentInfoMapper extends MyMapper<TbCommentInfo> {
     List<Map<String,Object>> queryCommentList(Map<String,Object> param);
 
     /**
+     * 查询单条父级评论根据主键id
+     * @param param
+     * @return
+     */
+    List<Map<String,Object>> querySingleCommentList(Map<String,Object> param);
+
+    /**
      * 查询与我相关父级评论
      * @param param
      * @return
