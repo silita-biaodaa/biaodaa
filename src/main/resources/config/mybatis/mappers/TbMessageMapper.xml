@@ -67,7 +67,38 @@
             #{isRead},
         </if>
         now()
-        ) ;
-
+        )
     </insert>
+
+    <!--删除多条记录-->
+    <delete id="deleteMsg" parameterType="java.util.Map">
+        DELETE
+        FROM
+          `tb_message`
+        WHERE user_id = #{userId}
+        AND pkid in (
+        <foreach collection="list" item="list" separator=",">
+            #{list}
+        </foreach>
+        )
+    </delete>
+
+    <!--设置消息已读状态-->
+    <update id="setIsRead" parameterType="java.util.Map">
+        UPDATE
+          `tb_message`
+        SET
+          `is_read` = 1
+        WHERE `pkid` = #{pkid}
+    </update>
+
+    <!--查询未读消息个数-->
+    <select id="queryIsReadCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+          COUNT(1)
+        FROM
+          tb_message t
+        WHERE t.`user_id` = #{userId}
+          AND t.`is_read` = 0
+    </select>
 </mapper>

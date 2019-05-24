@@ -38,6 +38,8 @@ public class CommentService {
     UserTempBddMapper userTempBddMapper;
     @Autowired
     TbCompanyService tbCompanyService;
+    @Autowired
+    MessageService messageService;
 
     /**
      * 查询评论列表
@@ -173,6 +175,8 @@ public class CommentService {
         tbReplyCommentMapper.insert(replyComment);
         //todo:推送消息
         //todo:发送系统内消息
+        messageService.saveReplyCommentMessage(replyComment.getPkid(),replyComment.getToUid());
+        replyComment = null;
     }
 
     /**

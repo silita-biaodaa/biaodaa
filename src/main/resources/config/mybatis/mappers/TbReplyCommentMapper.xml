@@ -35,7 +35,7 @@
   </select>
 
     <!--添加回复-->
-    <insert id="insert" parameterType="com.silita.biaodaa.dao.TbReplyCommentMapper">
+    <insert id="insert" parameterType="com.silita.biaodaa.dao.TbReplyCommentMapper" useGeneratedKeys="true" keyProperty="pkid">
         INSERT INTO `tb_reply_comment` (
         <if test="commentId != null and commentId != ''">
             `comment_id`,
@@ -126,7 +126,13 @@
             #{replyContent},
         </if>
         now()
-        ) ;
-
+        )
     </insert>
+
+    <!--根据主键查询详情-->
+    <select id="queryReplyComment" parameterType="java.lang.Integer" resultType="com.silita.biaodaa.model.TbReplyComment">
+        SELECT *
+        FROM tb_reply_comment
+        WHERE `pkid` = #{pkid}
+    </select>
 </mapper>

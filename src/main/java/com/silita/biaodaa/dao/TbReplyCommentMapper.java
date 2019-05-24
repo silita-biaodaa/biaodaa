@@ -24,4 +24,11 @@ public interface TbReplyCommentMapper extends MyMapper<TbReplyComment> {
      * @return
      */
     int insert(TbReplyComment tbReplyComment);
+
+    /**
+     * 根据主键查询详情
+     * @param pkid
+     * @return
+     */
+    TbReplyComment queryReplyComment(Integer pkid);
 }

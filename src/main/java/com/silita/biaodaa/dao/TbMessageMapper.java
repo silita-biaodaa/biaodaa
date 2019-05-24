@@ -24,4 +24,24 @@ public interface TbMessageMapper extends MyMapper<TbMessage> {
      */
     int insert(TbMessage message);
 
+    /**
+     * 删除多条记录
+     * @param param
+     * @return
+     */
+    int deleteMsg(Map<String,Object> param);
+
+    /**
+     * 设置消息已读状态
+     * @param param
+     * @return
+     */
+    int setIsRead(Map<String,Object> param);
+
+    /**
+     * 查询未读消息个数
+     * @param userId
+     * @return
+     */
+    int queryIsReadCount(String userId);
 }

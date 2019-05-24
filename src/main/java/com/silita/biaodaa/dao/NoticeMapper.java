@@ -162,4 +162,10 @@ public interface NoticeMapper {
      * @return
      */
     Map<String,Object> querySnatchurlParam(Map<String,Object> param);
+
+    /**
+     * 根据id查询公告标题
+     * @return
+     */
+    String queryNoticeTitle(Map<String,Object> param);
 }

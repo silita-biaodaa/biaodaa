@@ -704,4 +704,20 @@
         and s.isShow = 0 and s.type = 2
         limit 1
     </select>
+
+    <!--根据id查询公告标题-->
+    <select id="queryNoticeTitle" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+          t.`title`
+        FROM
+          <choose>
+              <when test="source == 'hunan'">
+                  snatchurl t
+              </when>
+              <otherwise>
+                  snatchurl_${source} t
+              </otherwise>
+          </choose>
+        WHERE t.`id` = #{relatedId}
+    </select>
 </mapper>

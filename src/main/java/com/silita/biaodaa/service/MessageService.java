@@ -3,13 +3,18 @@ package com.silita.biaodaa.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.Constant;
+import com.silita.biaodaa.common.VisitInfoHolder;
+import com.silita.biaodaa.dao.NoticeMapper;
 import com.silita.biaodaa.dao.TbMessageMapper;
+import com.silita.biaodaa.dao.TbReplyCommentMapper;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbMessage;
+import com.silita.biaodaa.model.TbReplyComment;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +27,10 @@ public class MessageService {
 
     @Autowired
     TbMessageMapper tbMessageMapper;
+    @Autowired
+    TbReplyCommentMapper tbReplyCommentMapper;
+    @Autowired
+    NoticeMapper noticeMapper;
 
     /**
      * 添加回复评论消息
@@ -55,11 +64,53 @@ public class MessageService {
         return pageInfo;
     }
 
+    /**
+     * 删除
+     * @param param
+     */
+    public void delMsg(Map<String, Object> param) {
+        String ids = MapUtils.getString(param, "ids").trim();
+        List<String> pkids = Arrays.asList(ids.split(","));
+        param.put("list", pkids);
+        tbMessageMapper.deleteMsg(param);
+    }
+
+    /**
+     * 设置消息已读状态
+     * @param param
+     */
+    public void setIsRead(Map<String,Object> param){
+        tbMessageMapper.setIsRead(param);
+    }
+
+    /**
+     * 获取未读消息个数
+     * @return
+     */
+    public int getIsReadCount(){
+        return tbMessageMapper.queryIsReadCount(VisitInfoHolder.getUid());
+    }
+
+    /**
+     * 如果消息类型为回复评论类的需查询回复详情
+     *
+     * @param list
+     */
     private void setReplyCommentMsg(List<Map<String, Object>> list) {
         if (null != list && list.size() > 0) {
-            for (Map<String,Object> map : list){
-                if (Constant.MSG_TYPE_REPLY.equals(map.get("msgType"))){
-
+            TbReplyComment replyComment = new TbReplyComment();
+            for (Map<String, Object> map : list) {
+                if (Constant.MSG_TYPE_REPLY.equals(map.get("msgType"))) {
+                    replyComment = tbReplyCommentMapper.queryReplyComment(MapUtils.getInteger(map, "replyId"));
+                    map.put("source", replyComment.getSource());
+                    map.put("relatedId", replyComment.getRelatedId());
+                    map.put("relatedType", replyComment.getRelatedType());
+                    map.put("replyUid", replyComment.getReplyUid());
+                    map.put("toUid", replyComment.getToUid());
+                    map.put("reNikename", replyComment.getReNikeName());
+                    map.put("commentId", replyComment.getCommentId());
+                    map.put("replyContent", replyComment.getReplyContent());
+                    map.put("noticeTitle", noticeMapper.queryNoticeTitle(map));
                 }
             }
         }
