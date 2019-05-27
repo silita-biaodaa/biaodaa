@@ -11,6 +11,7 @@ import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbMessage;
 import com.silita.biaodaa.model.TbReplyComment;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,6 +81,15 @@ public class MessageService {
      * @param param
      */
     public void setIsRead(Map<String,Object> param){
+        String pkid = MapUtils.getString(param,"pkid");
+        String[] ids = pkid.split(",");
+        if (ids.length > 1){
+            Map<String,Object> value = new HashedMap();
+            for (String id : ids){
+                value.put("pkid",id);
+            }
+            return;
+        }
         tbMessageMapper.setIsRead(param);
     }
 
