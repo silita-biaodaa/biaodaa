@@ -82,8 +82,12 @@
         FROM
         tb_comment_info t
         LEFT JOIN tb_reply_comment t1
-        ON t.`user_id` = t1.`comment_id`
-        WHERE (
+        ON t.`pkid` = t1.`comment_id`
+        WHERE t.`related_id` = #{relatedId}
+        AND t.`related_type` = #{relatedType}
+        AND t1.`related_id` = #{relatedId}
+        AND t1.`related_type` = #{relatedType}
+        AND (
         (t.`state` = 1
         OR t.`state` = 3)
         OR (t1.`state` = 1
@@ -93,12 +97,6 @@
         t.`user_id` = #{userId}
         OR t1.`to_uid` = #{userId}
         OR t1.`reply_uid` = #{userId}
-        )
-        AND (
-        t.`related_id` = #{relatedId}
-        OR t.`related_type` = #{relatedType}
-        OR t1.`related_id` = #{relatedId}
-        OR t1.`related_type` = #{relatedType}
         )
         AND (t.`is_pub` = 1
         OR t1.`is_pub` = 1)

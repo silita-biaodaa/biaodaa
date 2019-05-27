@@ -118,6 +118,7 @@ public class MessageService {
                     map.put("replyUid", replyComment.getReplyUid());
                     map.put("toUid", replyComment.getToUid());
                     map.put("reNikename", replyComment.getReNikeName());
+                    map.put("reCompany",replyComment.getReCompany());
                     map.put("commentId", replyComment.getCommentId());
                     map.put("replyContent", replyComment.getReplyContent());
                     map.put("noticeTitle", noticeMapper.queryNoticeTitle(map));
