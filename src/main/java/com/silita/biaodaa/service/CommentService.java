@@ -148,10 +148,14 @@ public class CommentService {
                 for (Map<String, Object> comment : comments) {
                     replys = new ArrayList<>();
                     content = MapUtils.getString(comment, "commContent");
-                    comment.put("commContent", EmojiParser.parseToUnicode(content));
+                    if (StringUtils.isNotEmpty(content)){
+                        comment.put("commContent", EmojiParser.parseToUnicode(content));
+                    }
                     for (Map<String, Object> reply : replyComments) {
                         replyContent = MapUtils.getString(reply, "replyContent");
-                        reply.put("replyContent", EmojiParser.parseToUnicode(replyContent));
+                        if (StringUtils.isNotEmpty(replyContent)){
+                            reply.put("replyContent", EmojiParser.parseToUnicode(replyContent));
+                        }
                         if (comment.get("pkid").toString().equals(reply.get("commentId").toString())
                                 && !Constant.COMMENT_STATES_PINGBI.toString().equals(comment.get("state"))) {
                             replys.add(reply);
@@ -186,8 +190,11 @@ public class CommentService {
         replyComment.setToNikeName(setNikeName(StringUtils.isEmpty(toUser.getNickname()) == true ? toUser.getPhoneNo() : toUser.getNikeName()));
         tbReplyCommentMapper.insert(replyComment);
         //todo:推送消息
+//        PushMessageUtils.pushMessage(replyComment.getToUid());
         //todo:发送系统内消息
-        messageService.saveReplyCommentMessage(replyComment.getPkid(),replyComment.getToUid());
+        if (!replyComment.getToUid().equals(replyComment.getReplyUid())){
+            messageService.saveReplyCommentMessage(replyComment.getPkid(),replyComment.getToUid());
+        }
         replyComment = null;
     }
 

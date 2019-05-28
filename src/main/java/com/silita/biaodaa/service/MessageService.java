@@ -87,6 +87,7 @@ public class MessageService {
             Map<String,Object> value = new HashedMap();
             for (String id : ids){
                 value.put("pkid",id);
+                tbMessageMapper.setIsRead(value);
             }
             return;
         }

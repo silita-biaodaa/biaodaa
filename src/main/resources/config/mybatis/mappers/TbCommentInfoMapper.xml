@@ -85,8 +85,6 @@
         ON t.`pkid` = t1.`comment_id`
         WHERE t.`related_id` = #{relatedId}
         AND t.`related_type` = #{relatedType}
-        AND t1.`related_id` = #{relatedId}
-        AND t1.`related_type` = #{relatedType}
         AND (
         (t.`state` = 1
         OR t.`state` = 3)
