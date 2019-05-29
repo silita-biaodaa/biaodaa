@@ -6,6 +6,7 @@ import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -164,6 +165,7 @@ public class AspectCheckLogin {
         String ipAddr = parseRequest(request).get("ipAddr");
         String xToken = SecurityCheck.getHeaderValue(request, "X-TOKEN");
         String filterUrl = PropertiesUtils.getProperty("FILTER_URL");
+        String baseInfo = SecurityCheck.getHeaderValue(request, "baseInfo");
         try {
             String name = null;
             String phone = null;
@@ -229,6 +231,11 @@ public class AspectCheckLogin {
                 VisitInfoHolder.setUserId(phone);
                 VisitInfoHolder.setUid(userId);
             }
+            if (StringUtils.isNotEmpty(baseInfo)) {
+                String[] baseInfos = baseInfo.split("\\|");
+                VisitInfoHolder.setChannel(baseInfos[baseInfos.length - 1]);
+            }
+
             logger.debug("requestUri:" + requestUri);
             logger.debug("aspect login:" + phone + "|" + userId);
 

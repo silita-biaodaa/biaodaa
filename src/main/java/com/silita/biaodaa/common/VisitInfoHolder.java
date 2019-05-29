@@ -20,6 +20,8 @@ public class VisitInfoHolder {
 
     protected static final ThreadLocal<String> permissions = new ThreadLocal<>();
 
+    protected static final ThreadLocal<String> channel = new ThreadLocal<>();
+
 
     public static void setRoleCode(String roleCode){
         VisitInfoHolder.role_code.set(roleCode);
@@ -29,12 +31,20 @@ public class VisitInfoHolder {
         VisitInfoHolder.permissions.set(permissions);
     }
 
+    public static void setChannel(String channel){
+        VisitInfoHolder.channel.set(channel);
+    }
+
     public static String getRoleCode(){
         return VisitInfoHolder.role_code.get();
     }
 
     public static String getPermissions(){
         return VisitInfoHolder.permissions.get();
+    }
+
+    public static String getChannel(){
+        return VisitInfoHolder.channel.get();
     }
 
     public static String getUserId() {

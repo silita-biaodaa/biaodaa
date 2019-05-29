@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.SendMessage;
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.common.WeChat.model.WXAccessToken;
 import com.silita.biaodaa.common.WeChat.model.WXUserInfo;
 import com.silita.biaodaa.common.WeChat.util.WeChatLoginUtil;
@@ -195,6 +196,7 @@ public class AuthorizeService {
         user.setLoginTime(System.currentTimeMillis());//设置登录时间
         user.setXtoken(TokenUtils.buildToken(user));
         updateLoginRecord(user);
+        logger.info("token:"+user.getXtoken());
         return user;
     }
 
@@ -230,6 +232,7 @@ public class AuthorizeService {
             user = resList.get(0);
         }
         if (user != null) {
+            user.setChannel(VisitInfoHolder.getChannel());
             user.setLoginTime(System.currentTimeMillis());//设置登录时间
             user.setXtoken(TokenUtils.buildToken(user));
         } else {

@@ -1,24 +1,47 @@
 package com.silita.biaodaa.service;
 
-import com.silita.biaodaa.utils.HttpUtils;
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.http.MethodType;
+import com.aliyuncs.http.ProtocolType;
+import com.aliyuncs.profile.DefaultProfile;
+import com.aliyuncs.profile.IClientProfile;
+import com.aliyuncs.push.model.v20160801.PushRequest;
+import com.aliyuncs.push.model.v20160801.PushResponse;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * Created by zhushuai on 2019/5/28.
  */
 public class PushMessageTest {
 
-    private static String pushUrl = "http://cloudpush.aliyuncs.com";
 
     @org.junit.Test
     public void push() throws UnsupportedEncodingException {
-        StringBuffer sbf = new StringBuffer();
-        sbf.append("Action=").append("push").append("&").append("Target=").append("24610908").append("&").append("TargetValue=")
-                .append("8073b63c941c11e5b833f0795939bee2").append("&").append("DeviceType=").append("ALL").append("&").append("PushType=")
-                .append("NOTICE").append("&").append("Title=").append(URLEncoder.encode("评论","UTF-8")).append("&").append("Body=").append(URLEncoder.encode("你有新的回复信息","UTF-8"));
-        System.out.println(HttpUtils.sendGet(pushUrl, sbf.toString()));
+        String appSeret = "25119f8b2c3762658734f1b21c597364";
+        String accessKey = "LTAIVLTf1eLK9MWJ";
+        String accessKeySecret = "Ti9oFBqhbVXu3un5AnpR908SObVAAe";
+        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKey, accessKeySecret);
+        DefaultAcsClient client = new DefaultAcsClient(profile);
+        PushRequest pushRequest  = new PushRequest();
+        pushRequest.setProtocol(ProtocolType.HTTPS);
+        pushRequest.setMethod(MethodType.POST);
+        pushRequest.setAppKey(24610908L);
+        pushRequest.setTarget("ACCOUNT");
+        pushRequest.setTargetValue("eb8154b8e47e416790ee6438430f3c21");
+        pushRequest.setPushType("NOTICE");
+        pushRequest.setDeviceType("ALL");
+        pushRequest.setTitle("评论");
+        pushRequest.setBody("你有新的回复信息");
+        try {
+            PushResponse pushResponse = client.getAcsResponse(pushRequest);
+            System.out.printf("RequestId: %s, MessageID: %s\n",
+                    pushResponse.getRequestId(), pushResponse.getMessageId());
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

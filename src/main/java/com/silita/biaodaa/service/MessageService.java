@@ -109,7 +109,7 @@ public class MessageService {
      */
     private void setReplyCommentMsg(List<Map<String, Object>> list) {
         if (null != list && list.size() > 0) {
-            TbReplyComment replyComment = new TbReplyComment();
+            TbReplyComment replyComment;
             for (Map<String, Object> map : list) {
                 if (Constant.MSG_TYPE_REPLY.equals(map.get("msgType"))) {
                     replyComment = tbReplyCommentMapper.queryReplyComment(MapUtils.getInteger(map, "replyId"));
@@ -120,9 +120,11 @@ public class MessageService {
                     map.put("toUid", replyComment.getToUid());
                     map.put("reNikename", replyComment.getReNikeName());
                     map.put("reCompany",replyComment.getReCompany());
+                    map.put("reImage",replyComment.getReImage());
                     map.put("commentId", replyComment.getCommentId());
                     map.put("replyContent", replyComment.getReplyContent());
                     map.put("noticeTitle", noticeMapper.queryNoticeTitle(map));
+                    replyComment = null;
                 }
             }
         }

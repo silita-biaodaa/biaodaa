@@ -134,7 +134,6 @@ public class AuthorizeController extends BaseController {
         }
 
         try {
-            bulidUserPwd(sysUser);
             SysUser userInfo = authorizeService.memberLogin(sysUser);
             if (userInfo != null) {
                 //会员权益赠送
