@@ -9,6 +9,7 @@
         t.`reply_id` AS replyId,
         t.`msg_title` AS msgTitle,
         t.`msg_type` AS msgType,
+        t.`msg_content` AS msgContent,
         (
           CASE
             WHEN DATE_FORMAT(t.`pushd`, '%Y') = DATE_FORMAT(NOW(), '%Y')
@@ -35,6 +36,9 @@
         <if test="msgTitle != null and msgTitle != ''">
             `msg_title`,
         </if>
+        <if test="msgContent != null and msgContent != ''">
+            `msg_content`,
+        </if>
         <if test="msgType != null and msgType != ''">
             `msg_type`,
         </if>
@@ -56,6 +60,9 @@
         </if>
         <if test="msgTitle != null and msgTitle != ''">
             #{msgTitle},
+        </if>
+        <if test="msgContent != null and msgContent != ''">
+            #{msgContent},
         </if>
         <if test="msgType != null and msgType != ''">
             #{msgType},
