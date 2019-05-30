@@ -21,7 +21,7 @@
           CASE
             WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
             THEN DATE_FORMAT(t.`updated`, '%m-%d %H:%i')
-            ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d %H:%i')
+            ELSE DATE_FORMAT(t.`updated`, '%Y-%m-%d')
           END
         ) AS pushd
       FROM

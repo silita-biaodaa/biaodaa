@@ -14,7 +14,7 @@
           CASE
             WHEN DATE_FORMAT(t.`pushd`, '%Y') = DATE_FORMAT(NOW(), '%Y')
             THEN DATE_FORMAT(t.`pushd`, '%m-%d %H:%i')
-            ELSE DATE_FORMAT(t.`pushd`, '%Y-%m-%d %H:%i')
+            ELSE DATE_FORMAT(t.`pushd`, '%Y-%m-%d')
           END
         ) AS pushd,
         t.`is_read` AS isRead
