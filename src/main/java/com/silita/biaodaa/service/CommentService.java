@@ -11,6 +11,7 @@ import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.model.TbCommentInfo;
 import com.silita.biaodaa.model.TbReplyComment;
+import com.silita.biaodaa.utils.PushMessageUtils;
 import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -66,7 +67,7 @@ public class CommentService {
      * @param param
      * @return
      */
-    public Map<String,Object> singleComment(Map<String, Object> param) {
+    public Map<String, Object> singleComment(Map<String, Object> param) {
         List<Map<String, Object>> commentList = tbCommentInfoMapper.querySingleCommentList(param);
         this.setReplyComment(commentList, param);
         return commentList.get(0);
@@ -93,6 +94,7 @@ public class CommentService {
 
     /**
      * 评论/回复评论
+     *
      * @param param
      * @return
      */
@@ -118,7 +120,7 @@ public class CommentService {
         String toUid = MapUtils.getString(param, "toUid");
         if (StringUtils.isNotEmpty(toUid)) {
             //回复评论
-            saveReplyComment(param,commentUser);
+            saveReplyComment(param, commentUser);
             return resultMap;
         }
         //评论
@@ -148,12 +150,12 @@ public class CommentService {
                 for (Map<String, Object> comment : comments) {
                     replys = new ArrayList<>();
                     content = MapUtils.getString(comment, "commContent");
-                    if (StringUtils.isNotEmpty(content)){
+                    if (StringUtils.isNotEmpty(content)) {
                         comment.put("commContent", EmojiParser.parseToUnicode(content));
                     }
                     for (Map<String, Object> reply : replyComments) {
                         replyContent = MapUtils.getString(reply, "replyContent");
-                        if (StringUtils.isNotEmpty(replyContent)){
+                        if (StringUtils.isNotEmpty(replyContent)) {
                             reply.put("replyContent", EmojiParser.parseToUnicode(replyContent));
                         }
                         if (comment.get("pkid").toString().equals(reply.get("commentId").toString())
@@ -178,10 +180,10 @@ public class CommentService {
      * @param commentUser
      */
     public void saveReplyComment(Map<String, Object> param, SysUser commentUser) {
-        String toUid = MapUtils.getString(param,"toUid");
+        String toUid = MapUtils.getString(param, "toUid");
         SysUser toUser = userTempBddMapper.queryUserDetailById(toUid);
-        String replyContent = MapUtils.getString(param,"content");
-        param.put("replyContent",EmojiParser.parseToAliases(replyContent));
+        String replyContent = MapUtils.getString(param, "content");
+        param.put("replyContent", EmojiParser.parseToAliases(replyContent));
         TbReplyComment replyComment = new TbReplyComment(param);
         replyComment.setReCompany(commentUser.getInCompany());
         replyComment.setReImage(commentUser.getImageUrl());
@@ -189,27 +191,32 @@ public class CommentService {
         replyComment.setReNikeName(setNikeName(StringUtils.isEmpty(commentUser.getNickname()) == true ? commentUser.getPhoneNo() : commentUser.getNikeName()));
         replyComment.setToNikeName(setNikeName(StringUtils.isEmpty(toUser.getNickname()) == true ? toUser.getPhoneNo() : toUser.getNikeName()));
         tbReplyCommentMapper.insert(replyComment);
-        //todo:推送消息
-//        PushMessageUtils.pushMessage(replyComment.getToUid());
-        //todo:发送系统内消息
-        if (!replyComment.getToUid().equals(replyComment.getReplyUid())){
-            messageService.saveReplyCommentMessage(replyComment.getPkid(),replyComment.getToUid());
+        //推送消息
+        Map<String, Object> paramters = new HashedMap();
+        paramters.put("commentId", replyComment.getCommentId());
+        paramters.put("relatedId",replyComment.getRelatedId());
+        paramters.put("relatedType",replyComment.getRelatedType());
+        PushMessageUtils.pushMessage(replyComment.getToUid(),paramters);
+        //发送系统内消息
+        if (!replyComment.getToUid().equals(replyComment.getReplyUid())) {
+            messageService.saveReplyCommentMessage(replyComment.getPkid(), replyComment.getToUid());
         }
         replyComment = null;
     }
 
     /**
      * 设置昵称(如是电话号码需替换*)
+     *
      * @param nikeName
      * @return
      */
-    private String setNikeName(String nikeName){
+    private String setNikeName(String nikeName) {
         //判断是否手机号
         String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(nikeName);
-        if (m.matches()){
-            nikeName = tbCompanyService.solPhone(nikeName,"replace");
+        if (m.matches()) {
+            nikeName = tbCompanyService.solPhone(nikeName, "replace");
         }
         return nikeName;
     }
