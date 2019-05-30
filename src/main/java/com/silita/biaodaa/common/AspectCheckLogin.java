@@ -239,6 +239,14 @@ public class AspectCheckLogin {
             logger.debug("requestUri:" + requestUri);
             logger.debug("aspect login:" + phone + "|" + userId);
 
+            //是否疑似爬虫
+            String blacklist = PropertiesUtils.getProperty("blacklist");
+            if (null != blacklist && null != phone && blacklist.contains(phone)) {
+                resMap.put("code", Constant.FAIL_CODE);
+                resMap.put("msg", errMsg);
+                return resMap;
+            }
+
             //绿色通道检查
             boolean greenWay = greenWayVerify(requestUri, filterUrl, xToken);
             if (greenWay) {//无需校验token
@@ -260,7 +268,8 @@ public class AspectCheckLogin {
                         return resMap;
                     }
                 }
-                String blacklist = PropertiesUtils.getProperty("blacklist");
+
+                //是否疑似爬虫
                 if (null != blacklist && null != phone && blacklist.contains(phone)) {
                     isHei = true;
                 }
