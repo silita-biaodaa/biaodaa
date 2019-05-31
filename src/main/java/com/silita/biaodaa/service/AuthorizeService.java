@@ -591,6 +591,8 @@ public class AuthorizeService {
         sysUser.setOwnInviteCode(constructShareCode());
         if (MyStringUtils.isNull(sysUser.getNikeName())) {
             sysUser.setNikeName(sysUser.getPhoneNo());
+        } else {
+            sysUser.setNikeName(EmojiUtils.emojiChange(sysUser.getNikeName()));
         }
         userTempBddMapper.insertUserInfo(sysUser);
 
@@ -655,7 +657,7 @@ public class AuthorizeService {
                 Map<String, Object> data = (Map<String, Object>) reMap.get("data");
                 resultMap.put("region", data.get("region"));
                 resultMap.put("city", data.get("city"));
-                resultMap.put("ip",ip);
+                resultMap.put("ip", ip);
                 return resultMap;
             }
             return resultMap;
@@ -669,7 +671,7 @@ public class AuthorizeService {
         String result = HttpUtils.sendGetUrl(token);
         if (MyStringUtils.isNotNull(result)) {
             Map<String, Object> tokenMap = JSONObject.parseObject(result);
-            if (null == tokenMap.get("access_token") && null == tokenMap.get("openid")){
+            if (null == tokenMap.get("access_token") && null == tokenMap.get("openid")) {
                 return null;
             }
             String accessToken = tokenMap.get("access_token").toString();
