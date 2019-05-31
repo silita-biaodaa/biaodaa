@@ -155,11 +155,11 @@ public class CommentService {
                     }
                     for (Map<String, Object> reply : replyComments) {
                         replyContent = MapUtils.getString(reply, "replyContent");
-                        if (StringUtils.isNotEmpty(replyContent)) {
-                            reply.put("replyContent", EmojiParser.parseToUnicode(replyContent));
-                        }
                         if (comment.get("pkid").toString().equals(reply.get("commentId").toString())
                                 && !Constant.COMMENT_STATES_PINGBI.toString().equals(comment.get("state"))) {
+                            if (StringUtils.isNotEmpty(replyContent)) {
+                                reply.put("replyContent", EmojiParser.parseToUnicode(replyContent));
+                            }
                             replys.add(reply);
                             replyContent = null;
                             continue;
@@ -194,9 +194,9 @@ public class CommentService {
         //推送消息
         Map<String, Object> paramters = new HashedMap();
         paramters.put("commentId", replyComment.getCommentId());
-        paramters.put("relatedId",replyComment.getRelatedId());
-        paramters.put("relatedType",replyComment.getRelatedType());
-        PushMessageUtils.pushMessage(replyComment.getToUid(),paramters);
+        paramters.put("relatedId", replyComment.getRelatedId());
+        paramters.put("relatedType", replyComment.getRelatedType());
+        PushMessageUtils.pushMessage(replyComment.getToUid(), paramters);
         //发送系统内消息
         if (!replyComment.getToUid().equals(replyComment.getReplyUid())) {
             messageService.saveReplyCommentMessage(replyComment.getPkid(), replyComment.getToUid());
