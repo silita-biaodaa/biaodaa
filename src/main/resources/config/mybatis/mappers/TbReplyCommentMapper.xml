@@ -17,6 +17,7 @@
         t.`re_post` AS rePost,
         t.`to_uid` AS toUid,
         t.`to_nike_name` AS toNikename,
+        t.`state` AS state,
         (
           CASE
             WHEN DATE_FORMAT(t.`updated`, '%Y') = DATE_FORMAT(NOW(), '%Y')
@@ -28,6 +29,7 @@
         tb_reply_comment t
       WHERE t.`related_id` = #{relatedId}
         AND t.`related_type` = #{relatedType}
+        AND (t.`state` = 1 OR t.`state` = 3)
         <if test="source != null and source != ''">
             AND t.`source` = #{source}
         </if>
