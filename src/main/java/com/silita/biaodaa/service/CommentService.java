@@ -191,15 +191,15 @@ public class CommentService {
         replyComment.setReNikeName(setNikeName(StringUtils.isEmpty(commentUser.getNickname()) == true ? commentUser.getPhoneNo() : commentUser.getNikeName()));
         replyComment.setToNikeName(setNikeName(StringUtils.isEmpty(toUser.getNickname()) == true ? toUser.getPhoneNo() : toUser.getNikeName()));
         tbReplyCommentMapper.insert(replyComment);
-        //推送消息
-        Map<String, Object> paramters = new HashedMap();
-        paramters.put("commentId", replyComment.getCommentId());
-        paramters.put("relatedId", replyComment.getRelatedId());
-        paramters.put("relatedType", replyComment.getRelatedType());
-        PushMessageUtils.pushMessage(replyComment.getToUid(), paramters);
-        //发送系统内消息
         if (!replyComment.getToUid().equals(replyComment.getReplyUid())) {
-            messageService.saveReplyCommentMessage(replyComment.getPkid(), replyComment.getToUid());
+            //推送消息/发送系统内消息
+            Map<String, Object> paramters = new HashedMap();
+            paramters.put("commentId", replyComment.getCommentId());
+            paramters.put("relatedId", replyComment.getRelatedId());
+            paramters.put("relatedType", replyComment.getRelatedType());
+            paramters.put("replyId",replyComment.getPkid());
+            paramters.put("noticeId", messageService.saveReplyCommentMessage(replyComment.getPkid(), replyComment.getToUid()));
+            PushMessageUtils.pushMessage(replyComment.getToUid(), paramters);
         }
         replyComment = null;
     }

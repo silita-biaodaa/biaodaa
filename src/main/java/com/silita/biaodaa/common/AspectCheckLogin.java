@@ -2,7 +2,6 @@ package com.silita.biaodaa.common;
 
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.service.LoginInfoService;
-import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -101,6 +100,7 @@ public class AspectCheckLogin {
         boolean state = true;
         try {
             String hk = Constant.buildLoginChanelKey(userId, channel);
+            logger.info("hk----------"+hk);
             Object v = myRedisTemplate.getHashValue(Constant.LOGIN_HASH_KEY, hk);
             if (v != null) {
                 Long time = Long.parseLong(v.toString());
@@ -145,7 +145,7 @@ public class AspectCheckLogin {
                 }
             }
             //返回通知
-            logger.debug("The method " + methodName + " end. result<" + resMap.get("code") + "---" + resMap.get("msg") + ">");
+            logger.info("The method " + methodName + " end. result<" + resMap.get("code") + "---" + resMap.get("msg") + ">");
         } catch (Throwable e) {
             logger.error(e, e);
             resMap = new HashMap();
@@ -166,6 +166,7 @@ public class AspectCheckLogin {
         String xToken = SecurityCheck.getHeaderValue(request, "X-TOKEN");
         String filterUrl = PropertiesUtils.getProperty("FILTER_URL");
         String baseInfo = SecurityCheck.getHeaderValue(request, "baseInfo");
+        logger.info("x-token:"+xToken);
         try {
             String name = null;
             String phone = null;
@@ -211,7 +212,7 @@ public class AspectCheckLogin {
                         //单用户多渠道登录状态校验
                         if (!verifyLoginByChannel(userId, chanel, date)) {
                             resMap.put("code", Constant.ERR_VERIFY_USER_TOKEN);
-                            resMap.put("msg", "用户登录失效，请重新登录。");
+                            resMap.put("msg", "多设备用户登录异常，请重新登录。");
                             return resMap;
                         }
                         //验证签名
@@ -232,12 +233,13 @@ public class AspectCheckLogin {
                 VisitInfoHolder.setUid(userId);
             }
             if (StringUtils.isNotEmpty(baseInfo)) {
+                logger.info("baseInfo:"+baseInfo);
                 String[] baseInfos = baseInfo.split("\\|");
                 VisitInfoHolder.setChannel(baseInfos[baseInfos.length - 1]);
             }
 
-            logger.debug("requestUri:" + requestUri);
-            logger.debug("aspect login:" + phone + "|" + userId);
+            logger.info("requestUri:" + requestUri);
+            logger.info("aspect login:" + phone + "|" + userId);
 
             //是否疑似爬虫
             String blacklist = PropertiesUtils.getProperty("blacklist");
@@ -254,19 +256,6 @@ public class AspectCheckLogin {
             } else {
                 if ("/foundation/version".equals(requestUri)) {
                     loginInfoService.saveLoginInfo(name, phone, date);
-                }
-                //校验登录失效期
-                if (MyStringUtils.isNotNull(date)) {
-                    String logind = MyDateUtils.longDateToStr(date, "yyyy-MM-dd");
-                    String today = MyDateUtils.getDate("yyyy-MM-dd");
-//                    Long days = MyDateUtils.dateDiff(logind,today,MyDateUtils.datetimePattern,"m");
-                    int days = MyDateUtils.compareTime(logind, today);
-                    String time = PropertiesUtils.getProperty("login.out.days");
-                    if (days > Integer.valueOf(time)) {
-                        resMap.put("code", Constant.ERR_VERIFY_USER_TOKEN);
-                        resMap.put("msg", relogin);
-                        return resMap;
-                    }
                 }
 
                 //是否疑似爬虫

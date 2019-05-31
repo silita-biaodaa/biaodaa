@@ -25,7 +25,7 @@
   </select>
 
     <!--添加消息-->
-    <insert id="insert" parameterType="com.silita.biaodaa.model.TbMessage">
+    <insert id="insert" parameterType="com.silita.biaodaa.model.TbMessage" useGeneratedKeys="true" keyProperty="pkid">
         INSERT INTO `tb_message` (
         <if test="replyId != null and replyId != ''">
             `reply_id`,

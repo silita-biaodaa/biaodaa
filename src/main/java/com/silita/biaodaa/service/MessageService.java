@@ -36,7 +36,7 @@ public class MessageService {
     /**
      * 添加回复评论消息
      */
-    public void saveReplyCommentMessage(Integer replyId, String toUid) {
+    public Integer saveReplyCommentMessage(Integer replyId, String toUid) {
         TbMessage message = new TbMessage();
         message.setUserId(toUid);
         message.setIsRead(Integer.valueOf(Constant.info_female));
@@ -44,6 +44,7 @@ public class MessageService {
         message.setPushd(new Date());
         message.setReplyId(replyId);
         tbMessageMapper.insert(message);
+        return message.getPkid();
     }
 
     /**
