@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHAOBIAO;
+import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHONGBIAO;
+
 /**
  * Created by zhushuai on 2019/5/22.
  */
@@ -205,6 +208,25 @@ public class CommentService {
     }
 
     /**
+     * 获取评论量
+     * @param param
+     * @return
+     */
+    public int getCommentCount(Map<String,Object> param){
+        param.put("relatedId", param.get("id"));
+        String type = MapUtils.getString(param, "type");
+        if (type.equals(SNATCHURL_ZHAOBIAO)) {
+            param.put("relatedType","zhaobiao");
+        }else if (type.equals(SNATCHURL_ZHONGBIAO)){
+            param.put("relatedType","zhongbiao");
+        }else {
+            param.put("relatedType","company");
+        }
+        int count = tbCommentInfoMapper.queryCommentCount(param);
+        return count;
+    }
+
+    /**
      * 设置昵称(如是电话号码需替换*)
      *
      * @param nikeName
@@ -220,4 +242,5 @@ public class CommentService {
         }
         return nikeName;
     }
+
 }

@@ -38,4 +38,11 @@ public interface TbCommentInfoMapper extends MyMapper<TbCommentInfo> {
      * @return
      */
     int insert(TbCommentInfo commentInfo);
+
+    /**
+     * 查询评论量
+     * @param param
+     * @return
+     */
+    int queryCommentCount(Map<String,Object> param);
 }

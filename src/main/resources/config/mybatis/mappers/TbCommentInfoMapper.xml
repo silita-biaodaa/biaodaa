@@ -105,6 +105,17 @@
         ORDER BY t.`updated` DESC
     </select>
 
+    <!--查询评论量-->
+    <select id="queryCommentCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT IFNULL(COUNT(1),0)
+        FROM tb_comment_info t
+        WHERE t.`related_id` = #{relatedId}
+        AND t.`related_type` = #{relatedType}
+        AND t.`source` = #{source}
+        AND (t.`state` = 1 OR t.`state` = 3)
+        AND t.`is_pub` = 1
+    </select>
+
     <!--添加评论-->
     <insert id="insert" parameterType="com.silita.biaodaa.dao.TbCommentInfoMapper">
         INSERT INTO `tb_comment_info` (

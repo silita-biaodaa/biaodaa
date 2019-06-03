@@ -7,6 +7,7 @@ import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.common.SnatchContent;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.model.Page;
+import com.silita.biaodaa.service.CommentService;
 import com.silita.biaodaa.service.CommonService;
 import com.silita.biaodaa.service.NoticeService;
 import com.silita.biaodaa.utils.*;
@@ -38,12 +39,12 @@ public class NoticeController extends BaseController {
 
     @Autowired
     private MyRedisTemplate myRedisTemplate;
-
     @Autowired
     private NoticeService noticeService;
-
     @Autowired
     private CommonService commonService;
+    @Autowired
+    private CommentService commentService;
 
     // 设置userid
     private void settingUserId(Map params) {
@@ -525,6 +526,8 @@ public class NoticeController extends BaseController {
             resultMap.put(DATA_FLAG, detailList);
             //添加点击次数
             resultMap.put("clickCount", noticeService.getClickCountBySourceAndTypeAndInnertId(params));
+            //评论量
+            resultMap.put("commentCount", commentService.getCommentCount(params));
 
             Long relNoticeCount = noticeService.queryRelCountParam(params);
 
