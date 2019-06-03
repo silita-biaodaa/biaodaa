@@ -201,6 +201,7 @@ public class CommentService {
             paramters.put("relatedId", replyComment.getRelatedId());
             paramters.put("relatedType", replyComment.getRelatedType());
             paramters.put("replyId",replyComment.getPkid());
+            paramters.put("source",replyComment.getSource());
             paramters.put("noticeId", messageService.saveReplyCommentMessage(replyComment.getPkid(), replyComment.getToUid()));
             PushMessageUtils.pushMessage(replyComment.getToUid(), paramters);
         }

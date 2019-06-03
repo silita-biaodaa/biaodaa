@@ -124,7 +124,9 @@ public class MessageService {
                     map.put("reImage",replyComment.getReImage());
                     map.put("commentId", replyComment.getCommentId());
                     map.put("replyContent", replyComment.getReplyContent());
+                    map.put("replyId",replyComment.getPkid());
                     map.put("noticeTitle", noticeMapper.queryNoticeTitle(map));
+
                     replyComment = null;
                 }
             }
