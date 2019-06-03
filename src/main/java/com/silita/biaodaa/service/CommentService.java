@@ -119,22 +119,28 @@ public class CommentService {
         //获取用户信息
         String userId = MapUtils.getString(param, "userId");
         SysUser commentUser = userTempBddMapper.queryUserDetailById(userId);
-        //判断回复评论还是评论
-        String toUid = MapUtils.getString(param, "toUid");
-        if (StringUtils.isNotEmpty(toUid)) {
-            //回复评论
-            saveReplyComment(param, commentUser);
+        try {
+            //判断回复评论还是评论
+            String toUid = MapUtils.getString(param, "toUid");
+            if (StringUtils.isNotEmpty(toUid)) {
+                //回复评论
+                saveReplyComment(param, commentUser);
+                return resultMap;
+            }
+            //评论
+            TbCommentInfo tbCommentInfo = new TbCommentInfo(param);
+            tbCommentInfo.setNickName(StringUtils.isEmpty(commentUser.getNickname()) == true ? commentUser.getPhoneNo() : commentUser.getNikeName());
+            tbCommentInfo.setInCompany(commentUser.getInCompany());
+            tbCommentInfo.setImage(commentUser.getImageUrl());
+            tbCommentInfo.setPost(commentUser.getPosition());
+            tbCommentInfo.setNickName(setNikeName(tbCommentInfo.getNickName()));
+            tbCommentInfoMapper.insert(tbCommentInfo);
+            return resultMap;
+        } catch (Exception e) {
+            resultMap.put("code", Constant.EXCEPTION_CODE);
+            resultMap.put("msg", "评论中可能含有特殊字符，请重新输入！");
             return resultMap;
         }
-        //评论
-        TbCommentInfo tbCommentInfo = new TbCommentInfo(param);
-        tbCommentInfo.setNickName(StringUtils.isEmpty(commentUser.getNickname()) == true ? commentUser.getPhoneNo() : commentUser.getNikeName());
-        tbCommentInfo.setInCompany(commentUser.getInCompany());
-        tbCommentInfo.setImage(commentUser.getImageUrl());
-        tbCommentInfo.setPost(commentUser.getPosition());
-        tbCommentInfo.setNickName(setNikeName(tbCommentInfo.getNickName()));
-        tbCommentInfoMapper.insert(tbCommentInfo);
-        return resultMap;
     }
 
     /**
@@ -200,8 +206,8 @@ public class CommentService {
             paramters.put("commentId", replyComment.getCommentId());
             paramters.put("relatedId", replyComment.getRelatedId());
             paramters.put("relatedType", replyComment.getRelatedType());
-            paramters.put("replyId",replyComment.getPkid());
-            paramters.put("source",replyComment.getSource());
+            paramters.put("replyId", replyComment.getPkid());
+            paramters.put("source", replyComment.getSource());
             paramters.put("noticeId", messageService.saveReplyCommentMessage(replyComment.getPkid(), replyComment.getToUid()));
             PushMessageUtils.pushMessage(replyComment.getToUid(), paramters);
         }
@@ -210,18 +216,19 @@ public class CommentService {
 
     /**
      * 获取评论量
+     *
      * @param param
      * @return
      */
-    public int getCommentCount(Map<String,Object> param){
+    public int getCommentCount(Map<String, Object> param) {
         param.put("relatedId", param.get("id"));
         String type = MapUtils.getString(param, "type");
         if (type.equals(SNATCHURL_ZHAOBIAO)) {
-            param.put("relatedType","zhaobiao");
-        }else if (type.equals(SNATCHURL_ZHONGBIAO)){
-            param.put("relatedType","zhongbiao");
-        }else {
-            param.put("relatedType","company");
+            param.put("relatedType", "zhaobiao");
+        } else if (type.equals(SNATCHURL_ZHONGBIAO)) {
+            param.put("relatedType", "zhongbiao");
+        } else {
+            param.put("relatedType", "company");
         }
         int count = tbCommentInfoMapper.queryCommentCount(param);
         return count;
