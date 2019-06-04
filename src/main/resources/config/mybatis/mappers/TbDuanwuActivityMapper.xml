@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbDuanwuActivityMapper">
+
+    <!--添加-->
+    <insert id="insert" parameterType="com.silita.biaodaa.model.TbDuanwuActivity">
+        INSERT INTO `tb_duanwu_activity` (
+        <if test="invitedUid != null and invitedUid != ''">
+            `invited_uid`,
+        </if>
+        <if test="invitePhone != null and invitePhone != ''">
+            `invite_phone`,
+        </if>
+        <if test="payState != null">
+            `pay_state`,
+        </if>
+        <if test="payAmount != null">
+            `pay_amount`,
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            `order_no`,
+        </if>
+        <if test="payd != null and payd != ''">
+            `payd`,
+        </if>
+        <if test="payType != null and payType != ''">
+            `pay_type`,
+        </if>
+        `created`
+        )
+        VALUES
+        (
+        <if test="invitedUid != null and invitedUid != ''">
+            #{invitedUid},
+        </if>
+        <if test="invitePhone != null and invitePhone != ''">
+            #{invitePhone},
+        </if>
+        <if test="payState != null">
+            #{payState},
+        </if>
+        <if test="payAmount != null">
+            #{payAmount},
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            #{orderNo},
+        </if>
+        <if test="payd != null and payd != ''">
+            #{payd},
+        </if>
+        <if test="payType != null and payType != ''">
+            #{payType},
+        </if>
+        now()
+        ) ;
+    </insert>
+
+    <!--修改支付状态-->
+    <update id="updatePayState" parameterType="com.silita.biaodaa.model.TbDuanwuActivity">
+        UPDATE
+          `tb_duanwu_activity`
+        SET
+          `pay_state` = #{payState},
+          `payd` = now(),
+          `updated` = now()
+        WHERE `order_no` = #{orderNo}
+    </update>
+</mapper>

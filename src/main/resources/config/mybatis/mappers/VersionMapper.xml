@@ -10,6 +10,7 @@
         select versionInformation as versionInformation
                 ,content as content
                 ,is_update as isUpdate
+                ,is_activity as isActivity
         from mishu.version where loginChannel=#{loginChannel}
     </select>
 </mapper>
