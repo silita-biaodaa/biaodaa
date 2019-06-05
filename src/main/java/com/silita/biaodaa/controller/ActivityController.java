@@ -39,7 +39,7 @@ public class ActivityController extends BaseController {
         }
         //判断用户是否首充值
         int count = orderInfoService.getUserCount(VisitInfoHolder.getUid());
-        if (count >= 0){
+        if (count > 0){
             return result;
         }
         TbVipFeeStandard fs = vipService.queryFeeStdInfoByCode(MapUtils.getString(param, "stdCode"));
