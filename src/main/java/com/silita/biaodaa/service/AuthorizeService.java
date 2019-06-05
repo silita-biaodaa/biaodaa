@@ -16,6 +16,7 @@ import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.model.SysUserRole;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.utils.*;
+import com.silita.pay.service.OrderInfoService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
@@ -50,6 +51,9 @@ public class AuthorizeService {
 
     @Autowired
     private UserCenterService userCenterService;
+
+    @Autowired
+    OrderInfoService orderInfoService;
 
     /**
      * 用户注册
@@ -120,6 +124,8 @@ public class AuthorizeService {
                     logger.warn("警告：更新用户unionid失败！[updateCount:" + updateCount + "][unionid:" + user.getWxUnionId() + "] by [openid:" + user.getWxOpenId() + "]");
                 }
             }
+            //首充
+            setIsFirst(user);
             return sysUserLoginSuccess(user);
         }
         return null;
@@ -208,6 +214,8 @@ public class AuthorizeService {
     public SysUser memberLogin(SysUser param) {
         SysUser user = queryUserInfo(param);
         if (user != null) {
+            //首充
+            setIsFirst(user);
             user.setChannel(param.getChannel());
             return sysUserLoginSuccess(user);
         } else {
@@ -238,6 +246,8 @@ public class AuthorizeService {
         } else {
             logger.error("刷新用户信息查询失败[resList:" + resList + "][param:" + param.getPkid() + "]");
         }
+        //首充
+        setIsFirst(user);
         return user;
     }
 
@@ -690,4 +700,19 @@ public class AuthorizeService {
         }
         return null;
     }
+
+    /**
+     * 设置是否首充
+     */
+    private void setIsFirst(SysUser user){
+        if (null != user){
+            //是否首充
+            user.setIsFirst(0);
+            Integer count = orderInfoService.getUserCount(user.getPkid());
+            if (count > 0){
+                user.setIsFirst(1);
+            }
+        }
+    }
+
 }
