@@ -3,10 +3,10 @@
 <mapper namespace="com.silita.biaodaa.dao.TbCompanyQualificationMapper" >
 
   <select id="queryCompanyQualification" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.TbCompanyQualification">
-    select * from tb_company_qualification where com_id = #{comId} GROUP BY qual_name ORDER BY valid_date DESC
+    select * from tb_company_qualification where com_id = #{comId} and is_valid =1 GROUP BY qual_name ORDER BY valid_date DESC
   </select>
 
   <select id="queryCompanyQualCount" resultType="java.lang.Integer" parameterType="java.lang.String">
-     select count(1) from tb_company_qualification where com_id = #{comId}
+     select count(1) from tb_company_qualification where com_id = #{comId} and is_valid = 1
   </select>
 </mapper>

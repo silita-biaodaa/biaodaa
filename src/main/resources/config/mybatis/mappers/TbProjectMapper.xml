@@ -168,7 +168,7 @@
             NULL AS pmName
         FROM
         tb_project_company t1
-        JOIN tb_project_contract t3
+        LEFT JOIN tb_project_contract t3
         ON t3.`pkid` = t1.`pid`
         JOIN tb_project t
         ON t1.`pro_id` = t.`pro_id`

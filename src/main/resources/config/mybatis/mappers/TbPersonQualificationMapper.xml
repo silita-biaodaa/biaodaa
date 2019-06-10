@@ -4,7 +4,7 @@
     <!-- 获取企业人员资质的注册类别-->
     <select id="getCompanyPersonCate" parameterType="Map" resultType="Map">
         select category,count(*) as num
-        from (select * from tb_person_${tableCode} where type=1
+        from (select * from tb_person_${tableCode} where type=1 and is_valid=1
         <if test="comId!=null and comId!=''">
             and com_id =#{comId}
         </if>
@@ -33,7 +33,7 @@
         ,q.`type`
         ,GROUP_CONCAT(DISTINCT q.major) AS major
         ,#{tableCode} as tabCode
-        from tb_person_${tableCode} q where 1=1 and q.type=1
+        from tb_person_${tableCode} q where 1=1 and q.type=1 and q.is_valid=1
         <if test="comId!=null and comId!=''">
             and q.com_id = #{comId}
         </if>
@@ -76,6 +76,7 @@
         where q.type=1
         and q.name = #{name}
         and q.id_card = #{idCard}
+        and q.is_valid=1
         order by q.created desc
         limit 1
     </select>
