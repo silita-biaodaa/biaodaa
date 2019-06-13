@@ -345,9 +345,9 @@ public class AuthorizeService {
         params.put("invitationCode", userTempBdd.getInvitationCode());
         InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
         if (null == invitationVo) {
-            return "验证码错误或无效！";
+            return "验证码失效或错误！";
         } else if ("1".equals(invitationVo.getInvitationState())) {
-            return "验证码失效！";
+            return "验证码失效或错误！";
         }
         //判断前端是否已加密  IOS 密码已加密  Android 密码已加密
         if (userTempBdd.getLoginchannel().equals("1002") && Integer.parseInt(userTempBdd.getVersion()) > 10100) {
@@ -563,6 +563,14 @@ public class AuthorizeService {
      */
     @Transactional
     public synchronized String registerUser(SysUser sysUser) throws Exception {
+        //验证登录账号（手机号）
+        Map argMap = new HashMap();
+        argMap.put("phoneNo", sysUser.getPhoneNo());
+        argMap.put("loginName", sysUser.getLoginName());
+        List<String> vList = userTempBddMapper.verifyUserInfo(argMap);
+        if (vList != null && vList.size() > 0) {
+            return Constant.ERR_USER_EXIST;
+        }
         //判断手机验证码是否有效
         String vMsg = verifyPhoneCode(sysUser);
         if (vMsg != null) {
@@ -573,17 +581,25 @@ public class AuthorizeService {
         if (vMsg != null) {
             return vMsg;
         }
-        //验证登录账号（手机号）
-        Map argMap = new HashMap();
-        argMap.put("phoneNo", sysUser.getPhoneNo());
-        argMap.put("loginName", sysUser.getLoginName());
-        List<String> vList = userTempBddMapper.verifyUserInfo(argMap);
-        if (vList != null && vList.size() > 0) {
-            return Constant.ERR_USER_EXIST;
-        }
         //创建会员用户
         createMemberUser(sysUser);
         return Constant.SUCCESS_CODE;
+    }
+
+    /**
+     * 校验手机号
+     * @param phone
+     * @return
+     */
+    public String checkPhone(String phone){
+        Map<String,Object> param = new HashedMap(){{
+            put("phoneNo",phone);
+        }};
+        List<String> vList = userTempBddMapper.verifyUserInfo(param);
+        if (null == vList || vList.size() <= 0){
+            return "该手机号码尚未注册，请立即注册";
+        }
+        return null;
     }
 
     /**

@@ -8,6 +8,7 @@ import com.silita.biaodaa.service.AuthorizeService;
 import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -134,6 +135,13 @@ public class AuthorizeController extends BaseController {
         }
 
         try {
+            //登录校验
+            String msg = authorizeService.checkPhone(sysUser.getPhoneNo());
+            if (StringUtils.isNotEmpty(msg)){
+                result.put("code", Constant.FAIL_CODE);
+                result.put("msg", msg);
+                return result;
+            }
             SysUser userInfo = authorizeService.memberLogin(sysUser);
             if (userInfo != null) {
                 //会员权益赠送
@@ -143,7 +151,7 @@ public class AuthorizeController extends BaseController {
                 result.put("data", userInfo);
             } else {
                 result.put("code", Constant.FAIL_CODE);
-                result.put("msg", "登录用户或密码错误!");
+                result.put("msg", "手机号或密码错误!");
             }
         } catch (Exception e) {
             logger.error("用户登录异常！" + e.getMessage(), e);
@@ -180,7 +188,7 @@ public class AuthorizeController extends BaseController {
                     if (msgCode.equals(Constant.ERR_VERIFY_PHONE_CODE)) {
                         msg = "验证码失效或错误！";
                     } else if (msgCode.equals(Constant.ERR_USER_EXIST)) {
-                        msg = "用户名或手机号已存在！";
+                        msg = "手机号已注册，请立即登录！";
                     } else if (msgCode.equals(Constant.ERR_VERIFY_IVITE_CODE)) {
                         msg = "推荐人邀请码错误！";
                     } else {
@@ -337,8 +345,13 @@ public class AuthorizeController extends BaseController {
                     result.put("msg", "绑定失败，请重试。");
                 }
             } else {
-                result.put("code", errCode);
-                result.put("msg", "绑定失败！");
+                if (errCode.equals(Constant.ERR_VERIFY_PHONE_CODE)) {
+                    result.put("code", errCode);
+                    result.put("msg", "验证码失效或错误！");
+                }else {
+                    result.put("code", errCode);
+                    result.put("msg", "绑定失败！");
+                }
             }
         } catch (Exception e) {
             logger.error("第三方绑定异常！" + e.getMessage(), e);

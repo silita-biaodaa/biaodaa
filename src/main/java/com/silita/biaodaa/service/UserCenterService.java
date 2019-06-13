@@ -101,9 +101,9 @@ public class UserCenterService {
     public String verifyPhoneCode(Map params){
         InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
         if (null == invitationVo) {
-            return "验证码错误或无效！";
+            return "验证码失效或错误！";
         } else if ("1".equals(invitationVo.getInvitationState())) {
-            return "验证码失效！";
+            return "验证码失效或错误！";
         }
         return  null;
     }
