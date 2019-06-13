@@ -95,7 +95,7 @@
   </select>
 
     <select id="queryProvinceList" resultType="Map">
-    select id,display_name from area where grade=0 order by name_abbr
+    select id,display_name from area where grade=0 AND display_name != '澳门特别行政区' AND display_name != '台湾省' AND display_name != '香港特别行政区' order by name_abbr
   </select>
 
     <select id="queryCityList" resultType="String" parameterType="String">
