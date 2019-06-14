@@ -65,4 +65,35 @@
           `updated` = now()
         WHERE `order_no` = #{orderNo}
     </update>
+
+    <update id="update" parameterType="com.silita.biaodaa.model.TbDuanwuActivity">
+        UPDATE
+          `tb_duanwu_activity`
+        SET
+        <if test="invitedUid != null and invitedUid != ''">
+            `invited_uid`=#{invitedUid},
+        </if>
+        <if test="invitePhone != null and invitePhone != ''">
+            `invite_phone`=#{invitePhone},
+        </if>
+        <if test="payState != null">
+            `pay_state`=#{payState},
+        </if>
+        <if test="payAmount != null">
+            `pay_amount` = #{payAmount},
+        </if>
+        <if test="payd != null and payd != ''">
+            `payd`=#{payd},
+        </if>
+        <if test="payType != null and payType != ''">
+            `pay_type`=#{payType},
+        </if>
+        `updated`=now()
+        WHERE `order_no` = #{orderNo}
+    </update>
+
+    <!--查询订单号是否存在-->
+    <select id="queryOrderNoExist" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM tb_duanwu_activity t WHERE t.`order_no` = #{orderNo}
+    </select>
 </mapper>

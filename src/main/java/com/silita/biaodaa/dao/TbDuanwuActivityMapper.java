@@ -18,4 +18,18 @@ public interface TbDuanwuActivityMapper extends MyMapper<TbDuanwuActivity> {
      * @return
      */
     int updatePayState(TbDuanwuActivity tbDuanwuActivity);
+
+    /**
+     * 修改
+     * @param tbDuanwuActivity
+     * @return
+     */
+    int update(TbDuanwuActivity tbDuanwuActivity);
+
+    /**
+     * 查询订单号是否存在
+     * @param orderNo
+     * @return
+     */
+    int queryOrderNoExist(String orderNo);
 }
