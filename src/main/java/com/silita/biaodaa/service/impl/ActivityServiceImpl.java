@@ -42,6 +42,10 @@ public class ActivityServiceImpl implements ActivityService {
         } else if ("ios".equals(tradeType)) {
             activity.setPayType("ios");
         }
+        if (tbDuanwuActivityMapper.queryOrderNoExist(activity.getOrderNo()) > 0){
+            tbDuanwuActivityMapper.update(activity);
+            return;
+        }
         tbDuanwuActivityMapper.insert(activity);
     }
 
