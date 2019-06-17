@@ -177,7 +177,7 @@ public class CompanyChengxinComputerTest {
             createCell(wb, row, (short) 15, HSSFCellStyle.ALIGN_FILL, HSSFCellStyle.VERTICAL_CENTER, list.get(i).get("score").toString()); //要充满屏幕又要中间
         }
         try {
-            FileOutputStream fileOut = new FileOutputStream("E:\\朱帅\\耀邦\\诚信\\非去重建筑工程诚信.xls");
+            FileOutputStream fileOut = new FileOutputStream("E:\\朱帅\\耀邦\\诚信\\去重建筑工程诚信.xls");
             wb.write(fileOut);
             fileOut.close();
         } catch (Exception e) {

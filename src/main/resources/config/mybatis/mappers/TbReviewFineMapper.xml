@@ -24,6 +24,7 @@
           tb_review_fine t
         WHERE t.`com_id` = #{comId}
           AND t.`type` = #{type}
+        AND t.`issued` = #{years}
         <choose>
             <when test="type == 'project'">
                 AND t.`pro_type` = #{reprojType}
