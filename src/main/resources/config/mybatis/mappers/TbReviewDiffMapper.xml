@@ -37,7 +37,8 @@
             <when test="type == 'project'">
                 AND t.`proj_name` is not NULL
                 AND t.`proj_name` != ''
-                AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 90 DAY) ;
+                AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 90 DAY)
+                AND t.`pro_type` = #{reprojType}
             </when>
             <otherwise>
                 AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 360 DAY) ;
@@ -55,7 +56,8 @@
         AND t.`type` = #{type}
         <choose>
             <when test="type == 'project'">
-                AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 90 DAY) ;
+                AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 90 DAY)
+                AND t.`pro_type` = #{reprojType}
             </when>
             <otherwise>
                 AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 360 DAY) ;

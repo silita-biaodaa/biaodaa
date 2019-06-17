@@ -201,6 +201,9 @@ public class ReputationComputerService {
      * @return
      */
     private Map<String, List<Map<String, Object>>> computerProv(Map<String, Object> param) {
+        if ("市政".equals(param.get("projType"))){
+            param.put("reprojType","市政工程");
+        }
         //获取芙蓉奖省优质工程个数5
         List<Map<String, Object>> list = tbAwardHunanMapper.querySjhjAwardsList(param);
         //获取评定合格优良工地个数15
@@ -278,6 +281,9 @@ public class ReputationComputerService {
      * @return
      */
     private Double reviewDiff(Map<String, Object> param) {
+        if ("市政".equals(param.get("projType"))){
+            param.put("reprojType","市政工程");
+        }
         param.put("type", "project");
         Integer proCount = tbReviewDiffMapper.queryReviewDiffCount(param);
         param.put("type", "company");
@@ -316,6 +322,9 @@ public class ReputationComputerService {
      * @return
      */
     public Map<String, Object> listUndesirable(Map<String, Object> param) {
+        if ("市政".equals(param.get("projType"))){
+            param.put("reprojType","市政工程");
+        }
         Map<String, Object> resultMap = new HashedMap();
         param.put("type", "company");
         resultMap.put("unCompany", tbReviewDiffMapper.queryReviewDiff(param));

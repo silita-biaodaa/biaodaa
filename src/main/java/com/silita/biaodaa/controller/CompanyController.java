@@ -163,6 +163,7 @@ public class CompanyController extends BaseController {
             String category = MapUtils.getString(params, "category");
             String keyWord = MapUtils.getString(params, "keyWord");
             String province = MapUtils.getString(params, "province");
+            String comName = MapUtils.getString(params,"comName");
             Map<String, Object> param = new HashMap<>();
             String tableCode = "hunan";
 
@@ -196,8 +197,9 @@ public class CompanyController extends BaseController {
             if (MyStringUtils.isNotNull(category)) {
                 param.put("category", category);
             }
-
-
+            if (StringUtils.isNotEmpty(comName)){
+                param.put("comName",comName);
+            }
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
             Page page = new Page();

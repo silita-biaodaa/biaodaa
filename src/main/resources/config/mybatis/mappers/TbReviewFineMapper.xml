@@ -26,6 +26,7 @@
           AND t.`type` = #{type}
         <choose>
             <when test="type == 'project'">
+                AND t.`pro_type` = #{reprojType}
                 AND t.`proj_name` is not NULL
                 AND t.`proj_name` != ''
                 LIMIT 15

@@ -180,7 +180,7 @@ public class AuthorizeController extends BaseController {
                     inviteProfitDeliver(sysUser);
                     firstProfitDeliver(vo);
                     result.put("code", Constant.SUCCESS_CODE);
-                    result.put("data", vo);
+                    result.put("data", authorizeService.memberLogin(sysUser));
                     result.put("msg", "用户注册成功！");
                 } else {
                     result.put("code", msgCode);
@@ -339,7 +339,7 @@ public class AuthorizeController extends BaseController {
                     firstProfitDeliver(vo);
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "绑定成功！");
-                    result.put("data", vo);
+                    result.put("data", authorizeService.memberLogin(sysUser));
                 } else {
                     result.put("code", Constant.FAIL_CODE);
                     result.put("msg", "绑定失败，请重试。");

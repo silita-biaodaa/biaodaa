@@ -137,7 +137,7 @@ public class CompanyChengxinComputerTest {
 
     public void test222(List<Map<String, Object>> list) {
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("中标候选人统计");  // 创建第一个Sheet页
+        HSSFSheet sheet = wb.createSheet("统计");  // 创建第一个Sheet页
         HSSFRow row = sheet.createRow(0); // 创建一个行
         row.setHeightInPoints(30); //设置这一行的高度
         createCell(wb, row, (short) 0, HSSFCellStyle.ALIGN_FILL, HSSFCellStyle.VERTICAL_CENTER, "企业名称"); //要充满屏幕又要中间
