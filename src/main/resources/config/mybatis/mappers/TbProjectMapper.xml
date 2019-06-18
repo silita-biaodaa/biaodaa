@@ -178,6 +178,24 @@
         <if test="proName != null and proName != ''">
             AND t.`pro_name` LIKE CONCAT('%',#{proName},'%')
         </if>
+        <if test="proType != null and proType != ''">
+            AND t.`pro_type` = #{proType}
+        </if>
+        <if test="amountStart != null and amountStart != ''">
+            AND CAST(t.`invest_amount` AS SIGNED INTEGER) &gt;= #{amountStart}
+        </if>
+        <if test="amountEnd != null and amountEnd != ''">
+            AND CAST(t.`invest_amount` AS SIGNED INTEGER) &lt;= #{amountEnd}
+        </if>
+        <if test="buildStart != null and buildStart != ''">
+            AND t2.`build_end` &gt;= #{buildStart}
+        </if>
+        <if test="buildEnd != null and buildEnd != ''">
+            AND t2.`build_end` &lt;= #{buildEnd}
+        </if>
+        <if test="area != null and area != ''">
+            AND t.`pro_where` LIKE CONCAT(#{area},'%')
+        </if>
         GROUP BY t1.`pro_id`
     </select>
 </mapper>

@@ -165,7 +165,7 @@
     </update>
 
     <select id="query" parameterType="java.util.Map" resultType="java.lang.Integer">
-         SELECT COUNT(1) FROM tb_award_count t WHERE t.`com_id` = #{com_id}
+        SELECT COUNT(1) FROM tb_award_count t WHERE t.`com_id` = #{com_id}
     </select>
 
     <select id="queryList" resultType="java.util.Map">
@@ -175,7 +175,7 @@
           t.`pro_type`
         FROM
           tb_award_count t
-        where t.pro_type is NULL
+        WHERE t.`pro_type` IS NULL
     </select>
 
 </mapper>

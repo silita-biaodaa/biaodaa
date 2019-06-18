@@ -222,11 +222,11 @@ public class CompanyChengxinComputerTest {
         Map<String, Object> param = new HashedMap() {{
             put("projType", "建筑工程");
         }};
-        param.put("comId", "ae45f0ff64ee17cd15607403c9d9f2c9");
+        param.put("comId", "894420c281ec19b4ccc1d86a55ee17c4");
 //            if ("市政工程".equals(map.get("pro_type"))) {
         param.put("projType", "市政");
 //            } else {
-        param.put("projType", "建筑工程");
+//        param.put("projType", "建筑工程");
 //            }
         Map resMap = reputationComputerService.computer(param);
         Double scope = MapUtils.getDouble(resMap, "score");
@@ -238,7 +238,7 @@ public class CompanyChengxinComputerTest {
     public void saveCompanyScope() {
         List<Map<String, Object>> list = saveCompanyMapper.queryList();
         for (Map<String, Object> map : list) {
-            map.put("furong", map.get("total"));
+            map.put("exam_sit", map.get("total"));
 //            map.put("exam_no_com",1);
             //是否存在
             int count = saveCompanyMapper.query(map);

@@ -43,6 +43,11 @@ public class ProjectController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/query", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> query(@RequestBody Map<String, Object> params) {
+        //如果是企业需查询企业下的业绩列表
+        if (null != params.get("comId") && !"".equals(params.get("comId"))){
+            params.put("type","page");
+            return this.companyProjectList(params);
+        }
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("code", this.SUCCESS_CODE);
         result.put("msg", this.SUCCESS_MSG);
