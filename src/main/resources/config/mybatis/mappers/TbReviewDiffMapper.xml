@@ -33,17 +33,12 @@
         tb_review_diff t
         WHERE t.`com_id` = #{comId}
         AND t.`type` = #{type}
-        <choose>
-            <when test="type == 'project'">
-                AND t.`proj_name` is not NULL
-                AND t.`proj_name` != ''
-                AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 90 DAY)
-                AND t.`pro_type` = #{reprojType}
-            </when>
-            <otherwise>
-                AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 360 DAY) ;
-            </otherwise>
-        </choose>
+        AND DATE(t.`valided`) &gt;DATE(NOW())
+        <if test="type == 'project'">
+            AND t.`proj_name` is not NULL
+            AND t.`proj_name` != ''
+            AND t.`pro_type` = #{reprojType}
+        </if>
     </select>
 
     <!-- 查询考评不合格情况(数量)-->
@@ -54,14 +49,9 @@
         tb_review_diff t
         WHERE t.`com_id` = #{comId}
         AND t.`type` = #{type}
-        <choose>
-            <when test="type == 'project'">
-                AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 90 DAY)
-                AND t.`pro_type` = #{reprojType}
-            </when>
-            <otherwise>
-                AND DATE(t.`valided`) &lt;= DATE_ADD(CURDATE(), INTERVAL 360 DAY) ;
-            </otherwise>
-        </choose>
+        AND DATE(t.`valided`) &gt;DATE(NOW())
+        <if test="type == 'project'">
+            AND t.`pro_type` = #{reprojType}
+        </if>
     </select>
 </mapper>

@@ -27,7 +27,7 @@
         ON t.`grade` = t1.`award_name`
         AND t1.`award_type` = 'sjaqrz'
         WHERE t.`com_id` = #{comId}
-        AND DATE(t.`valided`) &lt;= DATE_ADD(NOW(), INTERVAL 3 YEAR)
+        AND DATE(t.`valided`) &gt;= NOW()
         ORDER BY t1.`score` DESC
         LIMIT 1
     </select>

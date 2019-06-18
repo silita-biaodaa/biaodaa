@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.silita.biaodaa.dao.SaveCompanyMapper">
+
+
+    <insert id="save" parameterType="java.util.Map">
+        INSERT INTO `tb_award_count` (
+        `com_id`,
+        `com_name`,
+        `pro_type`,
+        <if test="luban != null and luban != ''">
+            `luban`,
+        </if>
+        <if test="safe_site != null and safe_site != ''">
+            `safe_site`,
+        </if>
+        <if test="set_award != null and set_award != ''">
+            `set_award`,
+        </if>
+        <if test="furong != null and furong != ''">
+            `furong`,
+        </if>
+        <if test="province_project != null and province_project != ''">
+            `province_project`,
+        </if>
+        <if test="exam_sit != null and exam_sit != ''">
+            `exam_sit`,
+        </if>
+        <if test="exam_com != null and exam_com != ''">
+            `exam_com`,
+        </if>
+        <if test="province_fine != null and province_fine != ''">
+            `province_fine`,
+        </if>
+        <if test="province_pass != null and province_pass != ''">
+            `province_pass`,
+        </if>
+        <if test="city_fine != null and city_fine != ''">
+            `city_fine`,
+        </if>
+        <if test="city_pass != null and city_pass != ''">
+            `city_pass`,
+        </if>
+        <if test="exam_no_sit != null and exam_no_sit != ''">
+            `exam_no_sit`,
+        </if>
+        <if test="exam_no_com != null and exam_no_com != ''">
+            `exam_no_com`,
+        </if>
+        <if test="undesirable != null and undesirable != ''">
+            `undesirable`,
+        </if>
+        <if test="score != null and score != ''">
+            `score`,
+        </if>
+        `updated`
+        )
+        VALUES
+        (
+        #{com_id},
+        #{com_name},
+        #{pro_type},
+        <if test="luban != null and luban != ''">
+            #{luban},
+        </if>
+        <if test="safe_site != null and safe_site != ''">
+            #{safe_site},
+        </if>
+        <if test="set_award != null and set_award != ''">
+            #{set_award},
+        </if>
+        <if test="furong != null and furong != ''">
+            #{furong},
+        </if>
+        <if test="province_project != null and province_project != ''">
+            #{province_project},
+        </if>
+        <if test="exam_sit != null and exam_sit != ''">
+            #{exam_sit},
+        </if>
+        <if test="exam_com != null and exam_com != ''">
+            #{exam_com},
+        </if>
+        <if test="province_fine != null and province_fine != ''">
+            #{province_fine},
+        </if>
+        <if test="province_pass != null and province_pass != ''">
+            #{province_pass},
+        </if>
+        <if test="city_fine != null and city_fine != ''">
+            #{city_fine},
+        </if>
+        <if test="city_pass != null and city_pass != ''">
+            #{city_pass},
+        </if>
+        <if test="exam_no_sit != null and exam_no_sit != ''">
+            #{exam_no_sit},
+        </if>
+        <if test="exam_no_com != null and exam_no_com != ''">
+            #{exam_no_com},
+        </if>
+        <if test="undesirable != null and undesirable != ''">
+            #{undesirable},
+        </if>
+        <if test="score != null and score != ''">
+            #{score},
+        </if>
+        now()
+        ) ;
+    </insert>
+
+    <update id="update" parameterType="java.util.Map">
+        UPDATE
+          `tb_award_count`
+        SET
+        <if test="luban != null and luban != ''">
+            `luban` = #{luban},
+        </if>
+        <if test="safe_site != null and safe_site != ''">
+            `safe_site` = #{safe_site},
+        </if>
+        <if test="set_award != null and set_award != ''">
+            `set_award` =#{set_award},
+        </if>
+        <if test="furong != null and furong != ''">
+            `furong` =#{furong},
+        </if>
+        <if test="province_project != null and province_project != ''">
+            `province_project` = #{province_project},
+        </if>
+        <if test="exam_sit != null and exam_sit != ''">
+            `exam_sit` =#{exam_sit},
+        </if>
+        <if test="exam_com != null and exam_com != ''">
+            `exam_com` = #{exam_com},
+        </if>
+        <if test="province_fine != null and province_fine != ''">
+            `province_fine` = #{province_fine},
+        </if>
+        <if test="province_pass != null and province_pass != ''">
+            `province_pass` = #{province_pass},
+        </if>
+        <if test="city_fine != null and city_fine != ''">
+            `city_fine` = #{city_fine},
+        </if>
+        <if test="city_pass != null and city_pass != ''">
+            `city_pass` =#{city_pass},
+        </if>
+        <if test="exam_no_sit != null and exam_no_sit != ''">
+            `exam_no_sit` = #{exam_no_sit},
+        </if>
+        <if test="exam_no_com != null and exam_no_com != ''">
+            `exam_no_com` = #{exam_no_com},
+        </if>
+        <if test="undesirable != null and undesirable != ''">
+            `undesirable` = #{undesirable},
+        </if>
+          <if test="score != null">
+              `score` = #{score},
+          </if>
+          `updated` = now()
+        WHERE `com_id` = #{com_id}
+        AND `com_name` = #{com_name}
+    </update>
+
+    <select id="query" parameterType="java.util.Map" resultType="java.lang.Integer">
+         SELECT COUNT(1) FROM tb_award_count t WHERE t.`com_id` = #{com_id}
+    </select>
+
+    <select id="queryList" resultType="java.util.Map">
+        SELECT
+          t.`com_id`,
+          t.`com_name`,
+          t.`pro_type`
+        FROM
+          tb_award_count t
+        where t.pro_type is NULL
+    </select>
+
+</mapper>

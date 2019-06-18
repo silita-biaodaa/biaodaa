@@ -94,9 +94,9 @@
         AND t.`proj_type` LIKE CONCAT('%',#{projType},'%')
         AND t.`proj_name` IS NOT NULL
         AND t.`proj_name` != ''
-        ORDER BY t1.`score` DESC,
-        t.`years` DESC) res
+        ORDER BY t.`years` DESC) res
         GROUP BY res.proj_name
+        ORDER BY res.`score` DESC
         LIMIT 5
     </select>
 </mapper>

@@ -1,8 +1,10 @@
 package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.common.Constant;
+import com.silita.biaodaa.dao.SaveCompanyMapper;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.model.es.CompanyEs;
+import lombok.val;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.hssf.usermodel.*;
@@ -27,6 +29,8 @@ public class CompanyChengxinComputerTest {
     ReputationComputerService reputationComputerService;
     @Autowired
     TbCompanyMapper tbCompanyMapper;
+    @Autowired
+    SaveCompanyMapper saveCompanyMapper;
 
     @org.junit.Test
     public void test() {
@@ -177,7 +181,7 @@ public class CompanyChengxinComputerTest {
             createCell(wb, row, (short) 15, HSSFCellStyle.ALIGN_FILL, HSSFCellStyle.VERTICAL_CENTER, list.get(i).get("score").toString()); //要充满屏幕又要中间
         }
         try {
-            FileOutputStream fileOut = new FileOutputStream("E:\\朱帅\\耀邦\\诚信\\去重建筑工程诚信.xls");
+            FileOutputStream fileOut = new FileOutputStream("E:\\朱帅\\耀邦\\诚信\\非去重建筑工程诚信.xls");
             wb.write(fileOut);
             fileOut.close();
         } catch (Exception e) {
@@ -188,5 +192,63 @@ public class CompanyChengxinComputerTest {
     private static void createCell(HSSFWorkbook wb, HSSFRow row, int column, short halign, short valign, String val) {
         HSSFCell cell = row.createCell(column);  // 创建单元格
         cell.setCellValue(new HSSFRichTextString(val));  // 设置值
+    }
+
+    @org.junit.Test
+    public void computerScope() {
+        Map<String, Object> param = new HashedMap() {{
+            put("projType", "建筑工程");
+        }};
+        List<Map<String, Object>> list = saveCompanyMapper.queryList();
+        for (Map<String, Object> map : list) {
+//            param.put("comId","894420c281ec19b4ccc1d86a55ee17c4");
+            param.put("comId", map.get("com_id"));
+            if ("市政工程".equals(map.get("pro_type"))) {
+                param.put("projType", "市政");
+            } else {
+                param.put("projType", "建筑工程");
+            }
+            Map resMap = reputationComputerService.computer(param);
+            Double scope = MapUtils.getDouble(resMap, "score");
+            map.put("score", scope);
+            saveCompanyMapper.update(map);
+        }
+//        System.out.println(scope);
+    }
+
+
+    @org.junit.Test
+    public void computerOneScope() {
+        Map<String, Object> param = new HashedMap() {{
+            put("projType", "建筑工程");
+        }};
+        param.put("comId", "ae45f0ff64ee17cd15607403c9d9f2c9");
+//            if ("市政工程".equals(map.get("pro_type"))) {
+        param.put("projType", "市政");
+//            } else {
+        param.put("projType", "建筑工程");
+//            }
+        Map resMap = reputationComputerService.computer(param);
+        Double scope = MapUtils.getDouble(resMap, "score");
+        System.out.println(scope);
+    }
+
+
+    @org.junit.Test
+    public void saveCompanyScope() {
+        List<Map<String, Object>> list = saveCompanyMapper.queryList();
+        for (Map<String, Object> map : list) {
+            map.put("furong", map.get("total"));
+//            map.put("exam_no_com",1);
+            //是否存在
+            int count = saveCompanyMapper.query(map);
+            if (count > 0) {
+                //修改
+                saveCompanyMapper.update(map);
+            } else {
+                //添加
+                saveCompanyMapper.save(map);
+            }
+        }
     }
 }
