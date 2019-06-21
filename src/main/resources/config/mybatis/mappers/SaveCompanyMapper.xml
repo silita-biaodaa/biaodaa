@@ -169,13 +169,13 @@
     </select>
 
     <select id="queryList" resultType="java.util.Map">
-        SELECT
-          t.`com_id`,
-          t.`com_name`,
-          t.`pro_type`
-        FROM
-          tb_award_count t
-        WHERE t.`pro_type` IS NULL
+      SELECT
+  t.`com_id`,
+  t.`com_name`,
+  t.`pro_type`
+FROM
+  tb_award_count t
+WHERE t.`pro_type` IS NULL
     </select>
 
 </mapper>

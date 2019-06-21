@@ -48,6 +48,11 @@ public class UnderConstructController extends BaseController {
             resultMap.put("data", list);
             return resultMap;
         }
+        if ("api".equals(param.get("type"))) {
+            resultMap.put(CODE_FLAG, 0);
+            resultMap.put(MSG_FLAG, "由于湖南省建筑厅系统交接中，暂时无法使用身份证号进行精准查询。");
+            return resultMap;
+        }
         if (MyStringUtils.isNull(param.get("name"))) {
             resultMap.put(CODE_FLAG, 0);
             resultMap.put(MSG_FLAG, "参数name不可为空!");
