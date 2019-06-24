@@ -12,6 +12,7 @@ import com.silita.biaodaa.utils.ObjectUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -377,11 +378,13 @@ public class ProjectService {
     public Map<String, Object> getProjectCompanyList(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         String companyId = MapUtils.getString(param, "comId");
-
+        String comName = MapUtils.getString(param,"comName");
         // TODO:获取公司信息
-        TbCompany company = tbCompanyMapper.getCompany(companyId);
-
-        param.put("comName", company.getComName());
+        if (StringUtils.isEmpty(comName)){
+            TbCompany company = tbCompanyMapper.getCompany(companyId);
+            comName = company.getComName();
+        }
+        param.put("comName", comName);
 
         List<Map<String, Object>> resultList = tbProjectMapper.queryListCompanyPro(param);
 

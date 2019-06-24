@@ -44,7 +44,7 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/query", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> query(@RequestBody Map<String, Object> params) {
         //如果是企业需查询企业下的业绩列表
-        if (null != params.get("comId") && !"".equals(params.get("comId"))){
+        if ((null != params.get("comId") && !"".equals(params.get("comId"))) || (null != params.get("comName") && !"".equals(params.get("comName")))){
             params.put("type","page");
             return this.companyProjectList(params);
         }
