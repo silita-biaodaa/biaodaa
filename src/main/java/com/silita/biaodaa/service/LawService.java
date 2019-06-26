@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.RedisConstantInterface;
+import com.silita.biaodaa.dao.TbClickStatisticsMapper;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.elastic.common.ConstantUtil;
 import com.silita.biaodaa.elastic.common.NativeElasticSearchUtils;
@@ -11,6 +12,7 @@ import com.silita.biaodaa.elastic.model.PaginationAndSort;
 import com.silita.biaodaa.elastic.model.QuerysModel;
 import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.es.InitElasticseach;
+import com.silita.biaodaa.model.TbClickStatistics;
 import com.silita.biaodaa.model.es.CompanyEs;
 import com.silita.biaodaa.model.es.CompanyLawEs;
 import com.silita.biaodaa.model.es.Law;
@@ -34,7 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.silita.biaodaa.common.RedisConstantInterface.LAW_LIST_OVER_TIME;
+import static com.silita.biaodaa.utils.RouteUtils.HUNAN_SOURCE;
 
 @Service
 public class LawService {
@@ -47,6 +49,8 @@ public class LawService {
     ElasticseachService elasticseachService;
     @Autowired
     TbCompanyMapper tbCompanyMapper;
+    @Autowired
+    TbClickStatisticsMapper tbClickStatisticsMapper;
     @Autowired
     MyRedisTemplate myRedisTemplate;
 
@@ -184,7 +188,24 @@ public class LawService {
         law.setTitle(jsonObject.getString("title"));
         law.setUrl(jsonObject.getString("url"));
         law.setContent(jsonObject.getString("content").replaceAll("<a href[^>]*>", "").replaceAll("</a>", ""));
+        //添加点击次数
+        setClickCount(law, id);
         return law;
+    }
+
+    private void setClickCount(Law law, String id) {
+        TbClickStatistics tbClickStatistics = new TbClickStatistics();
+        tbClickStatistics.setType("law");
+        tbClickStatistics.setInnertId(id);
+        tbClickStatistics.setSource(HUNAN_SOURCE);
+        //判断是否存在
+        Integer curDateTotal = tbClickStatisticsMapper.getTotalBySourceAndTypeAndInnertId(tbClickStatistics);
+        if (curDateTotal > 0) {
+            tbClickStatisticsMapper.updateClickStatisticsBySourceAndTypeAndInnertId(tbClickStatistics);
+        } else {
+            tbClickStatisticsMapper.insertClickStatistics(tbClickStatistics);
+        }
+        law.setClickCount(tbClickStatisticsMapper.getClickCountByBySourceAndTypeAndInnertId(tbClickStatistics));
     }
 
     /**

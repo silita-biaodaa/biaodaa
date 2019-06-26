@@ -173,4 +173,9 @@ public class Law implements Serializable{
      * 档案编号
      */
     private String number;
+
+    /**
+     * 点击数
+     */
+    private Integer clickCount;
 }
