@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbCompanyUpdateMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbCompanyUpdate">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="com_id" property="comId" jdbcType="VARCHAR"/>
+        <result column="com_name" property="comName" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="is_updated" property="isUpdated" jdbcType="INTEGER"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询待更新的企业信息-->
+    <select id="queryCompanyUpdated" parameterType="java.util.Map" resultMap="BaseResultMap">
+      SELECT
+        *
+      FROM
+        tb_company_update t
+      WHERE t.`is_updated` = #{isUpdated}
+      GROUP BY t.com_id
+      ORDER BY t.`created` ASC
+      LIMIT #{limit}
+  </select>
+
+    <!--修改-->
+    <update id="updated" parameterType="com.silita.biaodaa.model.TbCompanyUpdate">
+        UPDATE
+          tb_company_update
+        SET
+          `is_updated` = #{isUpdated},
+          `updated` = now()
+        WHERE `pkid` = #{pkid}
+    </update>
+
+    <!--更新状态-->
+    <update id="updatedStatus" parameterType="com.silita.biaodaa.model.TbCompanyUpdate">
+        UPDATE
+          tb_company_update
+        SET
+          `is_updated` = #{isUpdated},
+          `updated` = now()
+        WHERE `com_id` = #{comId}
+    </update>
+</mapper>
