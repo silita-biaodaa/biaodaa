@@ -77,7 +77,7 @@ public class AspectCheckLogin {
             if (filterUrl != null) {
                 String[] urls = filterUrl.split(",");
                 for (String url : urls) {
-                    if (requestUri.contains(url)) {
+                    if (url.contains(requestUri)) {
                         greenWay = true;
                         break;
                     }

@@ -23,8 +23,22 @@ public interface TbCompanyUpdateMapper extends MyMapper<TbCompanyUpdate> {
     int updated(TbCompanyUpdate companyUpdate);
 
     /**
-     * 更新状态
+     * 删除公司更新信息
      * @return
      */
-    int updatedStatus(TbCompanyUpdate companyUpdate);
+    int deleteCompanyUpdated(String comId);
+
+    /**
+     * 查询企业的更新状态
+     * @param param
+     * @return
+     */
+    int queryCompanyUpdatedState(Map<String,Object> param);
+
+    /**
+     * 添加
+     * @param companyUpdate
+     * @return
+     */
+    int insert(TbCompanyUpdate companyUpdate);
 }

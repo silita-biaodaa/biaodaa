@@ -1,6 +1,9 @@
 package com.silita.biaodaa.service;
 
+import com.silita.biaodaa.common.Constant;
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.TbCompanyUpdateMapper;
+import com.silita.biaodaa.dao.TbGsCompanyMapper;
 import com.silita.biaodaa.model.TbCompanyUpdate;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -19,6 +22,8 @@ public class CompanyForUpdatedService {
 
     @Autowired
     TbCompanyUpdateMapper tbCompanyUpdateMapper;
+    @Autowired
+    TbGsCompanyMapper tbGsCompanyMapper;
 
     /**
      * 返回待更新企业
@@ -40,6 +45,7 @@ public class CompanyForUpdatedService {
             companyUpdate.setIsUpdated(0);
             tbCompanyUpdateMapper.updated(companyUpdate);
         }
+        comList = null;
         return resultList;
     }
 
@@ -49,10 +55,38 @@ public class CompanyForUpdatedService {
     public void finishCompany(Map<String,Object> param){
         //从Hbase查询数据并解析入库
         //消息通知
-        //修改状态
+        //删掉这个公司的待更新记录
+        tbCompanyUpdateMapper.deleteCompanyUpdated(MapUtils.getString(param,"comId"));
+    }
+
+    /**
+     * 一键更新
+     * @param param
+     * @return
+     */
+    public Map<String,Object> updatedCompany(Map<String,Object> param){
+        Map<String,Object> resultMap = new HashedMap();
+        resultMap.put("code",Constant.WARN_CODE_405);
+        //该企业是否一周内最新数据
+        if (tbGsCompanyMapper.queryGsCompanyCount(param) > 0){
+            resultMap.put("msg","企业的【工商数据】为最新信息");
+            return resultMap;
+        }
+        //该企业在待更新
+        if (tbCompanyUpdateMapper.queryCompanyUpdatedState(param) > 0){
+            resultMap.put("msg","企业的【工商数据】将更新至最新信息，更新完成后，会有消息通知到您！！");
+            return resultMap;
+        }
+        //添加数据
         TbCompanyUpdate companyUpdate = new TbCompanyUpdate();
         companyUpdate.setComId(MapUtils.getString(param,"comId"));
-        companyUpdate.setIsUpdated(2);
-        tbCompanyUpdateMapper.updatedStatus(companyUpdate);
+        companyUpdate.setComName(MapUtils.getString(param,"comName"));
+        companyUpdate.setUserId(VisitInfoHolder.getUid());
+        companyUpdate.setIsUpdated(1);
+        tbCompanyUpdateMapper.insert(companyUpdate);
+        companyUpdate = null;
+        resultMap.put("code",1);
+        resultMap.put("msg","操作成功");
+        return resultMap;
     }
 }

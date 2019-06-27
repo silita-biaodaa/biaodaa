@@ -59,4 +59,14 @@ public class CompanyForUpdatedController extends BaseController{
             return result;
         }
     }
+
+    /**
+     * 一键更新
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/company", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> updatedCompany(@RequestBody Map<String,Object> param) {
+        return companyForUpdatedService.updatedCompany(param);
+    }
 }

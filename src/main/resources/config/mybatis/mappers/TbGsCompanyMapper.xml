@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbGsCompanyMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbGsCompany">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="com_id" property="comId" jdbcType="VARCHAR"/>
+        <result column="com_name" property="comName" jdbcType="VARCHAR"/>
+        <result column="updated" property="updated" jdbcType="TIMESTAMP"/>
+        <result column="basic" property="basic" jdbcType="LONGVARCHAR"/>
+        <result column="partner" property="partner" jdbcType="LONGVARCHAR"/>
+        <result column="personnel" property="personnel" jdbcType="LONGVARCHAR"/>
+        <result column="chang_record" property="changRecord" jdbcType="LONGVARCHAR"/>
+        <result column="punish" property="punish" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <!--查询是否在一周内更新-->
+    <select id="queryGsCompanyCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+      SELECT
+        COUNT(1)
+      FROM
+        tb_gs_company t
+      WHERE t.`com_id` = #{comId}
+        AND DATE(t.`updated`) &lt;= DATE_SUB(CURDATE(), INTERVAL - 7 DAY)
+  </select>
+</mapper>

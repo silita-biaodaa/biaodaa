@@ -26,6 +26,19 @@
       LIMIT #{limit}
   </select>
 
+    <!--查询企业的更新状态-->
+    <select id="queryCompanyUpdatedState" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select
+          count(1)
+        from
+          tb_company_update t
+        where t.`com_id` = #{comId}
+          and (
+            t.`is_updated` = 0
+            or t.`is_updated` = 1
+          )
+    </select>
+
     <!--修改-->
     <update id="updated" parameterType="com.silita.biaodaa.model.TbCompanyUpdate">
         UPDATE
@@ -36,13 +49,46 @@
         WHERE `pkid` = #{pkid}
     </update>
 
-    <!--更新状态-->
-    <update id="updatedStatus" parameterType="com.silita.biaodaa.model.TbCompanyUpdate">
-        UPDATE
-          tb_company_update
-        SET
-          `is_updated` = #{isUpdated},
-          `updated` = now()
+    <!--删除记录-->
+    <delete id="deleteCompanyUpdated" parameterType="java.lang.String">
+        DELETE
+        FROM
+          `tb_company_update`
         WHERE `com_id` = #{comId}
-    </update>
+    </delete>
+
+    <!--添加-->
+    <insert id="insert" parameterType="com.silita.biaodaa.model.TbCompanyUpdate">
+        insert into `tb_company_update`(
+        <if test="comId != null and comId != ''">
+            `com_id`,
+        </if>
+        <if test="comName != null and comName != ''">
+            `com_name`,
+        </if>
+        <if test="userId != null and userId != ''">
+            `user_id`,
+        </if>
+        <if test="isUpdated != null">
+            `is_updated`,
+        </if>
+        `created`
+        )
+        values
+        (
+        <if test="comId != null and comId != ''">
+            #{comId},
+        </if>
+        <if test="comName != null and comName != ''">
+            #{comName},
+        </if>
+        <if test="userId != null and userId != ''">
+            #{userId},
+        </if>
+        <if test="isUpdated != null">
+            #{isUpdated},
+        </if>
+        now()
+        )
+    </insert>
 </mapper>
