@@ -22,6 +22,11 @@ public class CompanyGsService {
     @Autowired
     TbCompanyMapper tbCompanyMapper;
 
+    /**
+     * 工商基本信息
+     * @param company
+     * @return
+     */
     public Map<String, Object> getGsCompany(TbCompany company) {
         if (tbGsCompanyMapper.queryCompanyExits(company.getComId()) <= 0) {
             return null;
@@ -46,4 +51,13 @@ public class CompanyGsService {
         return resultMap;
     }
 
+    /**
+     * 查询股东信息、主要人员、变更记录、企业年报、行政处罚
+     * @param param
+     * @return
+     */
+    public Object getGsCompangInfo(Map<String,Object> param){
+
+        return null;
+    }
 }

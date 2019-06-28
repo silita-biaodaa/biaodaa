@@ -59,7 +59,7 @@ public class CompanyForUpdatedService {
         companyHbaseService.saveGsCompany(param);
         //消息通知
         //删掉这个公司的待更新记录
-//        tbCompanyUpdateMapper.deleteCompanyUpdated(MapUtils.getString(param,"comId"));
+        tbCompanyUpdateMapper.deleteCompanyUpdated(MapUtils.getString(param,"comId"));
     }
 
     /**

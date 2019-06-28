@@ -72,7 +72,8 @@
         <if test="isUpdated != null">
             `is_updated`,
         </if>
-        `created`
+        `created`,
+        `updated`
         )
         values
         (
@@ -88,6 +89,7 @@
         <if test="isUpdated != null">
             #{isUpdated},
         </if>
+        now(),
         now()
         )
     </insert>

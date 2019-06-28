@@ -11,6 +11,7 @@ import com.silita.biaodaa.service.*;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +66,9 @@ public class CompanyController extends BaseController {
         try {
             TbCompany tbCompany = tbCompanyService.getCompany(comId);
             //判断是否最新工商
-            Map gsCompany = companyGsService.getGsCompany(tbCompany);
-            if (MapUtils.isNotEmpty(gsCompany)){
-                result.put("data", gsCompany);
-                result.put("code", 1);
-                result.put("msg", "查询成功!");
-                return result;
+            Map<String,Object> gsCom = this.setNewGsCompany(tbCompany);
+            if (MapUtils.isNotEmpty(gsCom)){
+                return gsCom;
             }
             result.put("data", tbCompany);
             result.put("code", 1);
@@ -482,6 +480,10 @@ public class CompanyController extends BaseController {
             result.put(MSG_FLAG, "未查询到公司详情");
             return result;
         }
+        Map<String,Object> gsCom = this.setNewGsCompany(company);
+        if (MapUtils.isNotEmpty(gsCom)){
+            return gsCom;
+        }
         result.put("data", company);
         return result;
     }
@@ -681,5 +683,18 @@ public class CompanyController extends BaseController {
         resultMap.put("data", list);
         successMsg(resultMap);
         return resultMap;
+    }
+
+    private Map<String,Object> setNewGsCompany(TbCompany company){
+        Map<String,Object> result = new HashedMap();
+        //判断是否最新工商
+        Map gsCom = companyGsService.getGsCompany(company);
+        if (MapUtils.isNotEmpty(gsCom)){
+            result.put("data", gsCom);
+            result.put("code", 1);
+            result.put("msg", "查询成功!");
+            return result;
+        }
+        return null;
     }
 }
