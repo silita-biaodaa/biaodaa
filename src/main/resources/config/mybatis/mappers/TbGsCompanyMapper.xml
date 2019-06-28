@@ -25,4 +25,112 @@
       WHERE t.`com_id` = #{comId}
         AND DATE(t.`updated`) &lt;= DATE_SUB(CURDATE(), INTERVAL - 7 DAY)
   </select>
+
+    <!--查询企业是否存在-->
+    <select id="queryCompanyExits" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+          COUNT(1)
+        FROM
+          tb_gs_company t
+        WHERE t.`com_id` = #{comId}
+    </select>
+
+    <!--查询企业单个字段-->
+    <select id="queryCompanyParamter" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          ${paramter} AS paramter,
+          updated AS updated
+        FROM
+          tb_gs_company
+        WHERE com_id = #{comId}
+    </select>
+
+    <!--添加-->
+    <insert id="insertGsCompany" parameterType="com.silita.biaodaa.model.TbGsCompany">
+        INSERT INTO `tb_gs_company` (
+        <if test="comId != null and comId != ''">
+            `com_id`,
+        </if>
+        <if test="comName != null and comName != ''">
+            `com_name`,
+        </if>
+        <if test="basic != null and basic != ''">
+            `basic`,
+        </if>
+        <if test="partner != null and partner != ''">
+            `partner`,
+        </if>
+        <if test="personnel != null and personnel != ''">
+            `personnel`,
+        </if>
+        <if test="changRecord != null and changRecord != ''">
+            `chang_record`,
+        </if>
+        <if test="punish != null and punish != ''">
+            `punish`,
+        </if>
+        <if test="branch != null and branch != ''">
+            `branch`,
+        </if>
+        `updated`
+        )
+        VALUES
+        (
+        <if test="comId != null and comId != ''">
+            #{comId},
+        </if>
+        <if test="comName != null and comName != ''">
+            #{comName},
+        </if>
+        <if test="basic != null and basic != ''">
+            #{basic},
+        </if>
+        <if test="partner != null and partner != ''">
+            #{partner},
+        </if>
+        <if test="personnel != null and personnel != ''">
+            #{personnel},
+        </if>
+        <if test="changRecord != null and changRecord != ''">
+            #{changRecord},
+        </if>
+        <if test="punish != null and punish != ''">
+            #{punish},
+        </if>
+        <if test="branch != null and branch != ''">
+            #{branch},
+        </if>
+        now()
+        ) ;
+    </insert>
+
+    <!--修改-->
+    <update id="updatedGsCompany" parameterType="com.silita.biaodaa.model.TbGsCompany">
+        UPDATE
+        `tb_gs_company`
+        SET
+        <if test="comName != null and comName != ''">
+            `com_name` = #{comName},
+        </if>
+        <if test="basic != null and basic != ''">
+            `basic` = #{basic},
+        </if>
+        <if test="partner != null and partner != ''">
+            `partner` = #{partner},
+        </if>
+        <if test="personnel != null and personnel != ''">
+            `personnel` = #{personnel},
+        </if>
+        <if test="changRecord != null and changRecord != ''">
+            `chang_record` = #{changRecord},
+        </if>
+        <if test="punish != null and punish != ''">
+            `punish` = #{punish},
+        </if>
+        <if test="branch != null and branch != ''">
+            `branch` = #{branch},
+        </if>
+        `updated` = now()
+        WHERE `com_id` = #{comId}
+    </update>
 </mapper>

@@ -24,6 +24,8 @@ public class CompanyForUpdatedService {
     TbCompanyUpdateMapper tbCompanyUpdateMapper;
     @Autowired
     TbGsCompanyMapper tbGsCompanyMapper;
+    @Autowired
+    CompanyHbaseService companyHbaseService;
 
     /**
      * 返回待更新企业
@@ -54,9 +56,10 @@ public class CompanyForUpdatedService {
      */
     public void finishCompany(Map<String,Object> param){
         //从Hbase查询数据并解析入库
+        companyHbaseService.saveGsCompany(param);
         //消息通知
         //删掉这个公司的待更新记录
-        tbCompanyUpdateMapper.deleteCompanyUpdated(MapUtils.getString(param,"comId"));
+//        tbCompanyUpdateMapper.deleteCompanyUpdated(MapUtils.getString(param,"comId"));
     }
 
     /**

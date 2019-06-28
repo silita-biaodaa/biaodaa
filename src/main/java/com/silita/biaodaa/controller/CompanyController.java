@@ -7,10 +7,7 @@ import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbCompany;
-import com.silita.biaodaa.service.CommonService;
-import com.silita.biaodaa.service.NoticeService;
-import com.silita.biaodaa.service.TbCompanyInfoService;
-import com.silita.biaodaa.service.TbCompanyService;
+import com.silita.biaodaa.service.*;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
 import org.apache.commons.collections.MapUtils;
@@ -50,6 +47,8 @@ public class CompanyController extends BaseController {
     ElasticseachService elasticseachService;
     @Autowired
     TbCompanyInfoService tbCompanyInfoService;
+    @Autowired
+    CompanyGsService companyGsService;
 
     /**
      * 企业详情
@@ -65,9 +64,18 @@ public class CompanyController extends BaseController {
         result.put("msg", "企业查询失败!");
         try {
             TbCompany tbCompany = tbCompanyService.getCompany(comId);
+            //判断是否最新工商
+            Map gsCompany = companyGsService.getGsCompany(tbCompany);
+            if (MapUtils.isNotEmpty(gsCompany)){
+                result.put("data", gsCompany);
+                result.put("code", 1);
+                result.put("msg", "查询成功!");
+                return result;
+            }
             result.put("data", tbCompany);
             result.put("code", 1);
             result.put("msg", "查询成功!");
+            return result;
         } catch (IllegalArgumentException e) {
             logger.error("获取企业信息异常" + e.getMessage(), e);
             result.put("code", 0);
