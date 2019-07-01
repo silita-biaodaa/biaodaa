@@ -12,7 +12,7 @@
         <result column="basic" property="basic" jdbcType="LONGVARCHAR"/>
         <result column="partner" property="partner" jdbcType="LONGVARCHAR"/>
         <result column="personnel" property="personnel" jdbcType="LONGVARCHAR"/>
-        <result column="chang_record" property="changRecord" jdbcType="LONGVARCHAR"/>
+        <result column="change_record" property="changeRecord" jdbcType="LONGVARCHAR"/>
         <result column="punish" property="punish" jdbcType="LONGVARCHAR"/>
     </resultMap>
 
@@ -63,8 +63,8 @@
         <if test="personnel != null and personnel != ''">
             `personnel`,
         </if>
-        <if test="changRecord != null and changRecord != ''">
-            `chang_record`,
+        <if test="changeRecord != null and changeRecord != ''">
+            `change_record`,
         </if>
         <if test="punish != null and punish != ''">
             `punish`,
@@ -91,8 +91,8 @@
         <if test="personnel != null and personnel != ''">
             #{personnel},
         </if>
-        <if test="changRecord != null and changRecord != ''">
-            #{changRecord},
+        <if test="changeRecord != null and changeRecord != ''">
+            #{changeRecord},
         </if>
         <if test="punish != null and punish != ''">
             #{punish},
@@ -121,8 +121,8 @@
         <if test="personnel != null and personnel != ''">
             `personnel` = #{personnel},
         </if>
-        <if test="changRecord != null and changRecord != ''">
-            `chang_record` = #{changRecord},
+        <if test="changeRecord != null and changeRecord != ''">
+            `change_record` = #{changeRecord},
         </if>
         <if test="punish != null and punish != ''">
             `punish` = #{punish},

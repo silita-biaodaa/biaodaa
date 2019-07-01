@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.dao.TbGsCompanyMapper;
 import com.silita.biaodaa.model.TbCompany;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,7 +59,12 @@ public class CompanyGsService {
      * @return
      */
     public Object getGsCompangInfo(Map<String,Object> param){
-
-        return null;
+        Map<String, Object> comMap = tbGsCompanyMapper.queryCompanyParamter(param);
+        Object resultObj = null;
+        if (null != comMap.get("paramter")){
+            resultObj =  (List) JSONObject.parse(MapUtils.getString(comMap,"paramter"));
+            return resultObj;
+        }
+        return new Object();
     }
 }

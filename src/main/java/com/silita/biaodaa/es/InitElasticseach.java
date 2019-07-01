@@ -39,7 +39,7 @@ public class InitElasticseach {
         try {
             Settings settings = Settings.builder()
                     .put("cluster.name", cluster)
-                    .put("client.transport.sniff", true)
+                    .put("client.transport.sniff", false)
                     .build();
             client = new PreBuiltTransportClient(settings)
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(ip), Integer.parseInt(host)));

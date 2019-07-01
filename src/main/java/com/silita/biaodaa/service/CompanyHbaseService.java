@@ -77,7 +77,7 @@ public class CompanyHbaseService {
             }else if ("分支机构信息".equals(sbder.toString())){
                gsCompany.setBranch(Bytes.toString(CellUtil.cloneValue(cell)));
             }else if ("变更信息".equals(sbder.toString())){
-                gsCompany.setChangRecord(Bytes.toString(CellUtil.cloneValue(cell)));
+                gsCompany.setChangeRecord(Bytes.toString(CellUtil.cloneValue(cell)));
             }else if ("主要人员信息".equals(sbder.toString())){
                 gsCompany.setPersonnel(Bytes.toString(CellUtil.cloneValue(cell)));
             }else if ("股东及出资信息".equals(sbder.toString())){
