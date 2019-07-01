@@ -578,7 +578,7 @@ public class NoticeService {
             tbClickStatistics.setSource(String.valueOf(params.get("source")));
         }
         tbClickStatistics.setType("content");
-        tbClickStatistics.setInnertId(Math.toIntExact((Long) params.get("id")));
+        tbClickStatistics.setInnertId(params.get("id").toString());
 
         //判断是否存在
         Integer curDateTotal = tbClickStatisticsMapper.getTotalBySourceAndTypeAndInnertId(tbClickStatistics);
