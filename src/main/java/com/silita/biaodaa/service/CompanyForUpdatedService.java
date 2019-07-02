@@ -26,6 +26,8 @@ public class CompanyForUpdatedService {
     TbGsCompanyMapper tbGsCompanyMapper;
     @Autowired
     CompanyHbaseService companyHbaseService;
+    @Autowired
+    MessageService messageService;
 
     /**
      * 返回待更新企业
@@ -34,7 +36,7 @@ public class CompanyForUpdatedService {
     public List<Map<String,Object>> listCompanyUpdated(){
         Map<String,Object> param = new HashedMap(){{
             put("isUpdated", 1);
-            put("limit",10);
+            put("limit",1);
         }};
         List<TbCompanyUpdate> comList = tbCompanyUpdateMapper.queryCompanyUpdated(param);
         List<Map<String,Object>> resultList = new ArrayList<>();
@@ -57,7 +59,9 @@ public class CompanyForUpdatedService {
     public void finishCompany(Map<String,Object> param){
         //从Hbase查询数据并解析入库
         companyHbaseService.saveGsCompany(param);
+        companyHbaseService.saveReport(param);
         //消息通知
+
         //删掉这个公司的待更新记录
         tbCompanyUpdateMapper.deleteCompanyUpdated(MapUtils.getString(param,"comId"));
     }
@@ -92,4 +96,5 @@ public class CompanyForUpdatedService {
         resultMap.put("msg","操作成功");
         return resultMap;
     }
+
 }

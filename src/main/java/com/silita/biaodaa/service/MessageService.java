@@ -103,6 +103,7 @@ public class MessageService {
         return tbMessageMapper.queryIsReadCount(VisitInfoHolder.getUid());
     }
 
+
     /**
      * 如果消息类型为回复评论类的需查询回复详情
      *
@@ -132,4 +133,5 @@ public class MessageService {
             }
         }
     }
+
 }

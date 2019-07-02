@@ -27,7 +27,7 @@ public class PushMessageUtils {
      *
      * @param userId
      */
-    public static void pushMessage(String userId, Map<String, Object> param) {
+    public static void pushMessage(String userId, Map<String, Object> param,String title,String body,String noticeType) {
         String accessKey = "LTAIVLTf1eLK9MWJ";
         String accessKeySecret = "Ti9oFBqhbVXu3un5AnpR908SObVAAe";
         IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKey, accessKeySecret);
@@ -40,10 +40,10 @@ public class PushMessageUtils {
         pushRequest.setTargetValue(userId);
         pushRequest.setPushType("NOTICE");
         pushRequest.setDeviceType("ALL");
-        pushRequest.setTitle("评论");
-        pushRequest.setBody("你有新的回复信息");
+        pushRequest.setTitle(title);
+        pushRequest.setBody(body);
         pushRequest.setIOSApnsEnv(PropertiesUtils.getProperty("push.env"));
-        param.put("noticeType", "reply");
+        param.put("noticeType", noticeType);
         Map<String, Object> paramters = new HashedMap() {{
             put("data", param);
         }};

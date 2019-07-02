@@ -238,7 +238,7 @@ public class CompanyChengxinComputerTest {
     public void saveCompanyScope() {
         List<Map<String, Object>> list = saveCompanyMapper.queryList();
         for (Map<String, Object> map : list) {
-            map.put("exam_sit", map.get("total"));
+            map.put("province_project", map.get("total"));
 //            map.put("exam_no_com",1);
             //是否存在
             int count = saveCompanyMapper.query(map);

@@ -169,7 +169,7 @@
     </select>
 
     <select id="queryList" resultType="java.util.Map">
-      SELECT
+    SELECT
   t.`com_id`,
   t.`com_name`,
   t.`pro_type`

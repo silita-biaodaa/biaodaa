@@ -209,7 +209,7 @@ public class CommentService {
             paramters.put("replyId", replyComment.getPkid());
             paramters.put("source", replyComment.getSource());
             paramters.put("noticeId", messageService.saveReplyCommentMessage(replyComment.getPkid(), replyComment.getToUid()));
-            PushMessageUtils.pushMessage(replyComment.getToUid(), paramters);
+            PushMessageUtils.pushMessage(replyComment.getToUid(), paramters,"评论","你有新的回复信息","reply");
         }
         replyComment = null;
     }
