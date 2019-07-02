@@ -39,6 +39,16 @@
           )
     </select>
 
+    <!--查询点击一键更新的用户-->
+    <select id="queryCompanyUpdatedForUsers" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+          t.`user_id`
+        FROM
+          tb_company_update t
+        WHERE t.`com_id` = #{userId}
+          AND t.`is_updated` = 0
+    </select>
+
     <!--修改-->
     <update id="updated" parameterType="com.silita.biaodaa.model.TbCompanyUpdate">
         UPDATE

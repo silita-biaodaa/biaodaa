@@ -12,8 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 工商企业
@@ -54,7 +53,7 @@ public class CompanyGsService {
         resultMap.put("isUpdated", 1);
         resultMap.put("certNo", company.getCertNo());
         resultMap.put("validDate", company.getValidDate());
-        if (null == resultMap.get("regisAddress")){
+        if (null == resultMap.get("regisAddress")) {
             resultMap.put("regisAddress", company.getRegisAddress());
         }
         comMap = null;
@@ -147,8 +146,47 @@ public class CompanyGsService {
     public Map<String, Object> getReportDetail(Map<String, Object> param) {
         String report = tbCompanyReportMapper.queryReportDetailForCompany(param);
         if (StringUtils.isNotEmpty(report)) {
-            return (Map<String, Object>)JSONObject.parse(report);
+            return setAttrMap((Map<String, Object>) JSONObject.parse(report));
         }
         return new HashedMap();
+    }
+
+    private Map<String, Object> setAttrMap(Map<String, Object> param) {
+        Map<String, Object> basic = (Map<String, Object>) param.get("basic");
+        param.put("basic", this.setMap(basic));
+        return param;
+    }
+
+    private Map setMap(Map<String, Object> param) {
+        List<String> keyList = new ArrayList<>();
+        List<String> constanCnList = new ArrayList<>();
+        Set<String> keys = param.keySet();
+        Iterator iterator = keys.iterator();
+        while (iterator.hasNext()) {
+            String key = (String) iterator.next();
+            if (key.endsWith("Dis")) {
+                keyList.add(key);
+            }
+            if (key.endsWith("cn") || key.endsWith("CN")) {
+                constanCnList.add(key);
+            }
+        }
+        String value;
+        //合并带cn的属性
+        if (null != constanCnList && constanCnList.size() > 0) {
+            for (String consCnKey : constanCnList) {
+                value = MapUtils.getString(param, consCnKey);
+                param.put(consCnKey.replace("_cn", "").replace("_CN", ""), value);
+                param.remove(consCnKey);
+            }
+        }
+        if (null != keyList && keyList.size() > 0) {
+            for (String disKey : keyList) {
+                if ("2".equals(param.get(disKey))) {
+                    param.put(disKey.replace("Dis", ""), "企业选择不公示");
+                }
+            }
+        }
+        return param;
     }
 }

@@ -10,6 +10,7 @@ import com.silita.biaodaa.dao.TbReplyCommentMapper;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbMessage;
 import com.silita.biaodaa.model.TbReplyComment;
+import com.silita.biaodaa.utils.PushMessageUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class MessageService {
         message.setIsRead(Integer.valueOf(Constant.info_female));
         message.setMsgType(Constant.MSG_TYPE_REPLY);
         message.setPushd(new Date());
-        message.setReplyId(replyId);
+        message.setReplyId(replyId.toString());
         tbMessageMapper.insert(message);
         return message.getPkid();
     }
@@ -68,6 +69,7 @@ public class MessageService {
 
     /**
      * 删除
+     *
      * @param param
      */
     public void delMsg(Map<String, Object> param) {
@@ -79,15 +81,16 @@ public class MessageService {
 
     /**
      * 设置消息已读状态
+     *
      * @param param
      */
-    public void setIsRead(Map<String,Object> param){
-        String pkid = MapUtils.getString(param,"pkid");
+    public void setIsRead(Map<String, Object> param) {
+        String pkid = MapUtils.getString(param, "pkid");
         String[] ids = pkid.split(",");
-        if (ids.length > 1){
-            Map<String,Object> value = new HashedMap();
-            for (String id : ids){
-                value.put("pkid",id);
+        if (ids.length > 1) {
+            Map<String, Object> value = new HashedMap();
+            for (String id : ids) {
+                value.put("pkid", id);
                 tbMessageMapper.setIsRead(value);
             }
             return;
@@ -97,9 +100,10 @@ public class MessageService {
 
     /**
      * 获取未读消息个数
+     *
      * @return
      */
-    public int getIsReadCount(){
+    public int getIsReadCount() {
         return tbMessageMapper.queryIsReadCount(VisitInfoHolder.getUid());
     }
 
@@ -121,11 +125,11 @@ public class MessageService {
                     map.put("replyUid", replyComment.getReplyUid());
                     map.put("toUid", replyComment.getToUid());
                     map.put("reNikename", replyComment.getReNikeName());
-                    map.put("reCompany",replyComment.getReCompany());
-                    map.put("reImage",replyComment.getReImage());
+                    map.put("reCompany", replyComment.getReCompany());
+                    map.put("reImage", replyComment.getReImage());
                     map.put("commentId", replyComment.getCommentId());
                     map.put("replyContent", replyComment.getReplyContent());
-                    map.put("replyId",replyComment.getPkid());
+                    map.put("replyId", replyComment.getPkid());
                     map.put("noticeTitle", noticeMapper.queryNoticeTitle(map));
 
                     replyComment = null;
@@ -134,4 +138,26 @@ public class MessageService {
         }
     }
 
+    /**
+     * 工商更新信息推送
+     *
+     * @param param
+     */
+    public void pushMessage(Map<String, Object> param, List<String> users) {
+        String comId = MapUtils.getString(param, "comId");
+        String comName = MapUtils.getString(param, "comName");
+        TbMessage message;
+        for (String user : users) {
+            PushMessageUtils.pushMessage(user, param, "企业数据更新已完成", comName + "的工商信息已更新完成！", "company");
+            message = new TbMessage();
+            message.setPushd(new Date());
+            message.setMsgType("company");
+            message.setIsRead(Integer.valueOf(Constant.info_female));
+            message.setMsgType("企业数据更新已完成");
+            message.setMsgContent(comName + "的工商信息已更新完成！");
+            message.setUserId(user);
+            message.setReplyId(comId);
+            tbMessageMapper.insert(message);
+        }
+    }
 }

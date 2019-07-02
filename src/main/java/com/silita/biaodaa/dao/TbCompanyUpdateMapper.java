@@ -41,4 +41,10 @@ public interface TbCompanyUpdateMapper extends MyMapper<TbCompanyUpdate> {
      * @return
      */
     int insert(TbCompanyUpdate companyUpdate);
+
+    /**
+     * 查询点击一键更新的用户
+     * @return
+     */
+    List<String> queryCompanyUpdatedForUsers(Map<String,Object> param);
 }
