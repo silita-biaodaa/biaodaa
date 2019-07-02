@@ -45,7 +45,7 @@
           t.`user_id`
         FROM
           tb_company_update t
-        WHERE t.`com_id` = #{userId}
+        WHERE t.`com_id` = #{comId}
           AND t.`is_updated` = 0
     </select>
 
