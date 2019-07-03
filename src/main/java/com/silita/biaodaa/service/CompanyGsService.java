@@ -135,7 +135,7 @@ public class CompanyGsService {
     }
 
     private Map<String, Object> setAttrMap(Map<String, Object> param) {
-        Map<String, Object> basic = ((List<Map<String, Object>>) param.get("basic")).get(0);
+        Map<String, Object> basic = (Map<String, Object>) param.get("basic");
         param.put("basic", this.setMap(basic));
         return param;
     }

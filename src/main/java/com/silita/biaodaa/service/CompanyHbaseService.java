@@ -103,7 +103,7 @@ public class CompanyHbaseService {
                 } else if ("企业名称".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
                     reportMap.put("comName", Bytes.toString(CellUtil.cloneValue(cell)));
                 } else if ("基本信息".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
-                    reportMap.put("basic", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
+                    reportMap.put("basic", ((Map<String,Object>)JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell)))));
                 } else if ("股东及出资信息".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
                     reportMap.put("partner", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
                 } else if ("网站或网店信息".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
@@ -114,6 +114,8 @@ public class CompanyHbaseService {
                     reportMap.put("invest", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
                 } else if ("企业资产状况信息".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
                     reportMap.put("amount", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
+                }else if ("对外提供保证担保信息".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))){
+                    reportMap.put("externalGuarantee ", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
                 }
             }
             resultMapList.add(reportMap);
