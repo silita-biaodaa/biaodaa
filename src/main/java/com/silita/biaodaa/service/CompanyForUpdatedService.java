@@ -3,7 +3,6 @@ package com.silita.biaodaa.service;
 import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.TbCompanyUpdateMapper;
-import com.silita.biaodaa.dao.TbGsCompanyMapper;
 import com.silita.biaodaa.model.TbCompanyUpdate;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -22,8 +21,6 @@ public class CompanyForUpdatedService {
 
     @Autowired
     TbCompanyUpdateMapper tbCompanyUpdateMapper;
-    @Autowired
-    TbGsCompanyMapper tbGsCompanyMapper;
     @Autowired
     CompanyHbaseService companyHbaseService;
     @Autowired
@@ -58,14 +55,11 @@ public class CompanyForUpdatedService {
      * 更新完成
      */
     public void finishCompany(Map<String, Object> param) {
-        //从Hbase查询数据并解析入库
-        companyHbaseService.saveGsCompany(param);
-        companyHbaseService.saveReport(param);
         //消息通知
         List<String> users = tbCompanyUpdateMapper.queryCompanyUpdatedForUsers(param);
         messageService.pushMessage(param, users);
         users = null;
-        //删掉这个公司的待更新记录
+        //修改更新记录
         tbCompanyUpdateMapper.deleteCompanyUpdated(MapUtils.getString(param, "comId"));
     }
 
@@ -79,13 +73,13 @@ public class CompanyForUpdatedService {
         Map<String, Object> resultMap = new HashedMap();
         resultMap.put("code", Constant.WARN_CODE_405);
         //该企业是否一周内最新数据
-        if (tbGsCompanyMapper.queryGsCompanyCount(param) > 0) {
+        if (tbCompanyUpdateMapper.queryGsCompanyCount(param) > 0) {
             resultMap.put("msg", "企业的【工商数据】为最新信息");
             return resultMap;
         }
         //该企业在待更新
         if (tbCompanyUpdateMapper.queryCompanyUpdatedState(param) > 0) {
-            resultMap.put("msg", "企业的【工商数据】将更新至最新信息，更新完成后，会有消息通知到您！！");
+            resultMap.put("msg","正在更新中。。。");
             return resultMap;
         }
         //添加数据
@@ -97,7 +91,7 @@ public class CompanyForUpdatedService {
         tbCompanyUpdateMapper.insert(companyUpdate);
         companyUpdate = null;
         resultMap.put("code", 1);
-        resultMap.put("msg", "操作成功");
+        resultMap.put("msg", "企业的【工商数据】将更新至最新信息，更新完成后，会有消息通知到您！！");
         return resultMap;
     }
 

@@ -16,6 +16,12 @@ public interface TbCompanyUpdateMapper extends MyMapper<TbCompanyUpdate> {
     List<TbCompanyUpdate> queryCompanyUpdated(Map<String,Object> param);
 
     /**
+     * 该企业是否一周内最新数据
+     * @return
+     */
+    int queryGsCompanyCount(Map<String, Object> param);
+
+    /**
      * 修改
      * @param companyUpdate
      * @return

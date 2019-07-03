@@ -17,7 +17,12 @@
     <!--查询待更新的企业信息-->
     <select id="queryCompanyUpdated" parameterType="java.util.Map" resultMap="BaseResultMap">
       SELECT
-        *
+          t.`pkid`,
+          t.`com_id`,
+          t.`com_name`,
+          t.`user_id`,
+          t.`is_updated`,
+          t.`created`
       FROM
         tb_company_update t
       WHERE t.`is_updated` = #{isUpdated}
@@ -49,6 +54,17 @@
           AND t.`is_updated` = 0
     </select>
 
+    <!--该企业是否一周内最新数据-->
+    <select id="queryGsCompanyCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+      SELECT
+        COUNT(1)
+      FROM
+        tb_company_update t
+      WHERE t.`com_id` = #{comId}
+        AND DATE(t.`updated`) &lt;= DATE_SUB(CURDATE(), INTERVAL - 7 DAY)
+        AND t.`is_updated` = 2
+    </select>
+
     <!--修改-->
     <update id="updated" parameterType="com.silita.biaodaa.model.TbCompanyUpdate">
         UPDATE
@@ -60,12 +76,13 @@
     </update>
 
     <!--删除记录-->
-    <delete id="deleteCompanyUpdated" parameterType="java.lang.String">
-        DELETE
-        FROM
+    <update id="deleteCompanyUpdated" parameterType="java.lang.String">
+        UPDATE
           `tb_company_update`
+        SET `is_updated` = 2,
+        `updated` = now()
         WHERE `com_id` = #{comId}
-    </delete>
+    </update>
 
     <!--添加-->
     <insert id="insert" parameterType="com.silita.biaodaa.model.TbCompanyUpdate">

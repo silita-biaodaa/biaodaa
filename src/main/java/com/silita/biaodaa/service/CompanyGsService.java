@@ -2,13 +2,9 @@ package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.dao.TbCompanyMapper;
-import com.silita.biaodaa.dao.TbCompanyReportMapper;
-import com.silita.biaodaa.dao.TbGsCompanyMapper;
 import com.silita.biaodaa.model.TbCompany;
-import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +18,9 @@ import java.util.*;
 public class CompanyGsService {
 
     @Autowired
-    TbGsCompanyMapper tbGsCompanyMapper;
-    @Autowired
     TbCompanyMapper tbCompanyMapper;
     @Autowired
-    TbCompanyReportMapper tbCompanyReportMapper;
+    CompanyHbaseService companyHbaseService;
 
     /**
      * 工商基本信息
@@ -35,15 +29,13 @@ public class CompanyGsService {
      * @return
      */
     public Map<String, Object> getGsCompany(TbCompany company) {
-        if (tbGsCompanyMapper.queryCompanyExits(company.getComId()) <= 0) {
+        Map<String, Object> param = new HashedMap();
+        param.put("comId", company.getComId());
+        Map<String, Object> comMap = companyHbaseService.getGsCompany(param);
+        if (MapUtils.isEmpty(comMap)) {
             return null;
         }
-        Map<String, Object> param = new HashedMap() {{
-            put("paramter", "basic");
-        }};
-        param.put("comId", company.getComId());
-        Map<String, Object> comMap = tbGsCompanyMapper.queryCompanyParamter(param);
-        Map<String, Object> resultMap = JSONObject.parseObject(comMap.get("paramter").toString());
+        Map<String, Object> resultMap = (Map<String, Object>) comMap.get("basic");
         resultMap.put("updated", comMap.get("updated"));
         resultMap.put("comId", company.getComId());
         resultMap.put("phone", company.getPhone());
@@ -53,8 +45,8 @@ public class CompanyGsService {
         resultMap.put("isUpdated", 1);
         resultMap.put("certNo", company.getCertNo());
         resultMap.put("validDate", company.getValidDate());
-        if (null == resultMap.get("regisAddress")) {
-            resultMap.put("regisAddress", company.getRegisAddress());
+        if (null == resultMap.get("comAddress")) {
+            resultMap.put("comAddress", company.getComAddress());
         }
         comMap = null;
         company = null;
@@ -62,16 +54,17 @@ public class CompanyGsService {
     }
 
     /**
-     * 查询股东信息、主要人员、变更记录、企业年报、行政处罚
+     * 查询股东信息、主要人员、变更记录、行政处罚
      *
      * @param param
      * @return
      */
     public Object getGsCompangInfo(Map<String, Object> param) {
-        Map<String, Object> comMap = tbGsCompanyMapper.queryCompanyParamter(param);
+        Map<String, Object> comMap = companyHbaseService.getGsCompany(param);
         Object resultObj = null;
-        if (MapUtils.isNotEmpty(comMap) && null != comMap.get("paramter")) {
-            resultObj = (List) JSONObject.parse(MapUtils.getString(comMap, "paramter"));
+        String paramter = MapUtils.getString(param, "paramter");
+        if (MapUtils.isNotEmpty(comMap) && null != comMap.get(paramter)) {
+            resultObj = (List) JSONObject.parse(MapUtils.getString(comMap, paramter));
             return resultObj;
         }
         return null;
@@ -90,36 +83,26 @@ public class CompanyGsService {
             put("changeRecord", 0);
             put("punish", 0);
         }};
+        Map<String, Object> obj = companyHbaseService.getGsCompany(param);
         List list;
         //股东信息
-        param.put("paramter", "partner");
-        Object obj = this.getGsCompangInfo(param);
-        if (null != obj) {
-            list = (List) JSONObject.parse(obj.toString());
-            ;
+        if (MapUtils.isNotEmpty(obj) && null != obj.get("partner")) {
+            list = (List) JSONObject.parse(MapUtils.getString(obj, "partner"));
             resultMap.put("partner", list.size());
         }
         //主要人员
-        param.put("paramter", "personnel");
-        obj = this.getGsCompangInfo(param);
-        if (null != obj) {
-            list = (List) JSONObject.parse(obj.toString());
-            ;
+        if (MapUtils.isNotEmpty(obj) && null != obj.get("personnel")) {
+            list = (List) JSONObject.parse(MapUtils.getString(obj, "personnel"));
             resultMap.put("personnel", list.size());
         }
         //变更记录
-        param.put("paramter", "change_record");
-        obj = this.getGsCompangInfo(param);
-        if (null != obj) {
-            list = (List) JSONObject.parse(obj.toString());
-            ;
+        if (MapUtils.isNotEmpty(obj) && null != obj.get("changeRecord")) {
+            list = (List) JSONObject.parse(MapUtils.getString(obj, "changeRecord"));
             resultMap.put("changeRecord", list.size());
         }
         //处罚信息
-        param.put("paramter", "punish");
-        obj = this.getGsCompangInfo(param);
-        if (MyStringUtils.isNotNull(obj)) {
-            list = (List) JSONObject.parse(obj.toString());
+        if (MapUtils.isNotEmpty(obj) && null != obj.get("punish")) {
+            list = (List) JSONObject.parse(MapUtils.getString(obj, "punish"));
             resultMap.put("punish", list.size());
         }
         param = null;
@@ -134,7 +117,7 @@ public class CompanyGsService {
      * @return
      */
     public List<Map<String, Object>> getReportYears(Map<String, Object> param) {
-        return tbCompanyReportMapper.queryReportYearsForCompany(param);
+        return companyHbaseService.getCompanyReportYear(param);
     }
 
     /**
@@ -144,15 +127,15 @@ public class CompanyGsService {
      * @return
      */
     public Map<String, Object> getReportDetail(Map<String, Object> param) {
-        String report = tbCompanyReportMapper.queryReportDetailForCompany(param);
-        if (StringUtils.isNotEmpty(report)) {
-            return setAttrMap((Map<String, Object>) JSONObject.parse(report));
+        Map<String, Object> report = companyHbaseService.getCompanyReport(param);
+        if (MapUtils.isNotEmpty(report)) {
+            return setAttrMap(report);
         }
         return new HashedMap();
     }
 
     private Map<String, Object> setAttrMap(Map<String, Object> param) {
-        Map<String, Object> basic = (Map<String, Object>) param.get("basic");
+        Map<String, Object> basic = ((List<Map<String, Object>>) param.get("basic")).get(0);
         param.put("basic", this.setMap(basic));
         return param;
     }
