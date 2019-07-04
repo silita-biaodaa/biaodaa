@@ -215,7 +215,7 @@ public class CompanyGsService {
                     iterator = setKets.iterator();
                     while (iterator.hasNext()) {
                         String mapKey = iterator.next();
-                        if ("0".equals(map.get(key).toString()) && mapKey.contains(key.replace("Dis", ""))) {
+                        if ("0".equals(map.get(key).toString()) && mapKey.contains(key.replace("Dis", "")) && !mapKey.equals(key)) {
                             disKey.add(mapKey);
                         }
                     }
