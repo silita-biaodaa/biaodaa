@@ -16,6 +16,8 @@ import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,8 @@ import static com.silita.biaodaa.common.SnatchContent.SNATCHURL_ZHONGBIAO;
  */
 @Service
 public class CommentService {
+
+    private Logger logger = LoggerFactory.getLogger(CommentService.class);
 
     @Autowired
     TbCommentInfoMapper tbCommentInfoMapper;
@@ -137,8 +141,9 @@ public class CommentService {
             tbCommentInfoMapper.insert(tbCommentInfo);
             return resultMap;
         } catch (Exception e) {
+            logger.error("评论异常！！！", e);
             resultMap.put("code", Constant.EXCEPTION_CODE);
-            resultMap.put("msg", "评论中可能含有特殊字符，请重新输入！");
+            resultMap.put("msg", "评论失败！！！");
             return resultMap;
         }
     }
@@ -209,7 +214,7 @@ public class CommentService {
             paramters.put("replyId", replyComment.getPkid());
             paramters.put("source", replyComment.getSource());
             paramters.put("noticeId", messageService.saveReplyCommentMessage(replyComment.getPkid(), replyComment.getToUid()));
-            PushMessageUtils.pushMessage(replyComment.getToUid(), paramters,"评论","你有新的回复信息","reply");
+            PushMessageUtils.pushMessage(replyComment.getToUid(), paramters, "评论", "你有新的回复信息", "reply");
         }
         replyComment = null;
     }
