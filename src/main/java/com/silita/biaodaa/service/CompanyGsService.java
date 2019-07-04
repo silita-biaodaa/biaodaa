@@ -1,5 +1,6 @@
 package com.silita.biaodaa.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.model.TbCompany;
@@ -135,8 +136,26 @@ public class CompanyGsService {
     }
 
     private Map<String, Object> setAttrMap(Map<String, Object> param) {
-        Map<String, Object> basic = (Map<String, Object>) param.get("basic");
+        Map<String, Object> basic = null;
+        Object objectMap = param.get("basic");
+        if (objectMap instanceof JSONArray) {
+            basic = (Map<String, Object>) ((List) param.get("basic")).get(0);
+        } else if (objectMap instanceof Map) {
+            basic = (Map<String, Object>) param.get("basic");
+        }
         param.put("basic", this.setMap(basic));
+        if (null != param.get("partner")) {
+            List<Map<String, Object>> list = (List<Map<String, Object>>) param.get("partner");
+            List partner = new ArrayList();
+            for (Map<String, Object> map : list) {
+                partner.add(setMap(map));
+            }
+            param.put("partner", partner);
+        }
+        if (null != param.get("socialSecurity")) {
+            List<Map<String, Object>> list = (List<Map<String, Object>>) param.get("socialSecurity");
+            param.put("socialSecurity", setSocialSecurityMap(list));
+        }
         return param;
     }
 
@@ -171,5 +190,44 @@ public class CompanyGsService {
             }
         }
         return param;
+    }
+
+    /**
+     * 设置社保显示
+     *
+     * @param socialSecurity
+     * @return
+     */
+    private List<Map<String, Object>> setSocialSecurityMap(List<Map<String, Object>> socialSecurity) {
+        for (Map<String, Object> map : socialSecurity) {
+            List<String> keys = new ArrayList<>();
+            Set<String> setKets = map.keySet();
+            Iterator<String> iterator = setKets.iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                if (key.endsWith("Dis")) {
+                    keys.add(key);
+                }
+            }
+            if (null != keys && keys.size() > 0) {
+                List<String> disKey = new ArrayList<>();
+                for (String key : keys) {
+                    iterator = setKets.iterator();
+                    while (iterator.hasNext()) {
+                        String mapKey = iterator.next();
+                        if ("0".equals(map.get(key).toString()) && mapKey.contains(key.replace("Dis", ""))) {
+                            disKey.add(mapKey);
+                        }
+                    }
+                }
+                if (null != disKey && disKey.size() > 0) {
+                    for (String key : disKey) {
+                        map.put(key, "企业选择不公示");
+                    }
+                }
+            }
+
+        }
+        return socialSecurity;
     }
 }

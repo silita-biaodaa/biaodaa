@@ -153,7 +153,7 @@ public class MessageService {
             message.setPushd(new Date());
             message.setMsgType("company");
             message.setIsRead(Integer.valueOf(Constant.info_female));
-            message.setMsgType("企业数据更新已完成");
+            message.setMsgTitle("企业数据更新已完成");
             message.setMsgContent(comName + "的工商信息已更新完成！");
             message.setUserId(user);
             message.setReplyId(comId);
