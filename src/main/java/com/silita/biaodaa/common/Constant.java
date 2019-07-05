@@ -84,6 +84,7 @@ public class Constant {
     public static final String PROFIT_S_CODE_FIRST = "a-first";
     //消息类型
     public static final String MSG_TYPE_REPLY = "reply";
+    public static final String MSG_TYPE_COMPANY = "company";
 
     public static String buildLoginChanelKey(String userid, String channel) {
         StringBuilder sb = new StringBuilder(userid);

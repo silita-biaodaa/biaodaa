@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.NoticeMapper;
+import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.dao.TbMessageMapper;
 import com.silita.biaodaa.dao.TbReplyCommentMapper;
 import com.silita.biaodaa.model.Page;
@@ -33,6 +34,8 @@ public class MessageService {
     TbReplyCommentMapper tbReplyCommentMapper;
     @Autowired
     NoticeMapper noticeMapper;
+    @Autowired
+    TbCompanyMapper tbCompanyMapper;
 
     /**
      * 添加回复评论消息
@@ -131,8 +134,9 @@ public class MessageService {
                     map.put("replyContent", replyComment.getReplyContent());
                     map.put("replyId", replyComment.getPkid());
                     map.put("noticeTitle", noticeMapper.queryNoticeTitle(map));
-
                     replyComment = null;
+                } else if (Constant.MSG_TYPE_COMPANY.equals(map.get("msgType"))) {
+                    map.put("comName", tbCompanyMapper.getCompany(MapUtils.getString(map, "replyId")).getComName());
                 }
             }
         }
