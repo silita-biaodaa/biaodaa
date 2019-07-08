@@ -13,6 +13,7 @@ import com.silita.biaodaa.model.TbCompanyInfo;
 import com.silita.biaodaa.model.es.BranchCompanyEs;
 import com.silita.biaodaa.model.es.CompanyEs;
 import com.silita.biaodaa.service.TbCompanyInfoService;
+import com.silita.biaodaa.service.TbCompanyService;
 import com.silita.biaodaa.utils.CommonUtil;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -39,6 +40,8 @@ public class ElasticseachService {
     TbPersonQualificationMapper tbPersonQualificationMapper;
     @Autowired
     TbCompanyInfoService tbCompanyInfoService;
+    @Autowired
+    TbCompanyService tbCompanyService;
 
 
     @Autowired
@@ -139,6 +142,10 @@ public class ElasticseachService {
 
     public Object queryBranchCompany(Map<String, Object> param) {
         String comId = MapUtils.getString(param, "comId");
+        Integer isVip = MapUtils.getInteger(param, "isVip");
+        if (null == isVip) {
+            isVip = 0;
+        }
         List<QuerysModel> querys = new ArrayList();
         querys.add(new QuerysModel(ConstantUtil.CONDITION_MUST, ConstantUtil.MATCHING_WILDCARD, "comId", comId));
         SearchResponse response = nativeElasticSearchUtils.complexQuery(transportClient, "branch_company", "branch_comes", querys, null, null, null);
@@ -159,13 +166,32 @@ public class ElasticseachService {
             if (pageNo < pages) {
                 end = start + pageSize;
             }
-            List resList = list.subList(start, end);
+            List<TbCompanyInfo> resList = list.subList(start, end);
             Map<String, Object> resultMap = new HashedMap();
             resultMap.put("total", response.getHits().getTotalHits());
             resultMap.put("pages", pages);
-            resultMap.put("data", resList);
+            resultMap.put("data", this.setPhone(resList, isVip));
             return resultMap;
         }
-        return list;
+        return  this.setPhone(list, isVip);
+    }
+
+    private List<Map<String,Object>> setPhone(List list, Integer isVip) {
+        List<Map<String,Object>> resList = new ArrayList<>();
+        if (null != list && list.size() > 0) {
+            for (Object object : list) {
+                Map<String,Object> map = (Map<String, Object>) object;
+                if (null != map.get("phone")){
+                    if (1 == isVip.intValue()) {
+                        map.put("phone",tbCompanyService.solPhone(MapUtils.getString(map,"phone"), "show"));
+                    } else {
+                        map.put("phone",tbCompanyService.solPhone(MapUtils.getString(map,"phone"), "replace"));
+                    }
+                }
+                resList.add(map);
+            }
+            list = null;
+        }
+        return resList;
     }
 }
