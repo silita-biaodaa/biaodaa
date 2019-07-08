@@ -3,7 +3,9 @@ package com.silita.biaodaa.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.dao.TbCompanyMapper;
+import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.TbCompany;
+import com.silita.biaodaa.model.TbCompanyInfo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ public class CompanyGsService {
     TbCompanyMapper tbCompanyMapper;
     @Autowired
     CompanyHbaseService companyHbaseService;
+    @Autowired
+    ElasticseachService elasticseachService;
 
     /**
      * 工商基本信息
@@ -105,6 +109,12 @@ public class CompanyGsService {
         if (MapUtils.isNotEmpty(obj) && null != obj.get("punish")) {
             list = (List) JSONObject.parse(MapUtils.getString(obj, "punish"));
             resultMap.put("punish", list.size());
+        }
+        //分支机构
+        List<TbCompanyInfo> companyInfoList = (List<TbCompanyInfo>) elasticseachService.queryBranchCompany(param);
+        if (null != companyInfoList && companyInfoList.size() > 0) {
+            resultMap.put("branchCompany", companyInfoList.size());
+            companyInfoList = null;
         }
         param = null;
         obj = null;
