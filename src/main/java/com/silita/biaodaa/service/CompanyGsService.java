@@ -87,6 +87,8 @@ public class CompanyGsService {
             put("personnel", 0);
             put("changeRecord", 0);
             put("punish", 0);
+            put("branchCompany", 0);
+            put("report", 0);
         }};
         Map<String, Object> obj = companyHbaseService.getGsCompany(param);
         List list;
@@ -115,6 +117,12 @@ public class CompanyGsService {
         if (null != companyInfoList && companyInfoList.size() > 0) {
             resultMap.put("branchCompany", companyInfoList.size());
             companyInfoList = null;
+        }
+        //年报个数
+        List<Map<String, Object>> reportList = companyHbaseService.getCompanyReportYear(param);
+        if (null != reportList && reportList.size() > 0) {
+            resultMap.put("report", reportList.size());
+            reportList = null;
         }
         param = null;
         obj = null;
