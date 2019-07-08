@@ -313,8 +313,6 @@ public class TbCompanyService {
             getRegisAddress(param);
         }
         List<TbCompany> list = new ArrayList<>();
-        Map<String, CertBasic> certBasicMap = getCertBasicMap();
-        Map<String, TbSafetyCertificate> safetyCertificateMap = getSafetyCertMap();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         if (levelRank != null && levelRank.length() == 4) {
             String level = levelRank.substring(0, 2);
@@ -325,7 +323,6 @@ public class TbCompanyService {
         } else {
             list = tbCompanyMapper.filterCompany(param);
         }
-
         TbCompanyInfo companyInfo = null;
         String tabCode = null;
         for (TbCompany company : list) {
@@ -333,7 +330,6 @@ public class TbCompanyService {
             companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), tabCode);
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
-//                    company.setPhone(companyInfo.getPhone().split(";")[0].trim());
                     if (1 == isVip.intValue()){
                         company.setPhone(this.solPhone(companyInfo.getPhone(), "show"));
                     }else {
@@ -344,21 +340,8 @@ public class TbCompanyService {
                     company.setRegisCapital(companyInfo.getRegisCapital());
                 }
             }
-            if (company.getComName() != null && company.getBusinessNum() != null) {
-                CertBasic certBasic = certBasicMap.get(company.getComName() + "|" + company.getBusinessNum());
-                if (certBasic != null) {
-                    //company.setSubsist(certBasic.getRegisterstatus());
-                    company.setComRange(certBasic.getRunscope());
-                }
-                TbSafetyCertificate tbSafetyCertificate = safetyCertificateMap.get(company.getComName());
-                if (tbSafetyCertificate != null) {
-                    company.setCertNo(tbSafetyCertificate.getCertNo());
-                    company.setCertDate(tbSafetyCertificate.getCertDate());
-                    company.setValidDate(tbSafetyCertificate.getValidDate());
-                }
-                // TODO: 18/4/26  存续状态暂时写死
-                company.setSubsist("存续");
-            }
+            // TODO: 18/4/26  存续状态暂时写死
+            company.setSubsist("存续");
             if (company.getRegisAddress() != null && company.getRegisAddress().indexOf("湖南") > -1) {
                 String url = tbCompanyMapper.getCompanyUrl(company.getComId());
                 company.setUrl(url);
