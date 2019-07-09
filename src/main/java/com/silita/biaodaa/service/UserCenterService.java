@@ -14,7 +14,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
@@ -47,24 +46,25 @@ public class UserCenterService {
     @Autowired
     private MyRedisTemplate myRedisTemplate;
 
-    public Integer updateUserInfo(SysUser sysUser){
-        return  userTempBddMapper.updateSysUser(sysUser);
+    public Integer updateUserInfo(SysUser sysUser) {
+        return userTempBddMapper.updateSysUser(sysUser);
     }
 
     /**
      * 验证推荐人邀请码
+     *
      * @param sysUser
      * @return
      */
-    public boolean verifyInviterCode(SysUser sysUser){
+    public boolean verifyInviterCode(SysUser sysUser) {
         Integer count = userTempBddMapper.verifyInviterCode(sysUser);
         if (count == null || count != 1) {
             return false;
-        }else{
-            String inviterCode  = userTempBddMapper.existInviterCodeByUserId(sysUser);
-            if(MyStringUtils.isNotNull(inviterCode)){
+        } else {
+            String inviterCode = userTempBddMapper.existInviterCodeByUserId(sysUser);
+            if (MyStringUtils.isNotNull(inviterCode)) {
                 return false;
-            }else {
+            } else {
                 return true;
             }
         }
@@ -98,17 +98,17 @@ public class UserCenterService {
         return userTempBddMapper.updateUserPwd(sysUser);
     }
 
-    public String verifyPhoneCode(Map params){
+    public String verifyPhoneCode(Map params) {
         InvitationBdd invitationVo = invitationBddMapper.getInvitationBddByPhoneAndCode(params);
         if (null == invitationVo) {
             return "验证码失效或错误！";
         } else if ("1".equals(invitationVo.getInvitationState())) {
             return "验证码失效或错误！";
         }
-        return  null;
+        return null;
     }
 
-    public void updateInvitationBddByCodeAndPhone(Map params){
+    public void updateInvitationBddByCodeAndPhone(Map params) {
         invitationBddMapper.updateInvitationBddByCodeAndPhone(params);
     }
 
@@ -136,7 +136,7 @@ public class UserCenterService {
     }
 
     public String insertCollectionNotice(CollecNotice collecNotice) {
-        if(null != collecNotice && MyStringUtils.isNull(collecNotice.getSource())){
+        if (null != collecNotice && MyStringUtils.isNull(collecNotice.getSource())) {
             collecNotice.setSource(HUNAN_SOURCE);
         }
         CollecNotice vo = collecNoticeMapper.getCollecNoticeByUserIdAndNoticeId(collecNotice);
@@ -149,7 +149,7 @@ public class UserCenterService {
     }
 
     public void deleteCollectionNotice(CollecNotice collecNotice) {
-        if(null != collecNotice && MyStringUtils.isNull(collecNotice.getSource())){
+        if (null != collecNotice && MyStringUtils.isNull(collecNotice.getSource())) {
             collecNotice.setSource(HUNAN_SOURCE);
         }
         collecNoticeMapper.deleteCollecNoticeByUserIdAndNoticeId(collecNotice);
@@ -217,6 +217,7 @@ public class UserCenterService {
     }
 
     public PageInfo querCollectionCompany(Page page, Map<String, Object> params) {
+        Integer isVip = MapUtils.getInteger(params, "isVip");
         List<Map<String, Object>> companys = new ArrayList<>();
         Map<String, CertBasic> certBasicMap = tbCompanyService.getCertBasicMap();
         Map<String, TbSafetyCertificate> safetyCertificateMap = tbCompanyService.getSafetyCertMap();
@@ -229,27 +230,19 @@ public class UserCenterService {
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
 //                        map.put("phone",companyInfo.getPhone().split(";")[0].trim());
-                        map.put("phone", tbCompanyService.solPhone(companyInfo.getPhone().trim(), "replace"));
+                        if (null != isVip && 1 == isVip) {
+                            map.put("phone", tbCompanyService.solPhone(companyInfo.getPhone().trim(), "show"));
+                        } else {
+                            map.put("phone", tbCompanyService.solPhone(companyInfo.getPhone().trim(), "replace"));
+                        }
                     }
                     if (null == map.get("regisCapital") && null != companyInfo.getRegisCapital()) {
                         map.put("regisCapital", companyInfo.getRegisCapital());
                     }
                 }
             }
-            if (!StringUtils.isEmpty(map.get("comName")) && !StringUtils.isEmpty(map.get("businessNum"))) {
-                CertBasic certBasic = certBasicMap.get(map.get("comName") + "|" + map.get("businessNum"));
-                if (certBasic != null) {
-                    map.put("runScope", certBasic.getRunscope());
-                }
-                TbSafetyCertificate tbSafetyCertificate = safetyCertificateMap.get(map.get("comName"));
-                if (tbSafetyCertificate != null) {
-                    map.put("certNo", tbSafetyCertificate.getCertNo());
-                    map.put("certDate", tbSafetyCertificate.getCertDate());
-                    map.put("validDate", tbSafetyCertificate.getValidDate());
-                }
-                // TODO: 18/4/26  存续状态暂时写死
-                map.put("subsist", "存续");
-            }
+            // TODO: 18/4/26  存续状态暂时写死
+            map.put("subsist", "存续");
         }
         PageInfo pageInfo = new PageInfo(companys);
         return pageInfo;
