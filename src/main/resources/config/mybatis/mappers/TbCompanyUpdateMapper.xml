@@ -65,6 +65,20 @@
         AND t.`is_updated` = 2
     </select>
 
+    <!--查询用户是否存在-->
+    <select id="queryCompanyUserUpdate" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT
+          COUNT(1)
+        FROM
+          tb_company_update t
+        WHERE t.`com_id` = #{comId}
+          AND t.`user_id` = #{userId}
+          AND (
+            t.`is_updated` = 0
+            OR t.`is_updated` = 1
+          )
+    </select>
+
     <!--修改-->
     <update id="updated" parameterType="com.silita.biaodaa.model.TbCompanyUpdate">
         UPDATE

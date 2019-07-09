@@ -79,8 +79,22 @@ public class CompanyForUpdatedService {
         }
         //该企业在待更新
         if (tbCompanyUpdateMapper.queryCompanyUpdatedState(param) > 0) {
-            resultMap.put("msg","正在更新中。。。");
+            resultMap.put("msg", "正在更新中。。。");
+            //添加数据
+            saveCompanyUpdate(param);
             return resultMap;
+        }
+        //添加数据
+        saveCompanyUpdate(param);
+        resultMap.put("code", 1);
+        resultMap.put("msg", "企业的【工商数据】将更新至最新信息，更新完成后，会有消息通知到您！！");
+        return resultMap;
+    }
+
+    private void saveCompanyUpdate(Map<String, Object> param) {
+        param.put("userId", VisitInfoHolder.getUid());
+        if (tbCompanyUpdateMapper.queryCompanyUserUpdate(param) > 0) {
+            return;
         }
         //添加数据
         TbCompanyUpdate companyUpdate = new TbCompanyUpdate();
@@ -90,9 +104,5 @@ public class CompanyForUpdatedService {
         companyUpdate.setIsUpdated(1);
         tbCompanyUpdateMapper.insert(companyUpdate);
         companyUpdate = null;
-        resultMap.put("code", 1);
-        resultMap.put("msg", "企业的【工商数据】将更新至最新信息，更新完成后，会有消息通知到您！！");
-        return resultMap;
     }
-
 }
