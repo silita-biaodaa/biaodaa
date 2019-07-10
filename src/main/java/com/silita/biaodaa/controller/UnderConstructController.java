@@ -1,5 +1,6 @@
 package com.silita.biaodaa.controller;
 
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.service.UnderConstructService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
@@ -32,14 +33,14 @@ public class UnderConstructController extends BaseController {
         return underList(param);
     }
 
-    Map<String,Object > underList(Map<String, Object> param){
+    Map<String, Object> underList(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         successMsg(resultMap);
         buildReturnMap(resultMap, underConstructService.listUnderConstruct(param));
         return resultMap;
     }
 
-    Map<String, Object> underQuery(Map<String, Object> param){
+    Map<String, Object> underQuery(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         List list;
         if ("detail".equals(param.get("type"))) {
@@ -48,7 +49,7 @@ public class UnderConstructController extends BaseController {
             resultMap.put("data", list);
             return resultMap;
         }
-        if ("api".equals(param.get("type"))) {
+        if ("api".equals(param.get("type")) && "1003".equals(VisitInfoHolder.getChannel())) {
             resultMap.put(CODE_FLAG, 0);
             resultMap.put(MSG_FLAG, "由于湖南省建筑厅系统交接中，暂时无法使用身份证号进行精准查询。");
             return resultMap;
@@ -78,7 +79,7 @@ public class UnderConstructController extends BaseController {
                     return resultMap;
                 }
                 if (!ProjectAnalysisUtil.isNumeric(idCard.substring(idCard.length() - 1))) {
-                    if(!idCard.endsWith("X")){
+                    if (!idCard.endsWith("X")) {
                         resultMap.put(CODE_FLAG, 0);
                         resultMap.put(MSG_FLAG, "第18位必须是纯数字或X!");
                         return resultMap;

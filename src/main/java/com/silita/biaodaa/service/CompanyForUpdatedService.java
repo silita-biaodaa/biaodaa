@@ -34,7 +34,7 @@ public class CompanyForUpdatedService {
     public List<Map<String, Object>> listCompanyUpdated() {
         Map<String, Object> param = new HashedMap() {{
             put("isUpdated", 1);
-            put("limit", 1);
+            put("limit", 100);
         }};
         List<TbCompanyUpdate> comList = tbCompanyUpdateMapper.queryCompanyUpdated(param);
         List<Map<String, Object>> resultList = new ArrayList<>();
@@ -45,7 +45,11 @@ public class CompanyForUpdatedService {
             resultMap.put("comName", companyUpdate.getComName());
             resultList.add(resultMap);
             companyUpdate.setIsUpdated(0);
-            tbCompanyUpdateMapper.updated(companyUpdate);
+            String[] pkids = companyUpdate.getPkid().split(",");
+            for (String id : pkids) {
+                companyUpdate.setPkid(id);
+                tbCompanyUpdateMapper.updated(companyUpdate);
+            }
         }
         comList = null;
         return resultList;

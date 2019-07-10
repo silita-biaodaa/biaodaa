@@ -17,7 +17,7 @@
     <!--查询待更新的企业信息-->
     <select id="queryCompanyUpdated" parameterType="java.util.Map" resultMap="BaseResultMap">
       SELECT
-          t.`pkid`,
+          GROUP_CONCAT(t.`pkid`) AS pkid,
           t.`com_id`,
           t.`com_name`,
           t.`user_id`,

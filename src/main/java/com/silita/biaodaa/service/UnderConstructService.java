@@ -13,8 +13,6 @@ import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,47 +67,38 @@ public class UnderConstructService {
 
     public List getApiUnderConstruct(Map<String, Object> param) {
         String url = PropertiesUtils.getProperty("api.build");
-        String opt = PropertiesUtils.getProperty("api.opt");
-        String name = MapUtils.getString(param, "name");
         String idCard = MapUtils.getString(param, "idCard");
-        String clictUrl = null;
-        try {
-            clictUrl = url + "?opt=" + opt + "&name=" + URLDecoder.decode(name, "UTF-8");
-            if (!MyStringUtils.isNull(idCard)) {
-                clictUrl = clictUrl + "&sfz=" + idCard;
-            }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        String result = HttpUtils.sendGetUrl(clictUrl);
+        String clickUrl = url.replace("CARD", idCard);
+        String result = HttpUtils.sendProxyGetUrl(clickUrl);
         if (MyStringUtils.isNull(result)) {
             return new ArrayList();
         }
         Map resultMap = JsonUtils.json2Map(result);
-        Boolean isSuccess = MapUtils.getBoolean(resultMap, "strSuccess");
+        Boolean isSuccess = MapUtils.getBoolean(resultMap, "success");
         if (!isSuccess) {
             return new ArrayList();
         }
-        List<Map> mapList = (List<Map>) resultMap.get("data");
+        Map<String,Object> data = (Map<String, Object>) resultMap.get("data");
+        List<Map> mapList = (List<Map>) data.get("list");
         List<TbUnderConstruct> list = new ArrayList<>();
         TbUnderConstruct underConstruct;
         for (int i = 0; i < mapList.size(); i++) {
+            if (!"1".equals(mapList.get(i).get("statusnum").toString())){
+                continue;
+            }
             underConstruct = new TbUnderConstruct();
-            underConstruct.setName(MapUtils.getString(mapList.get(i), "姓名"));
-            underConstruct.setDate(MapUtils.getString(mapList.get(i), "押证日期"));
-            underConstruct.setCity(MapUtils.getString(mapList.get(i), "所在市州"));
-            underConstruct.setCounty(MapUtils.getString(mapList.get(i), "所在县区"));
-            underConstruct.setProName(MapUtils.getString(mapList.get(i), "工程名称"));
-            underConstruct.setType(MapUtils.getString(mapList.get(i), "人员类别"));
-            underConstruct.setIdCard(MapUtils.getString(mapList.get(i), "身份证"));
-            underConstruct.setProOrg(MapUtils.getString(mapList.get(i), "建设单位"));
-            underConstruct.setUnitOrg(MapUtils.getString(mapList.get(i), "单位名称"));
+            underConstruct.setName(MapUtils.getString(mapList.get(i), "personname"));
+            underConstruct.setDate(MapUtils.getString(mapList.get(i), "bdate"));
+            underConstruct.setProName(MapUtils.getString(mapList.get(i), "prjname"));
+            underConstruct.setType(MapUtils.getString(mapList.get(i), "dutytypename"));
+            underConstruct.setIdCard(MapUtils.getString(mapList.get(i), "idcard"));
+            underConstruct.setUnitOrg(MapUtils.getString(mapList.get(i), "corpname"));
             if (tbUnderConstructMapper.queryUnderCount(underConstruct) <= 0) {
                 underConstruct.setPkid(VisitInfoHolder.getUUID());
-                this.getInnerid(underConstruct);
+//                this.getInnerid(underConstruct);
                 tbUnderConstructMapper.insertUnderConstruct(underConstruct);
             }
-            underConstruct.setIdCard(this.setIdCard(underConstruct));
+//            underConstruct.setIdCard(this.setIdCard(underConstruct));
             list.add(underConstruct);
         }
         return list;

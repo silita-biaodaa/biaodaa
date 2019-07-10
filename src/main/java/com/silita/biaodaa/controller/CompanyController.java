@@ -66,9 +66,12 @@ public class CompanyController extends BaseController {
         try {
             TbCompany tbCompany = tbCompanyService.getCompany(comId);
             //判断是否最新工商
-            Map<String,Object> gsCom = this.setNewGsCompany(tbCompany);
-            if (MapUtils.isNotEmpty(gsCom)){
+            Map<String, Object> gsCom = this.setNewGsCompany(tbCompany);
+            if (MapUtils.isNotEmpty(gsCom)) {
                 return gsCom;
+            }
+            if (null != tbCompany && null != tbCompany.getEconomicType()) {
+                tbCompany.setComType(tbCompany.getEconomicType());
             }
             result.put("data", tbCompany);
             result.put("code", 1);
@@ -169,7 +172,7 @@ public class CompanyController extends BaseController {
             String category = MapUtils.getString(params, "category");
             String keyWord = MapUtils.getString(params, "keyWord");
             String province = MapUtils.getString(params, "province");
-            String comName = MapUtils.getString(params,"comName");
+            String comName = MapUtils.getString(params, "comName");
             Map<String, Object> param = new HashMap<>();
             String tableCode = "hunan";
 
@@ -203,8 +206,8 @@ public class CompanyController extends BaseController {
             if (MyStringUtils.isNotNull(category)) {
                 param.put("category", category);
             }
-            if (StringUtils.isNotEmpty(comName)){
-                param.put("comName",comName);
+            if (StringUtils.isNotEmpty(comName)) {
+                param.put("comName", comName);
             }
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
@@ -300,8 +303,8 @@ public class CompanyController extends BaseController {
             if (MyStringUtils.isNull(rangeType)) {
                 rangeType = "or";
             }
-            Integer isVip = MapUtils.getInteger(params,"isVip");
-            if (isVip == null){
+            Integer isVip = MapUtils.getInteger(params, "isVip");
+            if (isVip == null) {
                 isVip = 0;
             }
 
@@ -314,7 +317,7 @@ public class CompanyController extends BaseController {
             param.put("qualCode", StringUtils.strip(code, ","));
             param.put("keyWord", keyWord);
             param.put("rangeType", rangeType);
-            param.put("isVip",isVip);
+            param.put("isVip", isVip);
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
@@ -480,8 +483,8 @@ public class CompanyController extends BaseController {
             result.put(MSG_FLAG, "未查询到公司详情");
             return result;
         }
-        Map<String,Object> gsCom = this.setNewGsCompany(company);
-        if (MapUtils.isNotEmpty(gsCom)){
+        Map<String, Object> gsCom = this.setNewGsCompany(company);
+        if (MapUtils.isNotEmpty(gsCom)) {
             return gsCom;
         }
         result.put("data", company);
@@ -589,10 +592,10 @@ public class CompanyController extends BaseController {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
-        Integer isVip = MapUtils.getInteger(param,"isVip");
-        if (isVip == null){
+        Integer isVip = MapUtils.getInteger(param, "isVip");
+        if (isVip == null) {
             isVip = 0;
-            param.put("isVip",isVip);
+            param.put("isVip", isVip);
         }
         List<TbCompany> companyList = tbCompanyService.getHostCompanyList(param);
         Map<String, String> typeMap = new HashMap<>();
@@ -685,11 +688,11 @@ public class CompanyController extends BaseController {
         return resultMap;
     }
 
-    private Map<String,Object> setNewGsCompany(TbCompany company){
-        Map<String,Object> result = new HashedMap();
+    private Map<String, Object> setNewGsCompany(TbCompany company) {
+        Map<String, Object> result = new HashedMap();
         //判断是否最新工商
         Map gsCom = companyGsService.getGsCompany(company);
-        if (MapUtils.isNotEmpty(gsCom)){
+        if (MapUtils.isNotEmpty(gsCom)) {
             result.put("data", gsCom);
             result.put("code", 1);
             result.put("msg", "查询成功!");

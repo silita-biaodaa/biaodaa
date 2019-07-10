@@ -1,25 +1,16 @@
 package com.silita.biaodaa.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.util.EntityUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +20,16 @@ import java.util.Map;
  *
  * @author zhushuai
  * @version 1.0
- * @date: 2018年2月5日 上午10:49:52
  * @since JDK 1.8
  */
 public class HttpUtils {
+
+    final static String ProxyUser = "H42I0796HK140EUD";
+    final static String ProxyPass = "169AE1671CB4912F";
+
+    // 代理服务器
+    final static String ProxyHost = "http-dyn.abuyun.com";
+    final static Integer ProxyPort = 9020;
 
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(HttpUtils.class);
 
@@ -89,57 +86,6 @@ public class HttpUtils {
         return result;
     }
 
-    /**
-     * Description 向指定 URL 发送POST方法的请求
-     *
-     * @param url   发送请求的 URL
-     * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
-     * @return 所代表远程资源的响应结果，null表示数据接口异常(含SQL执行异常), -1表示接口调用超时
-     * @date 2017年4月19日
-     */
-    public static JSONObject sendPost(String url, Object param) {
-        HttpPost httpPost = new HttpPost(url);
-        CloseableHttpResponse response = null;
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        RequestConfig requestConfig =
-                RequestConfig.custom().setSocketTimeout(2000).setConnectTimeout(2000)
-                        .build();
-        httpPost.setConfig(requestConfig);
-        httpPost.addHeader("Content-Type", "application/json");
-
-        try {
-            StringEntity requestEntity = new StringEntity(JSON.toJSONString(param), "utf-8");
-            httpPost.setEntity(requestEntity);
-
-            response = httpClient.execute(httpPost, new BasicHttpContext());
-
-            if (response.getStatusLine().getStatusCode() != 200) {
-
-                System.out.println(
-                        "request url failed, http code=" + response.getStatusLine().getStatusCode() + ", url=" + url);
-                return null;
-            }
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                String resultStr = EntityUtils.toString(entity, "utf-8");
-                JSONObject result = JSON.parseObject(resultStr);
-                return result;
-            }
-        } catch (IOException e) {
-            System.out.println("request url=" + url + ", exception, msg=" + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            if (response != null) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
-    }
-
     public static String sendGetUrl(String url) {
         HttpGet httpGet = new HttpGet(url);
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -171,6 +117,54 @@ public class HttpUtils {
         }
     }
 
+    /**
+     * 代理请求
+     *
+     * @param url
+     * @return
+     */
+    public static String sendProxyGetUrl(String url) {
+        String result = "";
+        BufferedReader in = null;
+        try {
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ProxyHost, ProxyPort));
+            Authenticator.setDefault(new Authenticator() {
+                @Override
+                public PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(ProxyUser, ProxyPass.toCharArray());
+                }
+            });
+            logger.info("---------send begin---------url:" + url);
+            URL sendUrl = new URL(url);
+            URLConnection urlConnection = sendUrl.openConnection(proxy);
+            // 设置通用的请求属性
+            urlConnection.setRequestProperty("accept", "*/*");
+            urlConnection.setRequestProperty("connection", "Keep-Alive");
+            urlConnection.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 建立实际的连接
+            urlConnection.connect();
+            logger.info("---------send end--------------");
+            // 定义 BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+            return result;
+        } catch (IOException e) {
+            logger.error("发送 GET请求出现异常！！！", e);
+            return null;
+        } finally {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     //解析http信息
     public static Map<String, String> parseRequest(HttpServletRequest request) {

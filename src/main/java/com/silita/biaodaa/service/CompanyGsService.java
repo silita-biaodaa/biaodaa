@@ -53,6 +53,9 @@ public class CompanyGsService {
         if (null == resultMap.get("comAddress")) {
             resultMap.put("comAddress", company.getComAddress());
         }
+        if (null == resultMap.get("comType") && null != company && null != company.getEconomicType()) {
+            resultMap.put("comType", company.getEconomicType());
+        }
         comMap = null;
         company = null;
         return resultMap;
