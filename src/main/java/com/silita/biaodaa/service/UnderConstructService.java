@@ -97,6 +97,8 @@ public class UnderConstructService {
                 underConstruct.setPkid(VisitInfoHolder.getUUID());
 //                this.getInnerid(underConstruct);
                 tbUnderConstructMapper.insertUnderConstruct(underConstruct);
+            }else {
+                underConstruct.setPkid(tbUnderConstructMapper.queryUnderPkid(underConstruct));
             }
 //            underConstruct.setIdCard(this.setIdCard(underConstruct));
             list.add(underConstruct);

@@ -61,8 +61,42 @@
     </select>
 
     <select id="queryUnderCount" parameterType="com.silita.biaodaa.model.TbUnderConstruct" resultType="java.lang.Integer">
+    select
+    count(1)
+    from tb_under_construct t
+    where 1=1
+    <if test="name != null and name != ''">
+        and t.`name` = #{name}
+    </if>
+    <if test="idCard != null and idCard != ''">
+        and t.`id_card` = #{idCard}
+    </if>
+    <if test="type != null and type != ''">
+        and t.`type` = #{type}
+    </if>
+    <if test="city != null and city != ''">
+        and t.`city` = #{city}
+    </if>
+    <if test="date != null and date != ''">
+        and t.`date` = #{date}
+    </if>
+    <if test="county != null and county != ''">
+        and t.`county` = #{county}
+    </if>
+    <if test="proOrg != null and proOrg != ''">
+        and t.`pro_org` = #{proOrg}
+    </if>
+    <if test="proName != null and proName != ''">
+        and t.`pro_name` = #{proName}
+    </if>
+    <if test="unitOrg != null and unitOrg != ''">
+        and t.`unit_org` = #{unitOrg}
+    </if>
+</select>
+
+    <select id="queryUnderPkid" parameterType="com.silita.biaodaa.model.TbUnderConstruct" resultType="java.lang.String">
         select
-            count(1)
+          t.pkid
         from tb_under_construct t
         where 1=1
         <if test="name != null and name != ''">

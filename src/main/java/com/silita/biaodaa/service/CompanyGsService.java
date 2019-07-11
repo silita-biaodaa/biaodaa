@@ -26,6 +26,8 @@ public class CompanyGsService {
     CompanyHbaseService companyHbaseService;
     @Autowired
     ElasticseachService elasticseachService;
+    @Autowired
+    TbCompanyService tbCompanyService;
 
     /**
      * 工商基本信息
@@ -36,6 +38,7 @@ public class CompanyGsService {
     public Map<String, Object> getGsCompany(TbCompany company) {
         Map<String, Object> param = new HashedMap();
         param.put("comId", company.getComId());
+        param.put("comName",company.getComName());
         Map<String, Object> comMap = companyHbaseService.getGsCompany(param);
         if (MapUtils.isEmpty(comMap)) {
             return null;
@@ -68,6 +71,10 @@ public class CompanyGsService {
      * @return
      */
     public Object getGsCompangInfo(Map<String, Object> param) {
+        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param,"comId"));
+        if (null != company){
+            param.put("comName",company.getComName());
+        }
         Map<String, Object> comMap = companyHbaseService.getGsCompany(param);
         Object resultObj = null;
         String paramter = MapUtils.getString(param, "paramter");
@@ -93,6 +100,10 @@ public class CompanyGsService {
             put("branchCompany", 0);
             put("report", 0);
         }};
+        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param,"comId"));
+        if (null != company){
+            param.put("comName",company.getComName());
+        }
         Map<String, Object> obj = companyHbaseService.getGsCompany(param);
         List list;
         //股东信息
@@ -139,6 +150,10 @@ public class CompanyGsService {
      * @return
      */
     public List<Map<String, Object>> getReportYears(Map<String, Object> param) {
+        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param,"comId"));
+        if (null != company){
+            param.put("comName",company.getComName());
+        }
         return companyHbaseService.getCompanyReportYear(param);
     }
 
@@ -149,6 +164,10 @@ public class CompanyGsService {
      * @return
      */
     public Map<String, Object> getReportDetail(Map<String, Object> param) {
+        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param,"comId"));
+        if (null != company){
+            param.put("comName",company.getComName());
+        }
         Map<String, Object> report = companyHbaseService.getCompanyReport(param);
         if (MapUtils.isNotEmpty(report)) {
             return setAttrMap(report);

@@ -12,7 +12,6 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
-import org.apache.hadoop.hbase.filter.SubstringComparator;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ public class CompanyHbaseService {
      * @param param
      */
     public Map<String, Object> getGsCompany(Map<String, Object> param) {
-        Cell[] cells = this.returnCells(param);
+        Cell[] cells = returnCells(param);
         if (null == cells || cells.length <= 0) {
             return null;
         }
@@ -46,6 +45,7 @@ public class CompanyHbaseService {
         for (Cell cell : cells) {
             sbder = new StringBuilder();
             sbder.append(Bytes.toString(CellUtil.cloneQualifier(cell)));
+            logger.info("----------工商结果显示：" + sbder.toString() + "--------------------------");
             if ("企业名称".equals(sbder.toString())) {
                 basicMap.put("comName", Bytes.toString(CellUtil.cloneValue(cell)));
             } else if ("成立日期".equals(sbder.toString())) {
@@ -147,7 +147,9 @@ public class CompanyHbaseService {
                 }
             }
         }
-
+        Set set = new HashSet(years);
+        years = new ArrayList<>();
+        years.addAll(set);
         Collections.sort(years, new Comparator<Map<String, Object>>() {
             @Override
             public int compare(Map<String, Object> o1, Map<String, Object> o2) {
@@ -180,9 +182,9 @@ public class CompanyHbaseService {
         }
     }
 
-    private static List<Result> returnReportCells(Map<String, Object> param) {
+    private List<Result> returnReportCells(Map<String, Object> param) {
         List<Result> results = new ArrayList<>();
-        String comId = MapUtils.getString(param, "comId");
+        String comId = MapUtils.getString(param, "comName");
         String ip = PropertiesUtils.getProperty("Hbase.ip");
         String port = PropertiesUtils.getProperty("Hbase.port");
         String master = PropertiesUtils.getProperty("Hbase.master");
@@ -192,8 +194,7 @@ public class CompanyHbaseService {
             connection = HBaseUtils.init(ip, port, master, hdfs);
             Scan scan = new Scan();
             FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
-            SubstringComparator comp = new SubstringComparator(comId);
-            filterList.addFilter(new SingleColumnValueFilter(Bytes.toBytes("basic"), Bytes.toBytes("com_id"), CompareOperator.EQUAL, comp));
+            filterList.addFilter(new SingleColumnValueFilter(Bytes.toBytes("basic"), Bytes.toBytes("企业名称"), CompareOperator.EQUAL, Bytes.toBytes(comId)));
             scan.setFilter(filterList);
             Table table = connection.getTable(TableName.valueOf("report"));
             ResultScanner resultScanner = table.getScanner(scan);

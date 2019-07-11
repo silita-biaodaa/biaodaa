@@ -34,7 +34,7 @@ public class CompanyForUpdatedService {
     public List<Map<String, Object>> listCompanyUpdated() {
         Map<String, Object> param = new HashedMap() {{
             put("isUpdated", 1);
-            put("limit", 100);
+            put("limit", 1);
         }};
         List<TbCompanyUpdate> comList = tbCompanyUpdateMapper.queryCompanyUpdated(param);
         List<Map<String, Object>> resultList = new ArrayList<>();
