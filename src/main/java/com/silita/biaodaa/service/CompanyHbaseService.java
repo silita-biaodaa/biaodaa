@@ -45,7 +45,6 @@ public class CompanyHbaseService {
         for (Cell cell : cells) {
             sbder = new StringBuilder();
             sbder.append(Bytes.toString(CellUtil.cloneQualifier(cell)));
-            logger.info("----------工商结果显示：" + sbder.toString() + "--------------------------");
             if ("企业名称".equals(sbder.toString())) {
                 basicMap.put("comName", Bytes.toString(CellUtil.cloneValue(cell)));
             } else if ("成立日期".equals(sbder.toString())) {
@@ -66,6 +65,8 @@ public class CompanyHbaseService {
                 basicMap.put("comRange", Bytes.toString(CellUtil.cloneValue(cell)));
             } else if ("统一社会信用代码".equals(sbder.toString())) {
                 basicMap.put("creditCode", Bytes.toString(CellUtil.cloneValue(cell)));
+            } else if ("注册号".equals(sbder.toString())) {
+                basicMap.put("regNo", Bytes.toString(CellUtil.cloneValue(cell)));
             } else if ("营业期限自".equals(sbder.toString())) {
                 basicMap.put("businessStart", Bytes.toString(CellUtil.cloneValue(cell)));
             } else if ("营业期限至".equals(sbder.toString())) {
@@ -133,6 +134,12 @@ public class CompanyHbaseService {
         return null;
     }
 
+    /**
+     * 查询企业年报年份
+     *
+     * @param param
+     * @return
+     */
     public List<Map<String, Object>> getCompanyReportYear(Map<String, Object> param) {
         List<Map<String, Object>> years = new ArrayList<>();
         List<Result> results = returnReportCells(param);
@@ -159,6 +166,28 @@ public class CompanyHbaseService {
             }
         });
         return years;
+    }
+
+
+    /**
+     * 根据企业名称查询企业id
+     *
+     * @param param
+     * @return
+     */
+    public String getCompanyReportComId(Map<String, Object> param) {
+        List<Result> results = returnReportCells(param);
+        for (Result result : results) {
+            Cell[] cells = result.rawCells();
+            Map<String, Object> reportMap = new HashedMap();
+            reportMap.put("comId", MapUtils.getString(param, "comId"));
+            for (Cell cell : cells) {
+                if ("com_id".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
+                    return Bytes.toString(CellUtil.cloneValue(cell));
+                }
+            }
+        }
+        return null;
     }
 
     private Cell[] returnCells(Map<String, Object> param) {

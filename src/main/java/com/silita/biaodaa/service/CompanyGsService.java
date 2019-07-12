@@ -8,6 +8,7 @@ import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.TbCompanyInfo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,14 @@ public class CompanyGsService {
      */
     public Map<String, Object> getGsCompany(TbCompany company) {
         Map<String, Object> param = new HashedMap();
-        param.put("comId", company.getComId());
-        param.put("comName",company.getComName());
+        if (null != company && null != company.getComName()) {
+            param.put("comName", company.getComName());
+        }
+        String comId = companyHbaseService.getCompanyReportComId(param);
+        if(StringUtils.isEmpty(comId)){
+            return null;
+        }
+        param.put("comId",comId);
         Map<String, Object> comMap = companyHbaseService.getGsCompany(param);
         if (MapUtils.isEmpty(comMap)) {
             return null;
@@ -71,10 +78,15 @@ public class CompanyGsService {
      * @return
      */
     public Object getGsCompangInfo(Map<String, Object> param) {
-        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param,"comId"));
-        if (null != company){
-            param.put("comName",company.getComName());
+        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param, "comId"));
+        if (null != company && null != company.getComName()) {
+            param.put("comName", company.getComName());
         }
+        String comId = companyHbaseService.getCompanyReportComId(param);
+        if(StringUtils.isEmpty(comId)){
+            return null;
+        }
+        param.put("comId",comId);
         Map<String, Object> comMap = companyHbaseService.getGsCompany(param);
         Object resultObj = null;
         String paramter = MapUtils.getString(param, "paramter");
@@ -100,10 +112,15 @@ public class CompanyGsService {
             put("branchCompany", 0);
             put("report", 0);
         }};
-        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param,"comId"));
-        if (null != company){
+        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param, "comId"));
+        if (null != company && null != company.getComName()){
             param.put("comName",company.getComName());
         }
+        String comId = companyHbaseService.getCompanyReportComId(param);
+        if (StringUtils.isEmpty(comId)){
+            return resultMap;
+        }
+        param.put("comId",comId);
         Map<String, Object> obj = companyHbaseService.getGsCompany(param);
         List list;
         //股东信息
@@ -150,23 +167,23 @@ public class CompanyGsService {
      * @return
      */
     public List<Map<String, Object>> getReportYears(Map<String, Object> param) {
-        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param,"comId"));
-        if (null != company){
-            param.put("comName",company.getComName());
+        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param, "comId"));
+        if (null != company) {
+            param.put("comName", company.getComName());
         }
         return companyHbaseService.getCompanyReportYear(param);
     }
 
     /**
-     * 获取年份
+     * 获取年报详情
      *
      * @param param
      * @return
      */
     public Map<String, Object> getReportDetail(Map<String, Object> param) {
-        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param,"comId"));
-        if (null != company){
-            param.put("comName",company.getComName());
+        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param, "comId"));
+        if (null != company) {
+            param.put("comName", company.getComName());
         }
         Map<String, Object> report = companyHbaseService.getCompanyReport(param);
         if (MapUtils.isNotEmpty(report)) {
