@@ -73,6 +73,7 @@ public class CompanyController extends BaseController {
             if (null != tbCompany && null != tbCompany.getEconomicType()) {
                 tbCompany.setComType(tbCompany.getEconomicType());
             }
+            tbCompany.setUpdated(null);
             result.put("data", tbCompany);
             result.put("code", 1);
             result.put("msg", "查询成功!");
