@@ -618,7 +618,6 @@ public class NoticeController extends BaseController {
     public Map<String, Object> queryCompanyList(@PathVariable Long id, @RequestBody Map params) {
         Map resultMap = new HashMap();
         try {
-            settingUserId(params);
             params.put("id", id);
             Page page = buildPage(params);
             String cacheKey = ObjectUtils.buildCacheKey(GG_REL_COM_LIST, params);
@@ -629,6 +628,7 @@ public class NoticeController extends BaseController {
                     myRedisTemplate.setObject(cacheKey, pageInfo, LIST_OVER_TIME);
                 }
             }
+            settingUserId(params);
             settingCompanyCollFlag(pageInfo, params);
             buildReturnMap(resultMap, pageInfo);
             successMsg(resultMap);

@@ -256,6 +256,7 @@ public class NoticeService {
      */
     public PageInfo queryCompanyListById(Page page, Map argMap) {
         String zzRes = noticeMapper.queryNoticeZZById(argMap);
+        Integer isVip = MapUtils.getInteger(argMap,"isVip");
         //获取公告省份
         String scource = getString(argMap, "source");
         argMap.put("area", RouteUtils.parseSourceToProv(scource));
@@ -286,7 +287,11 @@ public class NoticeService {
                         tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), tabCode);
                         if (null != tbCompanyInfo) {
                             if (null != tbCompanyInfo.getPhone()) {
-                                company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim(), "replace").toLowerCase());
+                                if (1 == isVip) {
+                                    company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim(), "show").toLowerCase());
+                                } else {
+                                    company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim(), "replace").toLowerCase());
+                                }
                             }
                             if (null == company.getRegisCapital() && null != tbCompanyInfo.getRegisCapital()) {
                                 company.setRegisCapital(tbCompanyInfo.getRegisCapital());
