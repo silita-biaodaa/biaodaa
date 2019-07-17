@@ -73,6 +73,9 @@ public class CompanyController extends BaseController {
             if (null != tbCompany && null != tbCompany.getEconomicType()) {
                 tbCompany.setComType(tbCompany.getEconomicType());
             }
+            if (null != tbCompany && null != tbCompany.getRegisCapital()) {
+                tbCompany.setRegisCapital(tbCompany.getRegisCapital().replace("万元", "万人民币"));
+            }
             tbCompany.setUpdated(null);
             result.put("data", tbCompany);
             result.put("code", 1);

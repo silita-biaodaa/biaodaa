@@ -60,7 +60,7 @@ public class CompanyGsService {
             resultMap.put("comType", company.getEconomicType());
         }
         if (null != resultMap.get("regisCapital")){
-            resultMap.put("regisCapital",String.format("%.2f",MapUtils.getDouble(resultMap,"regisCapital"))+"万元");
+            resultMap.put("regisCapital",String.format("%.2f",MapUtils.getDouble(resultMap,"regisCapital"))+"万人民币");
         }
         comMap = null;
         company = null;
