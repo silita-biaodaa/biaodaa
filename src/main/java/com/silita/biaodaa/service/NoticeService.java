@@ -287,7 +287,7 @@ public class NoticeService {
                         tbCompanyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), tabCode);
                         if (null != tbCompanyInfo) {
                             if (null != tbCompanyInfo.getPhone()) {
-                                if (1 == isVip) {
+                                if (null != isVip && 1 == isVip) {
                                     company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim(), "show").toLowerCase());
                                 } else {
                                     company.setPhone(tbCompanyService.solPhone(tbCompanyInfo.getPhone().trim(), "replace").toLowerCase());

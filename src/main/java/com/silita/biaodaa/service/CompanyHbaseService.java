@@ -2,6 +2,7 @@ package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.utils.HBaseUtils;
+import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -74,7 +75,7 @@ public class CompanyHbaseService {
             } else if ("分支机构信息".equals(sbder.toString())) {
                 resultMap.put("branch", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("变更信息".equals(sbder.toString())) {
-                resultMap.put("changeRecord", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
+                resultMap.put("changeRecord", setChangeRecord(JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell)))));
             } else if ("主要人员信息".equals(sbder.toString())) {
                 resultMap.put("personnel", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("股东及出资信息".equals(sbder.toString())) {
@@ -87,6 +88,22 @@ public class CompanyHbaseService {
         }
         resultMap.put("basic", basicMap);
         return resultMap;
+    }
+
+
+    private List<Map<String, Object>> setChangeRecord(Object object) {
+        if (null == object) {
+            return new ArrayList<>();
+        }
+        List<Map<String, Object>> list = (List<Map<String, Object>>) object;
+        StringBuffer altDate;
+        for (Map<String, Object> val : list) {
+            altDate = new StringBuffer(MapUtils.getString(val, "altDate"));
+            if (altDate.toString().contains("-")) {
+                val.put("altDate", MyDateUtils.strToDate(altDate.toString(), null).getTime());
+            }
+        }
+        return list;
     }
 
     /**
@@ -168,28 +185,6 @@ public class CompanyHbaseService {
         return years;
     }
 
-
-    /**
-     * 根据企业名称查询企业id
-     *
-     * @param param
-     * @return
-     */
-    public String getCompanyReportComId(Map<String, Object> param) {
-        List<Result> results = returnReportCells(param);
-        for (Result result : results) {
-            Cell[] cells = result.rawCells();
-            Map<String, Object> reportMap = new HashedMap();
-            reportMap.put("comId", MapUtils.getString(param, "comId"));
-            for (Cell cell : cells) {
-                if ("com_id".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
-                    return Bytes.toString(CellUtil.cloneValue(cell));
-                }
-            }
-        }
-        return null;
-    }
-
     private Cell[] returnCells(Map<String, Object> param) {
         String comId = MapUtils.getString(param, "comId");
         String ip = PropertiesUtils.getProperty("Hbase.ip");
@@ -213,7 +208,7 @@ public class CompanyHbaseService {
 
     private List<Result> returnReportCells(Map<String, Object> param) {
         List<Result> results = new ArrayList<>();
-        String comId = MapUtils.getString(param, "comName");
+        String comId = MapUtils.getString(param, "comId");
         String ip = PropertiesUtils.getProperty("Hbase.ip");
         String port = PropertiesUtils.getProperty("Hbase.port");
         String master = PropertiesUtils.getProperty("Hbase.master");
@@ -223,7 +218,7 @@ public class CompanyHbaseService {
             connection = HBaseUtils.init(ip, port, master, hdfs);
             Scan scan = new Scan();
             FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
-            filterList.addFilter(new SingleColumnValueFilter(Bytes.toBytes("basic"), Bytes.toBytes("企业名称"), CompareOperator.EQUAL, Bytes.toBytes(comId)));
+            filterList.addFilter(new SingleColumnValueFilter(Bytes.toBytes("basic"), Bytes.toBytes("com_id"), CompareOperator.EQUAL, Bytes.toBytes(comId)));
             scan.setFilter(filterList);
             Table table = connection.getTable(TableName.valueOf("report"));
             ResultScanner resultScanner = table.getScanner(scan);

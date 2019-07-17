@@ -30,7 +30,7 @@ public class CompanyGsController extends BaseController {
     @RequestMapping(value = "/info", method = RequestMethod.POST, produces = "application/json")
     public Map<String, Object> infoCompany(@RequestBody Map<String, Object> param) {
         Map<String, Object> result = new HashMap<>();
-        successMsg(result, companyGsService.getGsCompangInfo(param));
+        successMsg(result, companyGsService.getGsCompanyInfo(param));
         return result;
     }
 

@@ -6,9 +6,9 @@ import com.silita.biaodaa.dao.TbCompanyMapper;
 import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.TbCompanyInfo;
+import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,14 +38,7 @@ public class CompanyGsService {
      */
     public Map<String, Object> getGsCompany(TbCompany company) {
         Map<String, Object> param = new HashedMap();
-        if (null != company && null != company.getComName()) {
-            param.put("comName", company.getComName());
-        }
-        String comId = companyHbaseService.getCompanyReportComId(param);
-        if(StringUtils.isEmpty(comId)){
-            return null;
-        }
-        param.put("comId",comId);
+        param.put("comId", company.getComId());
         Map<String, Object> comMap = companyHbaseService.getGsCompany(param);
         if (MapUtils.isEmpty(comMap)) {
             return null;
@@ -66,6 +59,9 @@ public class CompanyGsService {
         if (null == resultMap.get("comType") && null != company && null != company.getEconomicType()) {
             resultMap.put("comType", company.getEconomicType());
         }
+        if (null != resultMap.get("regisCapital")){
+            resultMap.put("regisCapital",String.format("%.2f",MapUtils.getDouble(resultMap,"regisCapital"))+"万元");
+        }
         comMap = null;
         company = null;
         return resultMap;
@@ -77,16 +73,7 @@ public class CompanyGsService {
      * @param param
      * @return
      */
-    public Object getGsCompangInfo(Map<String, Object> param) {
-        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param, "comId"));
-        if (null != company && null != company.getComName()) {
-            param.put("comName", company.getComName());
-        }
-        String comId = companyHbaseService.getCompanyReportComId(param);
-        if(StringUtils.isEmpty(comId)){
-            return null;
-        }
-        param.put("comId",comId);
+    public Object getGsCompanyInfo(Map<String, Object> param) {
         Map<String, Object> comMap = companyHbaseService.getGsCompany(param);
         Object resultObj = null;
         String paramter = MapUtils.getString(param, "paramter");
@@ -94,7 +81,7 @@ public class CompanyGsService {
             resultObj = (List) JSONObject.parse(MapUtils.getString(comMap, paramter));
             return resultObj;
         }
-        return null;
+        return new ArrayList<>();
     }
 
     /**
@@ -112,15 +99,7 @@ public class CompanyGsService {
             put("branchCompany", 0);
             put("report", 0);
         }};
-        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param, "comId"));
-        if (null != company && null != company.getComName()){
-            param.put("comName",company.getComName());
-        }
-        String comId = companyHbaseService.getCompanyReportComId(param);
-        if (StringUtils.isEmpty(comId)){
-            return resultMap;
-        }
-        param.put("comId",comId);
+        param.put("comId", MapUtils.getString(param, "comId"));
         Map<String, Object> obj = companyHbaseService.getGsCompany(param);
         List list;
         //股东信息
@@ -167,10 +146,6 @@ public class CompanyGsService {
      * @return
      */
     public List<Map<String, Object>> getReportYears(Map<String, Object> param) {
-        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param, "comId"));
-        if (null != company) {
-            param.put("comName", company.getComName());
-        }
         return companyHbaseService.getCompanyReportYear(param);
     }
 
@@ -181,10 +156,6 @@ public class CompanyGsService {
      * @return
      */
     public Map<String, Object> getReportDetail(Map<String, Object> param) {
-        TbCompany company = tbCompanyService.getCompany(MapUtils.getString(param, "comId"));
-        if (null != company) {
-            param.put("comName", company.getComName());
-        }
         Map<String, Object> report = companyHbaseService.getCompanyReport(param);
         if (MapUtils.isNotEmpty(report)) {
             return setAttrMap(report);
@@ -211,7 +182,12 @@ public class CompanyGsService {
         }
         if (null != param.get("socialSecurity")) {
             List<Map<String, Object>> list = (List<Map<String, Object>>) param.get("socialSecurity");
-            param.put("socialSecurity", setSocialSecurityMap(list));
+            String isShow = PropertiesUtils.getProperty("isShow");
+            if ("show".equals(isShow)){
+                param.put("socialSecurity", setSocialSecurityMap(list));
+            }else {
+                param.put("socialSecurity", setShieldSocialSecurityMap(list));
+            }
         }
         return param;
     }
@@ -284,6 +260,33 @@ public class CompanyGsService {
                 }
             }
 
+        }
+        return socialSecurity;
+    }
+
+    /**
+     * 设置屏蔽
+     *
+     * @param socialSecurity
+     * @return
+     */
+    private List<Map<String, Object>> setShieldSocialSecurityMap(List<Map<String, Object>> socialSecurity) {
+        for (Map<String, Object> map : socialSecurity) {
+            map.put("totalPaymentSo310", "企业选择不公示");
+            map.put("totalPaymentSo410", "企业选择不公示");
+            map.put("totalPaymentSo510", "企业选择不公示");
+            map.put("totalWagesSo510", "企业选择不公示");
+            map.put("totalPaymentSo110", "企业选择不公示");
+            map.put("totalPaymentSo210", "企业选择不公示");
+            map.put("unpaidSocialInsSo510", "企业选择不公示");
+            map.put("unpaidSocialInsSo410", "企业选择不公示");
+            map.put("unpaidSocialInsSo310", "企业选择不公示");
+            map.put("unpaidSocialInsSo210", "企业选择不公示");
+            map.put("unpaidSocialInsSo110", "企业选择不公示");
+            map.put("unpaidSocialInsSo210", "企业选择不公示");
+            map.put("totalWagesSo110", "企业选择不公示");
+            map.put("totalWagesSo210", "企业选择不公示");
+            map.put("totalWagesSo310", "企业选择不公示");
         }
         return socialSecurity;
     }
