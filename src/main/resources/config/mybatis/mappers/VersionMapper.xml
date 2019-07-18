@@ -11,6 +11,7 @@
                 ,content as content
                 ,is_update as isUpdate
                 ,is_activity as isActivity
+                ,file_url as fileUrl
         from mishu.version where loginChannel=#{loginChannel}
     </select>
 </mapper>
