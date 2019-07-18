@@ -67,25 +67,44 @@
         <if test="maxCapital!=null">
             <![CDATA[ and c.regis_capital <= #{maxCapital} ]]>
         </if>
-        <if test="zzLevel == 'default' and qualCode!=null and qualCode!=''">
-            and c.range like CONCAT('%',#{qualCode},'%')
+        /*筛选条件全部为***级及以上并且是和的关系*/
+        <if test="null != qualRangeType and qualRangeType != '' and qualRangeType == 'over_and'">
+            AND
+            <foreach collection="qualCode" item="item" separator="and" close=")" open="(">
+                <foreach collection="item" item="qual" separator="or" open="(" close=")">
+                    c.range like CONCAT('%',#{qual},'%')
+                </foreach>
+            </foreach>
         </if>
-        <if test="zzLevel == 'level'">
-            and
-            <if test="rangeType == 'or'">
-                <foreach collection="range" item="zzList" close=")" separator="or" open="(">
-                    <foreach collection="zzList.rangeList" item="rangeList" close=")" separator="or" open="(">
-                        c.range like CONCAT('%',#{rangeList},'%')
+        /*筛选条件为****级以上和等级并且是和的关系*/
+        <if test="null != qualRangeType and qualRangeType != '' and qualRangeType == 'above_sum_and'">
+            AND
+            <foreach collection="qualCode" item="item" separator="and" close=")" open="(">
+                c.range like CONCAT('%',#{item},'%')
+            </foreach>
+        </if>
+        /*筛选条件全部为***级及以上并且是或的关系/筛选条件为****级以上和等级并且是或的关系*/
+        <if test="null != qualRangeType and qualRangeType != '' and (qualRangeType == 'over_or' or qualRangeType == 'above_sum_or')">
+            AND
+            <foreach collection="qualCode" item="item" separator="or" close=")" open="(">
+                c.range like CONCAT('%',#{item},'%')
+            </foreach>
+        </if>
+        /*筛选条件为非****级以上并且是和/或的关系*/
+        <if test="null != qualRangeType and qualRangeType != '' and qualRangeType == 'never'">
+            AND
+            <choose>
+                <when test="null != rangeType and rangeType != '' and rangeType == 'and'">
+                    <foreach collection="qualCode" item="item" separator="and" close=")" open="(">
+                        c.range like CONCAT('%',#{item},'%')
                     </foreach>
-                </foreach>
-            </if>
-            <if test="rangeType == 'and'">
-                <foreach collection="range" item="zzList" close=")" separator="and" open="(">
-                    <foreach collection="zzList.rangeList" item="rangeList" close=")" separator="or" open="(">
-                        c.range like CONCAT('%',#{rangeList},'%')
+                </when>
+                <otherwise>
+                    <foreach collection="qualCode" item="item" separator="or" close=")" open="(">
+                        c.range like CONCAT('%',#{item},'%')
                     </foreach>
-                </foreach>
-            </if>
+                </otherwise>
+            </choose>
         </if>
         order by c.px desc
     </select>
@@ -291,21 +310,21 @@
   </select>
 
     <select id="queryCompanyEsList" resultType="com.silita.biaodaa.model.es.CompanyEs" parameterType="java.util.Map">
-      SELECT t.com_id
-              ,t.com_name
-              ,t.com_name_py
-              ,IFNULL(t.px,0) AS px
-              ,regis_address AS regisAddress
-              ,credit_code AS creditCode
-      FROM tb_company t
-      WHERE 1=1
-      AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
-      <if test="regisAddress != null and regisAddress != ''">
-          and t.regis_address = #{regisAddress}
-      </if>
-      order by t.px desc
-      limit #{page},#{pageSize}
-  </select>
+        SELECT t.com_id
+        ,t.com_name
+        ,t.com_name_py
+        ,IFNULL(t.px,0) AS px
+        ,regis_address AS regisAddress
+        ,credit_code AS creditCode
+        FROM tb_company t
+        WHERE 1=1
+        AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
+        <if test="regisAddress != null and regisAddress != ''">
+            and t.regis_address = #{regisAddress}
+        </if>
+        order by t.px desc
+        limit #{page},#{pageSize}
+    </select>
 
     <select id="queryCompanyCount" resultType="java.lang.Integer">
     SELECT count(1)
@@ -315,15 +334,15 @@
   </select>
 
     <select id="queryCompanyAddressCount" resultType="java.lang.Integer" parameterType="java.util.Map">
-    SELECT count(1)
-      FROM tb_company t
-      WHERE 1=1
-      AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
+        SELECT count(1)
+        FROM tb_company t
+        WHERE 1=1
+        AND t.`com_name` IS NOT NULL AND t.`com_name` != ''
         <if test="regisAddress != null and regisAddress != ''">
             and t.regis_address = #{regisAddress}
         </if>
-      order by t.px desc
-  </select>
+        order by t.px desc
+    </select>
 
     <select id="getCertSrcUuidByName" resultType="java.lang.String" parameterType="java.lang.String">
         select uuid from cert_src where uuid is not null

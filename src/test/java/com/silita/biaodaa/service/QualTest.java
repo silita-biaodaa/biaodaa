@@ -1,13 +1,18 @@
 package com.silita.biaodaa.service;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QualTest {
+public class QualTest extends ConfigTest{
+
+    @Autowired
+    TbCompanyService tbCompanyService;
 
     @Test
     public void test() {
@@ -110,9 +115,9 @@ public class QualTest {
                     } else if (qualList.get(i).get("value").toString().contains("壹级")) {
                         index = getGradeIndex2(resultList, "水利", "公路", "市政", "建筑", "壹级", "特级");
                     } else if (qualList.get(i).get("value").toString().contains("贰级")) {
-                        index = getGradeIndex2(resultList, "水利", "公路", "市政", "建筑", "贰级","壹级");
+                        index = getGradeIndex2(resultList, "水利", "公路", "市政", "建筑", "贰级", "壹级");
                     } else if (qualList.get(i).get("value").toString().contains("叁级")) {
-                        index = getGradeIndex2(resultList, "水利", "公路", "市政", "建筑", "叁级","贰级");
+                        index = getGradeIndex2(resultList, "水利", "公路", "市政", "建筑", "叁级", "贰级");
                     }
                     if (index > 0) {
                         resultList.add(index, qualList.get(i));
@@ -132,15 +137,6 @@ public class QualTest {
         index = getLastIndex(resultList, value);
         if (index == -1 && value.length > 1) {
             index = getLastIndex(resultList, value[1]);
-        }
-        return index;
-    }
-
-    private int getIndex2(List<Map<String, Object>> resultList, String... value) {
-        int index = -1;
-        index = getLastIndex(resultList, value);
-        if (index == -1) {
-            index = getLastIndex(resultList, value[2], value[2]);
         }
         return index;
     }
@@ -193,7 +189,7 @@ public class QualTest {
     private int getLastIndex2(List<Map<String, Object>> resultList, String... value) {
         int index = -1;
         for (int i = resultList.size() - 1; i >= 0; i--) {
-            if(resultList.get(i).get("value").toString().contains("总承包")){
+            if (resultList.get(i).get("value").toString().contains("总承包")) {
                 if (resultList.get(i).get("value").toString().contains(value[0])
                         || resultList.get(i).get("value").toString().contains(value[1])
                         || resultList.get(i).get("value").toString().contains(value[2])
@@ -204,5 +200,16 @@ public class QualTest {
             }
         }
         return index;
+    }
+
+    @Test
+    public void setQual() {
+        Map<String, Object> param = new HashedMap() {{
+//            put("qualCode", "qual_tdxy_1554281896934/grade_yjjys_1554256688513,qual_zhzz_1554281838972,qual_gczbdl_1554281840493/grade_yj_1553245789137");
+            put("qualCode", "qual_tdxy_1554281896934/grade_yjjys_1554256688513,qual_tdxy_1554281896934/grade_yjjys_1554256688513,qual_tdxy_1554281896934/grade_yjjys_1554256688513");
+            put("rangeType", "or");
+        }};
+        tbCompanyService.setNewQualCode(param);
+        System.out.println(param);
     }
 }

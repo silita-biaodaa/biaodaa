@@ -310,7 +310,8 @@ public class TbCompanyService {
     public PageInfo filterCompany(Page page, Map<String, Object> param, String levelRank) {
         Integer isVip = MapUtils.getInteger(param, "isVip");
         //判断是否*****级以上
-        setQualCode(param);
+//        setQualCode(param);
+        setNewQualCode(param);
         //地区
         if (null != param.get("regisAddress")) {
             getRegisAddress(param);
@@ -386,25 +387,26 @@ public class TbCompanyService {
      *
      * @param param
      */
-    private void setNewQualCode(Map<String, Object> param) {
+    public void setNewQualCode(Map<String, Object> param) {
         if (null != param && null != param.get("qualCode")) {
-            Map<String, List> gradeMap = this.getGradeList();
+            Map<String, List> gradeMap = getGradeList();
             String qualCode = MapUtils.getString(param, "qualCode");
             String[] quals = qualCode.split(",");
             String[] qualGrades;
             List<String> qualList = new ArrayList<>();
-            List<String> qualGradeList = new ArrayList<>();
             List<String> gradeList = new ArrayList<>();
             List<List<String>> yiShangList = new ArrayList<>();
             Map<String, Object> val = new HashedMap();
             for (String qual : quals) {
                 qualGrades = qual.split("/");
                 if (qualGrades.length < 2) {
-                    qualGrades[1] = "0";
+                    qual = qual + "/0";
+                    qualGrades = qual.split("/");
                 }
                 val.put("qual", qualGrades[0]);
                 //判断资质****级及以上
                 if (null != gradeMap.get(qualGrades[1].trim())) {
+                    List<String> qualGradeList = new ArrayList<>();
                     gradeList = gradeMap.get(qualGrades[1].trim());
                     for (String grade : gradeList) {
                         val.put("grade", grade);
@@ -417,29 +419,39 @@ public class TbCompanyService {
                 qualList.add(dicQuaMapper.queryQualGradeId(val));
             }
 
-            String rangeType = MapUtils.getString(param, "rangeType") == null ? "and" : MapUtils.getString(param, "rangeType");
+            String rangeType = MapUtils.getString(param, "rangeType");
             //筛选条件全部为***级及以上并且是和的关系
-            if ("and".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && (null == qualList || qualList.size() <= 0)){
-                param.put("qualCode",yiShangList);
-                return;
-            }else if ("or".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && (null == qualList || qualList.size() <= 0)){
+            if ("and".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && (null == qualList || qualList.size() <= 0)) {
+                param.put("qualCode", yiShangList);
+                param.put("qualRangeType", "over_and");
+            } else if ("or".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && (null == qualList || qualList.size() <= 0)) {
                 //筛选条件全部为***级及以上并且是或的关系
                 List<String> valList = new ArrayList<>();
-                for (List<String> list : yiShangList){
-                    for (String value : list){
+                for (List<String> list : yiShangList) {
+                    for (String value : list) {
                         valList.add(value);
                     }
                 }
-                param.put("qualCode",valList);
-            }else if ("and".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && null != qualList && qualList.size() > 0){
+                param.put("qualCode", valList);
+                param.put("qualRangeType", "over_or");
+            } else if ("and".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && null != qualList && qualList.size() > 0) {
                 //筛选条件为****级以上和等级并且是和的关系
-                List<String> qualVal = new ArrayList<>();
-                for (List<String> list :yiShangList){
-                    for (String value : list){
+                yiShangList.add(qualList);
+                param.put("qualCode", yiShangList);
+//                param.put("qualRangeType","above_sum_and");
+                param.put("qualRangeType", "over_and");
+            } else if ("or".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && null != qualList && qualList.size() > 0) {
+                //筛选条件为****级以上和等级并且是或的关系
+                for (List<String> list : yiShangList) {
+                    for (String value : list) {
                         qualList.add(value);
                     }
-                    Collections.sort(qualList);
                 }
+                param.put("qualCode", qualList);
+                param.put("qualRangeType", "above_sum_or");
+            } else {
+                param.put("qualCode", qualList);
+                param.put("qualRangeType", "never");
             }
         }
     }
