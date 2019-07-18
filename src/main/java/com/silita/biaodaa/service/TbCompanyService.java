@@ -12,6 +12,7 @@ import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.*;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,8 @@ public class TbCompanyService {
 
     @Autowired
     QualService qualService;
+    @Autowired
+    DicQuaMapper dicQuaMapper;
 
     @Autowired
     TbUnderConstructMapper tbUnderConstructMapper;
@@ -305,7 +308,7 @@ public class TbCompanyService {
     }
 
     public PageInfo filterCompany(Page page, Map<String, Object> param, String levelRank) {
-        Integer isVip = MapUtils.getInteger(param,"isVip");
+        Integer isVip = MapUtils.getInteger(param, "isVip");
         //判断是否*****级以上
         setQualCode(param);
         //地区
@@ -330,9 +333,9 @@ public class TbCompanyService {
             companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), tabCode);
             if (null != companyInfo) {
                 if (null != companyInfo.getPhone()) {
-                    if (1 == isVip.intValue()){
+                    if (1 == isVip.intValue()) {
                         company.setPhone(this.solPhone(companyInfo.getPhone(), "show"));
-                    }else {
+                    } else {
                         company.setPhone(this.solPhone(companyInfo.getPhone(), "replace"));
                     }
                 }
@@ -351,7 +354,7 @@ public class TbCompanyService {
         return pageInfo;
     }
 
-    private void setQualCode(Map<String, Object> param){
+    private void setQualCode(Map<String, Object> param) {
         //判断是否*****级以上
         param.put("zzLevel", "default");
         if (null != param.get("qualCode") && StringUtils.isNotEmpty(param.get("qualCode").toString())) {
@@ -378,7 +381,64 @@ public class TbCompanyService {
         }
     }
 
-    public List<TbCompany>  filterCompanyList( Map<String, Object> param) {
+    /**
+     * 新资质筛选
+     *
+     * @param param
+     */
+    private void setNewQualCode(Map<String, Object> param) {
+        if (null != param && null != param.get("qualCode")) {
+            Map<String, List> gradeMap = this.getGradeList();
+            String qualCode = MapUtils.getString(param, "qualCode");
+            String[] quals = qualCode.split(",");
+            String[] qualGrades;
+            List<String> qualList = new ArrayList<>();
+            List<String> qualGradeList = new ArrayList<>();
+            List<String> gradeList = new ArrayList<>();
+            List<List<String>> yiShangList = new ArrayList<>();
+            Map<String, Object> val = new HashedMap();
+            for (String qual : quals) {
+                qualGrades = qual.split("/");
+                if (qualGrades.length < 2) {
+                    qualGrades[1] = "0";
+                }
+                val.put("qual", qualGrades[0]);
+                //判断资质****级及以上
+                if (null != gradeMap.get(qualGrades[1].trim())) {
+                    gradeList = gradeMap.get(qualGrades[1].trim());
+                    for (String grade : gradeList) {
+                        val.put("grade", grade);
+                        qualGradeList.add(dicQuaMapper.queryQualGradeId(val));
+                    }
+                    yiShangList.add(qualGradeList);
+                    continue;
+                }
+                val.put("grade", qualGrades[1]);
+                qualList.add(dicQuaMapper.queryQualGradeId(val));
+            }
+
+            String rangeType = MapUtils.getString(param, "rangeType") == null ? "and" : MapUtils.getString(param, "rangeType");
+            //筛选条件全部为***级及以上并且是和的关系
+            if ("and".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && (null == qualList || qualList.size() <= 0)){
+                param.put("qualCode",yiShangList);
+                return;
+            }else if ("or".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && (null == qualList || qualList.size() <= 0)){
+                //筛选条件全部为***级及以上并且是或的关系
+                List<String> valList = new ArrayList<>();
+                for (List<String> list : yiShangList){
+                    for (String value : list){
+                        valList.add(value);
+                    }
+                }
+                param.put("qualCode",valList);
+            }else if ("or".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && null != qualList && qualList.size() > 0){
+                //筛选条件为****级以上和等级并且是和的关系
+
+            }
+        }
+    }
+
+    public List<TbCompany> filterCompanyList(Map<String, Object> param) {
         this.setQualCode(param);
         //地区
         if (null != param.get("regisAddress")) {
@@ -672,7 +732,7 @@ public class TbCompanyService {
         for (TbSafetyCertificate safetyCertificate : tbSafetyCertificateList) {
             safetyMap.put(safetyCertificate.getComName(), safetyCertificate);
         }
-        myRedisTemplate.setObject("safety_list",safetyMap);
+        myRedisTemplate.setObject("safety_list", safetyMap);
         return safetyMap;
     }
 
@@ -882,7 +942,7 @@ public class TbCompanyService {
      * @return
      */
     public List<TbCompany> getHostCompanyList(Map<String, Object> param) {
-        Integer isVip = MapUtils.getInteger(param,"isVip");
+        Integer isVip = MapUtils.getInteger(param, "isVip");
         if (null != PropertiesUtils.getProperty("company.size")) {
             param.put("limit", Integer.parseInt(PropertiesUtils.getProperty("company.size")));
         }
@@ -893,9 +953,9 @@ public class TbCompanyService {
                 companyInfo = tbCompanyInfoMapper.queryDetailByComName(company.getComName(), CommonUtil.getCode(company.getRegisAddress()));
                 if (null != companyInfo) {
                     if (null != companyInfo.getPhone()) {
-                        if (1 == isVip.intValue()){
+                        if (1 == isVip.intValue()) {
                             company.setPhone(this.solPhone(companyInfo.getPhone(), "show"));
-                        }else {
+                        } else {
                             company.setPhone(this.solPhone(companyInfo.getPhone(), "replace"));
                         }
                     }
@@ -988,7 +1048,7 @@ public class TbCompanyService {
         if (null != companyInfo && null != companyInfo.getOrgCode()) {
             tbCompany.setOrgCode(companyInfo.getOrgCode());
         }
-        if (null != companyInfo && null != companyInfo.getRegisCapital()){
+        if (null != companyInfo && null != companyInfo.getRegisCapital()) {
             tbCompany.setRegisCapital(companyInfo.getRegisCapital());
         }
         return tbCompany;
@@ -1119,9 +1179,9 @@ public class TbCompanyService {
             resultMap.put("branchCompanyTotal", companyInfoList.size());
         }
         //业绩
-        Map<String,Object> proMap = projectService.getProjectCompanyList(param);
+        Map<String, Object> proMap = projectService.getProjectCompanyList(param);
         if (null != proMap && null != proMap.get("data")) {
-            List<Map<String,Object>> list = (List<Map<String, Object>>) proMap.get("data");
+            List<Map<String, Object>> list = (List<Map<String, Object>>) proMap.get("data");
             resultMap.put("projectTotal", list.size());
         }
         return resultMap;
@@ -1143,5 +1203,40 @@ public class TbCompanyService {
             }
         }
         return list;
+    }
+
+    /**
+     * 得到等级
+     *
+     * @return
+     */
+    private Map<String, List> getGradeList() {
+        Map<String, List> valMap = new HashedMap();
+        //一级及以上
+        List<String> yiji = Arrays.asList("grade_tj_1553497710814", "grade_yj_1553245789202");
+        //二级及以上
+        List<String> erji = Arrays.asList("grade_tj_1553497710814", "grade_yj_1553245789202", "grade_ej_1553245789219");
+        //三级及以上
+        List<String> sanji = Arrays.asList("grade_tj_1553497710814", "grade_yj_1553245789202", "grade_ej_1553245789219", "grade_sj_1553245789236");
+        //四级及以上
+        List<String> siji = Arrays.asList("grade_tj_1553497710814", "grade_yj_1553245789202", "grade_ej_1553245789219", "grade_sj_1553245789236", "grade_sj_1553476160640");
+        //五级及以上
+        List<String> wuji = Arrays.asList("grade_tj_1553497710814", "grade_yj_1553245789202", "grade_ej_1553245789219", "grade_sj_1553245789236", "grade_sj_1553476160640", "grade_wj_1553476160663");
+        //乙级及以上
+        List<String> yijij = Arrays.asList("grade_jj_1553245789116", "grade_yj_1553245789137");
+        //丙级及以上
+        List<String> bingji = Arrays.asList("grade_jj_1553245789116", "grade_yj_1553245789137", "grade_bj_1553245789155");
+        //丁级及以上
+        List<String> dingji = Arrays.asList("grade_jj_1553245789116", "grade_yj_1553245789137", "grade_bj_1553245789155", "grade_djjys_1554256688530");
+        valMap.put("grade_yjjys_1554256688540", yiji);
+        valMap.put("grade_ejjys_1554256688469", erji);
+        valMap.put("grade_sjjys_1554256688485", sanji);
+        valMap.put("grade_sjjys_1554256688494", siji);
+        valMap.put("grade_wjjys_1554256688504", wuji);
+
+        valMap.put("grade_yjjys_1554256688513", yijij);
+        valMap.put("grade_bjjys_1554256688521", bingji);
+        valMap.put("grade_djjys_1554256688530", dingji);
+        return valMap;
     }
 }

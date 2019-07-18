@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.DicQuaMapper">
+
+    <!--根据资质和等级code查询关联id-->
+    <select id="queryQualGradeId" parameterType="java.util.Map" resultType="java.lang.String">
+      SELECT
+        t.`id`
+      FROM
+        biaodaa_admin.`rel_qua_grade` t
+      WHERE t.`grade_code` = #{grade}
+        AND t.`qua_code` = #{qual}
+    </select>
+
+</mapper>

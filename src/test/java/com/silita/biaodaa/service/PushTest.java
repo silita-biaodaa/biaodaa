@@ -23,7 +23,7 @@ public class PushTest{
     @org.junit.Test
     public void test(){
         List<String> users = new ArrayList<>();
-        users.add("fefc9ce907e346768773cf34efe601df");
+        users.add("5f3c399306b54c9fbff9e558f7afed02");
         Map<String,Object> param = new HashedMap();
         param.put("comName","湖南东方红建设集团有限公司");
         param.put("comId","44b2a270d4088a997366d5febdf24b21");
