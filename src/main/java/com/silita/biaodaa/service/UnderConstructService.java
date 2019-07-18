@@ -52,7 +52,8 @@ public class UnderConstructService {
         } else {
             //获取身份证id
             TbUnderConstruct underConstruct = tbUnderConstructMapper.queryUnderConstructDetail(param.get("pkid").toString());
-            list = tbUnderConstructMapper.queryUnderListIdCard(underConstruct.getIdCard());
+//            list = tbUnderConstructMapper.queryUnderListIdCard(underConstruct.getIdCard());
+            list.add(underConstruct);
         }
         if (null != list && list.size() > 0) {
             for (TbUnderConstruct under : list) {
