@@ -431,9 +431,15 @@ public class TbCompanyService {
                     }
                 }
                 param.put("qualCode",valList);
-            }else if ("or".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && null != qualList && qualList.size() > 0){
+            }else if ("and".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && null != qualList && qualList.size() > 0){
                 //筛选条件为****级以上和等级并且是和的关系
-
+                List<String> qualVal = new ArrayList<>();
+                for (List<String> list :yiShangList){
+                    for (String value : list){
+                        qualList.add(value);
+                    }
+                    Collections.sort(qualList);
+                }
             }
         }
     }
