@@ -68,7 +68,7 @@
             <![CDATA[ and c.regis_capital <= #{maxCapital} ]]>
         </if>
         /*筛选条件全部为***级及以上并且是和的关系*/
-        <if test="null != qualRangeType and qualRangeType != '' and qualRangeType == 'over_and'">
+        <if test="null != qualRangeType and qualRangeType != '' and (qualRangeType == 'over_and' or qualRangeType == 'above_sum_and')">
             AND
             <foreach collection="qualCode" item="item" separator="and" close=")" open="(">
                 <foreach collection="item" item="qual" separator="or" open="(" close=")">
