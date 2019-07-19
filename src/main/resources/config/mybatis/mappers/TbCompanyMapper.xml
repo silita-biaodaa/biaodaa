@@ -76,13 +76,6 @@
                 </foreach>
             </foreach>
         </if>
-        /*筛选条件为****级以上和等级并且是和的关系*/
-        <if test="null != qualRangeType and qualRangeType != '' and qualRangeType == 'above_sum_and'">
-            AND
-            <foreach collection="qualCode" item="item" separator="and" close=")" open="(">
-                c.range like CONCAT('%',#{item},'%')
-            </foreach>
-        </if>
         /*筛选条件全部为***级及以上并且是或的关系/筛选条件为****级以上和等级并且是或的关系*/
         <if test="null != qualRangeType and qualRangeType != '' and (qualRangeType == 'over_or' or qualRangeType == 'above_sum_or')">
             AND

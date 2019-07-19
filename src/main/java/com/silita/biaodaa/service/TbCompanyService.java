@@ -388,7 +388,7 @@ public class TbCompanyService {
      * @param param
      */
     public void setNewQualCode(Map<String, Object> param) {
-        if (null != param && null != param.get("qualCode")) {
+        if (null != param && null != param.get("qualCode") && StringUtils.isNotEmpty(MapUtils.getString(param, "qualCode"))) {
             Map<String, List> gradeMap = getGradeList();
             String qualCode = MapUtils.getString(param, "qualCode");
             String[] quals = qualCode.split(",");
@@ -438,7 +438,7 @@ public class TbCompanyService {
                 //筛选条件为****级以上和等级并且是和的关系
                 yiShangList.add(qualList);
                 param.put("qualCode", yiShangList);
-                param.put("qualRangeType","above_sum_and");
+                param.put("qualRangeType", "above_sum_and");
             } else if ("or".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && null != qualList && qualList.size() > 0) {
                 //筛选条件为****级以上和等级并且是或的关系
                 for (List<String> list : yiShangList) {
