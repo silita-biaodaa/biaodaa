@@ -6,6 +6,7 @@ import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.CompareOperator;
@@ -49,7 +50,7 @@ public class CompanyHbaseService {
             if ("企业名称".equals(sbder.toString())) {
                 basicMap.put("comName", Bytes.toString(CellUtil.cloneValue(cell)));
             } else if ("成立日期".equals(sbder.toString())) {
-                basicMap.put("regisDate", Bytes.toString(CellUtil.cloneValue(cell)));
+                basicMap.put("regisDate", setDate(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("法定代表人".equals(sbder.toString())) {
                 basicMap.put("legalPerson", Bytes.toString(CellUtil.cloneValue(cell)));
             } else if ("注册资本".equals(sbder.toString())) {
@@ -69,9 +70,9 @@ public class CompanyHbaseService {
             } else if ("注册号".equals(sbder.toString())) {
                 basicMap.put("regNo", Bytes.toString(CellUtil.cloneValue(cell)));
             } else if ("营业期限自".equals(sbder.toString())) {
-                basicMap.put("businessStart", Bytes.toString(CellUtil.cloneValue(cell)));
+                basicMap.put("businessStart", setDate(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("营业期限至".equals(sbder.toString())) {
-                basicMap.put("businessEnd", Bytes.toString(CellUtil.cloneValue(cell)));
+                basicMap.put("businessEnd", setDate(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("分支机构信息".equals(sbder.toString())) {
                 resultMap.put("branch", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("变更信息".equals(sbder.toString())) {
@@ -104,6 +105,16 @@ public class CompanyHbaseService {
             }
         }
         return list;
+    }
+
+    private String setDate(String strDate) {
+        if (StringUtils.isEmpty(strDate)) {
+            return strDate;
+        }
+        if (strDate.contains("-")) {
+            return MyDateUtils.getDate(MyDateUtils.strToDate(strDate, "yyyy-MM-dd HH:mm:ss"), "yyyy年MM月dd日");
+        }
+        return strDate;
     }
 
     /**
