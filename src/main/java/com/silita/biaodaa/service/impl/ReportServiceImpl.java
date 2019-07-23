@@ -8,7 +8,6 @@ import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.AptitudeDictionaryMapper;
 import com.silita.biaodaa.dao.TbReportInfoMapper;
 import com.silita.biaodaa.dao.VipInfoMapper;
-import com.silita.biaodaa.model.AptitudeDictionary;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbReportInfo;
 import com.silita.biaodaa.model.TbVipFeeStandard;
@@ -136,45 +135,6 @@ public class ReportServiceImpl implements ReportService {
         return pageInfo;
     }
 
-    private String setQualGrade(String grade) {
-        String gradeName = null;
-        switch (grade) {
-            case "0":
-                gradeName = "特级";
-                break;
-            case "1":
-                gradeName = "一级";
-                break;
-
-            case "2":
-                gradeName = "二级";
-                break;
-            case "3":
-                gradeName = "三级";
-                break;
-            case "11":
-                gradeName = "一级及以上";
-                break;
-            case "21":
-                gradeName = "二级及以上";
-                break;
-            case "31":
-                gradeName = "三级及以上";
-                break;
-            case "-1":
-                gradeName = "甲级";
-                break;
-            case "-2":
-                gradeName = "乙级";
-                break;
-            case "-3":
-                gradeName = "丙级";
-                break;
-        }
-        return gradeName;
-    }
-
-    @Override
     public void setQualName(Map<String, Object> param) {
         String qualCode = MapUtils.getString(param, "qualCode");
         if (StringUtils.isNotEmpty(qualCode)) {
@@ -182,17 +142,21 @@ public class ReportServiceImpl implements ReportService {
             StringBuffer qualName = new StringBuffer();
             for (String str : qualCodeStr) {
                 String[] qua = str.split("/");
-                AptitudeDictionary aptitudeDictionary = aptitudeDictionaryMapper.queryQualDetail(qua[0]);
-                if (null != aptitudeDictionary) {
+                String benchName = aptitudeDictionaryMapper.queryQualNameByCode(qua[0]);
+                if (null != benchName) {
                     if (qua.length == 2) {
-                        qualName.append(aptitudeDictionary.getAptitudename() + aptitudeDictionary.getMajorname() + this.setQualGrade(qua[1])).append(",");
+                        qualName.append(benchName + this.setQualGrade(qua[1])).append(",");
                     } else {
-                        qualName.append(aptitudeDictionary.getAptitudename()).append(",");
+                        qualName.append(benchName).append(",");
                     }
                 }
             }
             param.put("qualName", StringUtils.strip(qualName.toString(), ","));
         }
+    }
+
+    private String setQualGrade(String grade) {
+        return aptitudeDictionaryMapper.queryGradeNameByCode(grade);
     }
 
     @Override

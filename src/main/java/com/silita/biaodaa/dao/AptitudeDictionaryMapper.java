@@ -33,4 +33,18 @@ public interface AptitudeDictionaryMapper extends MyMapper<AptitudeDictionary> {
      * @return
      */
     AptitudeDictionary queryQualDetail(String majorUUid);
+
+    /**
+     * 根据code查询资质名称
+     * @param qualCode
+     * @return
+     */
+    String queryQualNameByCode(String qualCode);
+
+    /**
+     * 根据code查询等级名称
+     * @param gradeCode
+     * @return
+     */
+    String queryGradeNameByCode(String gradeCode);
 }

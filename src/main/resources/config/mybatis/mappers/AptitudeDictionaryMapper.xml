@@ -1,19 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.biaodaa.dao.AptitudeDictionaryMapper" >
+<mapper namespace="com.silita.biaodaa.dao.AptitudeDictionaryMapper">
 
-  <!--获取所有资质字典信息-->
-  <select id="queryAptitude" resultType="com.silita.biaodaa.model.AptitudeDictionary">
+    <!--获取所有资质字典信息-->
+    <select id="queryAptitude" resultType="com.silita.biaodaa.model.AptitudeDictionary">
     select * from aptitude_dictionary
   </select>
 
-  <!--获取筛选条件-->
-  <select id="getIndustry" resultType="Map">
+    <!--获取筛选条件-->
+    <select id="getIndustry" resultType="Map">
     select `name`,`code` from twf_dict where is_valid=1 and type=1
   </select>
 
-  <!--查询详情-->
-  <select id="queryQualDetail" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.AptitudeDictionary">
+    <!--查询详情-->
+    <select id="queryQualDetail" parameterType="java.lang.String"
+            resultType="com.silita.biaodaa.model.AptitudeDictionary">
     SELECT * FROM aptitude_dictionary t WHERE t.`majorUuid` = #{majorUUid}
+  </select>
+
+    <!--根据code查询资质名称-->
+    <select id="queryQualNameByCode" parameterType="java.lang.String" resultType="java.lang.String">
+      select
+      t.`bench_name`
+      from
+      biaodaa_admin.`dic_qua` t
+      where t.`qua_code` = #{qualCode}
+      and t.`bench_name` is not null
+  </select>
+
+    <!--根据code查询等级名称-->
+    <select id="queryGradeNameByCode" parameterType="java.lang.String" resultType="java.lang.String">
+      SELECT
+      t.`name`
+      FROM
+      biaodaa_admin.`dic_common` t
+      WHERE t.`type` = 'qua_grade'
+      AND t.`code` = #{gradeCode}
   </select>
 </mapper>
