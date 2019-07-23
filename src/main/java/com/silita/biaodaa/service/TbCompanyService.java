@@ -122,12 +122,12 @@ public class TbCompanyService {
                         qualList = new ArrayList<>();
 
                     }
-                    String[] range = qual.getRange().split(",");
+                    String[] range = qual.getQualName().split(",");
                     if (range.length < 2) {
-                        range = qual.getRange().split(";");
+                        range = qual.getQualName().split(";");
                     }
                     if (range.length < 2) {
-                        range = qual.getRange().split("\\|");
+                        range = qual.getQualName().split("\\|");
                     }
 
                     if (range.length >= 2) {
@@ -140,12 +140,9 @@ public class TbCompanyService {
                         qual.setQualName(range[0]);
                         qualList.add(qual);
                     }
-                    //排序
-
                     qualMap.put(key, qualList);
                 }
             }
-
         }
         return qualMap;
     }
