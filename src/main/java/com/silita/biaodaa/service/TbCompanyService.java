@@ -122,12 +122,25 @@ public class TbCompanyService {
                         qualList = new ArrayList<>();
 
                     }
-                    String[] range = qual.getQualName().split(",");
-                    if (range.length < 2) {
-                        range = qual.getQualName().split(";");
+                    String[] range = null;
+                    if (StringUtils.isNotEmpty(qual.getQualName())) {
+                        range = qual.getQualName().split(",");
+                    } else {
+                        range = qual.getRange().split(",");
                     }
                     if (range.length < 2) {
-                        range = qual.getQualName().split("\\|");
+                        if (StringUtils.isNotEmpty(qual.getQualName())) {
+                            range = qual.getQualName().split(";");
+                        }else {
+                            range = qual.getRange().split(",");
+                        }
+                    }
+                    if (range.length < 2) {
+                        if (StringUtils.isNotEmpty(qual.getQualName())) {
+                            range = qual.getQualName().split("\\|");
+                        }else {
+                            range = qual.getRange().split(",");
+                        }
                     }
 
                     if (range.length >= 2) {
