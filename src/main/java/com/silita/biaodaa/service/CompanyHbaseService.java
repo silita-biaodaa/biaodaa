@@ -76,13 +76,13 @@ public class CompanyHbaseService {
             } else if ("分支机构信息".equals(sbder.toString())) {
                 resultMap.put("branch", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("变更信息".equals(sbder.toString())) {
-                resultMap.put("changeRecord", setChangeRecord(JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell)))));
+                resultMap.put("changeRecord", setResultDate(JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))),"altDate"));
             } else if ("主要人员信息".equals(sbder.toString())) {
                 resultMap.put("personnel", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("股东及出资信息".equals(sbder.toString())) {
                 resultMap.put("partner", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("行政处罚信息".equals(sbder.toString())) {
-                resultMap.put("punish", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
+                resultMap.put("punish", setResultDate(JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))),"penDecIssDate"));
             } else if ("timestamp".equals(sbder.toString())) {
                 resultMap.put("updated", Bytes.toString(CellUtil.cloneValue(cell)));
             }
@@ -92,16 +92,24 @@ public class CompanyHbaseService {
     }
 
 
-    private List<Map<String, Object>> setChangeRecord(Object object) {
+    /**
+     * 格式化时间
+     * @param object
+     * @param key
+     * @return
+     */
+    private List<Map<String, Object>> setResultDate(Object object,String key) {
         if (null == object) {
             return new ArrayList<>();
         }
         List<Map<String, Object>> list = (List<Map<String, Object>>) object;
         StringBuffer altDate;
         for (Map<String, Object> val : list) {
-            altDate = new StringBuffer(MapUtils.getString(val, "altDate"));
+            altDate = new StringBuffer(MapUtils.getString(val, key));
             if (altDate.toString().contains("-")) {
-                val.put("altDate", MyDateUtils.strToDate(altDate.toString(), null).getTime());
+                val.put(key, MyDateUtils.strToDate(altDate.toString(), null).getTime());
+            }else if (altDate.toString().contains("年")){
+                val.put(key, MyDateUtils.strToDate(altDate.toString(), "yyyy年MM月dd日").getTime());
             }
         }
         return list;

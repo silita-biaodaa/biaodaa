@@ -34,7 +34,7 @@
         <if test="type != null and type != ''">
             AND t.`TYPE` = #{type}
         </if>
-        order by t.cerated desc
+        ORDER BY t.`release_time` DESC
     </select>
 
     <update id="updateRemark" parameterType="java.util.Map">
