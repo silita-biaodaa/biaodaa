@@ -4,12 +4,26 @@
 
     <!--根据资质和等级code查询关联id-->
     <select id="queryQualGradeId" parameterType="java.util.Map" resultType="java.lang.String">
-      SELECT
+        SELECT
         t.`id`
-      FROM
+        FROM
         biaodaa_admin.`rel_qua_grade` t
-      WHERE t.`grade_code` = #{grade}
-        AND t.`qua_code` = #{qual}
+        WHERE 1 = 1
+        <if test="grade != null and grade != ''">
+            AND t.`grade_code` = #{grade}
+        </if>
+        <if test="qual != null and qual != ''">
+            AND t.`qua_code` = #{qual}
+        </if>
     </select>
 
+    <!--根据资质查询list-->
+    <select id="queryQualGradeIdList" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+          t.`id`
+        FROM
+        biaodaa_admin.`rel_qua_grade` t
+        WHERE 1 = 1
+            AND t.`qua_code` = #{qual}
+    </select>
 </mapper>

@@ -409,26 +409,25 @@ public class TbCompanyService {
             Map<String, Object> val = new HashedMap();
             for (String qual : quals) {
                 qualGrades = qual.split("/");
-                if (qualGrades.length < 2) {
-                    qual = qual + "/0";
-                    qualGrades = qual.split("/");
-                }
                 val.put("qual", qualGrades[0]);
                 //判断资质****级及以上
-                if (null != gradeMap.get(qualGrades[1].trim())) {
-                    List<String> qualGradeList = new ArrayList<>();
-                    gradeList = gradeMap.get(qualGrades[1].trim());
-                    for (String grade : gradeList) {
-                        val.put("grade", grade);
-                        qualGradeList.add(dicQuaMapper.queryQualGradeId(val));
+                if (qualGrades.length > 2){
+                    if (null != gradeMap.get(qualGrades[1].trim())) {
+                        List<String> qualGradeList = new ArrayList<>();
+                        gradeList = gradeMap.get(qualGrades[1].trim());
+                        for (String grade : gradeList) {
+                            val.put("grade", grade);
+                            qualGradeList.add(dicQuaMapper.queryQualGradeId(val));
+                        }
+                        yiShangList.add(qualGradeList);
+                        continue;
                     }
-                    yiShangList.add(qualGradeList);
+                    val.put("grade", qualGrades[1]);
+                    qualList.add(dicQuaMapper.queryQualGradeId(val));
                     continue;
                 }
-                val.put("grade", qualGrades[1]);
-                qualList.add(dicQuaMapper.queryQualGradeId(val));
+                qualList.addAll(dicQuaMapper.queryQualGradeIdList(val));
             }
-
             String rangeType = MapUtils.getString(param, "rangeType");
             //筛选条件全部为***级及以上并且是和的关系
             if ("and".equals(rangeType) && null != yiShangList && yiShangList.size() > 0 && (null == qualList || qualList.size() <= 0)) {

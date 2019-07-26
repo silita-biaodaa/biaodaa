@@ -177,7 +177,8 @@ public class UserCenterService {
             map.put("noticeId", coll.getNoticeid());
             map.put("source", coll.getSource());
             map.put("userId", params.get("userid"));
-            if ("0".equals(params.get("type"))) {
+            map.put("pdModeType",coll.getSource()+"_pbmode");
+            if ("0".equals(params.get("type")) || "1".equals(params.get("type"))) {
                 result = collecNoticeMapper.listZhaoBiaoCollecNoticeById(map);
             } else {
                 result = collecNoticeMapper.listZhongBiaoCollecNoticeById(map);

@@ -1,5 +1,6 @@
 package com.silita.biaodaa.dao;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,4 +15,10 @@ public interface DicQuaMapper{
      */
     String queryQualGradeId(Map<String,Object> param);
 
+    /**
+     * 根据资质查询list
+     * @param param
+     * @return
+     */
+    List<String> queryQualGradeIdList(Map<String,Object> param);
 }

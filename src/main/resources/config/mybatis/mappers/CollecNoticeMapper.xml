@@ -2,6 +2,47 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.biaodaa.dao.CollecNoticeMapper">
 
+    <sql id="noticeTypeConvert">
+        ( case mian.biness_type
+        when '01' then '施工'
+        when '02' then '监理'
+        when '03' then '设计'
+        when '04' then '勘察'
+        when '05' then '采购'
+        when '06' then '其他'
+        when '07' then 'PPP'
+        when '08' then '设计施工'
+        when '09' then 'EPC'
+        when '10' then '检测'
+        when '11' then '施工采购'
+        when '12' then '造价咨询'
+        when '13' then '招标代理'
+        else '其他' end) as projectType
+    </sql>
+
+    <sql id="noticeType">
+        ( case mian.nt_type
+        when '01' then '一般公告'
+        when '02' then '磋商公告'
+        when '03' then '补充公告'
+        when '04' then '答疑公告'
+        when '05' then '流标公告'
+        when '06' then '澄清公告'
+        when '07' then '延期公告'
+        when '08' then '变更/更正/更改公告'
+        when '09' then '废标公告'
+        when '10' then '终止公告'
+        when '11' then '修改公告'
+        when '12' then '招标控制价'
+        when '13' then '资审结果'
+        when '14' then '资格预审'
+        when '15' then '入围公告'
+        when '16' then '暂停公告'
+        when '17' then '合同公告'
+        when '18' then '结果公告'
+        when '19' then '成交公告'
+        else '其他公告' end) as noticeType
+    </sql>
 
     <select id="getCollecNoticeByUserIdAndNoticeId" parameterType="com.silita.biaodaa.model.CollecNotice"
             resultType="com.silita.biaodaa.model.CollecNotice">
@@ -58,78 +99,51 @@
 
     <select id="listZhaoBiaoCollecNoticeById" parameterType="com.silita.biaodaa.model.CollecNotice"
             resultType="Map">
-        SELECT #{userId} as userId,0 as `type`,s.id, s.title, s.openDate,#{source} as source,
-        d.projDq, d.projXs, GROUP_CONCAT(d.pbMode) AS pbMode,<include
-            refid="com.silita.biaodaa.dao.NoticeMapper.noticeTypeConvert"/>, temp.certificate
-        FROM
-        <choose>
-            <when test="source != null and source != 'hunan'">
-                mishu.snatchurl_${source} s
-                LEFT JOIN mishu.zhaobiao_detail_others d ON s.id = d.snatchUrlId AND d.source = #{source}
-            </when>
-            <otherwise>
-                mishu.snatchurl s
-                LEFT JOIN mishu.zhaobiao_detail d ON s.id = d.snatchUrlId
-            </otherwise>
-        </choose>
-        LEFT JOIN (SELECT GROUP_CONCAT(c.certificate) AS certificate, c.contId as contId
-        FROM
-        <choose>
-            <when test="source != null and source != 'hunan'">
-                mishu.snatch_url_cert_others c WHERE c.contId = #{noticeId} AND c.source = #{source} GROUP BY c.contId
-            </when>
-            <otherwise>
-                mishu.snatch_url_cert c WHERE c.contId = #{noticeId} GROUP BY c.contId
-            </otherwise>
-        </choose>
-       ) temp ON temp.contId = d.snatchUrlId
-        WHERE s.id = #{noticeId}
-        GROUP BY s.id
+        SELECT
+        mian.pkid AS id,
+        mian.`title`,
+        mian.snatch_id as snatchId,
+        mian.`pub_date` AS openDate,
+        tenders.qua_name AS certificate,
+        mian.source,
+        mian.provice_code as provice,
+        mian.city_code as city,
+        <include refid="noticeType"/>,
+        <include refid="noticeTypeConvert"/>,
+        mian.nt_category AS `type`,
+        (SELECT t.`name` FROM biaodaa_admin.dic_common t WHERE t.`code` = tenders.`pb_mode` AND t.`type` = '${pdModeType}') AS pbMode
+        FROM biaodaa_admin.tb_nt_tenders_${source} tenders
+        JOIN biaodaa_admin.tb_nt_mian_${source} mian
+        ON mian.pkid = tenders.nt_id
+        WHERE mian.pkid = #{noticeId}
+        and mian.nt_category='1'
         limit 1
     </select>
 
     <select id="listZhongBiaoCollecNoticeById" parameterType="com.silita.biaodaa.model.CollecNotice"
             resultType="Map">
-        SELECT #{userId} as userId, 2 as `type`, s.id, s.title, s.openDate,#{source} as source,
-        <choose>
-            <when test="source != null and source != 'hunan'">
-                (SELECT outdd.projSum from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS projSum,
-                (SELECT outdd.oneName from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS oneName,
-                (SELECT outdd.pbMode from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS pbMode ,
-                (SELECT outdd.pbMode from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS pbMode ,
-                (SELECT outdd.oneOffer from mishu.zhongbiao_detail_others outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail_others d WHERE d.snatchurlid =s.id AND d.source = #{source})) AS oneOffer,
-            </when>
-            <otherwise>
-                (SELECT outdd.projSum from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id )) AS projSum,
-                (SELECT outdd.oneName from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id )) AS oneName,
-                (SELECT outdd.pbMode from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id )) AS pbMode,
-                (SELECT outdd.oneOffer from mishu.zhongbiao_detail outdd where outdd.id =(SELECT min(d.id) FROM
-                mishu.zhongbiao_detail d WHERE d.snatchurlid =s.id)) AS oneOffer,
-            </otherwise>
-        </choose>
-        d.projType, d.projDq, d.projXs,
-        <include refid="com.silita.biaodaa.dao.NoticeMapper.noticeTypeConvert"/>
+        SELECT
+        mian.pkid as id,
+        mian.title,
+        bids.f_candidate as oneName,
+        bids.f_quote as oneOffer,
+        mian.pub_date as openDate,
+        mian.source,
+        mian.provice_code as provice,
+        mian.city_code as city,
+        mian.snatch_id as snatchId,
+        <include refid="noticeType"/>,
+        <include refid="noticeTypeConvert"/>,
+        mian.nt_category as type,
+        bids.pb_mode as pbMode
         FROM
-        <choose>
-            <when test="source != null and source != 'hunan'">
-                mishu.snatchurl_${source} s
-                LEFT JOIN mishu.zhongbiao_detail_others d ON s.id = d.snatchUrlId AND d.source = #{source}
-            </when>
-            <otherwise>
-                mishu.snatchurl s
-                LEFT JOIN mishu.zhongbiao_detail d ON s.id = d.snatchUrlId
-            </otherwise>
-        </choose>
-        WHERE s.id = #{noticeId}
-        GROUP BY s.id
+        biaodaa_admin.tb_nt_mian_${source} mian
+        JOIN biaodaa_admin.tb_nt_bids_${source} bids
+        ON mian.`pkid` = bids.`nt_id`
+        WHERE 1 = 1
+        and mian.nt_category='2'
+        AND mian.`pkid` = #{noticeId}
+        ORDER BY mian.pub_date DESC
         limit 1
     </select>
 </mapper>
