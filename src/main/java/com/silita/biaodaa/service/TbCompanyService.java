@@ -131,14 +131,14 @@ public class TbCompanyService {
                     if (range.length < 2) {
                         if (StringUtils.isNotEmpty(qual.getQualName())) {
                             range = qual.getQualName().split(";");
-                        }else {
+                        } else {
                             range = qual.getRange().split(",");
                         }
                     }
                     if (range.length < 2) {
                         if (StringUtils.isNotEmpty(qual.getQualName())) {
                             range = qual.getQualName().split("\\|");
-                        }else {
+                        } else {
                             range = qual.getRange().split(",");
                         }
                     }
@@ -183,7 +183,7 @@ public class TbCompanyService {
                         "二级注册建筑师", "二级临时注册建造师", "二级注册建造师", "二级注册结构工程师",
                         "注册公用设备工程师（动力）", "注册公用设备工程师（暖通空调）", "注册公用设备工程师（给水排水）",
                         "注册化工工程师", "注册土木工程师（岩土）", "注册电气工程师（供配电）", "注册电气工程师（发输变电）",
-                        "注册监理工程师", "注册造价工程师"};
+                        "注册监理工程师", "注册造价工程师", "安管人员"};
                 for (int i = 0; i < str.length; i++) {
                     Map<String, Object> map = new HashMap<>();
                     map.put("category", str[i]);
@@ -209,6 +209,14 @@ public class TbCompanyService {
                 }
                 param.put("tableCode", tableCode);
                 list = tbPersonQualificationMapper.getCompanyPersonCate(param);
+                //安管人员
+                int count = tbPersonQualificationMapper.queryPersonCompanyANGuan(param);
+                if (count > 0) {
+                    list.add(new HashedMap() {{
+                        put("category", "安管人员");
+                        put("num", count);
+                    }});
+                }
             }
         }
         return list;
@@ -411,7 +419,7 @@ public class TbCompanyService {
                 qualGrades = qual.split("/");
                 val.put("qual", qualGrades[0]);
                 //判断资质****级及以上
-                if (qualGrades.length > 2){
+                if (qualGrades.length > 2) {
                     if (null != gradeMap.get(qualGrades[1].trim())) {
                         List<String> qualGradeList = new ArrayList<>();
                         gradeList = gradeMap.get(qualGrades[1].trim());

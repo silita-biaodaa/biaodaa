@@ -724,7 +724,8 @@ public class AuthorizeService {
         if (null != user){
             //是否首充
             user.setIsFirst(0);
-            Integer count = orderInfoService.getUserCount(user.getPkid());
+//            Integer count = orderInfoService.getUserCount(user.getPkid());
+            int count = 0;
             if (count > 0){
                 user.setIsFirst(1);
             }

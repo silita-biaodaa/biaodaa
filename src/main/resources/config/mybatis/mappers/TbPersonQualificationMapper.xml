@@ -40,8 +40,11 @@
         <if test="comName!=null and comName!=''">
             and q.com_name = #{comName}
         </if>
-        <if test="category!=null and category!=''">
+        <if test="category!=null and category!='' and category != '安管人员'">
             and q.category = #{category}
+        </if>
+        <if test="category!=null and category!='' and category == '安管人员'">
+            and q.cert_no LIKE '%安%'
         </if>
         <if test="keyWord!=null and keyWord!=''">
             and (q.name = #{keyWord} or q.com_name like CONCAT('%',#{keyWord},'%'))
@@ -81,5 +84,16 @@
         limit 1
     </select>
 
+    <!--查询企业下的人员是否有安管-->
+    <select id="queryPersonCompanyANGuan" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(1)
+        from tb_person_${tableCode} where `type`=1 and is_valid=1 AND `cert_no` like '%安%'
+        <if test="comId!=null and comId!=''">
+            and com_id =#{comId}
+        </if>
+        <if test="comName!=null and comName!=''">
+            and com_name=#{comName}
+        </if>
+    </select>
 
 </mapper>

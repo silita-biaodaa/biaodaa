@@ -55,4 +55,11 @@ public interface TbPersonQualificationMapper extends MyMapper<TbPersonQualificat
      * @return
      */
     String queryPersonInnerid(Map<String, Object> param);
+
+    /**
+     * 查询企业下的人员是否有安管
+     * @param param
+     * @return
+     */
+    int queryPersonCompanyANGuan(Map<String,Object> param);
 }

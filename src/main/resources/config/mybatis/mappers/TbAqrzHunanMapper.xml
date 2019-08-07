@@ -43,7 +43,7 @@
             '（',
             t.`region`,
             '）'
-          ) AS award
+          ) AS awardName
         FROM
           tb_aqrz_hunan t
         WHERE t.`com_id` = #{comId}
