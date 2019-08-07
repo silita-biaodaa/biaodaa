@@ -97,4 +97,18 @@
         AND t.`com_id` = #{comId}
         AND (t.`persionName` IS NULL OR t.`persionName` = '')
     </select>
+
+    <!--查询企业不良行为-->
+    <select id="queryCompanyUndersiableList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t.`publishDate` AS issued,
+          t.`badBehaviorContent` AS remark,
+          t.`projectName` AS projName,
+          t.`validityDate` AS valided,
+          t.`review`
+        FROM
+          cert_undesirable t
+        WHERE t.`com_id` = #{comId}
+          AND t.`validityDate` &gt;= NOW()
+    </select>
 </mapper>

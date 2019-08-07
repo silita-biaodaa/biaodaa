@@ -21,4 +21,10 @@ public interface TbReviewDiffMapper extends MyMapper<TbReviewDiff> {
      * @return
      */
     int queryReviewDiffCount(Map<String,Object> param);
+
+    /**
+     * 查询考评不合格
+     * @return
+     */
+    List<Map<String,Object>> queryCompanyReviewDiff(Map<String,Object> param);
 }

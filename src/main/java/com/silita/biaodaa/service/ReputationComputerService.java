@@ -253,18 +253,18 @@ public class ReputationComputerService {
             }
             if (null != listInt && listInt.size() > 0) {
                 for (int index : listInt) {
-                    if (index >= list1.size()){
-                        list1.remove(list1.size()-1);
-                    }else {
+                    if (index >= list1.size()) {
+                        list1.remove(list1.size() - 1);
+                    } else {
                         list1.remove(index);
                     }
                 }
             }
             if (null != proInt && proInt.size() > 0) {
                 for (int index : proInt) {
-                    if (index >= list2.size()){
-                        list2.remove(list2.size()-1);
-                    }else {
+                    if (index >= list2.size()) {
+                        list2.remove(list2.size() - 1);
+                    } else {
                         list2.remove(index);
                     }
                 }
@@ -329,16 +329,72 @@ public class ReputationComputerService {
     }
 
     /**
+     * 查询企业诚信列表（无过滤规则即查询全部）
+     *
+     * @param param
+     * @return
+     */
+    public Map<String, Object> listCompanyAward(Map<String, Object> param) {
+        String reqType = MapUtils.getString(param, "reqType");
+        Map<String, Object> resultMap = new HashedMap();
+        //企业荣誉
+        List<Map<String, Object>> companyAwards = new ArrayList<>();
+        Map aqrz = tbAqrzHunanMapper.queryCompanyAqrz(param);
+        if (MapUtils.isNotEmpty(aqrz)) {
+            companyAwards.add(aqrz);
+        }
+        param.put("type", "company");
+        companyAwards.addAll(tbReviewFineMapper.queryCompanyReviewFineList(param));
+        resultMap.put("companyAwards", companyAwards);
+        //工程获奖
+        List<Map<String, Object>> awardsGroupList = new ArrayList<>();
+        if ("湖南省".equals(param.get("source")) && ("APP".equals(reqType) || "WAP".equals(reqType))) {
+            //优良工地
+            param.put("type", "project");
+            awardsGroupList.add(new HashedMap() {{
+                put("awards","湖南省年度考评优良工地");
+                put("values", tbReviewFineMapper.queryCompanyReviewFineList(param));
+            }});
+        }
+        if ("湖南省".equals(param.get("source")) && "PC".equals(reqType)) {
+            awardsGroupList.addAll(tbReviewFineMapper.queryCompanyReviewFineList(param));
+        }
+        if ("APP".equals(reqType) || "WAP".equals(reqType)) {
+            List<Map<String, Object>> awards = tbAwardHunanMapper.queryCompanyAwardsGroup(param);
+            if (null != awards && awards.size() > 0) {
+                Map<String, Object> groupMap;
+                for (Map<String, Object> map : awards) {
+                    groupMap = new HashedMap();
+                    groupMap.put("awards", map.get("awardName"));
+                    groupMap.put("values", tbAwardHunanMapper.queryCompanyAwards(map));
+                    awardsGroupList.add(groupMap);
+                }
+            }
+            resultMap.put("projectAwards", awardsGroupList);
+        } else {
+            awardsGroupList = tbAwardHunanMapper.queryCompanyAwards(param);
+            resultMap.put("projectAwards", awardsGroupList);
+        }
+        //不良记录
+        List<Map<String, Object>> under = new ArrayList<>();
+        under.addAll(tbReviewDiffMapper.queryCompanyReviewDiff(param));
+        under.addAll(prizeMapper.queryCompanyUndersiableList(param));
+        resultMap.put("under", under);
+        return resultMap;
+    }
+
+    /**
      * 设置项目类别
+     *
      * @param param
      */
-    private void setProType(Map<String, Object> param){
-        if ("市政".equals(param.get("projType"))){
-            param.put("reprojType","市政工程");
-        }else if ("建筑工程".equals(param.get("projType"))){
-            param.put("reprojType","建筑工程");
-        }else if ("市政工程".equals(param.get("projType"))){
-            param.put("reprojType","市政工程");
+    private void setProType(Map<String, Object> param) {
+        if ("市政".equals(param.get("projType"))) {
+            param.put("reprojType", "市政工程");
+        } else if ("建筑工程".equals(param.get("projType"))) {
+            param.put("reprojType", "建筑工程");
+        } else if ("市政工程".equals(param.get("projType"))) {
+            param.put("reprojType", "市政工程");
         }
     }
 }

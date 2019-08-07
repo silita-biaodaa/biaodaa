@@ -99,4 +99,34 @@
         ORDER BY res.`score` DESC
         LIMIT 5
     </select>
+
+    <!--查询企业获奖-->
+    <select id="queryCompanyAwards" parameterType="java.util.Map" resultType="java.util.Map">
+      SELECT
+          t.`pkid`,
+          t.`award_name` AS awardName,
+          t.`proj_type` AS projType,
+          t.`proj_name` AS projName,
+          t.`join_type` AS joinType,
+          t.`years` AS issued
+        FROM
+          tb_award_hunan t
+        WHERE t.`com_id` = #{comId}
+        <if test="awardName != null and awardName != ''">
+            AND t.`award_name`= #{awardName}
+        </if>
+        ORDER BY t.`years` DESC
+    </select>
+
+    <!--查询公司奖项名称-->
+    <select id="queryCompanyAwardsGroup" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t.`award_name` AS awardName,
+          t.`com_id` AS comId
+        FROM
+          tb_award_hunan t
+        WHERE t.`com_id` = #{comId}
+        GROUP BY t.`award_name`
+        ORDER BY t.`years` DESC
+    </select>
 </mapper>

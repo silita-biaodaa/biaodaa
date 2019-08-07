@@ -59,4 +59,26 @@ public class ReputationController extends BaseController{
         return result;
     }
 
+    /**
+     * 列表
+     *
+     * @param param
+     */
+    @ResponseBody
+    @RequestMapping(value = "/new/company", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> companyNew(@RequestBody Map<String, Object> param) {
+        Map<String,Object> result = new HashedMap();
+        if (null == param.get("comId")){
+            result.put("code",0);
+            result.put("msg","参数comId不允许为空");
+            return result;
+        }
+        if (null == param.get("reqType")){
+            result.put("code",0);
+            result.put("msg","参数reqType不允许为空");
+            return result;
+        }
+        successMsg(result,reputationComputerService.listCompanyAward(param));
+        return result;
+    }
 }

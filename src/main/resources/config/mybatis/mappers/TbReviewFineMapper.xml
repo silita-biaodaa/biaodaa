@@ -17,13 +17,13 @@
     <!--查询考评优良-->
     <select id="queryReviewFineList" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
-          t.`proj_name` AS projName,
-          t.`issued` AS issued,
-          t.`award_name` AS awardName
+        t.`proj_name` AS projName,
+        t.`issued` AS issued,
+        t.`award_name` AS awardName
         FROM
-          tb_review_fine t
+        tb_review_fine t
         WHERE t.`com_id` = #{comId}
-          AND t.`type` = #{type}
+        AND t.`type` = #{type}
         AND t.`issued` = #{years}
         <choose>
             <when test="type == 'project'">
@@ -37,5 +37,19 @@
                 LIMIT 1
             </otherwise>
         </choose>
-  </select>
+    </select>
+
+    <!--查询企业考评优良-->
+    <select id="queryCompanyReviewFineList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t.`issued`,
+          t.`proj_name` AS awardName,
+          t.`pkid`,
+          t.`proj_name` AS projName
+        FROM
+          tb_review_fine t
+        WHERE t.`com_id` = #{comId}
+          AND t.`type` = #{type}
+        ORDER BY t.`issued` DESC
+    </select>
 </mapper>

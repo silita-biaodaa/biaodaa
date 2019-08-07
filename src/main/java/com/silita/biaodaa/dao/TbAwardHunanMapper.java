@@ -35,4 +35,18 @@ public interface TbAwardHunanMapper extends MyMapper<TbAwardHunan> {
      * @return
      */
     List<Map<String,Object>> querySjhjAwardsList(Map<String,Object> param);
+
+    /**
+     * 查询企业获奖
+     * @param param
+     * @return
+     */
+    List<Map<String,Object>> queryCompanyAwards(Map<String,Object> param);
+
+    /**
+     * 查询公司奖项名称
+     * @param param
+     * @return
+     */
+    List<Map<String,Object>> queryCompanyAwardsGroup(Map<String,Object> param);
 }

@@ -54,4 +54,20 @@
             AND t.`pro_type` = #{reprojType}
         </if>
     </select>
+
+    <!--查询考评不合格-->
+    <select id="queryCompanyReviewDiff" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t.`pkid`
+          ,t.`issued`
+          ,t.`remark`
+          ,t.`review`
+          ,t.`proj_name` AS projName
+          ,t.`valided`
+        FROM
+          tb_review_diff t
+        WHERE t.`com_id` = #{comId}
+        AND t.`valided` &gt;= NOW()
+        ORDER BY t.`issued` DESC
+    </select>
 </mapper>

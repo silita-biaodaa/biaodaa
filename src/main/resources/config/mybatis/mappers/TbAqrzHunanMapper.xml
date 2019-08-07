@@ -31,4 +31,23 @@
         ORDER BY t1.`score` DESC
         LIMIT 1
     </select>
+
+    <!--查询企业的安全认证-->
+    <select id="queryCompanyAqrz" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t.`issued`,
+          t.`valided`,
+          CONCAT(
+            '安全认证--',
+            t.`grade`,
+            '（',
+            t.`region`,
+            '）'
+          ) AS award
+        FROM
+          tb_aqrz_hunan t
+        WHERE t.`com_id` = #{comId}
+        ORDER BY t.`updated` DESC
+        LIMIT 1
+    </select>
 </mapper>
