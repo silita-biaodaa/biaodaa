@@ -360,6 +360,7 @@ public class ReputationComputerService {
             }});
         }
         if ("湖南省".equals(param.get("source")) && "PC".equals(reqType)) {
+            param.put("type", "project");
             awardsGroupList.addAll(tbReviewFineMapper.queryCompanyReviewFineList(param));
         }
         if ("APP".equals(reqType) || "WAP".equals(reqType)) {
