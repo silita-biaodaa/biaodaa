@@ -30,7 +30,7 @@ public class AwardsExcelTest extends ConfigTest {
 
     @org.junit.Test
     public void analysisAwardExcel() throws Exception {
-        File file = new File("E:\\朱帅\\耀邦\\奖项\\奖项(1).xlsx");
+        File file = new File("E:\\朱帅\\耀邦\\奖项\\奖项.xlsx");
         FileInputStream inputStream = new FileInputStream(file);
         XSSFWorkbook hssfWorkbook = new XSSFWorkbook(inputStream);
         if (null != hssfWorkbook) {
@@ -136,6 +136,10 @@ public class AwardsExcelTest extends ConfigTest {
                 cell = row.getCell(16);
                 if (null != cell && StringUtils.isNotEmpty(cell.getStringCellValue())) {
                     tbAwardNationwide.setRemark(cell.getStringCellValue());
+                }
+                cell = row.getCell(17);
+                if (null != cell && StringUtils.isNotEmpty(cell.getStringCellValue())) {
+                    tbAwardNationwide.setProjType(cell.getStringCellValue());
                 }
                 cell = row.getCell(18);
                 if (null != cell && StringUtils.isNotEmpty(cell.getStringCellValue())) {

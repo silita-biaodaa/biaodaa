@@ -7,6 +7,9 @@
         `award_cate`,
         `award_name`,
         `proj_name`,
+        <if test="projType != null and projType != ''">
+            `proj_type`,
+        </if>
         <if test="unitOrg != null and unitOrg != ''">
             `unit_org`,
         </if>
@@ -63,6 +66,9 @@
         #{awardCate},
         #{awardName},
         #{projName},
+        <if test="projType != null and projType != ''">
+            #{projType},
+        </if>
         <if test="unitOrg != null and unitOrg != ''">
             #{unitOrg},
         </if>
