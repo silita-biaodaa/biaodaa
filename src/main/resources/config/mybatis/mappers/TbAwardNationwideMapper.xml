@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbAwardNationwideMapper">
+    <!--添加-->
+    <insert id="insertAward" parameterType="com.silita.biaodaa.model.TbAwardNationwide">
+        INSERT INTO `tb_award_nationwide` (
+        `award_cate`,
+        `award_name`,
+        `proj_name`,
+        <if test="unitOrg != null and unitOrg != ''">
+            `unit_org`,
+        </if>
+        <if test="buildOrg != null and buildOrg != ''">
+            `build_org`,
+        </if>
+        <if test="superOrg != null and superOrg != ''">
+            `super_org`,
+        </if>
+        <if test="exploreOrg != null and exploreOrg != ''">
+            `explore_org`,
+        </if>
+        <if test="designOrg != null and designOrg != ''">
+            `design_org`,
+        </if>
+        <if test="checkOrg != null and checkOrg != ''">
+            `check_org`,
+        </if>
+        <if test="joinOrg != null and joinOrg != ''">
+            `join_org`,
+        </if>
+        <if test="projManager != null and projManager != ''">
+            `proj_manager`,
+        </if>
+        <if test="skillManager != null and skillManager != ''">
+            `skill_manager`,
+        </if>
+        <if test="qualityManager != null and qualityManager != ''">
+            `quality_manager`,
+        </if>
+        <if test="techQualManage != null and techQualManage != ''">
+            `tech_qual_manage`,
+        </if>
+        <if test="superPerson != null and superPerson != ''">
+            `super_person`,
+        </if>
+        <if test="acreage != null and acreage != ''">
+            `acreage`,
+        </if>
+        <if test="remark != null and remark != ''">
+            `remark`,
+        </if>
+        <if test="pubOrg != null and pubOrg != ''">
+            `pub_org`,
+        </if>
+        <if test="issued != null and issued != ''">
+            `issued`,
+        </if>
+        `source`,
+        `updated`
+        )
+        VALUES
+        (
+        #{awardCate},
+        #{awardName},
+        #{projName},
+        <if test="unitOrg != null and unitOrg != ''">
+            #{unitOrg},
+        </if>
+        <if test="buildOrg != null and buildOrg != ''">
+            #{buildOrg},
+        </if>
+        <if test="superOrg != null and superOrg != ''">
+            #{superOrg},
+        </if>
+        <if test="exploreOrg != null and exploreOrg != ''">
+            #{exploreOrg},
+        </if>
+        <if test="designOrg != null and designOrg != ''">
+            #{designOrg},
+        </if>
+        <if test="checkOrg != null and checkOrg != ''">
+            #{checkOrg},
+        </if>
+        <if test="joinOrg != null and joinOrg != ''">
+            #{joinOrg},
+        </if>
+        <if test="projManager != null and projManager != ''">
+            #{projManager},
+        </if>
+        <if test="skillManager != null and skillManager != ''">
+            #{skillManager},
+        </if>
+        <if test="qualityManager != null and qualityManager != ''">
+            #{qualityManager},
+        </if>
+        <if test="techQualManage != null and techQualManage != ''">
+            #{techQualManage},
+        </if>
+        <if test="superPerson != null and superPerson != ''">
+            #{superPerson},
+        </if>
+        <if test="acreage != null and acreage != ''">
+            #{acreage},
+        </if>
+        <if test="remark != null and remark != ''">
+            #{remark},
+        </if>
+        <if test="pubOrg != null and pubOrg != ''">
+            #{pubOrg},
+        </if>
+        <if test="issued != null and issued != ''">
+            #{issued},
+        </if>
+        #{source},
+        now()
+        )
+    </insert>
+
+    <!--添加不存在的单位名称-->
+    <insert id="insertNotCompany" parameterType="java.lang.String">
+        INSERT INTO `tb_not_company` (`name`)
+        VALUES
+          (#{comName}) ;
+    </insert>
+
+    <!--查询企业奖项类别-->
+    <select id="queryCompanyAwardsGroup" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t.`award_cate` AS awardName,
+          #{comId} AS comId
+        FROM
+          tb_award_nationwide t
+        WHERE 1 = 1
+          AND (
+            t.`unit_org` LIKE CONCAT('%',#{comId},'%')
+            OR t.`join_org` LIKE CONCAT('%',#{comId},'%')
+          )
+        GROUP BY t.`award_cate`
+        ORDER BY t.`issued` DESC
+    </select>
+
+    <!--查询企业获奖-->
+    <select id="queryCompanyAwards" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+        t.`pkid`,
+        t.`award_name` AS awardName,
+        t.`proj_type` AS projType,
+        t.`proj_name` AS projName,
+        t.`issued`
+        FROM
+        tb_award_nationwide t
+        WHERE 1 = 1
+        AND (
+        t.`unit_org` LIKE CONCAT('%',#{comId},'%')
+        OR t.`join_org` LIKE CONCAT('%',#{comId},'%')
+        )
+        <if test="awardName != null and awardName != ''">
+            AND t.`award_cate`= #{awardName}
+        </if>
+        ORDER BY t.`issued` DESC
+    </select>
+
+    <!--查询奖项详情-->
+    <select id="queryCompanyAwardDetail" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT
+          t.`pkid`,
+          t.`acreage`,
+          t.`award_cate` AS awardCate,
+          t.`award_name` AS awardName,
+          t.`proj_name` AS projName,
+          t.proj_type AS proType,
+          t.unit_org AS unitOrg,
+          t.build_org AS buildOrg,
+          t.super_org AS superOrg,
+          t.explore_org AS exploreOrg,
+          t.design_org AS designOrg,
+          t.check_org AS checkOrg,
+          t.join_org AS joinOrg,
+          t.proj_manager AS projManager,
+          t.skill_manager AS skillManager,
+          t.quality_manager AS qualityManager,
+          t.remark AS remark,
+          t.pub_org AS pubOrg,
+          t.issued AS issued,
+          t.source AS source,
+          t.super_person AS superPerson
+        FROM
+          tb_award_nationwide t
+        WHERE t.`pkid` = #{pkid}
+    </select>
+</mapper>

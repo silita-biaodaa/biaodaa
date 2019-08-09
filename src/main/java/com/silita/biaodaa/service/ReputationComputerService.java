@@ -5,6 +5,7 @@ import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.utils.DoubleUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,8 @@ public class ReputationComputerService {
     TbAqrzHunanMapper tbAqrzHunanMapper;
     @Autowired
     PrizeMapper prizeMapper;
+    @Autowired
+    TbAwardNationwideMapper tbAwardNationwideMapper;
 
     public Map<String, Object> computer(Map<String, Object> param) {
         //获取最新年份
@@ -352,7 +355,7 @@ public class ReputationComputerService {
             //优良工地
             param.put("type", "project");
             awardsGroupList.add(new HashedMap() {{
-                put("awards","湖南省年度考评优良工地");
+                put("awards", "湖南省年度考评优良工地");
                 put("values", tbReviewFineMapper.queryCompanyReviewFineList(param));
             }});
         }
@@ -360,19 +363,19 @@ public class ReputationComputerService {
             awardsGroupList.addAll(tbReviewFineMapper.queryCompanyReviewFineList(param));
         }
         if ("APP".equals(reqType) || "WAP".equals(reqType)) {
-            List<Map<String, Object>> awards = tbAwardHunanMapper.queryCompanyAwardsGroup(param);
+            List<Map<String, Object>> awards = tbAwardNationwideMapper.queryCompanyAwardsGroup(param);
             if (null != awards && awards.size() > 0) {
                 Map<String, Object> groupMap;
                 for (Map<String, Object> map : awards) {
                     groupMap = new HashedMap();
                     groupMap.put("awards", map.get("awardName"));
-                    groupMap.put("values", tbAwardHunanMapper.queryCompanyAwards(map));
+                    groupMap.put("values", tbAwardNationwideMapper.queryCompanyAwards(map));
                     awardsGroupList.add(groupMap);
                 }
             }
             resultMap.put("projectAwards", awardsGroupList);
         } else {
-            awardsGroupList = tbAwardHunanMapper.queryCompanyAwards(param);
+            awardsGroupList.addAll(tbAwardNationwideMapper.queryCompanyAwards(param));
             resultMap.put("projectAwards", awardsGroupList);
         }
         //不良记录
@@ -381,6 +384,49 @@ public class ReputationComputerService {
         under.addAll(prizeMapper.queryCompanyUndersiableList(param));
         resultMap.put("under", under);
         return resultMap;
+    }
+
+    /**
+     * 查询企业诚信详情
+     *
+     * @param param
+     * @return
+     */
+    public Map<String, Object> detailCompanyAward(Map<String, Object> param) {
+        Map<String, Object> awardNationwide = tbAwardNationwideMapper.queryCompanyAwardDetail(param);
+        if (null == awardNationwide) {
+            return awardNationwide;
+        }
+        StringBuffer sbfOrg;
+        if (StringUtils.isNotEmpty(MapUtils.getString(awardNationwide, "unitOrg"))) {
+            sbfOrg = new StringBuffer(MapUtils.getString(awardNationwide, "unitOrg"));
+            awardNationwide.put("unitOrg", this.setOrgs(sbfOrg.toString()));
+        }
+        if (StringUtils.isNotEmpty(MapUtils.getString(awardNationwide, "buildOrg"))) {
+            sbfOrg = new StringBuffer(MapUtils.getString(awardNationwide, "buildOrg"));
+            awardNationwide.put("buildOrg", this.setOrgs(sbfOrg.toString()));
+        }
+        if (StringUtils.isNotEmpty(MapUtils.getString(awardNationwide, "superOrg"))) {
+            sbfOrg = new StringBuffer(MapUtils.getString(awardNationwide, "superOrg"));
+            awardNationwide.put("superOrg", this.setOrgs(sbfOrg.toString()));
+        }
+        if (StringUtils.isNotEmpty(MapUtils.getString(awardNationwide, "exploreOrg"))) {
+            sbfOrg = new StringBuffer(MapUtils.getString(awardNationwide, "exploreOrg"));
+            awardNationwide.put("exploreOrg", this.setOrgs(sbfOrg.toString()));
+        }
+        if (StringUtils.isNotEmpty(MapUtils.getString(awardNationwide, "designOrg"))) {
+            sbfOrg = new StringBuffer(MapUtils.getString(awardNationwide, "designOrg"));
+            awardNationwide.put("designOrg", this.setOrgs(sbfOrg.toString()));
+        }
+        if (StringUtils.isNotEmpty(MapUtils.getString(awardNationwide, "checkOrg"))) {
+            sbfOrg = new StringBuffer(MapUtils.getString(awardNationwide, "checkOrg"));
+            awardNationwide.put("checkOrg", this.setOrgs(sbfOrg.toString()));
+        }
+        if (StringUtils.isNotEmpty(MapUtils.getString(awardNationwide, "joinOrg"))) {
+            sbfOrg = new StringBuffer(MapUtils.getString(awardNationwide, "joinOrg"));
+            awardNationwide.put("joinOrg", this.setOrgs(sbfOrg.toString()));
+        }
+        return awardNationwide;
     }
 
     /**
@@ -396,5 +442,27 @@ public class ReputationComputerService {
         } else if ("市政工程".equals(param.get("projType"))) {
             param.put("reprojType", "市政工程");
         }
+    }
+
+    /**
+     * 设置单位
+     *
+     * @param org
+     * @return
+     */
+    private List<Map<String, Object>> setOrgs(String org) {
+        List<Map<String, Object>> orgs = new ArrayList<>();
+        String[] splitOrgs = org.split(",");
+        Map<String, Object> orgMap;
+        for (String unit : splitOrgs) {
+            orgMap = new HashedMap();
+            String[] splitUnit = unit.split("/");
+            orgMap.put("comName", splitUnit[0]);
+            if (splitUnit.length > 1) {
+                orgMap.put("comId", splitUnit[1]);
+            }
+            orgs.add(orgMap);
+        }
+        return orgs;
     }
 }

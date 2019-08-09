@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/reputation")
-public class ReputationController extends BaseController{
+public class ReputationController extends BaseController {
 
     @Autowired
     ReputationComputerService reputationComputerService;
@@ -29,14 +29,14 @@ public class ReputationController extends BaseController{
     @ResponseBody
     @RequestMapping(value = "/company", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> company(@RequestBody Map<String, Object> param) {
-        Map<String,Object> result = new HashedMap();
+        Map<String, Object> result = new HashedMap();
         successMsg(result);
-        if (null == param.get("comId")){
-            result.put("code",0);
-            result.put("msg","参数不允许为空");
+        if (null == param.get("comId")) {
+            result.put("code", 0);
+            result.put("msg", "参数不允许为空");
             return result;
         }
-        successMsg(result,reputationComputerService.computer(param));
+        successMsg(result, reputationComputerService.computer(param));
         return result;
     }
 
@@ -48,37 +48,60 @@ public class ReputationController extends BaseController{
     @ResponseBody
     @RequestMapping(value = "/undesirable", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> undesirable(@RequestBody Map<String, Object> param) {
-        Map<String,Object> result = new HashedMap();
+        Map<String, Object> result = new HashedMap();
         successMsg(result);
-        if (null == param.get("comId")){
-            result.put("code",0);
-            result.put("msg","参数不允许为空");
+        if (null == param.get("comId")) {
+            result.put("code", 0);
+            result.put("msg", "参数不允许为空");
             return result;
         }
-        successMsg(result,reputationComputerService.listUndesirable(param));
+        successMsg(result, reputationComputerService.listUndesirable(param));
         return result;
     }
 
     /**
-     * 列表
+     * 企业下的诚信列表(new)
      *
      * @param param
      */
     @ResponseBody
     @RequestMapping(value = "/new/company", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> companyNew(@RequestBody Map<String, Object> param) {
-        Map<String,Object> result = new HashedMap();
-        if (null == param.get("comId")){
-            result.put("code",0);
-            result.put("msg","参数comId不允许为空");
+        Map<String, Object> result = new HashedMap();
+        if (null == param.get("comId")) {
+            result.put("code", 0);
+            result.put("msg", "参数comId不允许为空");
             return result;
         }
-        if (null == param.get("reqType")){
-            result.put("code",0);
-            result.put("msg","参数reqType不允许为空");
+        if (null == param.get("reqType")) {
+            result.put("code", 0);
+            result.put("msg", "参数reqType不允许为空");
             return result;
         }
-        successMsg(result,reputationComputerService.listCompanyAward(param));
+        if (null == param.get("source")) {
+            result.put("code", 0);
+            result.put("msg", "参数source不允许为空");
+            return result;
+        }
+        successMsg(result, reputationComputerService.listCompanyAward(param));
+        return result;
+    }
+
+    /**
+     * 工程奖项详情
+     *
+     * @param param
+     */
+    @ResponseBody
+    @RequestMapping(value = "/detail", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> detail(@RequestBody Map<String, Object> param) {
+        Map<String, Object> result = new HashedMap();
+        if (null == param.get("pkid")) {
+            result.put("code", 0);
+            result.put("msg", "参数pkid不允许为空");
+            return result;
+        }
+        successMsg(result, reputationComputerService.detailCompanyAward(param));
         return result;
     }
 }
