@@ -30,7 +30,7 @@ public class AwardsExcelTest extends ConfigTest {
 
     @org.junit.Test
     public void analysisAwardExcel() throws Exception {
-        File file = new File("E:\\朱帅\\耀邦\\奖项\\奖项.xlsx");
+        File file = new File("E:\\朱帅\\耀邦\\奖项\\奖项(1)(3).xlsx");
         FileInputStream inputStream = new FileInputStream(file);
         XSSFWorkbook hssfWorkbook = new XSSFWorkbook(inputStream);
         if (null != hssfWorkbook) {
@@ -43,8 +43,8 @@ public class AwardsExcelTest extends ConfigTest {
                 TbAwardNationwide tbAwardNationwide = new TbAwardNationwide();
                 row = sheet.getRow(i);
                 cell = row.getCell(0);
-                if (null != cell) {
-//                    tbAwardNationwide.setSource(cell.getStringCellValue());
+                if (null != cell && !"国家级".equals(cell.getStringCellValue())) {
+                    tbAwardNationwide.setSource(cell.getStringCellValue());
                 }
                 cell = row.getCell(1);
                 tbAwardNationwide.setAwardCate(cell.getStringCellValue());
