@@ -48,9 +48,18 @@
         c.*
         FROM
         tb_company c
+        <if test="aqrz != null and aqrz != ''">
+            JOIN tb_aqrz_hunan aqrz on c.com_id = aqrz.com_id
+        </if>
+        <if test="reviewFine != null and reviewFine != ''">
+            JOIN tb_review_fine review on c.com_id = review.com_id and review.type = 'company'
+        </if>
         where 1=1
         <if test="keyWord!=null and keyWord!=''">
             and (c.com_name like CONCAT('%',#{keyWord},'%') or c.legal_person like CONCAT('%',#{keyWord},'%'))
+        </if>
+        <if test="isBei != null and isBei != ''">
+            AND c.is_bei = 1
         </if>
         <if test="province!=null and province!=''">
             and c.regis_address like CONCAT('%',#{province},'%')
@@ -98,6 +107,12 @@
                     </foreach>
                 </otherwise>
             </choose>
+        </if>
+        <if test="grades != null and grades.size() > 0">
+            AND
+            <foreach collection="grades" item="grade" separator="or" close=")" open="(">
+                aqrz.grade = #{grade}
+            </foreach>
         </if>
         order by c.px desc
     </select>

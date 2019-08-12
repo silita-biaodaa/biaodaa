@@ -330,6 +330,10 @@ public class TbCompanyService {
         //判断是否*****级以上
 //        setQualCode(param);
         setNewQualCode(param);
+        //备案地区条件处理
+        setIsBei(param);
+        //荣誉级别条件处理
+        setCateHonor(param);
         //地区
         if (null != param.get("regisAddress")) {
             getRegisAddress(param);
@@ -830,15 +834,6 @@ public class TbCompanyService {
         return code;
     }
 
-    public void updatePersonPX(String tableCode, String name) {
-        Map<String, Object> param = new HashMap<>();
-        if (tableCode != null && name != null) {
-            param.put("tableCode", tableCode);
-            param.put("name", name);
-            tbPersonQualificationMapper.updatePersonPX(param);
-        }
-    }
-
     public TbCompany getCompanyDetailByName(Map<String, Object> param) {
         String comName = param.get("comName").toString();
         TbCompany tbCompany = tbCompanyMapper.queryCompanyDetail(comName);
@@ -1272,5 +1267,58 @@ public class TbCompanyService {
         valMap.put("grade_bjjys_1554256688521", bingji);
         valMap.put("grade_djjys_1554256688530", dingji);
         return valMap;
+    }
+
+    /**
+     * 备案地区条件处理
+     *
+     * @param param
+     */
+    private void setIsBei(Map<String, Object> param) {
+        String isBei = MapUtils.getString(param, "isBei");
+        if (StringUtils.isNotEmpty(isBei)) {
+            if ("hunan".equals(isBei)) {
+                param.remove("isBei");
+            } else if ("enterCompany".endsWith(isBei)) {
+                param.remove("regisAddress");
+            }
+        }
+    }
+
+    /**
+     * 荣誉类别条件处理
+     *
+     * @param param
+     */
+    private void setCateHonor(Map<String, Object> param) {
+        String cateHonor = MapUtils.getString(param, "honorCate");
+        if (StringUtils.isNotEmpty(cateHonor)) {
+            String[] splitCate = cateHonor.split(",");
+            if (splitCate.length > 1) {
+                param.put("aqrz", "aqrz");
+                param.put("reviewFine", "reviewFine");
+                for (String str : splitCate) {
+                    if (str.indexOf("||") > -1) {
+                        String[] aqrzs = str.split("\\|\\|");
+                        if (aqrzs.length > 1){
+                            String[] grades = aqrzs[1].split("/");
+                            param.put("grades",Arrays.asList(grades));
+                            break;
+                        }
+                    }
+                }
+                return;
+            }
+            if (cateHonor.contains("aqrz")){
+                param.put("aqrz","aqrz");
+            }else {
+                param.put("reviewFine", "reviewFine");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        String a = "aaa";
+        System.out.println(a.indexOf("||"));
     }
 }

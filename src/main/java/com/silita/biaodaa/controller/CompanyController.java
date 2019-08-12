@@ -311,7 +311,7 @@ public class CompanyController extends BaseController {
             if (isVip == null) {
                 isVip = 0;
             }
-
+            String isBei = MapUtils.getString(params, "isBei");
             String code = serQualCode(qualCode);
             Map<String, Object> param = new HashMap<>();
             param.put("regisAddress", params.get("regisAddress"));
@@ -322,6 +322,8 @@ public class CompanyController extends BaseController {
             param.put("keyWord", keyWord);
             param.put("rangeType", rangeType);
             param.put("isVip", isVip);
+            param.put("isBei", isBei);
+            param.put("honorCate", params.get("honorCate"));
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");
