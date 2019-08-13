@@ -133,7 +133,8 @@
     <select id="queryCompanyAwardsGroup" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
           t.`award_cate` AS awardName,
-          #{comId} AS comId
+          #{comId} AS comId,
+          t.source AS source
         FROM
           tb_award_nationwide t
         WHERE 1 = 1

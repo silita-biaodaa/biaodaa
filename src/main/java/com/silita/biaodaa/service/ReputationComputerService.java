@@ -351,18 +351,18 @@ public class ReputationComputerService {
         resultMap.put("companyAwards", companyAwards);
         //工程获奖
         List<Map<String, Object>> awardsGroupList = new ArrayList<>();
-        if ("湖南省".equals(param.get("source")) && ("APP".equals(reqType) || "WAP".equals(reqType))) {
-            //优良工地
-            param.put("type", "project");
-            awardsGroupList.add(new HashedMap() {{
-                put("awards", "湖南省年度考评优良工地");
-                put("values", tbReviewFineMapper.queryCompanyReviewFineList(param));
-            }});
-        }
-        if ("湖南省".equals(param.get("source")) && "PC".equals(reqType)) {
-            param.put("type", "project");
-            awardsGroupList.addAll(tbReviewFineMapper.queryCompanyReviewFineList(param));
-        }
+//        if ("湖南省".equals(param.get("source")) && ("APP".equals(reqType) || "WAP".equals(reqType))) {
+//            //优良工地
+//            param.put("type", "project");
+//            awardsGroupList.add(new HashedMap() {{
+//                put("awards", "湖南省年度考评优良工地");
+//                put("values", tbReviewFineMapper.queryCompanyReviewFineList(param));
+//            }});
+//        }
+//        if ("湖南省".equals(param.get("source")) && "PC".equals(reqType)) {
+//            param.put("type", "project");
+//            awardsGroupList.addAll(tbReviewFineMapper.queryCompanyReviewFineList(param));
+//        }
         if ("APP".equals(reqType) || "WAP".equals(reqType)) {
             List<Map<String, Object>> awards = tbAwardNationwideMapper.queryCompanyAwardsGroup(param);
             if (null != awards && awards.size() > 0) {
@@ -370,6 +370,9 @@ public class ReputationComputerService {
                 for (Map<String, Object> map : awards) {
                     groupMap = new HashedMap();
                     groupMap.put("awards", map.get("awardName"));
+                    if (null != map.get("source")) {
+                        groupMap.put("awards", map.get("source").toString() + map.get("awardName"));
+                    }
                     groupMap.put("values", tbAwardNationwideMapper.queryCompanyAwards(map));
                     awardsGroupList.add(groupMap);
                 }

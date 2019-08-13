@@ -53,14 +53,17 @@ public class CompanyGsService {
         resultMap.put("isUpdated", 1);
         resultMap.put("certNo", company.getCertNo());
         resultMap.put("validDate", company.getValidDate());
+        if (null != company.getRegisAddress()) {
+            resultMap.put("regisAddress", company.getRegisAddress());
+        }
         if (null == resultMap.get("comAddress")) {
             resultMap.put("comAddress", company.getComAddress());
         }
         if (null == resultMap.get("comType") && null != company && null != company.getEconomicType()) {
             resultMap.put("comType", company.getEconomicType());
         }
-        if (null != resultMap.get("regisCapital")){
-            resultMap.put("regisCapital",String.format("%.2f",MapUtils.getDouble(resultMap,"regisCapital"))+"万人民币");
+        if (null != resultMap.get("regisCapital")) {
+            resultMap.put("regisCapital", String.format("%.2f", MapUtils.getDouble(resultMap, "regisCapital")) + "万人民币");
         }
         comMap = null;
         company = null;
@@ -183,9 +186,9 @@ public class CompanyGsService {
         if (null != param.get("socialSecurity")) {
             List<Map<String, Object>> list = (List<Map<String, Object>>) param.get("socialSecurity");
             String isShow = PropertiesUtils.getProperty("isShow");
-            if ("show".equals(isShow)){
+            if ("show".equals(isShow)) {
                 param.put("socialSecurity", setSocialSecurityMap(list));
-            }else {
+            } else {
                 param.put("socialSecurity", setShieldSocialSecurityMap(list));
             }
         }

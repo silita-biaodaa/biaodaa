@@ -78,11 +78,11 @@ public class ReputationController extends BaseController {
             result.put("msg", "参数reqType不允许为空");
             return result;
         }
-        if (null == param.get("source")) {
-            result.put("code", 0);
-            result.put("msg", "参数source不允许为空");
-            return result;
-        }
+//        if (null == param.get("source")) {
+//            result.put("code", 0);
+//            result.put("msg", "参数source不允许为空");
+//            return result;
+//        }
         successMsg(result, reputationComputerService.listCompanyAward(param));
         return result;
     }
