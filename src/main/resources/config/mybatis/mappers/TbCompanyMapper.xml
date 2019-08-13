@@ -58,18 +58,36 @@
         <if test="keyWord!=null and keyWord!=''">
             and (c.com_name like CONCAT('%',#{keyWord},'%') or c.legal_person like CONCAT('%',#{keyWord},'%'))
         </if>
-        <if test="isBei != null and isBei != ''">
-            AND c.is_bei = 1
-        </if>
-        <if test="province!=null and province!=''">
-            and c.regis_address like CONCAT('%',#{province},'%')
-        </if>
-        <if test="cityList != null and cityList.size() > 0">
-            and
-            <foreach collection="cityList" item="list" open="(" close=")" separator="or">
-                c.city like CONCAT(#{list},'%')
-            </foreach>
-        </if>
+        <choose>
+            <when test="isBei != null and isBei != '' and isBei == 'enterHunan'">
+                AND (
+                 c.is_bei = 1
+                <if test="province!=null and province!=''">
+                    OR c.regis_address like CONCAT('%',#{province},'%')
+                </if>
+                <if test="cityList != null and cityList.size() > 0">
+                    OR
+                    <foreach collection="cityList" item="list" open="(" close=")" separator="or">
+                        c.city like CONCAT(#{list},'%')
+                    </foreach>
+                </if>
+                )
+            </when>
+            <otherwise>
+                <if test="isBei != null and isBei != ''">
+                    AND c.is_bei = 1
+                </if>
+                <if test="province!=null and province!=''">
+                    and c.regis_address like CONCAT('%',#{province},'%')
+                </if>
+                <if test="cityList != null and cityList.size() > 0">
+                    and
+                    <foreach collection="cityList" item="list" open="(" close=")" separator="or">
+                        c.city like CONCAT(#{list},'%')
+                    </foreach>
+                </if>
+            </otherwise>
+        </choose>
         <if test="minCapital!=null">
             <![CDATA[ and c.regis_capital >= #{minCapital} ]]>
         </if>
