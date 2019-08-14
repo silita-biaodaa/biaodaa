@@ -1311,6 +1311,13 @@ public class TbCompanyService {
             }
             if (cateHonor.contains("aqrz")){
                 param.put("aqrz","aqrz");
+                if (cateHonor.indexOf("||") > -1) {
+                    String[] aqrzs = cateHonor.split("\\|\\|");
+                    if (aqrzs.length > 1){
+                        String[] grades = aqrzs[1].split("/");
+                        param.put("grades",Arrays.asList(grades));
+                    }
+                }
             }else {
                 param.put("reviewFine", "reviewFine");
             }
