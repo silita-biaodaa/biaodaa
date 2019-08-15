@@ -61,7 +61,7 @@
       FROM
         tb_company_update t
       WHERE t.`com_id` = #{comId}
-        AND DATE(t.`updated`) &lt;= DATE_SUB(CURDATE(), INTERVAL - 7 DAY)
+        AND DATE(t.`updated`) BETWEEN DATE(NOW()) AND DATE_SUB(CURDATE(), INTERVAL - 8 DAY)
         AND t.`is_updated` = 2
     </select>
 
