@@ -42,35 +42,14 @@ public class ProjectZhaotoubiaoService {
         }
         String tabCode = tbCompanyService.getProvinceCode(province);
         TbProjectZhaotoubiao zhaotoubiao = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByProId(param);
-//        if (null == zhaotoubiao || null == zhaotoubiao.getPkid()){
-//            if("监理".equals(param.get("zhaobiaoType").toString())){
-//                Map<String,Object> zhaoSuMap = tbProjectSupervisionMapper.querySuperDetail(param);
-//                if(null != zhaoSuMap){
-//                    zhaoSuMap.put("bidType","监理");
-//                    zhaotoubiao = this.getProjectZhao(zhaoSuMap);
-//                }
-//            }else{
-//                Map<String,Object> zhaoMap = tbProjectZhaotoubiaoMapper.queryZhaobiaoDetailByBuild(param);
-//                if(null != zhaoMap){
-//                    zhaoMap.put("bidType","施工");
-//                    zhaotoubiao = this.getProjectZhao(zhaoMap);
-//                }
-//            }
-//        }
         if(null == zhaotoubiao){
             zhaotoubiao = new TbProjectZhaotoubiao();
         }
         //获取管理者姓名
         Map<String,Object> zhaoParam = new HashMap<>();
         zhaoParam.put("proId",param.get("proId"));
-//        zhaoParam.put("company",param.get("company"));
         zhaoParam.put("role","项目经理");
         zhaoParam.put("roleOne","总监理工程师");
-//        if("监理".equals(param.get("zhaobiaoType").toString())){
-//            zhaoParam.put("type","supervision");
-//        }else {
-//            zhaoParam.put("type","build");
-//        }
         zhaoParam.put("type","zhaotoubiao");
         zhaoParam.put("pkid",param.get("pkid"));
         List<TbPersonProject> personProjectList = tbPersonProjectMapper.queryPersonProject(zhaoParam);

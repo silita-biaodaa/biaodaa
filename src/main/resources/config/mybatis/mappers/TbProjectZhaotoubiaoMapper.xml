@@ -52,7 +52,9 @@
         FROM tb_project t
         LEFT JOIN tb_project_zhaotoubiao t1 ON t.`pro_id` = t1.`pro_id`
         WHERE t.`pro_id` = #{proId}
-        AND t1.`zhongbiao_company` = #{company}
+        <if test="company != null and company != ''">
+            AND t1.`zhongbiao_company` = #{company}
+        </if>
         AND t1.`pkid` = #{pkid}
     </select>
 
