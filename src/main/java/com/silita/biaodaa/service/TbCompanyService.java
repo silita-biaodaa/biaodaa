@@ -423,7 +423,7 @@ public class TbCompanyService {
                 qualGrades = qual.split("/");
                 val.put("qual", qualGrades[0]);
                 //判断资质****级及以上
-                if (qualGrades.length > 2) {
+                if (qualGrades.length > 1) {
                     if (null != gradeMap.get(qualGrades[1].trim())) {
                         List<String> qualGradeList = new ArrayList<>();
                         gradeList = gradeMap.get(qualGrades[1].trim());
