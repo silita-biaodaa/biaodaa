@@ -174,7 +174,15 @@
         ON t1.`pro_id` = t.`pro_id`
         LEFT JOIN tb_project_completion t2
         ON t.`pro_id` = t2.`pro_id`
-        WHERE t1.`com_name` = #{comName}
+        WHERE 1 = 1
+        <choose>
+            <when test="comName != null and comName != '' and innerId != null and innerId != ''">
+                AND (t1.`com_name` = #{comName} or t1.innerId = #{innerId})
+            </when>
+            <otherwise>
+                AND t1.`com_name` = #{comName}
+            </otherwise>
+        </choose>
         <if test="proName != null and proName != ''">
             AND t.`pro_name` LIKE CONCAT('%',#{proName},'%')
         </if>

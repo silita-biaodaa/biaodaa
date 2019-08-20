@@ -378,11 +378,15 @@ public class ProjectService {
     public Map<String, Object> getProjectCompanyList(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         String companyId = MapUtils.getString(param, "comId");
-        String comName = MapUtils.getString(param,"comName");
+        String comName = MapUtils.getString(param, "comName");
         // TODO:获取公司信息
-        if (StringUtils.isEmpty(comName)){
-            TbCompany company = tbCompanyMapper.getCompany(companyId);
+        TbCompany company = tbCompanyMapper.getCompany(companyId);
+        if (StringUtils.isEmpty(comName) && null != company) {
             comName = company.getComName();
+        }
+        if (null != company && null != company.getUrl()) {
+            String url = company.getUrl();
+            param.put("innerId", url.substring(url.lastIndexOf("/") + 1, url.length()));
         }
         param.put("comName", comName);
 
