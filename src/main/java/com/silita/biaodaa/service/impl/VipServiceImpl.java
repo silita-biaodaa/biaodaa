@@ -95,6 +95,7 @@ public class VipServiceImpl implements VipService {
             }else{
                 errMsg = "会员信息或活动权益配置为空！[userId:" + userId + "][profitSettings:" + profitSettings + "]";
             }
+
         }catch (Exception e){
             logger.error(e,e);
             errMsg= "服务异常："+e.getMessage();

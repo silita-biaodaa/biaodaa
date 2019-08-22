@@ -82,6 +82,7 @@ public class Constant {
     //活动编码
     public static final String PROFIT_S_CODE_INVITE = "a-inviter";
     public static final String PROFIT_S_CODE_FIRST = "a-first";
+    public static final String PROFIT_S_CODE_ISINVITE = "a-isinvite";
     //消息类型
     public static final String MSG_TYPE_REPLY = "reply";
     public static final String MSG_TYPE_COMPANY = "company";

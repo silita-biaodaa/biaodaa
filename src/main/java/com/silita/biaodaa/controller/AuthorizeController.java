@@ -22,6 +22,7 @@ import java.util.Map;
 
 import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_FIRST;
 import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_INVITE;
+import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_ISINVITE;
 
 /**
  * 用户授权 如注册、登录、授权
@@ -95,6 +96,8 @@ public class AuthorizeController extends BaseController {
     private void inviteProfitDeliver(SysUser sysUser) {
         if (MyStringUtils.isNotNull(sysUser.getInviterCode())) {
             String errMsg = vipService.addUserProfit(sysUser.getChannel(), null, PROFIT_S_CODE_INVITE, sysUser.getInviterCode());
+            //被邀请者也需送会员天数
+            vipService.addUserProfit(sysUser.getChannel(), sysUser.getPkid(), PROFIT_S_CODE_ISINVITE, sysUser.getInviterCode());
             if (errMsg != null) {
                 logger.error("会员权益赠送出错[userId:" + sysUser.getPkid() + "][sCode:" + PROFIT_S_CODE_INVITE + "]：" + errMsg);
             }
@@ -171,7 +174,7 @@ public class AuthorizeController extends BaseController {
                 result.put("code", Constant.ERR_VIEW_CODE);
                 result.put("msg", errMsg);
             } else {
-                bulidUserPwd(sysUser);
+//                bulidUserPwd(sysUser);
                 String msgCode = authorizeService.registerUser(sysUser);
                 if (msgCode.equals(Constant.SUCCESS_CODE)) {
                     SysUser vo = authorizeService.memberLogin(sysUser);
