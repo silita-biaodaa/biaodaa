@@ -76,13 +76,13 @@ public class CompanyHbaseService {
             } else if ("分支机构信息".equals(sbder.toString())) {
                 resultMap.put("branch", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("变更信息".equals(sbder.toString())) {
-                resultMap.put("changeRecord", setResultDate(JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))),"altDate"));
+                resultMap.put("changeRecord", setResultDate(JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))), "altDate"));
             } else if ("主要人员信息".equals(sbder.toString())) {
                 resultMap.put("personnel", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("股东及出资信息".equals(sbder.toString())) {
                 resultMap.put("partner", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
             } else if ("行政处罚信息".equals(sbder.toString())) {
-                resultMap.put("punish", setResultDate(JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))),"penDecIssDate"));
+                resultMap.put("punish", setResultDate(JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))), "penDecIssDate"));
             } else if ("timestamp".equals(sbder.toString())) {
                 resultMap.put("updated", Bytes.toString(CellUtil.cloneValue(cell)));
             }
@@ -94,21 +94,25 @@ public class CompanyHbaseService {
 
     /**
      * 格式化时间
+     *
      * @param object
      * @param key
      * @return
      */
-    private List<Map<String, Object>> setResultDate(Object object,String key) {
+    private List<Map<String, Object>> setResultDate(Object object, String key) {
         if (null == object) {
             return new ArrayList<>();
         }
         List<Map<String, Object>> list = (List<Map<String, Object>>) object;
         StringBuffer altDate;
         for (Map<String, Object> val : list) {
+            if (null == MapUtils.getString(val, key)) {
+                continue;
+            }
             altDate = new StringBuffer(MapUtils.getString(val, key));
             if (altDate.toString().contains("-")) {
                 val.put(key, MyDateUtils.strToDate(altDate.toString(), null).getTime());
-            }else if (altDate.toString().contains("年")){
+            } else if (altDate.toString().contains("年")) {
                 val.put(key, MyDateUtils.strToDate(altDate.toString(), "yyyy年MM月dd日").getTime());
             }
         }
@@ -144,7 +148,8 @@ public class CompanyHbaseService {
                 } else if ("基本信息".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
                     reportMap.put("basic", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
                 } else if ("股东及出资信息".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
-                    reportMap.put("partner", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
+//                    reportMap.put("partner", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
+                    reportMap.put("partner", setResultDate(setResultDate(JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))), "subConDate"), "acConDate"));
                 } else if ("网站或网店信息".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
                     reportMap.put("website", JSONObject.parse(Bytes.toString(CellUtil.cloneValue(cell))));
                 } else if ("社保信息".equals(Bytes.toString(CellUtil.cloneQualifier(cell)))) {
