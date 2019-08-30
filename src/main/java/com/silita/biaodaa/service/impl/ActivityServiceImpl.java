@@ -1,5 +1,6 @@
 package com.silita.biaodaa.service.impl;
 
+import com.silita.biaodaa.dao.TbActivityContentMapper;
 import com.silita.biaodaa.dao.TbDuanwuActivityMapper;
 import com.silita.biaodaa.model.TbDuanwuActivity;
 import com.silita.biaodaa.service.ActivityService;
@@ -19,6 +20,8 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     TbDuanwuActivityMapper tbDuanwuActivityMapper;
+    @Autowired
+    TbActivityContentMapper tbActivityContentMapper;
 
     @Override
     public void saveOrderNo(Map<String, Object> param) {
@@ -42,7 +45,7 @@ public class ActivityServiceImpl implements ActivityService {
         } else if ("ios".equals(tradeType)) {
             activity.setPayType("ios");
         }
-        if (tbDuanwuActivityMapper.queryOrderNoExist(activity.getOrderNo()) > 0){
+        if (tbDuanwuActivityMapper.queryOrderNoExist(activity.getOrderNo()) > 0) {
             tbDuanwuActivityMapper.update(activity);
             return;
         }
@@ -55,5 +58,13 @@ public class ActivityServiceImpl implements ActivityService {
         activity.setOrderNo(MapUtils.getString(param, "orderNo"));
         activity.setPayState(MapUtils.getInteger(param, "orderStatus"));
         tbDuanwuActivityMapper.updatePayState(activity);
+    }
+
+    @Override
+    public boolean isActivity() {
+        if (tbActivityContentMapper.queryActivity() > 0) {
+            return true;
+        }
+        return false;
     }
 }

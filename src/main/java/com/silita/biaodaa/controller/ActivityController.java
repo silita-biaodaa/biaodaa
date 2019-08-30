@@ -6,6 +6,8 @@ import com.silita.biaodaa.service.ActivityService;
 import com.silita.biaodaa.service.VipService;
 import com.silita.pay.service.OrderInfoService;
 import org.apache.commons.collections.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/activity")
 public class ActivityController extends BaseController {
 
+    private Logger logger = LoggerFactory.getLogger(ActivityController.class);
     @Autowired
     ActivityService activityService;
     @Autowired
@@ -34,21 +37,41 @@ public class ActivityController extends BaseController {
     public Map<String, Object> phoneSave(@RequestBody Map<String, Object> param) {
         Map result = new HashMap();
         successMsg(result);
-        if (null == param.get("phone") || "".equals(param.get("phone"))){
+        if (null == param.get("phone") || "".equals(param.get("phone"))) {
             return result;
         }
         //判断用户是否首充值
         int count = orderInfoService.getUserCount(VisitInfoHolder.getUid());
-        if (count > 0){
+        if (count > 0) {
             return result;
         }
         TbVipFeeStandard fs = vipService.queryFeeStdInfoByCode(MapUtils.getString(param, "stdCode"));
         param.put("amount", fs.getPrice() * 100);
         param.put("userId", VisitInfoHolder.getUid());
-        param.put("tradeType","NATIVE");
+        param.put("tradeType", "NATIVE");
         successMsg(result);
         activityService.saveOrderNo(param);
         return result;
     }
+
+    /**
+     * 近期是否有活动
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/entrance", produces = "application/json;charset=utf-8")
+    public Map<String, Object> entrance() {
+        Map result = new HashMap();
+        try {
+            successMsg(result, activityService.isActivity());
+            return result;
+        } catch (Exception e) {
+            logger.error("获取活动失败！", e);
+            successMsg(result, false);
+            return result;
+        }
+    }
+
 
 }
