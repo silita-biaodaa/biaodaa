@@ -179,4 +179,19 @@ public class FoundationService {
     public Map<String,Object> version(String loginChannel) {
         return versionMapper.queryVersion(loginChannel);
     }
+
+    /**
+     * 获取热词(new)
+     * @param param
+     * @return
+     */
+    public List<String> listHotWords(Map<String,Object> param){
+        if (null != param && null == param.get("limit")){
+            param.put("limit", 20);
+        }
+        if (null != param && null == param.get("type")){
+            param.put("type","zhaobiao");
+        }
+        return hotWordsMapper.queryHotWords(param);
+    }
 }

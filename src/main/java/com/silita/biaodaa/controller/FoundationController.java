@@ -10,6 +10,7 @@ import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbHotWords;
 import com.silita.biaodaa.service.FoundationService;
 import com.silita.biaodaa.service.TbCompanyService;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -303,60 +304,6 @@ public class FoundationController extends BaseController {
     }
 
     /**
-     * TODO: 获得省份和城市列表
-     *
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getProvinceCity", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String, Object> getProvinceCity() {
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("code", 1);
-        result.put("msg", "获取省份和城市列表成功!");
-        try {
-            List<Map<String, Object>> list = tbCompanyService.getArea();
-            result.put("data", list);
-        } catch (Exception e) {
-            logger.error(String.format("获取省份和城市列表失败！%s", e.getMessage()));
-            result.put("code", 0);
-            result.put("msg", e.getMessage());
-        }
-        return result;
-    }
-
-    /**
-     * TODO: 获得招标项目列表
-     *
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping(value = "/getProjects", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String, Object> getProjects(@RequestBody Map<String, Object> params) {
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("code", 1);
-        result.put("msg", "获取招标项目列表成功!");
-        try {
-            String city = (String) params.get("city");
-            if (StringUtils.isNotBlank(city) && city.contains("市")) {
-                params.put("city", city.replace("市", ""));
-            }
-            Page page = buildPage(params);
-            PageInfo pageInfo = foundationService.queryProjects(page, params);
-            result.put("data", pageInfo.getList());
-            result.put("pageNum", pageInfo.getPageNum());
-            result.put("pageSize", pageInfo.getPageSize());
-            result.put("total", pageInfo.getTotal());
-            result.put("pages", pageInfo.getPages());
-        } catch (Exception e) {
-            logger.error(String.format("获取招标项目列表失败！%s", e.getMessage()));
-            result.put("code", 0);
-            result.put("msg", e.getMessage());
-        }
-        return result;
-    }
-
-
-    /**
      * TODO: 版本查询
      *
      * @param params
@@ -371,14 +318,27 @@ public class FoundationController extends BaseController {
         try {
             Preconditions.checkArgument(params.containsKey("loginChannel") && !Strings.isNullOrEmpty((String) params.get("loginChannel")), "loginChannel不能为空！");
             String loginChannel = (String) params.get("loginChannel");
-            Map<String,Object> version = foundationService.version(loginChannel);
+            Map<String, Object> version = foundationService.version(loginChannel);
             result.put("data", version);
         } catch (Exception e) {
-//            logger.error(String.format("版本查询失败！%s", e.getMessage()));
-            e.printStackTrace();
+            logger.error("版本查询失败！%s", e);
             result.put("code", 0);
             result.put("msg", e.getMessage());
         }
+        return result;
+    }
+
+    /**
+     * 获取热词
+     *
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/hot/words", method = RequestMethod.POST)
+    public Map<String, Object> hotWords(@RequestBody Map<String, Object> param) {
+        Map<String, Object> result = new HashedMap();
+        successMsg(result, foundationService.listHotWords(param));
         return result;
     }
 }

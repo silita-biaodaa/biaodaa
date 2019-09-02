@@ -18,4 +18,11 @@ public interface TbHotWordsMapper extends MyMapper<TbHotWords> {
      * @return
      */
     List<TbHotWords> listHotWordsByType(Map<String, Object> params);
+
+    /**
+     * 查询热词
+     * @param params
+     * @return
+     */
+    List<String> queryHotWords(Map<String,Object> params);
 }
