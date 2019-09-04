@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.biaodaa.dao.FeedbackMapper">
     <insert id="insertFeedback" parameterType="Map">
-        INSERT INTO mishu_write.feedback(pid, starttime, path, module, problem, state, type, loginChannel, version)
-          VALUES(#{pid}, NOW(), #{path}, #{module}, #{problem}, 1, #{type}, #{loginChannel}, #{version})
+        INSERT INTO mishu_write.feedback(pid, starttime, path, module, problem, state, type, loginChannel, version,contact_way)
+          VALUES(#{pid}, NOW(), #{path}, #{module}, #{problem}, 1, #{type}, #{loginChannel}, #{version},#{contactWay})
     </insert>
 </mapper>
