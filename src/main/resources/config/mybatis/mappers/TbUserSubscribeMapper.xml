@@ -5,22 +5,22 @@
     <!--查询用户最新的订阅条件(根据主键id和userId)-->
     <select id="queryNewCondition" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
-          t.`pkid`,
-          t.`condition`,
-          t.`sub_type` AS subType,
-          t.`user_id` AS userId,
-          t.`is_push` AS isPush
+        t.`pkid`,
+        t.`condition`,
+        t.`sub_type` AS subType,
+        t.`user_id` AS userId,
+        t.`is_push` AS isPush
         FROM
-          tb_user_subscribe t
+        tb_user_subscribe t
         WHERE
-          <choose>
-              <when test="pkid != null and pkid != ''">
-                  t.`pkid` = #{pkid}
-              </when>
-              <otherwise>
-                  t.`user_id` = #{userId}
-              </otherwise>
-          </choose>
+        <choose>
+            <when test="pkid != null and pkid != ''">
+                t.`pkid` = #{pkid}
+            </when>
+            <otherwise>
+                t.`user_id` = #{userId}
+            </otherwise>
+        </choose>
         ORDER BY t.`created` DESC
         LIMIT 1
     </select>
@@ -31,6 +31,41 @@
           tb_user_subscribe
         SET
           is_push = 0
-        WHERE user_id = ''
+        WHERE user_id = #{userId}
     </update>
+
+    <!--添加用户订阅条件-->
+    <insert id="insertUserSubscribe" parameterType="java.util.Map">
+        INSERT INTO `tb_user_subscribe` (
+        <if test="userId != null and userId != ''">
+            `user_id`,
+        </if>
+        <if test="condition != null and condition != ''">
+            `condition`,
+        </if>
+        <if test="isPush != null and isPush != ''">
+            `is_push`,
+        </if>
+        <if test="subType != null and subType != ''">
+            `sub_type`,
+        </if>
+        `created`
+        )
+        VALUES
+        (
+        <if test="userId != null and userId != ''">
+            #{userId},
+        </if>
+        <if test="condition != null and condition != ''">
+            #{condition},
+        </if>
+        <if test="isPush != null and isPush != ''">
+            #{isPush},
+        </if>
+        <if test="subType != null and subType != ''">
+            #{subType},
+        </if>
+        now()
+        )
+    </insert>
 </mapper>
