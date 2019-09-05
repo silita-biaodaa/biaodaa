@@ -670,6 +670,7 @@ public class AuthorizeService {
         Map<String, Object> resultMap = new HashMap<String, Object>() {{
             put("region", "湖南");
             put("city", "长沙");
+            put("ip",ip);
         }};
         if (MyStringUtils.isNull(ip)) {
             return resultMap;
