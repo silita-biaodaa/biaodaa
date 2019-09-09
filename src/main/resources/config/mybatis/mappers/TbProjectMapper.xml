@@ -5,22 +5,22 @@
     <!--按工程查询业绩列表-->
     <select id="queryObject" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
-            t.`pro_id` AS proId
-            ,t.`pro_no` AS proNo
-            ,t.`pro_name` AS proName
-            ,t.`pro_where` AS proWhere
-            ,t.`pro_org` AS proOrg
-            ,t.`pro_type` AS proType
-            ,t.`pro_address` AS proAddress
-            ,t.`pro_scope` AS scope
-            ,t1.`build_end` AS buildEnd
-            ,t.invest_amount AS amount
+        t.`pro_id` AS proId
+        ,t.`pro_no` AS proNo
+        ,t.`pro_name` AS proName
+        ,t.`pro_where` AS proWhere
+        ,t.`pro_org` AS proOrg
+        ,t.`pro_type` AS proType
+        ,t.`pro_address` AS proAddress
+        ,t.`pro_scope` AS scope
+        ,t1.`build_end` AS buildEnd
+        ,t.invest_amount AS amount
         FROM
         tb_project t
         LEFT JOIN tb_project_completion t1 ON t.`pro_id` = t1.`pro_id`
         where 1=1
         <if test="proName != null and proName != ''">
-            AND (t.`pro_name` LIKE  CONCAT('%',#{proName},'%')  OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))
+            AND (t.`pro_name` LIKE CONCAT('%',#{proName},'%') OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))
         </if>
         <if test="proType != null and proType != ''">
             AND t.`pro_type` = #{proType}
@@ -51,7 +51,8 @@
         ,t.`pro_where` AS proWhere
         ,t.`pro_type` AS proType
         ,t.`pro_address` AS proAddress
-        ,<if test="pactType == '施工'">t2.`b_org` AS proOrg</if>
+        ,
+        <if test="pactType == '施工'">t2.`b_org` AS proOrg</if>
         <if test="pactType == '监理'">t3.`super_org` AS proOrg</if>
         <if test="pactType == '勘察'">t4.`explore_org` AS proOrg</if>
         <if test="pactType == '设计'">t5.`design_org` AS proOrg</if>
@@ -59,31 +60,31 @@
         <if test="pactType == '施工'">
             LEFT JOIN mishu.`tb_project_build` t2 ON t2.`pro_id` = t.`pro_id`
             <if test="proOrg != null and proOrg != ''">
-                AND t2.`b_org` LIKE  CONCAT('%',#{proOrg},'%')
+                AND t2.`b_org` LIKE CONCAT('%',#{proOrg},'%')
             </if>
         </if>
         <if test="pactType == '监理'">
             LEFT JOIN mishu.`tb_project_supervision` t3 ON t3.`pro_id` = t.`pro_id`
             <if test="proOrg != null and proOrg != ''">
-                AND t3.`super_org` LIKE  CONCAT('%',#{proOrg},'%')
+                AND t3.`super_org` LIKE CONCAT('%',#{proOrg},'%')
             </if>
         </if>
         <if test="pactType == '勘察'">
             LEFT JOIN mishu.`tb_project_design` t4 ON t4.`pro_id` = t.`pro_id`
             <if test="proOrg != null and proOrg != ''">
-                AND t4.`explore_org` LIKE  CONCAT('%',#{proOrg},'%')
+                AND t4.`explore_org` LIKE CONCAT('%',#{proOrg},'%')
             </if>
         </if>
         <if test="pactType == '设计'">
             LEFT JOIN mishu.`tb_project_design` t5 ON t5.`pro_id` = t.`pro_id`
             <if test="proOrg != null and proOrg != ''">
-                AND t5.`design_org` LIKE  CONCAT('%',#{proOrg},'%')
+                AND t5.`design_org` LIKE CONCAT('%',#{proOrg},'%')
             </if>
         </if>
         WHERE
         1=1
         <if test="proName != null and proName != ''">
-            AND t.`pro_name` LIKE  CONCAT('%',#{proName},'%')
+            AND t.`pro_name` LIKE CONCAT('%',#{proName},'%')
         </if>
         <if test="proType != null and proName != ''">
             AND t.`pro_type` = #{proType}
@@ -94,7 +95,7 @@
     </select>
 
     <!--获取区域省级的名称和path-->
-    <select id="queryNameAndPath"  resultType="java.util.Map">
+    <select id="queryNameAndPath" resultType="java.util.Map">
         select name,path from area where grade=0 order by name_abbr
     </select>
 
@@ -130,12 +131,12 @@
 
     <select id="queryProjectListByIds" parameterType="java.util.List" resultType="java.util.Map">
         SELECT
-            t.`pro_id` AS proId
-            ,t.`pro_name` AS proName
-            ,t.`pro_type` AS proType
-            ,t.`pro_where` AS proWhere
-            ,t.`pro_org` AS proOrg
-            ,null AS pmName
+        t.`pro_id` AS proId
+        ,t.`pro_name` AS proName
+        ,t.`pro_type` AS proType
+        ,t.`pro_where` AS proWhere
+        ,t.`pro_org` AS proOrg
+        ,null AS pmName
         FROM tb_project t
         WHERE t.`pro_id` IN
         <foreach collection="list" item="list" index="index" open="(" close=")" separator=",">
@@ -146,64 +147,69 @@
     <update id="update" parameterType="java.util.Map">
         update tb_project
         set
-         <if test="acreage != null and acreage != ''">
-             acreage = #{acreage}
-         </if>
+        <if test="acreage != null and acreage != ''">
+            acreage = #{acreage}
+        </if>
         where
-            <if test="acreage != null and acreage != ''">
-                pro_id = #{proId}
-            </if>
+        <if test="acreage != null and acreage != ''">
+            pro_id = #{proId}
+        </if>
     </update>
 
     <!--企业下的业绩-->
     <select id="queryListCompanyPro" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
-            t.`pro_id` AS proId,
-            t.`pro_name` AS proName,
-            t.`pro_type` AS proType,
-            t.`pro_where` AS proWhere,
-            t.`pro_org` AS proOrg,
-            t2.`build_end` AS buildEnd,
-            t3.`amount` AS amount,
-            NULL AS pmName
+        project.`pro_id` AS proId,
+        project.`pro_name` AS proName,
+        project.`pro_type` AS proType,
+        project.`pro_where` AS proWhere,
+        project.`pro_org` AS proOrg,
+        comple.`build_end` AS buildEnd,
+        t1.`amount` AS amount
         FROM
-        tb_project_company t1
-        LEFT JOIN tb_project_contract t3
-        ON t3.`pkid` = t1.`pid`
-        JOIN tb_project t
-        ON t1.`pro_id` = t.`pro_id`
-        LEFT JOIN tb_project_completion t2
-        ON t.`pro_id` = t2.`pro_id`
+        tb_project project
+        JOIN
+        (SELECT
+        company.`pro_id`,
+        contract.`amount`
+        FROM
+        tb_project_company company
+        JOIN tb_project_contract contract
+        ON company.`pid` = contract.`pkid`
+        AND company.`type` = 'contract'
         WHERE 1 = 1
         <choose>
             <when test="comName != null and comName != '' and innerId != null and innerId != ''">
-                AND (t1.`com_name` = #{comName} or t1.innerId = #{innerId})
+                AND (company.`com_name` = #{comName} or company.innerId = #{innerId})
             </when>
             <otherwise>
-                AND t1.`com_name` = #{comName}
+                AND company.`com_name` = #{comName}
             </otherwise>
         </choose>
+        GROUP BY company.`pro_id`) t1
+        ON project.`pro_id` = t1.pro_id
+        LEFT JOIN tb_project_completion comple
+        ON project.`pro_id` = comple.`pro_id`
         <if test="proName != null and proName != ''">
-            AND t.`pro_name` LIKE CONCAT('%',#{proName},'%')
+            AND project.`pro_name` LIKE CONCAT('%',#{proName},'%')
         </if>
         <if test="proType != null and proType != ''">
-            AND t.`pro_type` = #{proType}
+            AND tproject.`pro_type` = #{proType}
         </if>
         <if test="amountStart != null and amountStart != ''">
-            AND CAST(t.`invest_amount` AS SIGNED INTEGER) &gt;= #{amountStart}
+            AND CAST(project.`invest_amount` AS SIGNED INTEGER) &gt;= #{amountStart}
         </if>
         <if test="amountEnd != null and amountEnd != ''">
-            AND CAST(t.`invest_amount` AS SIGNED INTEGER) &lt;= #{amountEnd}
+            AND CAST(project.`invest_amount` AS SIGNED INTEGER) &lt;= #{amountEnd}
         </if>
         <if test="buildStart != null and buildStart != ''">
-            AND t2.`build_end` &gt;= #{buildStart}
+            AND comple.`build_end` &gt;= #{buildStart}
         </if>
         <if test="buildEnd != null and buildEnd != ''">
-            AND t2.`build_end` &lt;= #{buildEnd}
+            AND comple.`build_end` &lt;= #{buildEnd}
         </if>
         <if test="area != null and area != ''">
-            AND t.`pro_where` LIKE CONCAT(#{area},'%')
+            AND project.`pro_where` LIKE CONCAT(#{area},'%')
         </if>
-        GROUP BY t1.`pro_id`
     </select>
 </mapper>

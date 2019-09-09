@@ -169,6 +169,7 @@
             <if test="loginPwd !=null and loginPwd!=''">
               AND login_pwd = #{loginPwd}
             </if>
+            AND ENABLE = 1
         </where>
     </select>
 

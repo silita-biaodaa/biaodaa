@@ -9,6 +9,8 @@ import redis.clients.jedis.ShardedJedisPool;
 
 import java.util.List;
 
+import static com.silita.biaodaa.common.RedisConstantInterface.ORDER_LIST;
+
 /**
  * <p>Created by mayongbin01 on 2017/3/9.</p>
  */
@@ -69,6 +71,11 @@ public class RedisTest extends ConfigTest {
         for (String str : list){
             System.out.println(str);
         }
+    }
+
+    @Test
+    public void pul(){
+        redisTemplate.lpush(ORDER_LIST,"20190905042003216E66ECA");
     }
 
 }
