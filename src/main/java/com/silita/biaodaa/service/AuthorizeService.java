@@ -100,6 +100,9 @@ public class AuthorizeService {
         Integer res = null;
         List<SysUser> userList = userTempBddMapper.queryUserByPhoneNo(sysUser.getPhoneNo());
         if (userList != null && userList.size() == 1) {//手机号已存在
+            if (!userList.get(0).getEnable()){  //用户被锁定
+                return 33;
+            }
             res = userTempBddMapper.updateSysUser(sysUser);
         } else if (userList == null || userList.size() == 0) {//手机号不存在,新建用户
             createMemberUser(sysUser);

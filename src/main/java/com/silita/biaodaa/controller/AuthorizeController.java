@@ -20,9 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_FIRST;
-import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_INVITE;
-import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_ISINVITE;
+import static com.silita.biaodaa.common.Constant.*;
 
 /**
  * 用户授权 如注册、登录、授权
@@ -140,18 +138,21 @@ public class AuthorizeController extends BaseController {
         try {
             //登录校验
             String msg = authorizeService.checkPhone(sysUser.getPhoneNo());
-            if (StringUtils.isNotEmpty(msg)){
+            if (StringUtils.isNotEmpty(msg)) {
                 result.put("code", Constant.FAIL_CODE);
                 result.put("msg", msg);
                 return result;
             }
             SysUser userInfo = authorizeService.memberLogin(sysUser);
-            if (userInfo != null) {
+            if (userInfo != null && userInfo.getEnable()) {
                 //会员权益赠送
                 firstProfitDeliver(userInfo);
                 result.put("code", Constant.SUCCESS_CODE);
                 result.put("msg", "用户登录成功！");
                 result.put("data", userInfo);
+            } else if (null != userInfo && !userInfo.getEnable()) {
+                result.put("code", Constant.ERR_LOCK_USER);
+                result.put("msg", "用户已被锁定!");
             } else {
                 result.put("code", Constant.FAIL_CODE);
                 result.put("msg", "手机号或密码错误!");
@@ -299,13 +300,16 @@ public class AuthorizeController extends BaseController {
             String errCode = preThirdLogin(sysUser);
             if (errCode == null) {
                 SysUser vo = authorizeService.memberThirdLogin(sysUser);
-                if (vo != null) {
+                if (vo != null && vo.getEnable()) {
                     //会员权益赠送
                     firstProfitDeliver(vo);
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "第三方登录成功！");
                     result.put("data", vo);
-                } else {
+                } else if (vo != null && !vo.getEnable()){
+                    result.put("code", Constant.ERR_LOCK_USER);
+                    result.put("msg", "用户已被锁定！");
+                }else {
                     result.put("code", Constant.THIRD_USER_NOTEXIST);
                     result.put("msg", "第三方用户不存在");
                 }
@@ -328,9 +332,8 @@ public class AuthorizeController extends BaseController {
         try {
             String errCode = preThirdBinding(sysUser);
             if (errCode == null) {
-                bulidUserPwd(sysUser);
                 Integer count = authorizeService.thirdPartyBinding(sysUser);
-                if (count != null) {
+                if (count != null && count != 33) {
                     SysUser vo = authorizeService.memberLogin(sysUser);
                     vo.setUserphone(vo.getPhoneNo());
                     vo.setImgurl(vo.getImageUrl());
@@ -343,7 +346,10 @@ public class AuthorizeController extends BaseController {
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "绑定成功！");
                     result.put("data", authorizeService.memberLogin(sysUser));
-                } else {
+                } else if (count != null && count == 33){
+                    result.put("code", Constant.ERR_LOCK_USER);
+                    result.put("msg", "用户被锁定！");
+                }else {
                     result.put("code", Constant.FAIL_CODE);
                     result.put("msg", "绑定失败，请重试。");
                 }
@@ -351,7 +357,7 @@ public class AuthorizeController extends BaseController {
                 if (errCode.equals(Constant.ERR_VERIFY_PHONE_CODE)) {
                     result.put("code", errCode);
                     result.put("msg", "验证码失效或错误！");
-                }else {
+                } else {
                     result.put("code", errCode);
                     result.put("msg", "绑定失败！");
                 }

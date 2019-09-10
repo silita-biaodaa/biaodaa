@@ -58,6 +58,7 @@ public class Constant {
     public static final String ERR_LOGIN_NAME = "110";//登录账号名
     public static final String ERR_LOGIN_PWD = "111";//密码输入有误
     public static final String ERR_NULL_CHANNEL = "112";//渠道编码不能为空
+    public static final String ERR_LOCK_USER = "113";//用户已被锁定
     public static final String WARN_CODE_405 = "405";//渠道编码不能为空
 
     public static final String HINT_IS_REGIST = "301";//用户已注册

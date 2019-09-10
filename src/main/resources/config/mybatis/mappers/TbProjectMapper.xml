@@ -159,57 +159,64 @@
     <!--企业下的业绩-->
     <select id="queryListCompanyPro" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
-        project.`pro_id` AS proId,
-        project.`pro_name` AS proName,
-        project.`pro_type` AS proType,
-        project.`pro_where` AS proWhere,
-        project.`pro_org` AS proOrg,
-        comple.`build_end` AS buildEnd,
-        t1.`amount` AS amount
+            project.`pro_id` AS proId,
+            project.`pro_name` AS proName,
+            project.`pro_type` AS proType,
+            project.`pro_where` AS proWhere,
+            project.`pro_org` AS proOrg,
+            comple.`build_end` AS buildEnd,
+            t1.`amount` AS amount
         FROM
         tb_project project
-        JOIN
+        LEFT JOIN
         (SELECT
-        company.`pro_id`,
-        contract.`amount`
+        t.`pro_id`,
+        t1.`amount`
         FROM
-        tb_project_company company
-        JOIN tb_project_contract contract
-        ON company.`pid` = contract.`pkid`
-        AND company.`type` = 'contract'
-        WHERE 1 = 1
+        tb_project_company t
+        JOIN tb_project_contract t1
+        ON t.`pid` = t1.`pkid`
+        WHERE t.`role` = '承包单位'
+        AND t.`type` = 'contract'
         <choose>
             <when test="comName != null and comName != '' and innerId != null and innerId != ''">
-                AND (company.`com_name` = #{comName} or company.innerId = #{innerId})
+                AND (t.`com_name` = #{comName} or t.innerId = #{innerId})
             </when>
             <otherwise>
-                AND company.`com_name` = #{comName}
+                AND t.`com_name` = #{comName}
             </otherwise>
         </choose>
-        GROUP BY company.`pro_id`) t1
+        UNION
+        SELECT
+        t.`pro_id`,
+        t2.`zhongbiao_amount` AS amount
+        FROM
+        tb_project_company t
+        JOIN tb_project_zhaotoubiao t2
+        ON t.`pid` = t2.`pkid`
+        WHERE t.`type` = 'zhaotoubiao'
+        <choose>
+            <when test="comName != null and comName != '' and innerId != null and innerId != ''">
+                AND (t.`com_name` = #{comName} or t.innerId = #{innerId})
+            </when>
+            <otherwise>
+                AND t.`com_name` = #{comName}
+            </otherwise>
+        </choose>) t1
         ON project.`pro_id` = t1.pro_id
         LEFT JOIN tb_project_completion comple
         ON project.`pro_id` = comple.`pro_id`
-        <if test="proName != null and proName != ''">
-            AND project.`pro_name` LIKE CONCAT('%',#{proName},'%')
-        </if>
-        <if test="proType != null and proType != ''">
-            AND tproject.`pro_type` = #{proType}
-        </if>
-        <if test="amountStart != null and amountStart != ''">
-            AND CAST(project.`invest_amount` AS SIGNED INTEGER) &gt;= #{amountStart}
-        </if>
-        <if test="amountEnd != null and amountEnd != ''">
-            AND CAST(project.`invest_amount` AS SIGNED INTEGER) &lt;= #{amountEnd}
-        </if>
-        <if test="buildStart != null and buildStart != ''">
-            AND comple.`build_end` &gt;= #{buildStart}
-        </if>
-        <if test="buildEnd != null and buildEnd != ''">
-            AND comple.`build_end` &lt;= #{buildEnd}
-        </if>
-        <if test="area != null and area != ''">
-            AND project.`pro_where` LIKE CONCAT(#{area},'%')
-        </if>
+        JOIN tb_project_company t5
+        ON project.`pro_id` = t5.`pro_id`
+        WHERE 1 = 1
+        <choose>
+            <when test="comName != null and comName != '' and innerId != null and innerId != ''">
+                AND (t5.`com_name` = #{comName} or t5.innerId = #{innerId})
+            </when>
+            <otherwise>
+                AND t5.`com_name` = #{comName}
+            </otherwise>
+        </choose>
+        GROUP BY project.`pro_id`
     </select>
 </mapper>
