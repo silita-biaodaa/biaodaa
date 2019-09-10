@@ -3,6 +3,7 @@ package com.silita.biaodaa.service;
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.TbUserSubscribeMapper;
+import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class SubscribeService {
      * @return
      */
     public Map<String, Object> getSubscribeCondition(Map<String, Object> param) {
-        if (param.containsKey("pkid") && null == param.get("pkid")) {
+        if (!param.containsKey("pkid") || MyStringUtils.isNull(param.get("pkid"))) {
             param.put("userId", VisitInfoHolder.getUid());
         }
         Map<String, Object> result = tbUserSubscribeMapper.queryNewCondition(param);
