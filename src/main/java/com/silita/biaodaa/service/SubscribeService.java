@@ -22,19 +22,20 @@ public class SubscribeService {
 
     /**
      * 设置条件
+     *
      * @param param
      * @return
      */
-    public void saveSubscribeCondition(String userId,Map<String,Object> param){
+    public void saveSubscribeCondition(String userId, Map<String, Object> param) {
         //将用户的之前的条件设置为不推送
         tbUserSubscribeMapper.updateIsPub(userId);
-        if (null == param.get("subType")){
-            param.put("subType","zhaobiao");
+        if (null == param.get("subType")) {
+            param.put("subType", "zhaobiao");
         }
-        Map<String,Object> valMap = new HashedMap(){{
-            put("userId",userId);
-            put("subType",param.get("subType"));
-            put("isPush",param.get("isPush"));
+        Map<String, Object> valMap = new HashedMap() {{
+            put("userId", userId);
+            put("subType", param.get("subType"));
+            put("isPush", param.get("isPush"));
         }};
         param.remove("isPush");
         param.remove("subType");
@@ -44,21 +45,22 @@ public class SubscribeService {
 
     /**
      * 获取用户最新的订阅条件/根据主键查询条件
+     *
      * @param param
      * @return
      */
-    public Map<String,Object> getSubscribeCondition(Map<String,Object> param){
-        if (null == param.get("pkid")){
+    public Map<String, Object> getSubscribeCondition(Map<String, Object> param) {
+        if (param.containsKey("pkid") && null == param.get("pkid")) {
             param.put("userId", VisitInfoHolder.getUid());
         }
-        Map<String,Object> result = tbUserSubscribeMapper.queryNewCondition(param);
-        if (MapUtils.isEmpty(result)){
+        Map<String, Object> result = tbUserSubscribeMapper.queryNewCondition(param);
+        if (MapUtils.isEmpty(result)) {
             return new HashedMap();
         }
-        Map<String,Object> conditionMap = JSONObject.parseObject(MapUtils.getString(result,"condition"));
-        conditionMap.put("isPush",result.get("isPush"));
-        conditionMap.put("subType",result.get("subType"));
-        conditionMap.put("pkid",result.get("pkid"));
+        Map<String, Object> conditionMap = JSONObject.parseObject(MapUtils.getString(result, "condition"));
+        conditionMap.put("isPush", result.get("isPush"));
+        conditionMap.put("subType", result.get("subType"));
+        conditionMap.put("pkid", result.get("pkid"));
         return conditionMap;
     }
 }
