@@ -3,9 +3,9 @@
 <mapper namespace="com.silita.biaodaa.dao.TbActivityContentMapper">
 
     <!--查询近期是否有活动-->
-    <select id="queryActivity" resultType="java.lang.Integer">
+    <select id="queryActivity" resultType="java.util.Map">
         SELECT
-        COUNT(1)
+          *
         FROM
         tb_activity_content t
         WHERE DATE(t.`start_date`) &lt;= DATE(NOW())

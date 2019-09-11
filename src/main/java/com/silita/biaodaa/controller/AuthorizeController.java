@@ -184,7 +184,7 @@ public class AuthorizeController extends BaseController {
                     inviteProfitDeliver(sysUser);
                     firstProfitDeliver(vo);
                     result.put("code", Constant.SUCCESS_CODE);
-                    result.put("data", authorizeService.memberLogin(sysUser));
+                    result.put("data", vo);
                     result.put("msg", "用户注册成功！");
                 } else {
                     result.put("code", msgCode);
@@ -345,7 +345,7 @@ public class AuthorizeController extends BaseController {
                     firstProfitDeliver(vo);
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "绑定成功！");
-                    result.put("data", authorizeService.memberLogin(sysUser));
+                    result.put("data",vo);
                 } else if (count != null && count == 33){
                     result.put("code", Constant.ERR_LOCK_USER);
                     result.put("msg", "用户被锁定！");

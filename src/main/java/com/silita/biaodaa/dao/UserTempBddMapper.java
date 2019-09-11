@@ -206,4 +206,11 @@ public interface UserTempBddMapper extends MyMapper<UserTempBdd> {
      * @return
      */
     SysUser queryUserDetailById(String pkid);
+
+    /**
+     * 查询用户是否关注公众号
+     * @param userId
+     * @return
+     */
+    int queryRelUserInfo(String userId);
 }

@@ -61,10 +61,10 @@ public class ActivityController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/entrance", produces = "application/json;charset=utf-8")
-    public Map<String, Object> entrance() {
+    public Map<String, Object> entrance(@RequestBody Map<String, Object> param) {
         Map result = new HashMap();
         try {
-            successMsg(result, activityService.isActivity());
+            successMsg(result, activityService.isActivity(param));
             return result;
         } catch (Exception e) {
             logger.error("获取活动失败！", e);

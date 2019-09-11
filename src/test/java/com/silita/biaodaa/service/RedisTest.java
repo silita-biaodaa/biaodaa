@@ -75,7 +75,7 @@ public class RedisTest extends ConfigTest {
 
     @Test
     public void pul(){
-        redisTemplate.lpush(ORDER_LIST,"20190905042003216E66ECA");
+        redisTemplate.lpush(ORDER_LIST,"20190911085210320E6GLCA");
     }
 
 }

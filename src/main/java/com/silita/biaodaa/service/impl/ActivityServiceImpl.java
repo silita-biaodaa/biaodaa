@@ -1,7 +1,9 @@
 package com.silita.biaodaa.service.impl;
 
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.TbActivityContentMapper;
 import com.silita.biaodaa.dao.TbDuanwuActivityMapper;
+import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.model.TbDuanwuActivity;
 import com.silita.biaodaa.service.ActivityService;
 import org.apache.commons.collections.MapUtils;
@@ -9,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -22,6 +25,8 @@ public class ActivityServiceImpl implements ActivityService {
     TbDuanwuActivityMapper tbDuanwuActivityMapper;
     @Autowired
     TbActivityContentMapper tbActivityContentMapper;
+    @Autowired
+    UserTempBddMapper userTempBddMapper;
 
     @Override
     public void saveOrderNo(Map<String, Object> param) {
@@ -61,10 +66,42 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public boolean isActivity() {
-        if (tbActivityContentMapper.queryActivity() > 0) {
-            return true;
+    public boolean isActivity(Map<String, Object> param) {
+        Map<String, Object> activityMap = tbActivityContentMapper.queryActivity();
+        if (MapUtils.isEmpty(activityMap)) {
+            return false;
         }
-        return false;
+        String userId = VisitInfoHolder.getUid();
+        if (StringUtils.isEmpty(userId)) {
+            return false;
+        }
+        //判断是否参与过活动
+        int count = userTempBddMapper.queryRelUserInfo(userId);
+        if (count > 0) {
+            return false;
+        }
+        String channel = VisitInfoHolder.getChannel();
+        //判断是否APP
+        if (("1001".equals(channel) || "1002".equals(channel)) && null != param.get("version")) {
+            String version = MapUtils.getString(activityMap, "version");
+            String paramVersion = MapUtils.getString(param, "version");
+            String[] versions = version.split("\\.");
+            String[] paramVersions = paramVersion.split("\\.");
+            if (Integer.valueOf(paramVersions[0]) >= Integer.valueOf(versions[0])) {
+                return true;
+            }
+            if (Integer.valueOf(paramVersions[1]) >= Integer.valueOf(versions[1])) {
+                return true;
+            }
+            if (Integer.valueOf(paramVersions[2]) >= Integer.valueOf(versions[2])) {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        String s = "4.0.0";
+        System.out.println(Arrays.asList(s.split("\\.")));
     }
 }

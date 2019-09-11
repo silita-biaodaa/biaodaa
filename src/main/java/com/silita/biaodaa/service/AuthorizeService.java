@@ -129,6 +129,8 @@ public class AuthorizeService {
             }
             //首充
             setIsFirst(user);
+            //是否关注公众号
+            setIsCollected(user);
             return sysUserLoginSuccess(user);
         }
         return null;
@@ -219,6 +221,8 @@ public class AuthorizeService {
         if (user != null) {
             //首充
             setIsFirst(user);
+            //是否关注公众号
+            setIsCollected(user);
             user.setChannel(param.getChannel());
             return sysUserLoginSuccess(user);
         } else {
@@ -251,6 +255,8 @@ public class AuthorizeService {
         }
         //首充
         setIsFirst(user);
+        //是否关注
+        setIsCollected(user);
         return user;
     }
 
@@ -735,5 +741,19 @@ public class AuthorizeService {
             }
         }
     }
+
+    /**
+     * 设置是否关注
+     * @param user
+     */
+    private void setIsCollected(SysUser user){
+        if (null != user){
+            int isCollected = userTempBddMapper.queryRelUserInfo(user.getPkid());
+            if (isCollected > 0){
+                user.setIsCollected(true);
+            }
+        }
+    }
+
 
 }

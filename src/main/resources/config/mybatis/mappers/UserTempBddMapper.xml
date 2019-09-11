@@ -493,4 +493,13 @@
         where own_invite_code is null or own_invite_code=''
     </select>
 
+    <!--查询用户是否关注公众号-->
+    <select id="queryRelUserInfo" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+          COUNT(1)
+        FROM
+          mishu_write.`rel_user_info` t
+        WHERE t.`user_id` = #{userId}
+          AND t.`state` = 1
+    </select>
 </mapper>
