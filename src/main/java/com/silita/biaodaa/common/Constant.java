@@ -44,6 +44,7 @@ public class Constant {
 
     public static final String ERR_VERIFY_USER_PERMISSIONS = "400";//用户权限不足
     public static final String ERR_VERIFY_USER_TOKEN = "401";//用户登录失效
+    public static final String ERR_NOT_FOUND = "404";//用户登录失效
 
     public static final String ERR_SEX_CODE = "100";//性别码错误
     public static final String ERR_IMGURL_CODE = "101";//头像链接
@@ -84,6 +85,7 @@ public class Constant {
     public static final String PROFIT_S_CODE_INVITE = "a-inviter";
     public static final String PROFIT_S_CODE_FIRST = "a-first";
     public static final String PROFIT_S_CODE_ISINVITE = "a-isinvite";
+    public static final String PROFIT_S_CODE_BINDNG = "a-binding";
     //消息类型
     public static final String MSG_TYPE_REPLY = "reply";
     public static final String MSG_TYPE_COMPANY = "company";
@@ -92,9 +94,11 @@ public class Constant {
         StringBuilder sb = new StringBuilder(userid);
         if (CHANNEL_ANDROID.equals(channel) || CHANNEL_IOS.equals(channel)) {
             channel = "appChannel";
-        }else if(CHANNEL_PC.equals(channel)) {
+        } else if (CHANNEL_PC.equals(channel)) {
             channel = "webChannel";
-        }else {
+        } else if ("weChat".equals(channel)) {
+            channel = "weChatChannel";
+        } else {
             channel = "wapChannel";
         }
         return sb.append("|").append(channel).toString();

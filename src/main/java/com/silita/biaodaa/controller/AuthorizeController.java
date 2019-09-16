@@ -306,10 +306,10 @@ public class AuthorizeController extends BaseController {
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "第三方登录成功！");
                     result.put("data", vo);
-                } else if (vo != null && !vo.getEnable()){
+                } else if (vo != null && !vo.getEnable()) {
                     result.put("code", Constant.ERR_LOCK_USER);
                     result.put("msg", "用户已被锁定！");
-                }else {
+                } else {
                     result.put("code", Constant.THIRD_USER_NOTEXIST);
                     result.put("msg", "第三方用户不存在");
                 }
@@ -345,11 +345,11 @@ public class AuthorizeController extends BaseController {
                     firstProfitDeliver(vo);
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "绑定成功！");
-                    result.put("data",vo);
-                } else if (count != null && count == 33){
+                    result.put("data", vo);
+                } else if (count != null && count == 33) {
                     result.put("code", Constant.ERR_LOCK_USER);
                     result.put("msg", "用户被锁定！");
-                }else {
+                } else {
                     result.put("code", Constant.FAIL_CODE);
                     result.put("msg", "绑定失败，请重试。");
                 }
@@ -586,6 +586,9 @@ public class AuthorizeController extends BaseController {
                     result.put("msg", "用户信息匹配异常");
                 }
                 result.put("code", errCode);
+            } else if (type == 4) {  //公告号登录
+                invitation.setMsgTemplate("SMS_104720006");
+                isSendMsg = true;
             }
 
             if (isSendMsg) {

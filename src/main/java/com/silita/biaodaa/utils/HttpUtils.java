@@ -7,9 +7,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import java.io.*;
 import java.net.*;
 import java.util.HashMap;
 import java.util.List;
@@ -174,5 +174,39 @@ public class HttpUtils {
         map.put("userId", userId);
         map.put("ipAddr", ipAddr);
         return map;
+    }
+
+    public static String connectURL(String address, String jsonstr, String requestMethod) {
+        String result = "";
+        URL url = null;
+        HttpURLConnection conn = null;
+        try {
+            url = new URL(address);
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(1000 * 60 * 5);
+            conn.setReadTimeout(1000 * 60 * 5);
+            conn.setDoOutput(true);
+            conn.setRequestMethod(requestMethod);
+            conn.setRequestProperty(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+            OutputStream out = conn.getOutputStream();
+            out.write(jsonstr.getBytes("UTF-8"));
+            out.flush();
+            out.close();
+
+            String resCode = new Integer(conn.getResponseCode()).toString();
+            logger.info("http请求响应码:" + resCode);
+            InputStream input = resCode.startsWith("2") ? conn.getInputStream() : conn.getErrorStream();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+            result = reader.readLine();
+            logger.info("http请求返回数据:" + result);
+        } catch (Exception e) {
+            logger.error("http提交请求异常,", e);
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+        return result;
     }
 }

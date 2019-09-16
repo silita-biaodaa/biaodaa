@@ -100,7 +100,7 @@ public class AuthorizeService {
         Integer res = null;
         List<SysUser> userList = userTempBddMapper.queryUserByPhoneNo(sysUser.getPhoneNo());
         if (userList != null && userList.size() == 1) {//手机号已存在
-            if (!userList.get(0).getEnable()){  //用户被锁定
+            if (!userList.get(0).getEnable()) {  //用户被锁定
                 return 33;
             }
             res = userTempBddMapper.updateSysUser(sysUser);
@@ -207,7 +207,7 @@ public class AuthorizeService {
         user.setLoginTime(System.currentTimeMillis());//设置登录时间
         user.setXtoken(TokenUtils.buildToken(user));
         updateLoginRecord(user);
-        logger.info("token:"+user.getXtoken());
+        logger.info("token:" + user.getXtoken());
         return user;
     }
 
@@ -226,6 +226,28 @@ public class AuthorizeService {
             user.setChannel(param.getChannel());
             return sysUserLoginSuccess(user);
         } else {
+            return null;
+        }
+    }
+
+    /**
+     * 根据unionid登录
+     *
+     * @param unionId
+     * @return
+     */
+    public SysUser memberLoginByUnionId(String unionId) {
+        List<SysUser> resList = userTempBddMapper.queryUserInfoByUnionId(unionId);
+        if (resList != null && resList.size() == 1) {
+            SysUser user = resList.get(0);
+            //首充
+            setIsFirst(user);
+            //是否关注公众号
+            setIsCollected(user);
+            user.setChannel("weChat");
+            return sysUserLoginSuccess(user);
+        } else {
+            logger.warn("用户信息查询失败[resList:" + resList + "][unionId:" + unionId + "]");
             return null;
         }
     }
@@ -597,15 +619,16 @@ public class AuthorizeService {
 
     /**
      * 校验手机号
+     *
      * @param phone
      * @return
      */
-    public String checkPhone(String phone){
-        Map<String,Object> param = new HashedMap(){{
-            put("phoneNo",phone);
+    public String checkPhone(String phone) {
+        Map<String, Object> param = new HashedMap() {{
+            put("phoneNo", phone);
         }};
         List<String> vList = userTempBddMapper.verifyUserInfo(param);
-        if (null == vList || vList.size() <= 0){
+        if (null == vList || vList.size() <= 0) {
             return "该手机号码尚未注册，请立即注册";
         }
         return null;
@@ -679,7 +702,7 @@ public class AuthorizeService {
         Map<String, Object> resultMap = new HashMap<String, Object>() {{
             put("region", "湖南");
             put("city", "长沙");
-            put("ip",ip);
+            put("ip", ip);
         }};
         if (MyStringUtils.isNull(ip)) {
             return resultMap;
@@ -730,13 +753,13 @@ public class AuthorizeService {
     /**
      * 设置是否首充
      */
-    private void setIsFirst(SysUser user){
-        if (null != user){
+    private void setIsFirst(SysUser user) {
+        if (null != user) {
             //是否首充
             user.setIsFirst(0);
 //            Integer count = orderInfoService.getUserCount(user.getPkid());
             int count = 0;
-            if (count > 0){
+            if (count > 0) {
                 user.setIsFirst(1);
             }
         }
@@ -744,12 +767,13 @@ public class AuthorizeService {
 
     /**
      * 设置是否关注
+     *
      * @param user
      */
-    private void setIsCollected(SysUser user){
-        if (null != user){
+    private void setIsCollected(SysUser user) {
+        if (null != user) {
             int isCollected = userTempBddMapper.queryRelUserInfo(user.getPkid());
-            if (isCollected > 0){
+            if (isCollected > 0) {
                 user.setIsCollected(true);
             }
         }

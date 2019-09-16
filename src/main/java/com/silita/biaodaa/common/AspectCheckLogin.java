@@ -100,7 +100,7 @@ public class AspectCheckLogin {
         boolean state = true;
         try {
             String hk = Constant.buildLoginChanelKey(userId, channel);
-            logger.info("hk----------"+hk);
+            logger.info("hk----------" + hk);
             Object v = myRedisTemplate.getHashValue(Constant.LOGIN_HASH_KEY, hk);
             if (v != null) {
                 Long time = Long.parseLong(v.toString());
@@ -142,10 +142,13 @@ public class AspectCheckLogin {
                 result = point.proceed();
                 if (result instanceof Map) {
                     resMap = (Map) result;
+                    //返回通知
+                    logger.info("The method " + methodName + " end. result<" + resMap.get("code") + "---" + resMap.get("msg") + ">");
+                } else if (result instanceof String) {
+                    //返回通知
+                    logger.info("The method " + methodName + " end. result<" + resMap + "--->");
                 }
             }
-            //返回通知
-            logger.info("The method " + methodName + " end. result<" + resMap.get("code") + "---" + resMap.get("msg") + ">");
         } catch (Throwable e) {
             logger.error(e, e);
             resMap = new HashMap();
@@ -166,7 +169,7 @@ public class AspectCheckLogin {
         String xToken = SecurityCheck.getHeaderValue(request, "X-TOKEN");
         String filterUrl = PropertiesUtils.getProperty("FILTER_URL");
         String baseInfo = SecurityCheck.getHeaderValue(request, "baseInfo");
-        logger.info("x-token:"+xToken);
+        logger.info("x-token:" + xToken);
         try {
             String name = null;
             String phone = null;
@@ -233,7 +236,7 @@ public class AspectCheckLogin {
                 VisitInfoHolder.setUid(userId);
             }
             if (StringUtils.isNotEmpty(baseInfo)) {
-                logger.info("baseInfo:"+baseInfo);
+                logger.info("baseInfo:" + baseInfo);
                 String[] baseInfos = baseInfo.split("\\|");
                 VisitInfoHolder.setChannel(baseInfos[baseInfos.length - 1]);
             }

@@ -148,7 +148,8 @@
         SELECT COUNT(*) FROM mishu_write.user_temp_bdd WHERE userPhone = #{userphone}
     </select>
 
-    <select id="queryUserInfo" parameterType="com.silita.biaodaa.model.SysUser" resultType="com.silita.biaodaa.model.SysUser">
+    <select id="queryUserInfo" parameterType="com.silita.biaodaa.model.SysUser"
+            resultType="com.silita.biaodaa.model.SysUser">
         SELECT u.*,r.code as roleCode,r.name as roleName,r.permissions,v.expired_date,v.level
         FROM mishu_write.sys_user_info u
         LEFT JOIN mishu_write.sys_user_role rel on rel.user_id= u.pkid
@@ -167,11 +168,32 @@
                 </otherwise>
             </choose>
             <if test="loginPwd !=null and loginPwd!=''">
-              AND login_pwd = #{loginPwd}
+                AND login_pwd = #{loginPwd}
             </if>
         </where>
     </select>
 
+    <select id="queryUserInfoByUnionId" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.SysUser">
+       SELECT
+          u.*,
+          r.code AS roleCode,
+          r.name AS roleName,
+          r.permissions,
+          v.expired_date,
+          v.level
+        FROM
+          mishu_write.sys_user_info u
+          LEFT JOIN mishu_write.sys_user_role rel
+            ON rel.user_id = u.pkid
+          LEFT JOIN mishu_write.sys_role_info r
+            ON r.pkid = rel.role_id
+          LEFT JOIN mishu_write.tb_vip_info v
+            ON u.pkid = v.user_id
+          LEFT JOIN mishu_write.`rel_user_info` rel_user
+            ON rel_user.`user_id` = u.`pkid`
+        WHERE rel_user.`union_id` = #{unionId}
+          AND rel_user.`state` = 1
+    </select>
     <!--查询用户详情-->
     <select id="queryUserDetailById" parameterType="java.lang.String" resultType="com.silita.biaodaa.model.SysUser">
         SELECT u.*
@@ -179,145 +201,145 @@
         WHERE u.pkid=#{pkid}
     </select>
 
-    <select id="verifyUserInfo"  resultType="String">
+    <select id="verifyUserInfo" resultType="String">
         SELECT u.pkid
         FROM mishu_write.sys_user_info u
-        WHERE  phone_no=#{phoneNo}
+        WHERE phone_no=#{phoneNo}
         <if test="loginName != null and loginName != ''">
             or login_name=#{loginName}
         </if>
     </select>
 
     <insert id="insertUserInfo" parameterType="com.silita.biaodaa.model.SysUser">
-    insert into mishu_write.sys_user_info
+        insert into mishu_write.sys_user_info
         (pkid,
         <if test="loginName !=null and loginName!=''">
-        login_name,
+            login_name,
         </if>
         login_pwd,
         <if test="userName !=null and userName!=''">
-        user_name,
+            user_name,
         </if>
         <if test="sex !=null and sex!=''">
-        sex,
+            sex,
         </if>
         phone_no,
         channel,
         <if test="nikeName !=null and nikeName!=''">
-        nike_name,
+            nike_name,
         </if>
         <if test="certType !=null and certType!=''">
-        cert_type,
+            cert_type,
         </if>
         <if test="certNo !=null and certNo!=''">
-        cert_no,
+            cert_no,
         </if>
         <if test="email !=null and email!=''">
-        email,
+            email,
         </if>
         <if test="birthYear !=null and birthYear!=''">
-        birth_year,
+            birth_year,
         </if>
         <if test="inCity !=null and inCity!=''">
-        in_city,
+            in_city,
         </if>
         <if test="inCompany !=null and inCompany!=''">
-        in_company,
+            in_company,
         </if>
         <if test="position !=null and position!=''">
-        position,
+            position,
         </if>
         <if test="imageUrl !=null and imageUrl!=''">
-        image_url,
+            image_url,
         </if>
         <if test="wxUnionId !=null and wxUnionId!=''">
-        wx_union_id,
+            wx_union_id,
         </if>
         <if test="wxOpenId !=null and wxOpenId!=''">
-        wx_open_id,
+            wx_open_id,
         </if>
         <if test="qqOpenId !=null and qqOpenId!=''">
-        qq_open_id,
+            qq_open_id,
         </if>
         created,
         create_by,
         <if test="inviterCode !=null and inviterCode!=''">
-        inviter_code,
+            inviter_code,
         </if>
         own_invite_code)
-    VALUES
+        VALUES
         (#{pkid},
         <if test="loginName !=null and loginName!=''">
-        #{loginName},
+            #{loginName},
         </if>
         #{loginPwd},
         <if test="userName !=null and userName!=''">
-        #{userName},
+            #{userName},
         </if>
         <if test="sex !=null and sex!=''">
-        #{sex},
+            #{sex},
         </if>
         #{phoneNo},
         #{channel},
         <if test="nikeName !=null and nikeName!=''">
-        #{nikeName},
+            #{nikeName},
         </if>
         <if test="certType !=null and certType!=''">
-        #{certType},
+            #{certType},
         </if>
         <if test="certNo !=null and certNo!=''">
-        #{certNo},
+            #{certNo},
         </if>
         <if test="email !=null and email!=''">
-        #{email},
+            #{email},
         </if>
         <if test="birthYear !=null and birthYear!=''">
-        #{birthYear},
+            #{birthYear},
         </if>
         <if test="inCity !=null and inCity!=''">
-        #{inCity},
+            #{inCity},
         </if>
         <if test="inCompany !=null and inCompany!=''">
-        #{inCompany},
+            #{inCompany},
         </if>
         <if test="position !=null and position!=''">
-        #{position},
+            #{position},
         </if>
         <if test="imageUrl !=null and imageUrl!=''">
-        #{imageUrl},
+            #{imageUrl},
         </if>
         <if test="wxUnionId !=null and wxUnionId!=''">
-        #{wxUnionId},
+            #{wxUnionId},
         </if>
         <if test="wxOpenId !=null and wxOpenId!=''">
-        #{wxOpenId},
+            #{wxOpenId},
         </if>
         <if test="qqOpenId !=null and qqOpenId!=''">
-        #{qqOpenId},
+            #{qqOpenId},
         </if>
         CURRENT_TIMESTAMP,
         #{createBy},
         <if test="inviterCode !=null and inviterCode!=''">
-        #{inviterCode},
+            #{inviterCode},
         </if>
         #{ownInviteCode})
     </insert>
-    
+
     <insert id="insertUserRole" parameterType="com.silita.biaodaa.model.SysUserRole">
-    insert into mishu_write.sys_user_role
-        (pkid,
-        role_id,
-        user_id,
-        created,
-        create_by)
-    VALUES
-        (#{pkid},
-        (SELECT pkid from mishu_write.sys_role_info where code=#{roleCode}),
-        #{userId},
-        CURRENT_TIMESTAMP,
-        #{createBy})
+        insert into mishu_write.sys_user_role
+            (pkid,
+            role_id,
+            user_id,
+            created,
+            create_by)
+        VALUES
+            (#{pkid},
+            (SELECT pkid from mishu_write.sys_role_info where code=#{roleCode}),
+            #{userId},
+            CURRENT_TIMESTAMP,
+            #{createBy})
     </insert>
-    
+
     <select id="verifyInviterCode" parameterType="com.silita.biaodaa.model.SysUser" resultType="Integer">
         SELECT count(1)
         FROM mishu_write.sys_user_info
@@ -345,90 +367,90 @@
         SELECT inviter_code
         FROM mishu_write.sys_user_info
         <where>
-        <choose>
-            <when test="pkid !=null and pkid!=''">
-                and pkid =#{pkid}
-            </when>
-            <when test="phoneNo !=null and phoneNo!=''">
-                and phone_no =#{phoneNo}
-            </when>
-            <when test="wxUnionId !=null and wxUnionId!=''">
-                and wx_union_id =#{wxUnionId}
-            </when>
-            <when test="wxOpenId !=null and wxOpenId !=''">
-                and wx_open_id =#{wxOpenId}
-            </when>
-            <when test="qqOpenId !=null and qqOpenId!=''">
-                and qq_open_id =#{qqOpenId}
-            </when>
-        </choose>
+            <choose>
+                <when test="pkid !=null and pkid!=''">
+                    and pkid =#{pkid}
+                </when>
+                <when test="phoneNo !=null and phoneNo!=''">
+                    and phone_no =#{phoneNo}
+                </when>
+                <when test="wxUnionId !=null and wxUnionId!=''">
+                    and wx_union_id =#{wxUnionId}
+                </when>
+                <when test="wxOpenId !=null and wxOpenId !=''">
+                    and wx_open_id =#{wxOpenId}
+                </when>
+                <when test="qqOpenId !=null and qqOpenId!=''">
+                    and qq_open_id =#{qqOpenId}
+                </when>
+            </choose>
         </where>
     </select>
 
     <update id="updateSysUser">
         update mishu_write.sys_user_info
         SET
-            <if test="loginName !=null and loginName!=''">
-                login_name=#{loginName},
-            </if>
-            <if test="loginPwd !=null and loginPwd!=''">
-              login_pwd=#{loginPwd},
-            </if>
-            <if test="userName !=null and userName!=''">
-                user_name=#{userName},
-            </if>
-            <if test="sex !=null">
-                sex=#{sex},
-            </if>
-            <if test="nikeName !=null and nikeName!=''">
-                nike_name=#{nikeName},
-            </if>
-            <if test="certType !=null and certType!=''">
-                cert_type=#{certType},
-            </if>
-            <if test="certNo !=null and certNo!=''">
-                cert_no=#{certNo},
-            </if>
-            <if test="email !=null and email!=''">
-                email=#{email},
-            </if>
-            <if test="birthYear !=null and birthYear!=''">
-                birth_year=#{birthYear},
-            </if>
-            <if test="inCity !=null and inCity!=''">
-                in_city=#{inCity},
-            </if>
-            <if test="inCompany !=null and inCompany!=''">
-                in_company=#{inCompany},
-            </if>
-            <if test="position !=null and position!=''">
-                position=#{position},
-            </if>
-            <if test="imageUrl !=null and imageUrl!=''">
-                image_url=#{imageUrl},
-            </if>
-            <if test="wxUnionId !=null and wxUnionId!=''">
-                wx_union_id=#{wxUnionId},
-            </if>
-            <if test="wxOpenId !=null and wxOpenId!=''">
-                wx_open_id=#{wxOpenId},
-            </if>
-            <if test="qqOpenId !=null and qqOpenId!=''">
-                qq_open_id=#{qqOpenId},
-            </if>
-            <if test="updateBy !=null and updateBy!=''">
-              update_by=#{updateBy},
-            </if>
-            <if test="inviterCode !=null and inviterCode!=''">
-                inviter_code=#{inviterCode},
-            </if>
+        <if test="loginName !=null and loginName!=''">
+            login_name=#{loginName},
+        </if>
+        <if test="loginPwd !=null and loginPwd!=''">
+            login_pwd=#{loginPwd},
+        </if>
+        <if test="userName !=null and userName!=''">
+            user_name=#{userName},
+        </if>
+        <if test="sex !=null">
+            sex=#{sex},
+        </if>
+        <if test="nikeName !=null and nikeName!=''">
+            nike_name=#{nikeName},
+        </if>
+        <if test="certType !=null and certType!=''">
+            cert_type=#{certType},
+        </if>
+        <if test="certNo !=null and certNo!=''">
+            cert_no=#{certNo},
+        </if>
+        <if test="email !=null and email!=''">
+            email=#{email},
+        </if>
+        <if test="birthYear !=null and birthYear!=''">
+            birth_year=#{birthYear},
+        </if>
+        <if test="inCity !=null and inCity!=''">
+            in_city=#{inCity},
+        </if>
+        <if test="inCompany !=null and inCompany!=''">
+            in_company=#{inCompany},
+        </if>
+        <if test="position !=null and position!=''">
+            position=#{position},
+        </if>
+        <if test="imageUrl !=null and imageUrl!=''">
+            image_url=#{imageUrl},
+        </if>
+        <if test="wxUnionId !=null and wxUnionId!=''">
+            wx_union_id=#{wxUnionId},
+        </if>
+        <if test="wxOpenId !=null and wxOpenId!=''">
+            wx_open_id=#{wxOpenId},
+        </if>
+        <if test="qqOpenId !=null and qqOpenId!=''">
+            qq_open_id=#{qqOpenId},
+        </if>
+        <if test="updateBy !=null and updateBy!=''">
+            update_by=#{updateBy},
+        </if>
+        <if test="inviterCode !=null and inviterCode!=''">
+            inviter_code=#{inviterCode},
+        </if>
         updated=CURRENT_TIMESTAMP
         where 1=1
         <if test="pkid !=null and pkid!=''">
-          and pkid = #{pkid}
+            and pkid = #{pkid}
         </if>
         <if test="phoneNo !=null and phoneNo!=''">
-          and phone_no = #{phoneNo}
+            and phone_no = #{phoneNo}
         </if>
     </update>
 
@@ -464,7 +486,7 @@
         WHERE phone_no =#{phoneNo}
     </select>
 
-      <delete id="deleteRoleByUserId" >
+    <delete id="deleteRoleByUserId">
           delete ur
           from mishu_write.sys_user_role ur
           join mishu_write.sys_role_info r on ur.role_id = r.pkid
@@ -502,4 +524,48 @@
         WHERE t.`user_id` = #{userId}
           AND t.`state` = 1
     </select>
+
+    <!--添加绑定-->
+    <insert id="insertRelUserInfo" parameterType="java.util.Map">
+        INSERT INTO `mishu_write`.`rel_user_info` (
+          `user_id`,
+          `union_id`,
+          `created`
+        )
+        VALUES
+          (
+            #{userId},
+            #{unionId},
+            now()
+          )
+    </insert>
+
+    <!--查询是否有用户的绑定记录-->
+    <select id="queryRelUserInfoCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+          COUNT(1)
+        FROM
+          mishu_write.`rel_user_info` t
+        WHERE t.`user_id` = #{userId}
+    </select>
+
+    <!--删除之前的绑定记录-->
+    <update id="updateRelUserInfo" parameterType="java.lang.String">
+        UPDATE
+          `mishu_write`.`rel_user_info`
+        SET
+          <if test="unionId != null and unionId != ''">
+              `union_id` =#{unionId},
+          </if>
+          <choose>
+              <when test="state != null and state != ''">
+                  `state` = #{state}
+              </when>
+              <otherwise>
+                  `state` = 1,
+              </otherwise>
+          </choose>
+          `updated` = now()
+        WHERE `user_id` = #{userId}
+    </update>
 </mapper>
