@@ -530,12 +530,14 @@
         INSERT INTO `mishu_write`.`rel_user_info` (
           `user_id`,
           `union_id`,
+          `open_id`,
           `created`
         )
         VALUES
           (
             #{userId},
             #{unionId},
+            #{openId},
             now()
           )
     </insert>
@@ -557,6 +559,9 @@
           <if test="unionId != null and unionId != ''">
               `union_id` =#{unionId},
           </if>
+            <if test="openId != null and openId != ''">
+                `open_id` =#{openId},
+            </if>
           <choose>
               <when test="state != null and state != ''">
                   `state` = #{state}

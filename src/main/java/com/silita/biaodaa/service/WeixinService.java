@@ -9,6 +9,7 @@ import com.silita.biaodaa.model.weixin.JsapiSignature;
 import com.silita.biaodaa.model.weixin.TextMessage;
 import com.silita.biaodaa.utils.HttpUtils;
 import com.silita.biaodaa.utils.MessageUtil;
+import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -19,11 +20,13 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -183,7 +186,9 @@ public class WeixinService {
         SysUser sysUser = new SysUser();
         sysUser.setPhoneNo(phone);
         sysUser.setVerifyCode(MapUtils.getString(param, "verifyCode"));
-        String checkCode = authorizeService.verifyInviterCode(sysUser);
+        sysUser.setPkid(sysUserList.get(0).getPkid());
+        sysUser.setChannel("weChat");
+        String checkCode = authorizeService.verifyPhoneCode(sysUser);
         if (StringUtils.isNotEmpty(checkCode)) {
             result.put("code", checkCode);
             result.put("msg", "验证码失效或错误！");
@@ -191,13 +196,14 @@ public class WeixinService {
         }
         //绑定
         String code = MapUtils.getString(param, "code");
-        String unionId = getUnionId(code);
-        if (StringUtils.isNotEmpty(unionId)) {
+        Map<String, Object> weChatUser = getUnionIdAndOpenId(code);
+        if (MapUtils.isNotEmpty(weChatUser)) {
+            String unionId = MapUtils.getString(weChatUser, "unionId");
+            String openId = MapUtils.getString(weChatUser, "openId");
             //赠送会员天数并绑定
-            String userId = sysUserList.get(0).getPkid();
-            bingProfit(userId, unionId);
+            bingProfit(sysUser.getPkid(), unionId, openId);
+            firstProfitDeliver(sysUser);
             //设置token
-            sysUser.setChannel("weChat");
             SysUser uers = authorizeService.memberLogin(sysUser);
             if (null != uers && !uers.getEnable()) {
                 result.put("code", Constant.ERR_LOCK_USER);
@@ -207,6 +213,8 @@ public class WeixinService {
             result.put("data", uers);
             result.put("code", Constant.SUCCESS_CODE);
             result.put("msg", "用户登录成功！");
+            //发送消息
+            this.sendTemplateMsg(openId,phone);
             return result;
         } else {
             result.put("code", Constant.ERR_NOT_FOUND);
@@ -224,12 +232,14 @@ public class WeixinService {
     public Map<String, Object> loginUser(Map<String, Object> param) {
         Map<String, Object> result = new HashedMap(3);
         String weChat = MapUtils.getString(param, "code");
-        String unionId = this.getUnionId(weChat);
-        if (StringUtils.isEmpty(unionId)) {
+        //公众号绑定
+        Map<String, Object> weChatUser = this.getUnionIdAndOpenId(weChat);
+        if (MapUtils.isEmpty(weChatUser)) {
             result.put("code", Constant.ERR_NOT_FOUND);
             result.put("msg", "用户未关注公众号！");
             return result;
         }
+        String unionId = MapUtils.getString(weChatUser, "unionId");
         SysUser userInfo = authorizeService.memberLoginByUnionId(unionId);
         if (userInfo != null && userInfo.getEnable()) {
             result.put("code", Constant.SUCCESS_CODE);
@@ -270,8 +280,8 @@ public class WeixinService {
         Map<String, Object> result = new HashedMap(3);
         String weChatCode = MapUtils.getString(param, "code");
         //公众号绑定
-        String unionId = this.getUnionId(weChatCode);
-        if (StringUtils.isEmpty(unionId)) {
+        Map<String, Object> weChatUser = this.getUnionIdAndOpenId(weChatCode);
+        if (MapUtils.isEmpty(weChatUser)) {
             result.put("code", Constant.ERR_NOT_FOUND);
             result.put("msg", "用户未关注公众号！");
             return result;
@@ -291,13 +301,17 @@ public class WeixinService {
             return result;
         } else if (checkCode.equals(Constant.SUCCESS_CODE)) {
             //赠送会员天数并绑定
+            String unionId = MapUtils.getString(weChatUser, "unionId");
+            String openId = MapUtils.getString(weChatUser, "openId");
             String userId = user.getPkid();
-            bingProfit(userId, unionId);
+            bingProfit(userId, unionId, openId);
             firstProfitDeliver(user);
             SysUser uers = authorizeService.memberLogin(user);
             result.put("code", Constant.SUCCESS_CODE);
             result.put("data", uers);
             result.put("msg", "用户注册成功！");
+            //发送消息
+            this.sendTemplateMsg(openId,uers.getPhoneNo());
             return result;
         } else {
             result.put("msg", "未知错误码！");
@@ -311,7 +325,7 @@ public class WeixinService {
      * @param userId
      * @param unionId
      */
-    private void bingProfit(String userId, String unionId) {
+    private void bingProfit(String userId, String unionId, String openId) {
         //判断是否绑定过
         int count = userTempBddMapper.queryRelUserInfoCount(userId);
         if (count <= 0) {
@@ -320,6 +334,7 @@ public class WeixinService {
         Map<String, Object> valMap = new HashedMap(2);
         valMap.put("userId", userId);
         valMap.put("unionId", unionId);
+        valMap.put("openId", openId);
         //添加绑定记录
         if (count > 0) {
             userTempBddMapper.updateRelUserInfo(valMap);
@@ -390,14 +405,46 @@ public class WeixinService {
      * @param code
      * @return
      */
-    private String getUnionId(String code) {
+    private Map<String, Object> getUnionIdAndOpenId(String code) {
         String user = this.getUser(code);
         JSONObject resultJson = JSONObject.parseObject(user);
-        if ("1".equals(resultJson.getInteger("code"))) {
+        if ("1".equals(resultJson.getInteger("code").toString())) {
+            Map<String, Object> result = new HashedMap(2);
             Map<String, Object> dataMap = (Map<String, Object>) resultJson.get("data");
-            String unionId = MapUtils.getString(dataMap, "unionId");
-            return unionId;
+            result.put("unionId", MapUtils.getString(dataMap, "unionId"));
+            result.put("openId", MapUtils.getString(dataMap, "openid"));
+            return result;
         }
         return null;
+    }
+
+    @Async
+    private void sendTemplateMsg(String openId, String phone) {
+        String url = PropertiesUtils.getProperty("send_template_message");
+        String token = this.fetchAccessToken();
+        Map<String, Object> sendMap = new HashMap<>();
+        sendMap.put("touser", openId);
+        sendMap.put("template_id", "P87gRdN9cTgXuXrfb1zCRQ27wxCJfk0SOvxAF2k3FvM");
+        Map<String, Object> data = new HashMap<>();
+        Map<String, String> firstMap = new HashMap<String, String>(1) {{
+            put("value","您好，您的信息已绑定成功！");
+        }};
+        data.put("first", firstMap);
+        Map<String, String> keywordMap1 = new HashMap<String, String>(1) {{
+            put("value", phone);
+        }};
+        data.put("keyword1", keywordMap1);
+        Map<String, String> keywordMap2 = new HashMap<String, String>(1) {{
+            put("value", phone);
+        }};
+        data.put("keyword2", keywordMap2);
+        Map<String, String> keywordMap3 = new HashMap<String, String>(1) {{
+            put("value", MyDateUtils.getDate(new Date(),"yyyy-MM-dd HH:ss:mm"));
+        }};
+        data.put("keyword3", keywordMap3);
+        sendMap.put("data", data);
+        String requstUrl = url.replace("ACCESS_TOKEN", token);
+        logger.info("http请求参数:" + JSONObject.toJSONString(sendMap));
+        HttpUtils.connectURL(requstUrl, JSONObject.toJSONString(sendMap), "POST");
     }
 }
