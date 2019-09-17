@@ -109,6 +109,7 @@
         FROM
           cert_undesirable t
         WHERE t.`com_id` = #{comId}
-          AND t.`validityDate` &gt;= NOW()
+        AND (t.`persionName` IS NULL OR t.`persionName` = '')
+        AND t.`validityDate` &gt;= NOW()
     </select>
 </mapper>

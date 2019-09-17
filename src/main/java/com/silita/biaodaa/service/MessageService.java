@@ -58,6 +58,10 @@ public class MessageService {
      * @return
      */
     public PageInfo listMessage(Map<String, Object> param) {
+        String channel = VisitInfoHolder.getChannel();
+        if ("1003".equals(channel)){
+            param.put("msgType","subscribe");
+        }
         Integer pageIndex = MapUtils.getInteger(param, "pageNum");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
         Page page = new Page();
@@ -107,7 +111,14 @@ public class MessageService {
      * @return
      */
     public int getIsReadCount() {
-        return tbMessageMapper.queryIsReadCount(VisitInfoHolder.getUid());
+        Map<String,Object> param = new HashedMap(2){{
+            put("userId",VisitInfoHolder.getUid());
+        }};
+        String channel = VisitInfoHolder.getChannel();
+        if ("1003".equals(channel)){
+            param.put("msgType","subscribe");
+        }
+        return tbMessageMapper.queryIsReadCount(param);
     }
 
 

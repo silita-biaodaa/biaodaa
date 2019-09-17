@@ -68,6 +68,7 @@
           tb_review_diff t
         WHERE t.`com_id` = #{comId}
         AND t.`valided` &gt;= NOW()
+        AND t.`type` = 'company'
         ORDER BY t.`issued` DESC
     </select>
 </mapper>

@@ -40,8 +40,7 @@ public interface TbMessageMapper extends MyMapper<TbMessage> {
 
     /**
      * 查询未读消息个数
-     * @param userId
      * @return
      */
-    int queryIsReadCount(String userId);
+    int queryIsReadCount(Map<String,Object> param);
 }

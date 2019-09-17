@@ -21,6 +21,9 @@
       FROM
         tb_message t
       WHERE t.`user_id` = #{userId}
+      <if test="msgType != null and msgType != ''">
+          AND t.msg_type != #{msgType}
+      </if>
       ORDER BY t.`created` DESC
   </select>
 
@@ -106,6 +109,9 @@
         FROM
           tb_message t
         WHERE t.`user_id` = #{userId}
+        <if test="msgType != null and msgType != ''">
+            AND t.msg_type != #{msgType}
+        </if>
           AND t.`is_read` = 0
     </select>
 </mapper>
