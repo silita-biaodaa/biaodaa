@@ -266,7 +266,7 @@ public class WeixinService {
         String userId = VisitInfoHolder.getUid();
         Map<String, Object> param = new HashedMap(2);
         param.put("userId", userId);
-        param.put("state", "1");
+        param.put("state", "0");
         userTempBddMapper.updateRelUserInfo(param);
     }
 

@@ -564,7 +564,7 @@
             </if>
           <choose>
               <when test="state != null and state != ''">
-                  `state` = #{state}
+                  `state` = #{state},
               </when>
               <otherwise>
                   `state` = 1,
