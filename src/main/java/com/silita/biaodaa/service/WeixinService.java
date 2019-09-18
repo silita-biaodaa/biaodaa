@@ -98,13 +98,17 @@ public class WeixinService {
             } else if (MsgType.equals(MessageUtil.MESSAGG_TYPE_EVENT)) {
                 String event = xmlMap.get("Event");
                 if (event.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)) {
+                    String url = PropertiesUtils.getProperty("user_binding");
+                    StringBuffer stringBuffer = new StringBuffer("标大大-建筑行业第一服务平台\n");
+                    stringBuffer.append("致力为您提供有价值的数据服务\n");
+                    stringBuffer.append("绑定标大大账号，赠送30天会员<a href = '" + url + "'>（点击绑定）</a>");
                     // 订阅
                     TextMessage tm = new TextMessage();
                     tm.setToUserName(FromUserName);
                     tm.setFromUserName(ToUserName);
                     tm.setMsgType(MessageUtil.MESSAGG_TYPE_TEXT);
                     tm.setCreateTime(System.currentTimeMillis());
-                    tm.setContent("你好，欢迎关注[标大大云数据]公众号！");
+                    tm.setContent(stringBuffer.toString());
                     return MessageUtil.textMessageToXml(tm);
                 } else if (event.equals(MessageUtil.EVENT_TYPE_UNSUBSCRIBE)) {
                     // 取消订阅
@@ -213,7 +217,7 @@ public class WeixinService {
             result.put("code", Constant.SUCCESS_CODE);
             result.put("msg", "用户登录成功！");
             //发送消息
-            this.sendTemplateMsg(openId,phone);
+            this.sendTemplateMsg(openId, phone);
             return result;
         } else {
             result.put("code", Constant.ERR_NOT_FOUND);
@@ -310,7 +314,7 @@ public class WeixinService {
             result.put("data", uers);
             result.put("msg", "用户注册成功！");
             //发送消息
-            this.sendTemplateMsg(openId,uers.getPhoneNo());
+            this.sendTemplateMsg(openId, uers.getPhoneNo());
             return result;
         } else {
             result.put("msg", "未知错误码！");
@@ -426,7 +430,7 @@ public class WeixinService {
         sendMap.put("template_id", "P87gRdN9cTgXuXrfb1zCRQ27wxCJfk0SOvxAF2k3FvM");
         Map<String, Object> data = new HashMap<>();
         Map<String, String> firstMap = new HashMap<String, String>(1) {{
-            put("value","您好，您的信息已绑定成功！");
+            put("value", "您好，您的信息已绑定成功！");
         }};
         data.put("first", firstMap);
         Map<String, String> keywordMap1 = new HashMap<String, String>(1) {{
@@ -438,7 +442,7 @@ public class WeixinService {
         }};
         data.put("keyword2", keywordMap2);
         Map<String, String> keywordMap3 = new HashMap<String, String>(1) {{
-            put("value", MyDateUtils.getDate(new Date(),"yyyy-MM-dd HH:ss:mm"));
+            put("value", MyDateUtils.getDate(new Date(), "yyyy-MM-dd HH:ss:mm"));
         }};
         data.put("keyword3", keywordMap3);
         sendMap.put("data", data);
