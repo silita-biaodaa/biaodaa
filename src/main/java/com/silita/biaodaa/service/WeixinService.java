@@ -202,7 +202,6 @@ public class WeixinService {
             String openId = MapUtils.getString(weChatUser, "openId");
             //赠送会员天数并绑定
             bingProfit(sysUser.getPkid(), unionId, openId);
-//            firstProfitDeliver(sysUser);
             //设置token
             SysUser uers = authorizeService.memberLogin(sysUser);
             if (null != uers && !uers.getEnable()) {
