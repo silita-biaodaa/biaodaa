@@ -176,7 +176,8 @@ public class VipServiceImpl implements VipService {
         }
 
         updateVipDayTO.setVid(vid);
-        updateVipDayTO.setHisExpiredDate(hisExpiredDate);
+//        updateVipDayTO.setHisExpiredDate(hisExpiredDate);
+        updateVipDayTO.setHisExpiredDate(tbVipInfo.getExpiredDate());
         updateVipDayTO.setVipInfoRecord(vipInfoRecord);
 
         //检查角色关联关系
