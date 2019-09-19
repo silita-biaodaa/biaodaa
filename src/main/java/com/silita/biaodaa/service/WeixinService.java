@@ -3,8 +3,10 @@ package com.silita.biaodaa.service;
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.VisitInfoHolder;
+import com.silita.biaodaa.dao.TbMessageMapper;
 import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.model.SysUser;
+import com.silita.biaodaa.model.TbMessage;
 import com.silita.biaodaa.model.weixin.JsapiSignature;
 import com.silita.biaodaa.model.weixin.TextMessage;
 import com.silita.biaodaa.utils.HttpUtils;
@@ -46,7 +48,9 @@ public class WeixinService {
     @Autowired
     private AuthorizeService authorizeService;
     @Autowired
-    VipService vipService;
+    private VipService vipService;
+    @Autowired
+    private TbMessageMapper tbMessageMapper;
 
     /**
      * 解析微信请求并读取XML
@@ -205,7 +209,7 @@ public class WeixinService {
             String unionId = MapUtils.getString(weChatUser, "unionId");
             String openId = MapUtils.getString(weChatUser, "openId");
             //赠送会员天数并绑定
-            bingProfit(sysUser.getPkid(), unionId, openId);
+            bingProfit(sysUser.getPkid(), unionId, openId, sysUser.getPhoneNo());
             //设置token
             SysUser uers = authorizeService.memberLogin(sysUser);
             if (null != uers && !uers.getEnable()) {
@@ -216,8 +220,6 @@ public class WeixinService {
             result.put("data", uers);
             result.put("code", Constant.SUCCESS_CODE);
             result.put("msg", "用户登录成功！");
-            //发送消息
-            this.sendTemplateMsg(openId, phone);
             return result;
         } else {
             result.put("code", Constant.ERR_NOT_FOUND);
@@ -307,14 +309,12 @@ public class WeixinService {
             String unionId = MapUtils.getString(weChatUser, "unionId");
             String openId = MapUtils.getString(weChatUser, "openId");
             String userId = user.getPkid();
-            bingProfit(userId, unionId, openId);
+            bingProfit(userId, unionId, openId, user.getPhoneNo());
             firstProfitDeliver(user);
             SysUser uers = authorizeService.memberLogin(user);
             result.put("code", Constant.SUCCESS_CODE);
             result.put("data", uers);
             result.put("msg", "用户注册成功！");
-            //发送消息
-            this.sendTemplateMsg(openId, uers.getPhoneNo());
             return result;
         } else {
             result.put("msg", "未知错误码！");
@@ -328,11 +328,17 @@ public class WeixinService {
      * @param userId
      * @param unionId
      */
-    private void bingProfit(String userId, String unionId, String openId) {
+    private void bingProfit(String userId, String unionId, String openId, String phone) {
         //判断是否绑定过
         int count = userTempBddMapper.queryRelUserInfoCount(userId);
         if (count <= 0) {
             firstBindionProfitDeliver(userId, "weChat", Constant.PROFIT_S_CODE_BINDNG);
+            //发送微信公众号消息和系统消息
+            this.sendTemplateMsg(openId, phone, "first");
+            this.sendSystemMessage(userId);
+        } else {
+            //发送消息
+            this.sendTemplateMsg(openId, phone, "not_first");
         }
         Map<String, Object> valMap = new HashedMap(2);
         valMap.put("userId", userId);
@@ -422,7 +428,7 @@ public class WeixinService {
     }
 
     @Async
-    private void sendTemplateMsg(String openId, String phone) {
+    private void sendTemplateMsg(String openId, String phone, String opt) {
         String url = PropertiesUtils.getProperty("send_template_message");
         String token = this.fetchAccessToken();
         Map<String, Object> sendMap = new HashMap<>();
@@ -445,9 +451,33 @@ public class WeixinService {
             put("value", MyDateUtils.getDate(new Date(), "yyyy-MM-dd HH:ss:mm"));
         }};
         data.put("keyword3", keywordMap3);
+        if ("first".equals(opt)) {
+            Map<String, String> remark = new HashMap<String, String>(1) {{
+                put("value", "首次绑定已赠送30天会员，请查收！");
+            }};
+            data.put("remark", remark);
+        }
         sendMap.put("data", data);
         String requstUrl = url.replace("ACCESS_TOKEN", token);
         logger.info("http请求参数:" + JSONObject.toJSONString(sendMap));
         HttpUtils.connectURL(requstUrl, JSONObject.toJSONString(sendMap), "POST");
+    }
+
+    /**
+     * 发送系统消息
+     *
+     * @param userId
+     */
+    @Async
+    private void sendSystemMessage(String userId) {
+        TbMessage tbMessage = new TbMessage();
+        tbMessage.setMsgTitle("赠送会员成功通知");
+        tbMessage.setUserId(userId);
+        tbMessage.setMsgType("system");
+        tbMessage.setPushd(new Date());
+        tbMessage.setReplyId(null);
+        tbMessage.setIsRead(0);
+        tbMessage.setMsgContent("您的账号于" + MyDateUtils.getDate("yyyy年MM月dd日") + "首次绑定微信公众号，已赠送您30天会员。");
+        tbMessageMapper.insert(tbMessage);
     }
 }
