@@ -80,8 +80,7 @@ public class SubscribeService {
      */
     @Async
     private void sendMessage(String userId, Map valMap) {
-        System.out.println("-----------------valMap:" + valMap.toString() + "---------------");
-        if ("true".equals(valMap.get("isPush").toString())) {
+        if ("true".equals(valMap.get("isPush").toString()) || "1".equals(valMap.get("isPush").toString())) {
             int count = userTempBddMapper.queryRelUserInfo(userId);
             if (count <= 0) {
                 String content = PropertiesUtils.getProperty("msg_content");
