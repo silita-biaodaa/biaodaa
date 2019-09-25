@@ -307,10 +307,10 @@ public class WeixinService {
             return result;
         } else if (checkCode.equals(Constant.SUCCESS_CODE)) {
             //赠送会员天数并绑定
-//            String unionId = MapUtils.getString(weChatUser, "unionId");
-//            String openId = MapUtils.getString(weChatUser, "openId");
+            String unionId = MapUtils.getString(weChatUser, "unionId");
+            String openId = MapUtils.getString(weChatUser, "openId");
             String userId = user.getPkid();
-//            bingProfit(userId, unionId, openId, user.getPhoneNo());
+            bingProfit(userId, unionId, openId, user.getPhoneNo());
             firstProfitDeliver(user);
             SysUser uers = authorizeService.memberLogin(user);
             result.put("code", Constant.SUCCESS_CODE);
