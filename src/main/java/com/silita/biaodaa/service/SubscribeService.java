@@ -3,10 +3,13 @@ package com.silita.biaodaa.service;
 import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.TbUserSubscribeMapper;
+import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.utils.MyStringUtils;
+import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -20,6 +23,10 @@ public class SubscribeService {
 
     @Autowired
     TbUserSubscribeMapper tbUserSubscribeMapper;
+    @Autowired
+    MessageService messageService;
+    @Autowired
+    UserTempBddMapper userTempBddMapper;
 
     /**
      * 设置条件
@@ -42,6 +49,7 @@ public class SubscribeService {
         param.remove("subType");
         valMap.put("condition", JSONObject.toJSONString(param));
         tbUserSubscribeMapper.insertUserSubscribe(valMap);
+        sendMessage(userId, valMap);
     }
 
     /**
@@ -63,5 +71,22 @@ public class SubscribeService {
         conditionMap.put("subType", result.get("subType"));
         conditionMap.put("pkid", result.get("pkid"));
         return conditionMap;
+    }
+
+    /**
+     * 发送消息
+     *
+     * @param userId
+     */
+    @Async
+    private void sendMessage(String userId, Map valMap) {
+        System.out.println("-----------------valMap:" + valMap.toString() + "---------------");
+        if ("true".equals(valMap.get("isPush").toString())) {
+            int count = userTempBddMapper.queryRelUserInfo(userId);
+            if (count <= 0) {
+                String content = PropertiesUtils.getProperty("msg_content");
+                messageService.sendMessageSyetem(userId, "订阅成功通知", content, "system", null);
+            }
+        }
     }
 }

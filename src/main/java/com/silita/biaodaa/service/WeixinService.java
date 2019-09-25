@@ -104,8 +104,9 @@ public class WeixinService {
                 if (event.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)) {
                     String url = PropertiesUtils.getProperty("user_binding");
                     StringBuffer stringBuffer = new StringBuffer("标大大-建筑行业第一服务平台\n");
-                    stringBuffer.append("致力为您提供有价值的数据服务\n");
-                    stringBuffer.append("绑定标大大账号，赠送30天会员<a href = '" + url + "'>（点击绑定）</a>");
+                    stringBuffer.append("致力为您提供有价值的数据服务");
+//                    stringBuffer.append("致力为您提供有价值的数据服务\n");
+//                    stringBuffer.append("绑定标大大账号，赠送30天会员<a href = '" + url + "'>（点击绑定）</a>");
                     // 订阅
                     TextMessage tm = new TextMessage();
                     tm.setToUserName(FromUserName);
@@ -306,10 +307,10 @@ public class WeixinService {
             return result;
         } else if (checkCode.equals(Constant.SUCCESS_CODE)) {
             //赠送会员天数并绑定
-            String unionId = MapUtils.getString(weChatUser, "unionId");
-            String openId = MapUtils.getString(weChatUser, "openId");
+//            String unionId = MapUtils.getString(weChatUser, "unionId");
+//            String openId = MapUtils.getString(weChatUser, "openId");
             String userId = user.getPkid();
-            bingProfit(userId, unionId, openId, user.getPhoneNo());
+//            bingProfit(userId, unionId, openId, user.getPhoneNo());
             firstProfitDeliver(user);
             SysUser uers = authorizeService.memberLogin(user);
             result.put("code", Constant.SUCCESS_CODE);
@@ -331,16 +332,16 @@ public class WeixinService {
     private void bingProfit(String userId, String unionId, String openId, String phone) {
         //判断是否绑定过
         int count = userTempBddMapper.queryRelUserInfoCount(userId);
-        if (count <= 0) {
-            firstBindionProfitDeliver(userId, "weChat", Constant.PROFIT_S_CODE_BINDNG);
-            //发送微信公众号消息和系统消息
-            this.sendTemplateMsg(openId, phone, "first");
-            this.sendSystemMessage(userId);
-        } else {
-            //发送消息
-            this.sendTemplateMsg(openId, phone, "not_first");
-        }
-        Map<String, Object> valMap = new HashedMap(2);
+//        if (count <= 0) {
+//            firstBindionProfitDeliver(userId, "weChat", Constant.PROFIT_S_CODE_BINDNG);
+//            //发送微信公众号消息和系统消息
+//            this.sendTemplateMsg(openId, phone, "first");
+//            this.sendSystemMessage(userId);
+//        } else {
+        //发送消息
+        this.sendTemplateMsg(openId, phone, "not_first");
+//        }
+        Map<String, Object> valMap = new HashedMap(3);
         valMap.put("userId", userId);
         valMap.put("unionId", unionId);
         valMap.put("openId", openId);

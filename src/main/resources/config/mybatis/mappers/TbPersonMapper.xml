@@ -53,11 +53,61 @@
         <if test="type != null and type != ''">
             and t.type = #{type}
         </if>
---         AND t.`valid_date` &gt;= DATE_FORMAT(NOW(),'%Y年%m月%d日')
+        -- AND t.`valid_date` &gt;= DATE_FORMAT(NOW(),'%Y年%m月%d日')
     </select>
 
     <!--根据innerid查询人员性别-->
     <select id="queryPersonSexInnerId" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT t.`sex` FROM tb_person_hunan t WHERE t.`innerid` = #{innerId} LIMIT 1;
+    </select>
+
+    <!--根据name查询注册id-->
+    <select id="queryPersonCateName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+          t.`pkid`
+        FROM
+          tb_person_cate t
+        WHERE t.`cate_name` = #{cateName}
+    </select>
+
+    <!--添加人员注册类别-->
+    <insert id="insertPersonCate" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="pkid">
+        INSERT INTO `tb_person_cate` (
+        <if test="parentId != null">
+            `parent_id`,
+        </if>
+        <if test="cateName != null and cateName != ''">
+            `cate_name`,
+        </if>
+        <if test="level != null">
+            `level`,
+        </if>
+        `created`
+        )
+        VALUES
+        (
+        <if test="parentId != null and parentId != ''">
+            #{parentId},
+        </if>
+        <if test="cateName != null and cateName != ''">
+            #{cateName},
+        </if>
+        <if test="level != null">
+            #{level},
+        </if>
+        now()
+        )
+    </insert>
+
+    <!--根据级别查询人员注册-->
+    <select id="queryPersonCate" parameterType="java.lang.Integer" resultType="java.util.Map">
+        SELECT
+        t.`pkid`,
+        t.`parent_id` AS parentId,
+        t.`cate_name` AS cateName,
+        t.`level`
+        FROM
+        tb_person_cate t
+        WHERE t.`level` = #{level}
     </select>
 </mapper>

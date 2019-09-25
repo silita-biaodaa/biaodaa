@@ -40,19 +40,16 @@ public class PersonController extends BaseController {
     }
 
     /**
-     * TODO: 手动执行人员缓存
-     *
+     * 人员注册类别
      * @param param
      * @return
      */
-    @RequestMapping(value = "/addRedis", method = RequestMethod.POST, produces = "application/json")
-    public Map<String, Object> addRedis(@RequestBody Map<String, Object> param) {
+    @RequestMapping(value = "/cate", method = RequestMethod.POST, produces = "application/json")
+    public Map<String, Object> catePerson(@RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("code", this.SUCCESS_CODE);
         resultMap.put("msg", this.SUCCESS_MSG);
-        logger.info("---------手动执行缓存人员数据begin------------");
-        personService.setRedisParam();
-        logger.info("---------手动执行缓存人员数据end------------");
+        resultMap.put("data",personService.listPersonCateList(param));
         return resultMap;
     }
 }

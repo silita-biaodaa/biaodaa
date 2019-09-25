@@ -32,4 +32,25 @@ public interface TbPersonMapper {
      * @return
      */
     String queryPersonSexInnerId(String innerId);
+
+    /**
+     * 根据name查询注册id
+     * @param cateName
+     * @return
+     */
+    Integer queryPersonCateName(String cateName);
+
+    /**
+     * 添加人员注册类别
+     * @param param
+     * @return
+     */
+    int insertPersonCate(Map<String,Object> param);
+
+    /**
+     * 根据级别查询人员注册
+     * @param level
+     * @return
+     */
+    List<Map<String,Object>> queryPersonCate(int level);
 }

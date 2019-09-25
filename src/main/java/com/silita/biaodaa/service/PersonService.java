@@ -1,9 +1,11 @@
 package com.silita.biaodaa.service;
 
+import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,8 @@ public class PersonService {
     TbCompanyService tbCompanyService;
     @Autowired
     TbPersonQualificationMapper tbPersonQualificationMapper;
+    @Autowired
+    MyRedisTemplate redisTemplate;
 
     /**
      * 获取人员详情
@@ -183,21 +187,69 @@ public class PersonService {
         return tbPersonChangeMapper.queryPersonChangeByFlag(flag);
     }
 
-    public void setRedisParam() {
-        Page page = new Page();
-        page.setPageSize(20);
-        List<Map<String, Object>> provinceList = tbPersonQualificationMapper.getProvinceList();
-        Map<String, Object> param = new HashMap<>();
-        if (null != provinceList && provinceList.size() > 0) {
-            for (Map<String, Object> provin : provinceList) {
-                logger.info("---------缓存【" + provin.get("code") + "】省人员数据begin------------");
-                param.put("tableCode", provin.get("code").toString());
-                for (int i = 0; i < 6; i++) {
-                    page.setCurrentPage((i + 1));
-                    tbCompanyService.getPersonCacheMap(page, param);
-                }
-                logger.info("---------缓存【" + provin.get("code") + "】省人员数据end------------");
+    /**
+     * 人员注册类别
+     *
+     * @param param
+     * @return
+     */
+    public List<Map<String, Object>> listPersonCateList(Map<String, Object> param) {
+        String redisKey = "person_cate_list";
+        List list = redisTemplate.getList(redisKey);
+        if (null != list && list.size() > 0) {
+            return list;
+        }
+        List<Map<String, Object>> twoPerCate = tbPersonMapper.queryPersonCate(2);
+        List<Map<String, Object>> threePerCate = tbPersonMapper.queryPersonCate(3);
+        List<Map<String, Object>> fourPerCate = tbPersonMapper.queryPersonCate(4);
+        list = formateCate(twoPerCate, formateCate(threePerCate, fourPerCate));
+        redisTemplate.setList(redisKey, list, 7200);
+        return list;
+    }
+
+    /**
+     * 格式化人员注册分类
+     *
+     * @param persCate
+     * @return
+     */
+    private Map<Integer, List<Map<String, Object>>> formatPersCate(List<Map<String, Object>> persCate) {
+        Map<Integer, List<Map<String, Object>>> cateMap = new HashedMap();
+        int len = persCate.size();
+        List<Map<String, Object>> cate;
+        for (int i = 0; i < len; i++) {
+            if (null != cateMap.get(persCate.get(i).get("parentId"))) {
+                cate = cateMap.get(persCate.get(i).get("parentId"));
+                cate.add(persCate.get(i));
+                cateMap.put(Integer.valueOf(persCate.get(i).get("parentId").toString()), cate);
+            } else {
+                cate = new ArrayList<>(1);
+                cate.add(persCate.get(i));
+                cateMap.put(Integer.valueOf(persCate.get(i).get("parentId").toString()), cate);
             }
         }
+        return cateMap;
+    }
+
+    /**
+     * 合并父子级关系
+     *
+     * @param persCate
+     * @param childPersCate
+     * @return
+     */
+    private List<Map<String, Object>> formateCate(List<Map<String, Object>> persCate, List<Map<String, Object>> childPersCate) {
+        Map<Integer, List<Map<String, Object>>> fourPerCate = formatPersCate(childPersCate);
+        int threePerLen = persCate.size();
+        int id;
+        List list;
+        for (int i = 0; i < threePerLen; i++) {
+            id = Integer.valueOf(persCate.get(i).get("pkid").toString());
+            list = fourPerCate.get(id);
+            if (null != list) {
+                persCate.get(i).put("list", fourPerCate.get(id));
+            }
+        }
+        return persCate;
     }
 }

@@ -175,4 +175,24 @@ public class MessageService {
             tbMessageMapper.insert(message);
         }
     }
+
+    /**
+     * 添加消息
+     * @param userId 用户id
+     * @param title 消息标题
+     * @param content 消息内容
+     * @param msgType 消息类型
+     * @param replyId 关联id(可为空)
+     */
+    public void sendMessageSyetem(String userId,String title,String content,String msgType,String replyId){
+        TbMessage message = new TbMessage();
+        message.setUserId(userId);
+        message.setMsgType(msgType);
+        message.setMsgTitle(title);
+        message.setMsgContent(content);
+        message.setReplyId(replyId);
+        message.setIsRead(Integer.valueOf(Constant.info_female));
+        message.setPushd(new Date());
+        tbMessageMapper.insert(message);
+    }
 }

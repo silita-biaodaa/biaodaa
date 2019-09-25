@@ -772,6 +772,11 @@ public class AuthorizeService {
      */
     private void setIsCollected(SysUser user) {
         if (null != user) {
+            String channel = VisitInfoHolder.getChannel();
+            if ("1001".equals(channel) || "1002".equals(channel)) {
+                user.setIsCollected(true);
+                return;
+            }
             int isCollected = userTempBddMapper.queryRelUserInfo(user.getPkid());
             if (isCollected > 0) {
                 user.setIsCollected(true);
