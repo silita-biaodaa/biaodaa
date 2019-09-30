@@ -1,5 +1,6 @@
 package com.silita.biaodaa.utils;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -124,6 +125,7 @@ public class HttpUtils {
      * @return
      */
     public static String sendProxyGetUrl(String url) {
+        Map<String, Object> param = new HashedMap();
         String result = "";
         BufferedReader in = null;
         try {
@@ -164,6 +166,69 @@ public class HttpUtils {
                 }
             }
         }
+    }
+
+    /**
+     * 发送代理
+     *
+     * @param url
+     * @param param
+     * @return
+     */
+    public static String sendProxyUrl(String url, Map<String, Object> param) {
+        OutputStreamWriter out = null;
+        BufferedReader in = null;
+        StringBuffer result = new StringBuffer("");
+        try {
+            URL realUrl = new URL(url);
+            HttpURLConnection conn = null;
+            logger.info("---------send begin---------url:" + url);
+            conn = (HttpURLConnection) realUrl.openConnection();
+            // 打开和URL之间的连接
+
+            // 发送POST请求必须设置如下两行
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setRequestMethod("POST");    // POST方法
+            // 设置通用的请求属性
+            conn.setRequestProperty("accept", "*/*");
+            conn.setRequestProperty("connection", "Keep-Alive");
+            conn.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.connect();
+            // 获取URLConnection对象对应的输出流
+            out = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
+            // 发送请求参数
+            out.write(param.toString());
+            // flush输出流的缓冲
+            out.flush();
+            logger.info("--------------send end-------------");
+            // 定义BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream(),"UTF-8"));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result.append(line);
+            }
+        } catch (Exception e) {
+            System.out.println("发送 POST 请求出现异常！" + e);
+            e.printStackTrace();
+        }
+        //使用finally块来关闭输出流、输入流
+        finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return result.toString();
     }
 
     //解析http信息

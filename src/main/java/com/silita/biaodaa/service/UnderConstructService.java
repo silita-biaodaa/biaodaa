@@ -10,6 +10,7 @@ import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbUnderConstruct;
 import com.silita.biaodaa.utils.*;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,10 +68,16 @@ public class UnderConstructService {
     }
 
     public List getApiUnderConstruct(Map<String, Object> param) {
-        String url = PropertiesUtils.getProperty("api.build");
         String idCard = MapUtils.getString(param, "idCard");
+        Map<String, Object> sendParam = new HashedMap(4) {{
+            put("idcard", idCard);
+            put("method", "getSiteManager");
+            put("pageSize", 1);
+            put("pageIndex", 20);
+        }};
+        String url = PropertiesUtils.getProperty("api.build");
         String clickUrl = url.replace("CARD", idCard);
-        String result = HttpUtils.sendProxyGetUrl(clickUrl);
+        String result = HttpUtils.sendProxyUrl(clickUrl, sendParam);
         if (MyStringUtils.isNull(result)) {
             return new ArrayList();
         }
@@ -79,12 +86,12 @@ public class UnderConstructService {
         if (!isSuccess) {
             return new ArrayList();
         }
-        Map<String,Object> data = (Map<String, Object>) resultMap.get("data");
+        Map<String, Object> data = (Map<String, Object>) resultMap.get("data");
         List<Map> mapList = (List<Map>) data.get("list");
         List<TbUnderConstruct> list = new ArrayList<>();
         TbUnderConstruct underConstruct;
         for (int i = 0; i < mapList.size(); i++) {
-            if (!"1".equals(mapList.get(i).get("statusnum").toString())){
+            if (!"1".equals(mapList.get(i).get("statusnum").toString())) {
                 continue;
             }
             underConstruct = new TbUnderConstruct();
@@ -98,7 +105,7 @@ public class UnderConstructService {
                 underConstruct.setPkid(VisitInfoHolder.getUUID());
 //                this.getInnerid(underConstruct);
                 tbUnderConstructMapper.insertUnderConstruct(underConstruct);
-            }else {
+            } else {
                 underConstruct.setPkid(tbUnderConstructMapper.queryUnderPkid(underConstruct));
             }
 //            underConstruct.setIdCard(this.setIdCard(underConstruct));

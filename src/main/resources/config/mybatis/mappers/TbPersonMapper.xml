@@ -109,5 +109,6 @@
         FROM
         tb_person_cate t
         WHERE t.`level` = #{level}
+        AND t.state = 1
     </select>
 </mapper>
