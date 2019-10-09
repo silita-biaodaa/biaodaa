@@ -470,6 +470,11 @@ public class TbCompanyService {
                 param.put("qualCode", qualList);
                 param.put("qualRangeType", "above_sum_or");
             } else {
+                for (List<String> list : yiShangList) {
+                    for (String value : list) {
+                        qualList.add(value);
+                    }
+                }
                 param.put("qualCode", qualList);
                 param.put("qualRangeType", "never");
             }

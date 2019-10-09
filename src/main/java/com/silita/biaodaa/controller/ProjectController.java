@@ -46,6 +46,7 @@ public class ProjectController extends BaseController {
         //如果是企业需查询企业下的业绩列表
         if ((null != params.get("comId") && !"".equals(params.get("comId"))) || (null != params.get("comName") && !"".equals(params.get("comName")))){
             params.put("type","page");
+            params.put("opt","query");
             return this.companyProjectList(params);
         }
         Map<String, Object> result = new HashMap<String, Object>();

@@ -165,7 +165,14 @@
             project.`pro_where` AS proWhere,
             project.`pro_org` AS proOrg,
             comple.`build_end` AS buildEnd,
-            t1.`amount` AS amount
+            <choose>
+                <when test="opt != null and opt == 'query'">
+                    project.invest_amount AS amount
+                </when>
+                <otherwise>
+                    t1.`amount` AS amount
+                </otherwise>
+            </choose>
         FROM
         tb_project project
         LEFT JOIN
@@ -217,6 +224,35 @@
                 AND t5.`com_name` = #{comName}
             </otherwise>
         </choose>
+        <if test="proType != null and proType != ''">
+            AND project.`pro_type` = #{proType}
+        </if>
+        <if test="amountStart != null and amountStart != ''">
+            <choose>
+                <when test="opt == 'query'">
+                    AND CAST(project.invest_amount AS SIGNED INTEGER) &gt;= #{amountStart}
+                </when>
+                <otherwise>
+                    AND CAST(t1.amount AS SIGNED INTEGER) &gt;= #{amountStart}
+                </otherwise>
+            </choose>
+        </if>
+        <if test="amountEnd != null and amountEnd != ''">
+            <choose>
+                <when test="opt == 'query'">
+                    AND CAST(project.invest_amount AS SIGNED INTEGER) &lt;= #{amountEnd}
+                </when>
+                <otherwise>
+                    AND CAST(t1.amount AS SIGNED INTEGER) &lt;= #{amountEnd}
+                </otherwise>
+            </choose>
+        </if>
+        <if test="buildStart != null and buildStart != ''">
+            AND comple.`build_end` &gt;= #{buildStart}
+        </if>
+        <if test="buildEnd != null and buildEnd != ''">
+            AND comple.`build_end` &lt;= #{buildEnd}
+        </if>
         GROUP BY project.`pro_id`
     </select>
 </mapper>
