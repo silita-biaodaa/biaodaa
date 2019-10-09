@@ -253,6 +253,9 @@
         <if test="buildEnd != null and buildEnd != ''">
             AND comple.`build_end` &lt;= #{buildEnd}
         </if>
+        <if test="area != null and area != ''">
+            AND project.`pro_where` LIKE CONCAT(#{area},'%')
+        </if>
         GROUP BY project.`pro_id`
     </select>
 </mapper>
