@@ -257,7 +257,7 @@ public class AspectCheckLogin {
             if (greenWay) {//无需校验token
                 return null;
             } else {
-                if ("/foundation/version".equals(requestUri)) {
+                if ("/foundation/version".equals(requestUri) && StringUtils.isNotEmpty(phone)) {
                     loginInfoService.saveLoginInfo(name, phone, date);
                 }
 
