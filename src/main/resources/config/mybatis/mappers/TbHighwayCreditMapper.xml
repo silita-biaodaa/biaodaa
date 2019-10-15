@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbHighwayCreditMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbHighwayCredit">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
+        <result column="com_id" property="comId" jdbcType="VARCHAR"/>
+        <result column="com_name" property="comName" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="VARCHAR"/>
+        <result column="years" property="years" jdbcType="INTEGER"/>
+        <result column="issue_province" property="issueProvince" jdbcType="VARCHAR"/>
+        <result column="regis_address" property="regisAddress" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.silita.biaodaa.model.TbHighwayCredit">
+        INSERT INTO `tb_highway_credit` (
+        `com_id`,
+        `com_name`,
+        `level`,
+        `years`,
+        <if test="issueProvince != null and issueProvince != ''">
+            `issue_province`,
+        </if>
+        `regis_address`,
+        `created`
+        )
+        VALUES
+        (
+        #{comId},
+        #{comName},
+        #{level},
+        #{years},
+        <if test="issueProvince != null and issueProvince != ''">
+            #{issueProvince},
+        </if>
+        #{regisAddress},
+        now()
+        ) ;
+    </insert>
+
+    <!--查询企业的公路信用等级-->
+    <select id="queryListCompanyHighway" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.TbHighwayCredit">
+        SELECT
+          *
+        FROM
+          tb_highway_credit t
+        WHERE t.`com_id` = #{comId}
+        ORDER BY t.`years` DESC
+    </select>
+</mapper>

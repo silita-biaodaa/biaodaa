@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbShuiliCreditMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbShuiliCredit" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="com_id" property="comId" jdbcType="VARCHAR" />
+    <result column="com_name" property="comName" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="years" property="years" jdbcType="INTEGER" />
+    <result column="issued" property="issued" jdbcType="VARCHAR" />
+    <result column="valied" property="valied" jdbcType="VARCHAR" />
+    <result column="credit_type" property="creditType" jdbcType="VARCHAR" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <insert id="insert" parameterType="com.silita.biaodaa.model.TbShuiliCredit">
+    INSERT INTO `mishu`.`tb_shuili_credit` (
+      `com_id`,
+      `com_name`,
+      `level`,
+      `years`,
+      `issued`,
+      `valied`,
+      `credit_type`,
+      `created`
+    )
+    VALUES
+      (
+        #{comId},
+        #{comName},
+        #{level},
+        #{years},
+        #{issued},
+        #{valied},
+        #{creditType},
+        now()
+      ) ;
+  </insert>
+
+  <!--查询公司水利信用等级-->
+  <select id="queryListCompanyShuiliCredit" parameterType="java.util.Map" resultType="com.silita.biaodaa.model.TbShuiliCredit">
+      SELECT *
+      FROM tb_shuili_credit t
+      WHERE t.`com_id` = #{comId}
+      ORDER BY t.`years` DESC
+  </select>
+</mapper>

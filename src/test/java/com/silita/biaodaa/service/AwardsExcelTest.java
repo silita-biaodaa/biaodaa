@@ -185,4 +185,33 @@ public class AwardsExcelTest extends ConfigTest {
         String comName = "北京住六欣跃机电安装工程有限公司（机电工程安装）";
         System.out.println(comName.substring(0, comName.indexOf("公司") + 2));
     }
+
+    @org.junit.Test
+    public void analysisCompanyExcel() throws Exception {
+        File file = new File("C:\\Users\\dh\\Desktop\\企业.xlsx");
+        FileInputStream inputStream = new FileInputStream(file);
+        XSSFWorkbook hssfWorkbook = new XSSFWorkbook(inputStream);
+        if (null != hssfWorkbook) {
+            XSSFSheet sheet = hssfWorkbook.getSheetAt(0);
+            int rowCount = sheet.getLastRowNum();
+            XSSFRow row = null;
+            XSSFCell cell = null;
+            TbCompany company;
+            String comName;
+            String newComName;
+            for (int i = 0; i < rowCount; i++) {
+                row = sheet.getRow(i);
+                cell = row.getCell(0);
+                if (null != cell && StringUtils.isNotEmpty(cell.getStringCellValue())) {
+                    comName = cell.getStringCellValue();
+                    newComName = comName.substring(0, comName.lastIndexOf("司") + 1);
+                    company = tbCompanyMapper.queryCompanyDetail(newComName);
+                    if (null != company) {
+                        continue;
+                    }
+//                    tbCompanyMapper.insertNotCompany(newComName);
+                }
+            }
+        }
+    }
 }

@@ -23,17 +23,21 @@ import static com.silita.biaodaa.utils.DoubleUtils.mul;
 public class ReputationComputerService {
 
     @Autowired
-    TbAwardHunanMapper tbAwardHunanMapper;
+    private TbAwardHunanMapper tbAwardHunanMapper;
     @Autowired
-    TbReviewDiffMapper tbReviewDiffMapper;
+    private TbReviewDiffMapper tbReviewDiffMapper;
     @Autowired
-    TbReviewFineMapper tbReviewFineMapper;
+    private TbReviewFineMapper tbReviewFineMapper;
     @Autowired
-    TbAqrzHunanMapper tbAqrzHunanMapper;
+    private TbAqrzHunanMapper tbAqrzHunanMapper;
     @Autowired
-    PrizeMapper prizeMapper;
+    private PrizeMapper prizeMapper;
     @Autowired
-    TbAwardNationwideMapper tbAwardNationwideMapper;
+    private TbAwardNationwideMapper tbAwardNationwideMapper;
+    @Autowired
+    private TbHighwayCreditMapper tbHighwayCreditMapper;
+    @Autowired
+    private TbShuiliCreditMapper tbShuiliCreditMapper;
 
     public Map<String, Object> computer(Map<String, Object> param) {
         //获取最新年份
@@ -387,6 +391,10 @@ public class ReputationComputerService {
         under.addAll(tbReviewDiffMapper.queryCompanyReviewDiff(param));
         under.addAll(prizeMapper.queryCompanyUndersiableList(param));
         resultMap.put("under", under);
+        //公路信用等级
+        resultMap.put("highway", tbHighwayCreditMapper.queryListCompanyHighway(param));
+        //水利信用等级
+        resultMap.put("shuili", tbShuiliCreditMapper.queryListCompanyShuiliCredit(param));
         return resultMap;
     }
 

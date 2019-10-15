@@ -19,9 +19,9 @@ public class MongodbUtils {
 
     private static Logger logger = LoggerFactory.getLogger(MongodbUtils.class);
 
-    public static Datastore init(String ip,String port,String dbName){
+    public static Datastore init(String ip, String port, String dbName) {
         List<ServerAddress> list = new ArrayList<>();
-        list.add(new ServerAddress(ip,Integer.valueOf(port)));
+        list.add(new ServerAddress(ip, Integer.valueOf(port)));
         MongoClientOptions.Builder builder = new MongoClientOptions.Builder();
         builder.minConnectionsPerHost(10);
         builder.connectionsPerHost(20);
@@ -36,7 +36,7 @@ public class MongodbUtils {
         morphia.mapPackage("com.silita.biaodaa");
         Datastore datastore = morphia.createDatastore(mongoClient, dbName);
         datastore.ensureIndexes();
-        logger.info(String.format("MongoDB连接池初始化完毕！主机列表：%s 数据库名：%s", PropertiesUtils.getProperty("mongodb.ip"), PropertiesUtils.getProperty("mongodb.dbName")));
+        logger.info(String.format("MongoDB连接池初始化完毕！主机列表：%s 数据库名：%s", ip, dbName));
         return datastore;
     }
 }
