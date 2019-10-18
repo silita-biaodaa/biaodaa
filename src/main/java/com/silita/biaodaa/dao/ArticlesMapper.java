@@ -22,4 +22,11 @@ public interface ArticlesMapper {
      * @return
      */
     Map queryArticleDetail(Integer id);
+
+    /**
+     * 添加
+     * @param params
+     * @return
+     */
+    int insert(Map params);
 }
