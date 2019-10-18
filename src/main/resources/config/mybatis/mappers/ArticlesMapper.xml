@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.silita.biaodaa.dao.ArticlesMapper">
     <select id="queryArticleList" resultType="Map" parameterType="Map">
-        select id,title,contentDescribe,url,time,image,content
+        select id,title,contentDescribe,url,time,image
         from mishu.articles
         where flag=1
         <if test="time !=null and time != ''">
@@ -22,4 +22,26 @@
         select * from mishu.articles
         where id=#{id}
     </select>
+
+    <insert id="insert" parameterType="java.util.Map">
+          INSERT INTO articles (
+              `title`,
+              `content`,
+              `url`,
+              `time`,
+              `flag`,
+              `type`,
+              `username`
+            )
+            VALUES
+              (
+                #{title},
+                #{content},
+                #{url},
+                #{time},
+                1,
+                0,
+                'zk'
+              ) ;
+    </insert>
 </mapper>

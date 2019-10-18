@@ -256,6 +256,7 @@
         <if test="area != null and area != ''">
             AND project.`pro_where` LIKE CONCAT(#{area},'%')
         </if>
+        AND t5.`role` != '发包单位'
         GROUP BY project.`pro_id`
     </select>
 </mapper>
