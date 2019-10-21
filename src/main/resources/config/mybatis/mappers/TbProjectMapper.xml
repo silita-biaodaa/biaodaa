@@ -259,7 +259,6 @@
         AND t5.`role` != '发包单位'
         AND DATE(t5.`updated`) &gt;= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
         AND DATE(t5.`updated`) &lt;= DATE(NOW())
-        AND t5.`remark` != '施工许可'
         GROUP BY project.`pro_id`
     </select>
 </mapper>
