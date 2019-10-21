@@ -251,16 +251,15 @@ public class AspectCheckLogin {
                 resMap.put("msg", errMsg);
                 return resMap;
             }
-
+            //统计活跃用户
+            if ("/foundation/version".equals(requestUri) && StringUtils.isNotEmpty(phone)) {
+                loginInfoService.saveLoginInfo(name, phone, date);
+            }
             //绿色通道检查
             boolean greenWay = greenWayVerify(requestUri, filterUrl, xToken);
             if (greenWay) {//无需校验token
                 return null;
             } else {
-                if ("/foundation/version".equals(requestUri) && StringUtils.isNotEmpty(phone)) {
-                    loginInfoService.saveLoginInfo(name, phone, date);
-                }
-
                 //是否疑似爬虫
                 if (null != blacklist && null != phone && blacklist.contains(phone)) {
                     isHei = true;
