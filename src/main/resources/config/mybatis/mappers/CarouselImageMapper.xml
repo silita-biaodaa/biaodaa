@@ -11,6 +11,15 @@
             <if test="type!=null">
                AND type = #{type}
             </if>
+            <choose>
+                <when test="source != null and source != '' and source == 'hunan'">
+                    and (source = 'all' or source = 'hunan')
+                </when>
+                <otherwise>
+                    and source = 'all'
+                </otherwise>
+            </choose>
+
         </where>
         ORDER BY orderNum DESC
     </select>
