@@ -14,6 +14,7 @@ import com.silita.biaodaa.model.TbReplyComment;
 import com.silita.biaodaa.utils.PushMessageUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,8 +60,8 @@ public class MessageService {
      */
     public PageInfo listMessage(Map<String, Object> param) {
         String channel = VisitInfoHolder.getChannel();
-        if ("1003".equals(channel)){
-            param.put("msgType","subscribe");
+        if ("1003".equals(channel)) {
+            param.put("msgType", "subscribe");
         }
         Integer pageIndex = MapUtils.getInteger(param, "pageNum");
         Integer pageSize = MapUtils.getInteger(param, "pageSize");
@@ -111,12 +112,12 @@ public class MessageService {
      * @return
      */
     public int getIsReadCount() {
-        Map<String,Object> param = new HashedMap(2){{
-            put("userId",VisitInfoHolder.getUid());
+        Map<String, Object> param = new HashedMap(2) {{
+            put("userId", VisitInfoHolder.getUid());
         }};
         String channel = VisitInfoHolder.getChannel();
-        if ("1003".equals(channel)){
-            param.put("msgType","subscribe");
+        if ("1003".equals(channel)) {
+            param.put("msgType", "subscribe");
         }
         return tbMessageMapper.queryIsReadCount(param);
     }
@@ -144,7 +145,10 @@ public class MessageService {
                     map.put("commentId", replyComment.getCommentId());
                     map.put("replyContent", replyComment.getReplyContent());
                     map.put("replyId", replyComment.getPkid());
-                    map.put("noticeTitle", noticeMapper.queryNoticeTitle(map));
+                    map.put("noticeTitle", "");
+                    if (StringUtils.isNotEmpty(replyComment.getSource())) {
+                        map.put("noticeTitle", noticeMapper.queryNoticeTitle(map));
+                    }
                     replyComment = null;
                 } else if (Constant.MSG_TYPE_COMPANY.equals(map.get("msgType"))) {
                     map.put("comName", tbCompanyMapper.getCompany(MapUtils.getString(map, "replyId")).getComName());
@@ -178,13 +182,14 @@ public class MessageService {
 
     /**
      * 添加消息
-     * @param userId 用户id
-     * @param title 消息标题
+     *
+     * @param userId  用户id
+     * @param title   消息标题
      * @param content 消息内容
      * @param msgType 消息类型
      * @param replyId 关联id(可为空)
      */
-    public void sendMessageSyetem(String userId,String title,String content,String msgType,String replyId){
+    public void sendMessageSyetem(String userId, String title, String content, String msgType, String replyId) {
         TbMessage message = new TbMessage();
         message.setUserId(userId);
         message.setMsgType(msgType);

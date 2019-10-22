@@ -709,17 +709,6 @@
 
     <!--根据id查询公告标题-->
     <select id="queryNoticeTitle" parameterType="java.util.Map" resultType="java.lang.String">
-        SELECT
-          t.`title`
-        FROM
-          <choose>
-              <when test="source == 'hunan'">
-                  snatchurl t
-              </when>
-              <otherwise>
-                  snatchurl_${source} t
-              </otherwise>
-          </choose>
-        WHERE t.`id` = #{relatedId}
+        SELECT t.`title` FROM biaodaa_admin.`tb_nt_mian_${source}` t WHERE t.`pkid` = #{relatedId}
     </select>
 </mapper>
