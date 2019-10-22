@@ -428,13 +428,14 @@ public class WeixinService {
         return null;
     }
 
-    @Async
     private void sendTemplateMsg(String openId, String phone, String opt) {
         String url = PropertiesUtils.getProperty("send_template_message");
+        String templateId = PropertiesUtils.getProperty("template_id");
         String token = this.fetchAccessToken();
         Map<String, Object> sendMap = new HashMap<>();
         sendMap.put("touser", openId);
-        sendMap.put("template_id", "P87gRdN9cTgXuXrfb1zCRQ27wxCJfk0SOvxAF2k3FvM");
+        //sendMap.put("template_id", "P87gRdN9cTgXuXrfb1zCRQ27wxCJfk0SOvxAF2k3FvM");
+        sendMap.put("template_id", templateId);
         Map<String, Object> data = new HashMap<>();
         Map<String, String> firstMap = new HashMap<String, String>(1) {{
             put("value", "您好，您的信息已绑定成功！");
