@@ -26,7 +26,10 @@
     <name>biaodaa</name>
     <groupId>com.biaodaa</groupId>
     <artifactId>biaodaa</artifactId>
-    <version>4.0.3</version>
+    <version>4.0.4</version>
+
+
+
 
     <properties>
         <spring.version>4.1.6.RELEASE</spring.version>
@@ -89,6 +92,12 @@
     </distributionManagement>
 
     <dependencies>
+
+       <!-- <dependency>
+            <groupId>com.biaodaa</groupId>
+            <artifactId>biaodaa-api</artifactId>
+            <version>1.0.0.1</version>
+        </dependency>-->
 
         <!-- hbase-client -->
         <dependency>
