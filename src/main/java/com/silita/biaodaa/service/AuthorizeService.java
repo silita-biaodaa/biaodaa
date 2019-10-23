@@ -120,12 +120,8 @@ public class AuthorizeService {
             //判断是否是会员用户
             String expiredDate = user.getExpiredDate();//过期时间
             String date = MyDateUtils.getDate("yyyy-MM-dd");//当前时间
-            int i = MyDateUtils.compareStringTime(expiredDate, date, "yyyy-MM-dd");
-            if(i > 0){
-                user.setIsVip(false);
-            }else{
-                user.setIsVip(true);
-            }
+            Boolean compare = compare(expiredDate, date);
+            user.setIsVip(compare);
             if (MyStringUtils.isNotNull(param.getWxOpenId())
                     && MyStringUtils.isNotNull(param.getWxUnionId())
                     && MyStringUtils.isNull(user.getWxUnionId())) {
@@ -268,18 +264,31 @@ public class AuthorizeService {
                 //判断是否是会员用户
                 String expiredDate = sysUser.getExpiredDate();//过期时间
                 String date = MyDateUtils.getDate("yyyy-MM-dd");//当前时间
-                int i = MyDateUtils.compareStringTime(expiredDate, date, "yyyy-MM-dd");
-                if(i > 0){
-                    sysUser.setIsVip(false);
-                }else{
-                    sysUser.setIsVip(true);
-                }
+                Boolean compare = compare(expiredDate, date);
+                sysUser.setIsVip(compare);
             }
             return resList.get(0);
         } else {
             logger.warn("用户信息查询失败[resList:" + resList + "][param:" + param.toString() + "]");
             return null;
         }
+    }
+
+    /**
+     * 比较时间
+     * @param expiredDate
+     * @param date
+     * @return
+     */
+    public Boolean compare(String expiredDate,String date){
+        Boolean b;
+        int i = expiredDate.compareTo(date);
+        if(i >= 0){
+            b = true;
+        }else{
+            b = false;
+        }
+        return b;
     }
 
     public SysUser refreshUserInfo(SysUser param) {
@@ -290,12 +299,8 @@ public class AuthorizeService {
             //判断是否是会员用户
             String expiredDate = user.getExpiredDate();//过期时间
             String date = MyDateUtils.getDate("yyyy-MM-dd");//当前时间
-            int i = MyDateUtils.compareStringTime(expiredDate, date, "yyyy-MM-dd");
-            if(i > 0){
-                user.setIsVip(false);
-            }else{
-                user.setIsVip(true);
-            }
+            Boolean compare = compare(expiredDate, date);
+            user.setIsVip(compare);
         }
         if (user != null) {
             user.setChannel(VisitInfoHolder.getChannel());
