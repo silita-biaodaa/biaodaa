@@ -4,12 +4,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.dao.TbPlatformNoticeMapper;
 import com.silita.biaodaa.model.Page;
-import com.silita.biaodaa.model.TbPlatformNotice;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,20 +33,5 @@ public class PlatformNoticeService {
         result.put("total",pageInfo.getTotal());
         result.put("pages",pageInfo.getPages());
         return result;
-    }
-
-    public void insert(Map<String,Object> param){
-        if(null == param){
-            return;
-        }
-        String statDate = param.get("statDate").toString();
-        String remark = param.get("remark").toString();
-        TbPlatformNotice tbPlatformNotice = new TbPlatformNotice();
-        tbPlatformNotice.setCountDate(new Date());
-        tbPlatformNotice.setReleaseTime(statDate);
-        tbPlatformNotice.setRemark(remark);
-        tbPlatformNotice.setTitle(param.get("title").toString());
-        tbPlatformNotice.setType(MapUtils.getInteger(param,"type"));
-        tbPlatformNoticeMapper.insertPlatformNotice(tbPlatformNotice);
     }
 }

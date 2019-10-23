@@ -19,20 +19,6 @@ public class CountBidInfoController extends BaseController {
     CountBidInfoService countBidInfoService;
 
     /**
-     * TODO: 手动执行统计近一年中标数据
-     *
-     * @return
-     */
-    @RequestMapping(value = "/timer", method = RequestMethod.POST)
-    public Map<String, Object> manualTimerCount() {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("code", this.SUCCESS_CODE);
-        resultMap.put("msg", this.SUCCESS_MSG);
-        countBidInfoService.timerCount();
-        return resultMap;
-    }
-
-    /**
      * TODO: 列表
      *
      * @param param
@@ -41,38 +27,13 @@ public class CountBidInfoController extends BaseController {
     @RequestMapping(value = "list", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public Map<String, Object> listCountBid(@RequestBody Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("code", this.SUCCESS_CODE);
-        resultMap.put("msg", this.SUCCESS_MSG);
-        String statDate = null;
-        if (null != param.get("statDate")) {
-            statDate = param.get("statDate").toString();
+        if (null == param.get("pkid")) {
+            resultMap.put("code", this.INVALIDATE_PARAM_CODE);
+            resultMap.put("msg", "pkid字段必填！");
+            return resultMap;
         }
-        if (null != param.get("type")){
-            if ("2".equals(param.get("type").toString()) || "3".equals(param.get("type").toString())){
-                resultMap.put("data", countBidInfoService.listCountBidReq(param));
-                return resultMap;
-            }
-        }
-        param.put("count",3);
-        if(statDate.contains("~")){
-            String[] str = statDate.split("~");
-            param.put("statDate",str[0]);
-            param.put("endDate",str[1]);
-            param.put("count",10);
-            param.put("ressDate",statDate);
-        }
-        resultMap.put("data", countBidInfoService.listCountBid(param));
+        successMsg(resultMap, countBidInfoService.listCountBid(param));
         return resultMap;
     }
 
-
-    @ResponseBody
-    @RequestMapping(value = "/manualCount", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String,Object> manualCount(@RequestBody Map<String, Object> param){
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("code", this.SUCCESS_CODE);
-        resultMap.put("msg", this.SUCCESS_MSG);
-//        countBidInfoService.countDates(param);
-        return resultMap;
-    }
 }

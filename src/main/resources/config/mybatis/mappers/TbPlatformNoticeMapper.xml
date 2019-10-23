@@ -25,7 +25,8 @@
     </select>
 
     <select id="queryPlatformNoticeList" parameterType="java.util.Map" resultType="java.util.Map">
-        select t.title AS title
+        select t.pkid
+                ,t.title AS title
                 ,t.remark AS remark
                 ,t.release_time AS releaseTime
                 ,t.`TYPE` as `type`
@@ -72,7 +73,6 @@
              `release_time` as releaseTime
         from tb_platform_notice t
         where t.`status` =1
-        and t.release_time = #{statDate}
-        and t.`TYPE` = #{type}
+        AND t.pkid = #{pkid}
     </select>
 </mapper>

@@ -12,73 +12,18 @@ import java.util.Map;
 public interface TbCountBidInfoMapper extends MyMapper<TbCountBidInfo> {
 
     /**
-     * 获取单月的中标第一候选人统计
+     * 获取详情列表(根据日期)
      *
-     * @param param
+     * @param map
      * @return
      */
-    List<Map<String, Object>> queryZhongbiaoCount(Map<String, Object> param);
+    List<Map<String, Object>> queryCountBidDateList(Map<String, Object> map);
 
     /**
-     * 删除单月记录
-     *
-     * @param statDate
-     * @return
-     */
-    int delZhongBiaoCountByDate(String statDate);
-
-    /**
-     * 批量添加
-     *
-     * @param list
-     * @return
-     */
-    int batchInsertCountBinInfo(List<Map<String, Object>> list);
-
-    /**
-     * 添加
-     *
-     * @param param
-     * @return
-     */
-    int insertCountBinInfo(Map<String, Object> param);
-
-    /**
-     * 获取详情列表
+     * 获取详情列表(根据关联id)
      *
      * @param map
      * @return
      */
     List<Map<String, Object>> queryCountBidList(Map<String, Object> map);
-
-    /**
-     * 获取详情列表
-     *
-     * @param map
-     * @return
-     */
-    List<Map<String, Object>> queryCountBidReq(Map<String, Object> map);
-
-    /**
-     * 获取个数
-     *
-     * @param map
-     * @return
-     */
-    Map<String, Object> queryCountBidNum(Map<String, Object> map);
-
-    /**
-     * 获取当月统计数
-     *
-     * @param param
-     * @return
-     */
-    int queryCountBidByStat(Map<String,Object> param);
-
-    /**
-     *  查询排行榜
-     * @param param
-     * @return
-     */
-    List<String> queryRequCompany(Map<String,Object> param);
 }

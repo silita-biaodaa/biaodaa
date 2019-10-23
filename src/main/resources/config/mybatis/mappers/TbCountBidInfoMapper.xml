@@ -1,164 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.silita.biaodaa.dao.TbCountBidInfoMapper">
-    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbCountBidInfo">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        <id column="pkid" property="pkid" jdbcType="INTEGER"/>
-        <result column="com_name" property="comName" jdbcType="VARCHAR"/>
-        <result column="stat_date" property="statDate" jdbcType="VARCHAR"/>
-        <result column="num" property="num" jdbcType="INTEGER"/>
-        <result column="type" property="type" jdbcType="BIT"/>
-        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <select id="queryZhongbiaoCount" parameterType="java.util.Map" resultType="java.util.Map">
-    SELECT
-      t.oneName as comName,
-      DATE_FORMAT(t.gsDate, '%Y-%m-01')  AS statDate,
-      ifnull(SUM(num),0) AS num,
-      1 as type
-    FROM
-      (SELECT
-        zbd.`oneName`,
-        zbd.`gsDate`,
-        COUNT(1) AS num
-      FROM
-        `zhongbiao_detail` zbd
-      WHERE zbd.gsDate &gt;= #{startDate}
-        AND zbd.gsDate &lt;= #{endDate}
-        AND zbd.`oneName` IS NOT NULL
-        AND zbd.`oneName` != ''
-      GROUP BY zbd.`oneName`,
-        zbd.`gsDate`) t
-    GROUP BY t.oneName;
-  </select>
-
-    <delete id="delZhongBiaoCountByDate" parameterType="java.lang.String">
-    DELETE
-    FROM `tb_count_bid_info`
-    WHERE `stat_date` = #{statDate}
-  </delete>
-
-    <insert id="batchInsertCountBinInfo" parameterType="java.util.List">
-        INSERT INTO `tb_count_bid_info`
-        (
-        `com_name`,
-        `stat_date`,
-        `num`,
-        `type`,
-        `score`
-        )
-        VALUES
-        <foreach collection="list" item="list" separator=",">
-            (
-            #{list.comName},#{list.statDate},#{list.num},#{list.type},#{list.score}
-            )
-        </foreach>
-    </insert>
-
-
-    <insert id="insertCountBinInfo" parameterType="java.util.Map">
-        INSERT INTO `tb_count_bid_info`
-        (
-        `com_name`,
-        `stat_date`,
-        `num`,
-        `type`,
-        `score`
-        )
-        VALUES(#{comName},#{statDate},#{num},#{type},#{score})
-    </insert>
-
-    <select id="queryCountBidList" parameterType="java.util.Map" resultType="java.util.Map">
+    <!-- 获取详情列表(根据日期)-->
+    <select id="queryCountBidDateList" parameterType="java.util.Map" resultType="java.util.Map">
         select
         t.com_name as comName,
-        <choose>
-            <when test="endDate != null and endDate != ''">
-                SUM(t.num) as num
-            </when>
-            <otherwise>
-                t.num as num
-            </otherwise>
-        </choose>
+        SUM(t.num) as num
         from tb_count_bid_info t
         where
-        <choose>
-            <when test="endDate != null and endDate != ''">
-                t.stat_date &gt;= #{statDate}
-                and t.stat_date &lt;= #{endDate}
-            </when>
-            <otherwise>
-                t.stat_date = #{statDate}
-            </otherwise>
-        </choose>
-        <choose>
-            <when test="endDate != null and endDate != ''">
-                GROUP BY t.`com_name`
-                HAVING SUM(t.num) &gt;= #{count}
-                ORDER BY SUM(t.num) DESC
-            </when>
-            <otherwise>
-                and t.num &gt;= #{count}
-                order by t.num desc
-            </otherwise>
-        </choose>
+        t.stat_date &gt;= #{statDate}
+        and t.stat_date &lt;= #{endDate}
+        GROUP BY t.`com_name`
+        HAVING SUM(t.num) &gt;= #{count}
+        ORDER BY SUM(t.num) DESC
     </select>
 
-    <select id="queryCountBidNum" parameterType="java.util.Map" resultType="java.util.Map">
-        <choose>
-            <when test="endDate != null and endDate != ''">
-                SELECT
-                IFNULL(COUNT(t1.comNameCount), 0) AS comNameCount,
-                IFNULL(SUM(t1.sumNum), 0) AS sumNum
-                FROM
-                (SELECT
-                IFNULL(COUNT(t.com_name), 0) AS comNameCount,
-                IFNULL(SUM(t.num), 0) AS sumNum
-                FROM
-                tb_count_bid_info t
-                WHERE t.stat_date &gt;= #{statDate}
-                AND t.stat_date &lt;= #{endDate}
-                GROUP BY t.`com_name`
-                HAVING SUM(t.num) &gt;= #{count}) t1
-            </when>
-            <otherwise>
-                select ifnull(count(t.com_name),0) as comNameCount,
-                ifnull(sum(t.num),0) as sumNum
-                from tb_count_bid_info t
-                where
-                t.stat_date = #{statDate}
-                and t.num &gt;= #{count}
-            </otherwise>
-        </choose>
-    </select>
-
-    <select id="queryCountBidByStat" parameterType="java.util.Map" resultType="int">
-        select count(1)
-        from tb_count_bid_info t
-        where
-        <choose>
-            <when test="endDate != null and endDate != ''">
-                t.stat_date &gt;= #{statDate}
-                and t.stat_date &lt;= #{endDate}
-            </when>
-            <otherwise>
-                t.stat_date = #{statDate}
-            </otherwise>
-        </choose>
-    </select>
-
-    <select id="queryRequCompany" parameterType="java.util.Map" resultType="java.lang.String">
-        SELECT t.`com_name`
-        FROM tb_count_bid_info t
-        WHERE t.`stat_date` = #{date}
-        AND t.`TYPE` = #{type}
-        ORDER BY t.`score` DESC
-        LIMIT 3
-    </select>
-
-    <select id="queryCountBidReq" parameterType="java.util.Map" resultType="java.util.Map">
+    <!-- 获取详情列表(根据关联id)-->
+    <select id="queryCountBidList" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT
           t.`com_name` AS comName,
           t.`num` AS num,
@@ -166,8 +24,7 @@
           t.`stat_date` AS statDate
         FROM
           tb_count_bid_info t
-        WHERE t.`TYPE` = #{type}
-        AND t.`stat_date` = #{statDate}
+        WHERE t.`plat_id` = #{pkid}
         ORDER BY t.`score` DESC
         LIMIT 100
     </select>
