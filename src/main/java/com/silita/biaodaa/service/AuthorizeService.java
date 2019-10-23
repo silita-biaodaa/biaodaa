@@ -117,6 +117,15 @@ public class AuthorizeService {
         List<SysUser> list = userTempBddMapper.queryUserInfo(param);
         if (list != null && list.size() == 1) {
             SysUser user = list.get(0);
+            //判断是否是会员用户
+            String expiredDate = user.getExpiredDate();//过期时间
+            String date = MyDateUtils.getDate("yyyy-MM-dd");//当前时间
+            int i = MyDateUtils.compareStringTime(expiredDate, date, "yyyy-MM-dd");
+            if(i > 0){
+                user.setIsVip(false);
+            }else{
+                user.setIsVip(true);
+            }
             if (MyStringUtils.isNotNull(param.getWxOpenId())
                     && MyStringUtils.isNotNull(param.getWxUnionId())
                     && MyStringUtils.isNull(user.getWxUnionId())) {
@@ -255,6 +264,17 @@ public class AuthorizeService {
     private SysUser queryUserInfo(SysUser param) {
         List<SysUser> resList = userTempBddMapper.queryUserInfo(param);
         if (resList != null && resList.size() == 1) {
+            for (SysUser sysUser : resList) {
+                //判断是否是会员用户
+                String expiredDate = sysUser.getExpiredDate();//过期时间
+                String date = MyDateUtils.getDate("yyyy-MM-dd");//当前时间
+                int i = MyDateUtils.compareStringTime(expiredDate, date, "yyyy-MM-dd");
+                if(i > 0){
+                    sysUser.setIsVip(false);
+                }else{
+                    sysUser.setIsVip(true);
+                }
+            }
             return resList.get(0);
         } else {
             logger.warn("用户信息查询失败[resList:" + resList + "][param:" + param.toString() + "]");
@@ -267,6 +287,15 @@ public class AuthorizeService {
         List<SysUser> resList = userTempBddMapper.queryUserInfo(param);
         if (resList != null && resList.size() == 1) {
             user = resList.get(0);
+            //判断是否是会员用户
+            String expiredDate = user.getExpiredDate();//过期时间
+            String date = MyDateUtils.getDate("yyyy-MM-dd");//当前时间
+            int i = MyDateUtils.compareStringTime(expiredDate, date, "yyyy-MM-dd");
+            if(i > 0){
+                user.setIsVip(false);
+            }else{
+                user.setIsVip(true);
+            }
         }
         if (user != null) {
             user.setChannel(VisitInfoHolder.getChannel());

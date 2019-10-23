@@ -210,6 +210,10 @@ public class UserCenterController {
         return result;
     }
 
+    /**
+     * 个人信息
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/refreshUserInfo", produces = "application/json;charset=utf-8")
     public Map<String, Object> refreshUserInfo() {
