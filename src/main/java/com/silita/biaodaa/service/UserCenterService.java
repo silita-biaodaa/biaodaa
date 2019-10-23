@@ -184,6 +184,7 @@ public class UserCenterService {
                 result = collecNoticeMapper.listZhongBiaoCollecNoticeById(map);
             }
             if (null != result && MapUtils.isNotEmpty(result)) {
+                result.put("collected",true);
                 notices.add(result);
             }
         }

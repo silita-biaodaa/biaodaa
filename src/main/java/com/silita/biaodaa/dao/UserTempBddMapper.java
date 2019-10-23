@@ -4,6 +4,7 @@ import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.model.SysUserRole;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.utils.MyMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
