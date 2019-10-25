@@ -11,6 +11,9 @@
             <if test="type!=null">
                AND type = #{type}
             </if>
+            <if test="source == null or source == ''">
+                and source = 'all'
+            </if>
             <choose>
                 <when test="source != null and source != '' and source == 'hunan'">
                     and (source = 'all' or source = 'hunan')

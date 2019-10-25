@@ -53,7 +53,6 @@ public class FoundationController extends BaseController {
         Map result = new HashMap();
         result.put("code", 1);
         result.put("msg", "获取轮播图信息成功!");
-
         try {
             List<CarouselImage> carouselImages = foundationService.queryCarouselImageList(params);
             result.put("data", carouselImages);
