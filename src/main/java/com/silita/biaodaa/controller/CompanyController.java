@@ -324,6 +324,7 @@ public class CompanyController extends BaseController {
             param.put("isVip", isVip);
             param.put("isBei", isBei);
             param.put("honorCate", params.get("honorCate"));
+            param.put("joinRegion",params.get("joinRegion"));
 
             Integer pageNo = MapUtils.getInteger(params, "pageNo");
             Integer pageSize = MapUtils.getInteger(params, "pageSize");

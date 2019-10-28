@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.cache.GlobalCache;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.RedisConstantInterface;
+import com.silita.biaodaa.common.RegionMap;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.dao.*;
@@ -338,6 +339,8 @@ public class TbCompanyService {
         if (null != param.get("regisAddress")) {
             getRegisAddress(param);
         }
+        //设置新的备案地区条件
+        setNewRegion(param);
         List<TbCompany> list = new ArrayList<>();
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         if (levelRank != null && levelRank.length() == 4) {
@@ -1291,6 +1294,28 @@ public class TbCompanyService {
     }
 
     /**
+     * 新的备案地区
+     *
+     * @param param
+     */
+    private void setNewRegion(Map<String, Object> param) {
+        String regisAddress = MapUtils.getString(param, "province");
+        if (StringUtils.isNotEmpty(regisAddress)) {
+            String joinRegion = MapUtils.getString(param, "joinRegion");
+            if (StringUtils.isEmpty(joinRegion)) {
+                joinRegion = "in";
+                param.put("joinRegion", joinRegion);
+            }else if ("all_in".equals(joinRegion) || "enter".equals(joinRegion)) {
+                int index = RegionMap.regionBeiAnIndex.get(regisAddress);
+                param.remove("cityList");
+                param.put("index", index + 1);
+            }else if ("changsha".equals(joinRegion)){
+                param.put("inCity","inCity");
+            }
+        }
+    }
+
+    /**
      * 荣誉类别条件处理
      *
      * @param param
@@ -1305,32 +1330,27 @@ public class TbCompanyService {
                 for (String str : splitCate) {
                     if (str.indexOf("||") > -1) {
                         String[] aqrzs = str.split("\\|\\|");
-                        if (aqrzs.length > 1){
+                        if (aqrzs.length > 1) {
                             String[] grades = aqrzs[1].split("/");
-                            param.put("grades",Arrays.asList(grades));
+                            param.put("grades", Arrays.asList(grades));
                             break;
                         }
                     }
                 }
                 return;
             }
-            if (cateHonor.contains("aqrz")){
-                param.put("aqrz","aqrz");
+            if (cateHonor.contains("aqrz")) {
+                param.put("aqrz", "aqrz");
                 if (cateHonor.indexOf("||") > -1) {
                     String[] aqrzs = cateHonor.split("\\|\\|");
-                    if (aqrzs.length > 1){
+                    if (aqrzs.length > 1) {
                         String[] grades = aqrzs[1].split("/");
-                        param.put("grades",Arrays.asList(grades));
+                        param.put("grades", Arrays.asList(grades));
                     }
                 }
-            }else {
+            } else {
                 param.put("reviewFine", "reviewFine");
             }
         }
-    }
-
-    public static void main(String[] args) {
-        String a = "aaa";
-        System.out.println(a.indexOf("||"));
     }
 }
