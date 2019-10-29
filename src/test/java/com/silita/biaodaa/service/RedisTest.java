@@ -2,6 +2,8 @@ package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.ObjectTranscoder;
+import com.silita.biaodaa.dao.TbCompanyQualificationMapper;
+import com.silita.biaodaa.model.TbCompanyQualification;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.ShardedJedis;
@@ -19,6 +21,8 @@ public class RedisTest extends ConfigTest {
     private MyRedisTemplate redisTemplate;
     @Autowired
     private ShardedJedisPool shardedJedisPool;
+    @Autowired
+    TbCompanyQualificationMapper tbCompanyQualificationMapper;
 
     @Test
     public void getAndPutTest() {
@@ -36,14 +40,14 @@ public class RedisTest extends ConfigTest {
     }
 
     @Test
-    public void getList(){
+    public void getList() {
         ShardedJedis jedis = null;
         List<byte[]> list = null;
         try {
             jedis = shardedJedisPool.getResource();
-            list = jedis.lrange("ceshi".getBytes(),0,0);
-            if(null!= list && list.size() > 0){
-                for (byte[] str : list){
+            list = jedis.lrange("ceshi".getBytes(), 0, 0);
+            if (null != list && list.size() > 0) {
+                for (byte[] str : list) {
                     System.out.println(ObjectTranscoder.deserialize(str));
                 }
             }
@@ -60,7 +64,7 @@ public class RedisTest extends ConfigTest {
     public void push() {
         String topic = "order_list";
         for (int i = 1; i < 100; i++) {
-            redisTemplate.convertAndSend(topic,i+"只猪");
+            redisTemplate.convertAndSend(topic, i + "只猪");
         }
     }
 
@@ -68,14 +72,22 @@ public class RedisTest extends ConfigTest {
     public void pop() {
         String topic = "orderber_list";
         List<String> list = (List<String>) redisTemplate.lpop(topic);
-        for (String str : list){
+        for (String str : list) {
             System.out.println(str);
         }
     }
 
     @Test
-    public void pul(){
-        redisTemplate.lpush(ORDER_LIST,"20191007052514328E6QJWA");
+    public void pul() {
+        redisTemplate.lpush(ORDER_LIST, "20191007052514328E6QJWA");
     }
 
+
+    @Test
+    public void pullCompany() {
+        List<String> coms = tbCompanyQualificationMapper.queryCompanyQual();
+        for (String str : coms) {
+            redisTemplate.lpushStr("Sky_Company_Name", str);
+        }
+    }
 }

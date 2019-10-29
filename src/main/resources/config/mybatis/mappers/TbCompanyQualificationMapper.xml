@@ -9,4 +9,9 @@
   <select id="queryCompanyQualCount" resultType="java.lang.Integer" parameterType="java.lang.String">
      select count(1) from tb_company_qualification where com_id = #{comId} and is_valid = 1
   </select>
+
+  <!--查询资质企业-->
+  <select id="queryCompanyQual" resultType="java.lang.String">
+      SELECT t.`com_name` FROM tb_company_qualification t WHERE t.`is_valid` = '0' AND DATE(t.`created`) >= '2018-01-01' AND t.`channel` != 3 GROUP BY t.`com_id`
+  </select>
 </mapper>

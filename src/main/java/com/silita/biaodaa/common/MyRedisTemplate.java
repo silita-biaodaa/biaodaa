@@ -273,6 +273,27 @@ public class MyRedisTemplate {
     }
 
     /**
+     * 设置redis队列未编码（顺序）
+     *
+     * @param key
+     * @param value
+     */
+    public void lpushStr(String key, String value) {
+        ShardedJedis jedis = null;
+        try {
+            String bKey = buildKey(key);
+            jedis = getJedis();
+            jedis.lpush(bKey, value);
+        } catch (Exception e) {
+            logger.error("setObject error : " + e);
+        } finally {
+            if (jedis != null) {
+                jedis.close();
+            }
+        }
+    }
+
+    /**
      * 消费redis队列（）
      *
      * @param key
