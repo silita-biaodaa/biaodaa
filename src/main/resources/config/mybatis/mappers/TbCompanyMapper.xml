@@ -68,7 +68,7 @@
             AND c.regis_address = #{province}
         </if>
         <if test="inCity != null and inCity != ''">
-            AND c.in_city = like CONCAT('%',#{joinRegion},'%')
+            AND c.in_city like CONCAT('%',#{joinRegion},'%')
         </if>
         <if test="isBei != null and isBei != '' and isBei == 'enterHunan'">
             AND (
