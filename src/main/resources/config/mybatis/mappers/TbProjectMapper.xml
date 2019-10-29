@@ -215,7 +215,7 @@
         ON project.`pro_id` = comple.`pro_id`
         JOIN tb_project_company t5
         ON project.`pro_id` = t5.`pro_id`
-        WHERE 1 = 1
+        WHERE t5.`role` != '发包单位'
         <choose>
             <when test="comName != null and comName != '' and innerId != null and innerId != ''">
                 AND (t5.`com_name` = #{comName} or t5.innerId = #{innerId})
@@ -256,7 +256,6 @@
         <if test="area != null and area != ''">
             AND project.`pro_where` LIKE CONCAT(#{area},'%')
         </if>
-        AND t5.`role` != '发包单位'
         AND DATE(t5.`updated`) &gt;= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
         AND DATE(t5.`updated`) &lt;= DATE(NOW())
         GROUP BY project.`pro_id`
