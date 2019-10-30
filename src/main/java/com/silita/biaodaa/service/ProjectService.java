@@ -375,7 +375,7 @@ public class ProjectService {
         }
     }
 
-    public Map<String, Object> getProjectCompanyList(Map<String, Object> param) {
+    public Map<String,Object> getProjectCompanyList(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashMap<>();
         String companyId = MapUtils.getString(param, "comId");
         String comName = MapUtils.getString(param, "comName");
@@ -390,30 +390,25 @@ public class ProjectService {
         }
         param.put("comName", comName);
 
+        Integer pageNo = MapUtils.getInteger(param, "pageNo");
+        Integer pageSize = MapUtils.getInteger(param, "pageSize");
+        Page page = new Page();
+        page.setCurrentPage(pageNo);
+        page.setPageSize(pageSize);
+        PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<Map<String, Object>> resultList = tbProjectMapper.queryListCompanyPro(param);
-
-        List<Map<String, Object>> resList = resultList;
+        PageInfo pageInfo = new PageInfo(resultList);
         if (null != resultList && resultList.size() > 0) {
-            if ("page".equals(param.get("type"))) {
-                Integer pageNo = MapUtils.getInteger(param, "pageNo");
-                Integer pageSize = MapUtils.getInteger(param, "pageSize");
-                Integer pages = CommonUtil.getPages(resultList.size(), pageSize);
-                Integer start = (pageNo - 1) * pageSize;
-                Integer end = resultList.size();
-                if (pageNo < pages) {
-                    end = start + pageSize;
-                }
-                resList = resultList.subList(start, end);
-                resultMap.put("total", resultList.size());
-                resultMap.put("pages", pages);
-            }
-            for (Map<String, Object> map : resList) {
+            for (Map<String, Object> map : resultList) {
                 this.putProvince(map);
             }
         }
-        resultMap.put("data", resList);
+        resultMap.put("total",pageInfo.getTotal());
+        resultMap.put("pages",pageInfo.getPages());
+        resultMap.put("data",pageInfo.getList());
         return resultMap;
     }
+
 
     public Map<String, Object> getProjectDetailCount(Map<String, Object> param) {
         Map<String, Object> resultMap = new HashedMap();

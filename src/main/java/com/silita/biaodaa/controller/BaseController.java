@@ -40,6 +40,7 @@ public abstract class BaseController {
         resultMap.put(this.MSG_FLAG, SUCCESS_MSG);
     }
 
+
     protected void successMsg(Map resultMap, Object data) {
         successMsg(resultMap);
         resultMap.put("data", data);
@@ -69,6 +70,7 @@ public abstract class BaseController {
         return page;
     }
 
+
     protected void buildReturnMap(Map resultMap, PageInfo pageInfo) {
         if (pageInfo != null) {
             resultMap.put("data", pageInfo.getList());
@@ -78,12 +80,19 @@ public abstract class BaseController {
             resultMap.put("pages", pageInfo.getPages());
         }
     }
-
     protected void buildReturnMap2(Map resultMap, PageInfo pageInfo) {
         if (pageInfo != null) {
             resultMap.put("list", pageInfo.getList());
             resultMap.put("pageNo", pageInfo.getPageNum());
             resultMap.put("pageSize", pageInfo.getPageSize());
+            resultMap.put("total", pageInfo.getTotal());
+            resultMap.put("pages", pageInfo.getPages());
+        }
+    }
+
+    protected void buildReturnMap3(Map resultMap, PageInfo pageInfo) {
+        if (pageInfo != null) {
+            resultMap.put("data", pageInfo.getList());
             resultMap.put("total", pageInfo.getTotal());
             resultMap.put("pages", pageInfo.getPages());
         }
