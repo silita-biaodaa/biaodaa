@@ -31,7 +31,8 @@
               `time`,
               `flag`,
               `type`,
-              `username`
+              `username`,
+              `contentDescribe`
             )
             VALUES
               (
@@ -41,7 +42,8 @@
                 #{time},
                 1,
                 0,
-                'zk'
+                'zk',
+                #{contentDescribe}
               ) ;
     </insert>
 </mapper>
