@@ -216,6 +216,23 @@ public class MyDateUtils {
 		return day2-day1;
 
 	}
+
+	/**
+	 * 比较时间
+	 * @param expiredDate
+	 * @param date
+	 * @return
+	 */
+	public static Boolean compare(String expiredDate,String date){
+		Boolean b;
+		int i = expiredDate.compareTo(date);
+		if(i >= 0){
+			b = true;
+		}else{
+			b = false;
+		}
+		return b;
+	}
 	//同上面的方法，不取结果的绝对值
 	public static int compareStringTimeEx(String t1, String t2, String parrten) {
 		SimpleDateFormat formatter = new SimpleDateFormat(parrten);

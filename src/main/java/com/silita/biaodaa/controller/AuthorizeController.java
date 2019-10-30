@@ -6,6 +6,7 @@ import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.AuthorizeService;
 import com.silita.biaodaa.service.VipService;
+import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -178,11 +179,11 @@ public class AuthorizeController extends BaseController {
 //                bulidUserPwd(sysUser);
                 String msgCode = authorizeService.registerUser(sysUser);
                 if (msgCode.equals(Constant.SUCCESS_CODE)) {
-                    SysUser vo = authorizeService.memberLogin(sysUser);
-                    vo.setUserphone(vo.getPhoneNo());
                     //会员权益赠送
                     inviteProfitDeliver(sysUser);
-                    firstProfitDeliver(vo);
+                    firstProfitDeliver(sysUser);
+                    SysUser vo = authorizeService.memberLogin(sysUser);
+                    vo.setUserphone(vo.getPhoneNo());
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("data", vo);
                     result.put("msg", "用户注册成功！");
@@ -334,15 +335,15 @@ public class AuthorizeController extends BaseController {
             if (errCode == null) {
                 Integer count = authorizeService.thirdPartyBinding(sysUser);
                 if (count != null && count != 33) {
-                    SysUser vo = authorizeService.memberLogin(sysUser);
-                    vo.setUserphone(vo.getPhoneNo());
-                    vo.setImgurl(vo.getImageUrl());
-                    vo.setNickname(vo.getNikeName());
                     if (count == 22) {
                         //会员权益赠送
                         inviteProfitDeliver(sysUser);
                     }
-                    firstProfitDeliver(vo);
+                    firstProfitDeliver(sysUser);
+                    SysUser vo = authorizeService.memberLogin(sysUser);
+                    vo.setUserphone(vo.getPhoneNo());
+                    vo.setImgurl(vo.getImageUrl());
+                    vo.setNickname(vo.getNikeName());
                     result.put("code", Constant.SUCCESS_CODE);
                     result.put("msg", "绑定成功！");
                     result.put("data", vo);
