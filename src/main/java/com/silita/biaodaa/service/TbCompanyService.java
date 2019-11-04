@@ -1312,6 +1312,8 @@ public class TbCompanyService {
             }else if ("changsha".equals(joinRegion)){
                 param.put("inCity","inCity");
             }
+        }else {
+            param.remove("joinRegion");
         }
     }
 
