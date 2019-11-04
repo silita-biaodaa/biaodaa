@@ -45,21 +45,21 @@ public class CreditShuiliHighwayTest extends ConfigTest {
         int pages = this.getPage(total, pageSize);
         TbCompany company;
         for (int i = 1; i <= pages; i++) {
-            DBCursor dbCursor = dbCollection.find().skip((i - 1) * pageSize).limit(end).batchSize(pageSize);
+            DBCursor dbCursor = dbCollection.find().skip((i - 1) * pageSize).limit(2000).batchSize(pageSize);
             while (dbCursor.hasNext()) {
                 DBObject dbObject = dbCursor.next();
                 Map map = dbObject.toMap();
                 TbHighwayCredit highwayCredit = new TbHighwayCredit();
                 highwayCredit.setComName(MapUtils.getString(map,"company"));
                 company = tbCompanyMapper.queryCompanyDetail(highwayCredit.getComName());
-                if (null == company){
-                    continue;
+                if (null != company){
+                    highwayCredit.setComId(company.getComId());
+                    highwayCredit.setRegisAddress(company.getRegisAddress());
                 }
-                highwayCredit.setComId(company.getComId());
                 highwayCredit.setIssueProvince(MapUtils.getString(map,"province"));
                 highwayCredit.setLevel(MapUtils.getString(map,"creditrat"));
                 highwayCredit.setYears(MapUtils.getInteger(map,"year"));
-                highwayCredit.setRegisAddress(company.getRegisAddress());
+                highwayCredit.setCreditType(MapUtils.getString(map,"companytype"));
                 tbHighwayCreditMapper.insert(highwayCredit);
             }
         }

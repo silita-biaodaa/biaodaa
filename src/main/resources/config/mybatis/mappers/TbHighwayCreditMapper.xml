@@ -17,26 +17,36 @@
 
     <insert id="insert" parameterType="com.silita.biaodaa.model.TbHighwayCredit">
         INSERT INTO `tb_highway_credit` (
-        `com_id`,
+        <if test="comId != null and comId != ''">
+            `com_id`,
+        </if>
         `com_name`,
         `level`,
         `years`,
+        `credit_type`,
         <if test="issueProvince != null and issueProvince != ''">
             `issue_province`,
         </if>
-        `regis_address`,
+        <if test="regisAddress != null and regisAddress != ''">
+            `regis_address`,
+        </if>
         `created`
         )
         VALUES
         (
-        #{comId},
+        <if test="comId != null and comId != ''">
+            #{comId},
+        </if>
         #{comName},
         #{level},
         #{years},
+        #{creditType},
         <if test="issueProvince != null and issueProvince != ''">
             #{issueProvince},
         </if>
-        #{regisAddress},
+        <if test="regisAddress != null and regisAddress != ''">
+            #{regisAddress},
+        </if>
         now()
         ) ;
     </insert>
