@@ -92,4 +92,11 @@
           `tb_project_traffic`
         WHERE pkid = #{pkid}
     </select>
+
+    <select id="queryBuildGroup" resultType="java.lang.String">
+       SELECT build FROM tb_project_traffic GROUP BY build
+    </select>
+    <select id="queryProType" resultType="java.lang.String">
+      SELECT pro_type FROM tb_project_traffic GROUP BY pro_type
+    </select>
 </mapper>

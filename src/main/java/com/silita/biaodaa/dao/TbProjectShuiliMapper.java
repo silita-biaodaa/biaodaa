@@ -22,4 +22,10 @@ public interface TbProjectShuiliMapper extends MyMapper<TbProjectShuili> {
      * @return
      */
     TbProjectShuili queryShuiliDetail(String proId);
+
+    /**
+     * 获取水利项目类型
+     * @return
+     */
+    List<String> queryShuiliProType();
 }

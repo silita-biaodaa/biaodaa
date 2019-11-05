@@ -90,4 +90,7 @@
         FROM tb_project_shuili
         WHERE pkid = #{pkid}
   </select>
+    <select id="queryShuiliProType" resultType="java.lang.String">
+        SELECT pro_type FROM tb_project_shuili GROUP BY pro_type
+    </select>
 </mapper>

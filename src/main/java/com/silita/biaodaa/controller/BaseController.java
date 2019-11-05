@@ -7,6 +7,7 @@ import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -38,6 +39,14 @@ public abstract class BaseController {
     protected void successMsg(Map resultMap) {
         resultMap.put(this.CODE_FLAG, SUCCESS_CODE);
         resultMap.put(this.MSG_FLAG, SUCCESS_MSG);
+    }
+
+    protected Map<String,Object> successMsgs(Object obj) {
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put(this.CODE_FLAG, SUCCESS_CODE);
+        resultMap.put(this.MSG_FLAG, SUCCESS_MSG);
+        resultMap.put("data",obj);
+        return resultMap;
     }
 
 

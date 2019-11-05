@@ -21,4 +21,16 @@ public interface TbProjectTrafficMapper extends MyMapper<TbProjectTraffic> {
      * @return
      */
     TbProjectTraffic queryProjectDetail(String pkid);
+
+    /**
+     * 建设状态
+     * @return
+     */
+    List<String> queryBuildGroup();
+
+    /**
+     * 查询项目类型
+     * @return
+     */
+    List<String> queryProType();
 }
