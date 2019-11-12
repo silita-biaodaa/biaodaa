@@ -91,6 +91,6 @@
         WHERE pkid = #{pkid}
   </select>
     <select id="queryShuiliProType" resultType="java.lang.String">
-        SELECT pro_type FROM tb_project_shuili GROUP BY pro_type
+         SELECT pro_status FROM tb_project_shuili WHERE pro_status IS NOT NULL GROUP BY pro_status
     </select>
 </mapper>

@@ -19,7 +19,7 @@ public class ShuiliService {
      */
     public Map<String,Object> getProType(){
         Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("proType",tbProjectShuiliMapper.queryShuiliProType());
+        resultMap.put("proStatus",tbProjectShuiliMapper.queryShuiliProType());
         return resultMap;
     }
 }
