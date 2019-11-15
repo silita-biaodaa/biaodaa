@@ -58,7 +58,7 @@
         ORDER BY a.created DESC
     </select>
 
-    <select id="queryProfitTotal" parameterType="java.lang.String" resultType="Integer">
+    <select id="queryProfitTotal" parameterType="java.lang.String" resultType="java.lang.Integer">
         select sum(vip_days)
         from mishu_write.tb_vip_profits a
         left join mishu_write.tb_vip_profit_settings s on a.settings_code=s.settings_code

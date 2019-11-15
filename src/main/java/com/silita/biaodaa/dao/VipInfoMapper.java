@@ -54,5 +54,5 @@ public interface VipInfoMapper {
      * @param channel
      * @return
      */
-    List<TbVipFeeStandard>  queryFeeStandardReport(String channel);
+    List<TbVipFeeStandard> queryFeeStandardReport(String channel);
 }

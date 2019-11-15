@@ -2,6 +2,7 @@ package com.silita.biaodaa.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+
 import com.silita.biaodaa.dao.TbVipRightsChangesMapper;
 import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.dao.VipInfoMapper;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_FIRST;
 
@@ -143,6 +145,11 @@ public class VipServiceImpl implements VipService {
 
     public List<TbVipFeeStandard> queryFeeStandard(String channel) {
         return vipInfoMapper.queryFeeStandard(channel);
+    }
+
+    @Override
+    public List<TbVipFeeStandard> getFeeStandards(String channel) {
+        return vipInfoMapper.queryFeeStandardReport(channel);
     }
 
     /**

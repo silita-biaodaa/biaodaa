@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/screen")
-public class screenController extends BaseController{
+public class ScreenController extends BaseController{
     @Autowired
     HighwayService highwayService;
     @Autowired

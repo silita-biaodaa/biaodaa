@@ -175,6 +175,7 @@ public class ReportServiceImpl implements ReportService {
         return null;
     }
 
+
     private void setMap(Map<String, Object> target, Map<String, Object> soure) {
         target.put("regisAddress", soure.get("regisAddress"));
         target.put("qualCode", soure.get("qualCode"));

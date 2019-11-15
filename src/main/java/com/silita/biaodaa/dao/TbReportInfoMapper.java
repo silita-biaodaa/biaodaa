@@ -65,4 +65,5 @@ public interface TbReportInfoMapper extends MyMapper<TbReportInfo> {
      * @return
      */
     TbReportInfo queryReportDetailOrderPayStatus(Map<String,Object> param);
+
 }

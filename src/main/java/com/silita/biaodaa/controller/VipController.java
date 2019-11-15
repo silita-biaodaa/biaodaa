@@ -51,6 +51,7 @@ public class VipController extends BaseController {
         return null;
     }
 
+
     @ResponseBody
     @RequestMapping(value = "/queryFeeStandard", produces = "application/json;charset=utf-8")
     public Map<String, Object> queryFeeStandard(@RequestBody TbVipFeeStandard tbVipFeeStandard) {
@@ -68,6 +69,11 @@ public class VipController extends BaseController {
             errorMsg(result, Constant.EXCEPTION_CODE, e.getMessage());
         }
         return result;
+    }
+    @ResponseBody
+    @RequestMapping(value = "/getFeeStandard", produces = "application/json;charset=utf-8")
+    public Map<String,Object> getFeeStandard(@RequestBody Map<String,Object> paran){
+        return successMsgs(vipService.getFeeStandards(MapUtils.getString(paran,"channel")));
     }
 
 
