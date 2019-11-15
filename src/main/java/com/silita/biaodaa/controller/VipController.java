@@ -73,7 +73,7 @@ public class VipController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/getFeeStandard", produces = "application/json;charset=utf-8")
     public Map<String,Object> getFeeStandard(@RequestBody Map<String,Object> paran){
-        return successMsgs(vipService.getFeeStandards(MapUtils.getString(paran,"channel")));
+        return successMsgs(vipService.getFeeStandards());
     }
 
 

@@ -20,10 +20,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.silita.biaodaa.common.Constant.PROFIT_S_CODE_FIRST;
 
@@ -148,9 +145,53 @@ public class VipServiceImpl implements VipService {
     }
 
     @Override
-    public List<TbVipFeeStandard> getFeeStandards(String channel) {
-        return vipInfoMapper.queryFeeStandardReport(channel);
+    public Map<String,Object> getFeeStandards() {
+        Map<String,Object> resultMap = new HashMap<>();
+        TbVipFeeStandard tbVipFeeStandard = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_vip");
+        TbVipFeeStandard tbComFeeStandard = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_com");
+        resultMap.put("vipPrice",tbVipFeeStandard.getPrice());
+        resultMap.put("vipPrimePrice",tbVipFeeStandard.getPrimePrice());
+        resultMap.put("vipStdCode",tbVipFeeStandard.getStdCode());
+        resultMap.put("vipProductId",tbVipFeeStandard.getProductId());
+        resultMap.put("comPrice",tbComFeeStandard.getPrice());
+        resultMap.put("comPrimePrice",tbComFeeStandard.getPrimePrice());
+        resultMap.put("comStdCode",tbComFeeStandard.getStdCode());
+        resultMap.put("comProductId",tbComFeeStandard.getProductId());
+        return resultMap;
     }
+/*
+    @Override
+    public Map<String,Object> getFeeStandards(String channel) {
+        Map<String,Object> resultMap = new HashMap<>();
+        TbVipFeeStandard tbVipFeeStandard = vipInfoMapper.queryFeeStandardReportZhuancha(channel);
+        if(channel.equals("special_query_com_gl")){
+            TbVipFeeStandard vipGonglu = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_vip_gl");
+            resultMap.put("vip",vipGonglu);
+            resultMap.put("com",tbVipFeeStandard);
+        }else if (channel.equals("special_query_vip_gl")){
+            TbVipFeeStandard comGonglu = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_com_gl");
+            resultMap.put("vip",tbVipFeeStandard);
+            resultMap.put("com",comGonglu);
+        }else if (channel.equals("special_query_com_sl")){
+            TbVipFeeStandard vipShuili = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_vip_sl");
+            resultMap.put("vip",vipShuili);
+            resultMap.put("com",tbVipFeeStandard);
+        }else if (channel.equals("special_query_vip_sl")){
+            TbVipFeeStandard comShuili = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_com_sl");
+            resultMap.put("vip",tbVipFeeStandard);
+            resultMap.put("com",comShuili);
+        }else if (channel.equals("special_query_com_zj")){
+            TbVipFeeStandard vipZhujian = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_vip_zj");
+            resultMap.put("vip",tbVipFeeStandard);
+            resultMap.put("com",vipZhujian);
+        }else if (channel.equals("special_query_vip_zj")){
+            TbVipFeeStandard comZhujian = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_com_zj");
+            resultMap.put("vip",comZhujian);
+            resultMap.put("com",tbVipFeeStandard);
+        }
+        return resultMap;
+    }
+*/
 
     /**
      * 查询收益列表（分页）

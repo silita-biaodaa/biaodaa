@@ -55,4 +55,10 @@ public interface VipInfoMapper {
      * @return
      */
     List<TbVipFeeStandard> queryFeeStandardReport(String channel);
+    /**
+     * 查询单个报告编码
+     * @param channel
+     * @return
+     */
+    TbVipFeeStandard queryFeeStandardReportZhuancha(String channel);
 }

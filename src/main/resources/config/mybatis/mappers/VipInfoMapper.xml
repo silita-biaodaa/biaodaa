@@ -64,7 +64,12 @@
         left join mishu_write.tb_vip_profit_settings s on a.settings_code=s.settings_code
         where v_id=(select v_id from mishu_write.tb_vip_info where user_id=#{userId})
     </select>
-    
+    <select id="queryFeeStandardReportZhuancha" resultType="com.silita.biaodaa.model.TbVipFeeStandard" parameterType="map">
+        select *
+        from mishu_write.tb_vip_fee_standard
+        where channel=#{channel} and state=true
+    </select>
+
     <update id="updateVipInfo" parameterType="com.silita.biaodaa.model.TbVipInfo">
         update mishu_write.tb_vip_info
         set
