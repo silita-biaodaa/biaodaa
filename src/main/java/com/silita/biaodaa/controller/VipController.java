@@ -167,7 +167,8 @@ public class VipController extends BaseController {
             put("payStatus", orderStatus);
         }};
         for (OrderInfo orderInfo : list) {
-            if ("report_com".equals(orderInfo.getStdCode()) || "report_vip".equals(orderInfo.getStdCode())) {
+            if ("report_com".equals(orderInfo.getStdCode()) || "report_vip".equals(orderInfo.getStdCode()) || "special_query_com".equals(orderInfo.getStdCode()) ||
+                    "special_query_vip".equals(orderInfo.getStdCode())) {
                 param.put("orderNo", orderInfo.getOrderNo());
                 Map<String, Object> map = reportService.getReportMap(param);
                 if (null != map) {

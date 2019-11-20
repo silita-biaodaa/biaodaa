@@ -182,6 +182,5 @@
         FROM
         tb_report_info t
         WHERE t.`order_no` = #{orderNo}
-        AND `pay_status` = #{payStatus}
     </select>
 </mapper>
