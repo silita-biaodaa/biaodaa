@@ -170,6 +170,10 @@ public class AspectCheckLogin {
         String filterUrl = PropertiesUtils.getProperty("FILTER_URL");
         String baseInfo = SecurityCheck.getHeaderValue(request, "baseInfo");
         logger.info("x-token:" + xToken);
+        if ("/authorize/memberLogin".equals(requestUri) && MyStringUtils.isNotNull(xToken)) {
+            logger.info("------------登录接口需要将xtoken设为空-------------------------------");
+            xToken = null;
+        }
         try {
             String name = null;
             String phone = null;
