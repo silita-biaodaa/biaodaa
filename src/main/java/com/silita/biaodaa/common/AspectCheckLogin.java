@@ -1,10 +1,8 @@
 package com.silita.biaodaa.common;
 
-import com.alibaba.fastjson.JSONObject;
 import com.silita.biaodaa.service.LoginInfoService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.PropertiesUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -26,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.silita.biaodaa.common.SecurityCheck.checkSigner;
 import static com.silita.biaodaa.utils.EncryptUtils.Base64Decode;
 import static com.silita.biaodaa.utils.HttpUtils.parseRequest;
 import static com.silita.biaodaa.utils.TokenUtils.parseJsonString;
@@ -130,7 +127,6 @@ public class AspectCheckLogin {
         String methodName = point.getSignature().getName();
         String permissions = VisitInfoHolder.getPermissions();
         String roleCode = VisitInfoHolder.getRoleCode();
-//        Object[] args = point.getArgs();
         logger.debug("AspectPermissions [calssName:" + calssName + "][methodName:" + methodName + "][Permissions:" + permissions + "][RoleCode:" + roleCode + "]");
         Map resMap = null;
         try {
@@ -170,33 +166,21 @@ public class AspectCheckLogin {
         String filterUrl = PropertiesUtils.getProperty("FILTER_URL");
         String baseInfo = SecurityCheck.getHeaderValue(request, "baseInfo");
         logger.info("x-token:" + xToken);
+        if ("/authorize/memberLogin".equals(requestUri) && MyStringUtils.isNotNull(xToken)) {
+            logger.info("------------登录接口需要将xtoken设为空-------------------------------");
+            xToken = null;
+        }
         try {
             String name = null;
             String phone = null;
             String userId = null;
             Long date = null;
-            String permissions = null;
-            Map<String, String> parameters = new HashedMap();
             boolean isHei = false;
             boolean tokenValid = false;
             if (MyStringUtils.isNotNull(xToken) && !xToken.equals("biaodaaTestToken")) {
                 String[] token = xToken.split("\\.");
-                if (token.length == 2) {//旧token验证逻辑
-                    String sign = token[0];
-                    String json = Base64Decode(token[1]);
-                    JSONObject jsonObject = (JSONObject) JSONObject.parse(json);
-                    name = jsonObject.getString("name");
-                    String password = jsonObject.getString("password");
-                    phone = jsonObject.getString("phone");
-                    userId = jsonObject.getString("userId");
-                    date = jsonObject.getLong("date");
-                    parameters.put("name", name);
-                    parameters.put("password", password);
-                    parameters.put("phone", phone);
-                    parameters.put("userId", userId);
-                    parameters.put("date", String.valueOf(date));
-                    tokenValid = checkSigner(parameters, sign);
-                } else if (token.length == 3) {//新版token校验
+                if (token.length == 3) {
+                    //新版token校验
                     if (verifyTokenVersion(xToken)) {
                         String[] sArray = xToken.split(Constant.TOKEN_SPLIT);
                         String paramJson = sArray[1];
