@@ -20,7 +20,7 @@
         LEFT JOIN tb_project_completion t1 ON t.`pro_id` = t1.`pro_id`
         where 1=1
         <if test="proName != null and proName != ''">
-            AND (t.`pro_name` LIKE CONCAT('%',#{proName},'%') OR t.`pro_org` LIKE CONCAT('%',#{proName},'%'))
+            AND (t.`pro_name` LIKE CONCAT('%',#{proName},'%')
         </if>
         <if test="proType != null and proType != ''">
             AND t.`pro_type` = #{proType}
@@ -226,6 +226,9 @@
         </choose>
         <if test="proType != null and proType != ''">
             AND project.`pro_type` = #{proType}
+        </if>
+        <if test="proName != null and proName != ''">
+            AND project.`pro_name` like CONCAT('%',#{proName},'%')
         </if>
         <if test="amountStart != null and amountStart != ''">
             <choose>
