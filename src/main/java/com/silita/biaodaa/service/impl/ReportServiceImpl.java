@@ -164,6 +164,7 @@ public class ReportServiceImpl implements ReportService {
         TbReportInfo reportInfo = tbReportInfoMapper.queryReportDetailOrderPayStatus(param);
         if (null != reportInfo) {
             Map<String, Object> resultMap = new HashedMap();
+
             String repTitle = reportInfo.getRepTitle();
             resultMap.put("pkid", reportInfo.getPkid());
             resultMap.put("repTitle", repTitle);
@@ -175,10 +176,10 @@ public class ReportServiceImpl implements ReportService {
                 resultMap.put("zhuanchaType","shuili");
             }else {
                 resultMap.put("zhuanchaType",null);
-                resultMap.put("reportPath", reportInfo.getReportPath());
                 resultMap.put("email", reportInfo.getEmail());
             }
-            resultMap.put("payDate", MyDateUtils.getDate(reportInfo.getUpdated(), "yyyy-MM-dd"));
+            resultMap.put("reportPath", reportInfo.getReportPath());
+            resultMap.put("payDate", MyDateUtils.getDate(reportInfo.getUpdated(), "yyyy-MM-dd HH:mm:ss"));
             resultMap.put("pattern", reportInfo.getPattern());
             return resultMap;
         }
