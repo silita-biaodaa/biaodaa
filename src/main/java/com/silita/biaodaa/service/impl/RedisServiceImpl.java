@@ -5,8 +5,10 @@ import com.silita.biaodaa.service.RedisService;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.util.StringUtil;
 
 import static com.silita.biaodaa.common.RedisConstantInterface.ORDER_LIST;
+import static com.silita.biaodaa.common.RedisConstantInterface.ORDER_LIST_ZHUANCHA;
 
 /**
  * Created by zhushuai on 2019/4/17.
@@ -17,10 +19,19 @@ public class RedisServiceImpl implements RedisService {
     @Autowired
     MyRedisTemplate myRedisTemplate;
 
+
+
+
     @Override
-    public void saveRedisMQ(String orderNo) {
-        myRedisTemplate.lpush(ORDER_LIST,orderNo);
+    public void saveRedisMQ(String orderNo,String type) {
+        if(StringUtil.isEmpty(type)){
+            myRedisTemplate.lpush(ORDER_LIST,orderNo);
+        }else{
+            myRedisTemplate.lpushs(ORDER_LIST_ZHUANCHA,orderNo);
+        }
     }
+
+
 
     @Override
     public String customerOrder(String key) {

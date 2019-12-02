@@ -168,14 +168,14 @@ public class ReportServiceImpl implements ReportService {
             String repTitle = reportInfo.getRepTitle();
             resultMap.put("pkid", reportInfo.getPkid());
             resultMap.put("repTitle", repTitle);
-            if("住建专查".equals(repTitle)){
-                resultMap.put("zhuanchaType","zhujian");
-            }else if("公路专查".equals(repTitle)){
-                resultMap.put("zhuanchaType","gonglu");
-            }else if("水利专查".equals(repTitle)){
-                resultMap.put("zhuanchaType","shuili");
-            }else {
-                resultMap.put("zhuanchaType",null);
+            if ("住建专查".equals(repTitle)) {
+                resultMap.put("zhuanchaType", "zhujian");
+            } else if ("公路专查".equals(repTitle)) {
+                resultMap.put("zhuanchaType", "gonglu");
+            } else if ("水利专查".equals(repTitle)) {
+                resultMap.put("zhuanchaType", "shuili");
+            } else {
+                resultMap.put("zhuanchaType", null);
                 resultMap.put("email", reportInfo.getEmail());
             }
             resultMap.put("reportPath", reportInfo.getReportPath());

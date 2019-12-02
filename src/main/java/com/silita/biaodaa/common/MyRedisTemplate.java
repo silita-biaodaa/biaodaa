@@ -272,6 +272,17 @@ public class MyRedisTemplate {
         }
     }
 
+
+    /**
+     * 设置redis队列（顺序）
+     *
+     * @param key
+     * @param value
+     */
+    public void lpushs(String key,String value){
+        redisTemplate.opsForList().rightPush(key,value);
+    }
+
     /**
      * 设置redis队列未编码（顺序）
      *

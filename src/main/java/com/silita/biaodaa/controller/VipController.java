@@ -153,7 +153,7 @@ public class VipController extends BaseController {
                 result.put("pages", myPage.getPages());
                 result.put("total", myPage.getTotal());
             } else {
-                errorMsg(result, "订单查询为空");
+                errorMsg(result, "1","订单查询为空");
             }
         } catch (Exception e) {
             logger.error(e, e);

@@ -74,7 +74,7 @@ public class ReportController extends BaseController {
         Map<String, Object> resultMap = new HashedMap();
         boolean isFlag = reportService.updateReportEmail(param);
         if (isFlag){
-            redisService.saveRedisMQ(MapUtils.getString(param, "orderNo"));
+            redisService.saveRedisMQ(MapUtils.getString(param, "orderNo"),null);
         }
         successMsg(resultMap);
         return resultMap;

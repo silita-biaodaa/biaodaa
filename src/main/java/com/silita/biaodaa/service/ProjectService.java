@@ -6,7 +6,6 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.dao.*;
 import com.silita.biaodaa.model.*;
-import com.silita.biaodaa.utils.CommonUtil;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;

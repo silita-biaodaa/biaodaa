@@ -25,6 +25,8 @@ public interface RedisConstantInterface {
 
 	String ORDER_LIST = "order_list"; //订单
 
+	String ORDER_LIST_ZHUANCHA= "order_list_zhuancha";
+
 	int DETAIL_OVER_TIME = 30*60;
 
 	int LIST_OVER_TIME = 3600;
