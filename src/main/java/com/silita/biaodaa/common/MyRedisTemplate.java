@@ -281,6 +281,7 @@ public class MyRedisTemplate {
      */
     public void lpushs(String key,String value){
         redisTemplate.opsForList().rightPush(key,value);
+        logger.info("=========等待被消费订单："+key+"=============");
     }
 
     /**

@@ -24,10 +24,10 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void saveRedisMQ(String orderNo,String type) {
-        if(StringUtil.isEmpty(type)){
-            myRedisTemplate.lpush(ORDER_LIST,orderNo);
-        }else{
+        if("zhuancha".equals(type)){
             myRedisTemplate.lpushs(ORDER_LIST_ZHUANCHA,orderNo);
+        }else{
+            myRedisTemplate.lpush(ORDER_LIST,orderNo);
         }
     }
 

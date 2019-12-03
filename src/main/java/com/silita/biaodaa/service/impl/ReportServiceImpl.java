@@ -199,4 +199,12 @@ public class ReportServiceImpl implements ReportService {
         target.put("amountEnd", soure.get("amountEnd"));
         soure.remove("repCondition");
     }
+
+
+    public void updateReportPath(Map<String,Object> param){
+        TbReportInfo tbReportInfo = new TbReportInfo();
+        tbReportInfo.setReportPath(null);
+        tbReportInfo.setOrderNo(MapUtils.getString(param,"orderNo"));
+        tbReportInfoMapper.updateReportPath(tbReportInfo);
+    }
 }

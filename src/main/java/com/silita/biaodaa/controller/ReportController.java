@@ -89,6 +89,7 @@ public class ReportController extends BaseController {
     @RequestMapping(value = "/rebuild")
     public Map<String,Object> rebuild(@RequestBody Map<String,Object> param){
         Map<String,Object> resultMap = new HashedMap();
+        reportService.updateReportPath(param);
         redisService.saveRedisMQ(MapUtils.getString(param, "orderNo"),"zhuancha");
         successMsg(resultMap);
         return resultMap;
