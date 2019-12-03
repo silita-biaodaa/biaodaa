@@ -79,4 +79,18 @@ public class ReportController extends BaseController {
         successMsg(resultMap);
         return resultMap;
     }
+
+    /**
+     * 专查 -- 重新生成
+     * @param param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/rebuild")
+    public Map<String,Object> rebuild(@RequestBody Map<String,Object> param){
+        Map<String,Object> resultMap = new HashedMap();
+        redisService.saveRedisMQ(MapUtils.getString(param, "orderNo"),"zhuancha");
+        successMsg(resultMap);
+        return resultMap;
+    }
 }
