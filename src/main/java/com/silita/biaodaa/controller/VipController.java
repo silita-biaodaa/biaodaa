@@ -72,9 +72,10 @@ public class VipController extends BaseController {
         }
         return result;
     }
+
     @ResponseBody
     @RequestMapping(value = "/getFeeStandard", produces = "application/json;charset=utf-8")
-    public Map<String,Object> getFeeStandard(@RequestBody Map<String,Object> paran){
+    public Map<String, Object> getFeeStandard(@RequestBody Map<String, Object> paran) {
         return successMsgs(vipService.getFeeStandards());
     }
 
@@ -153,7 +154,7 @@ public class VipController extends BaseController {
                 result.put("pages", myPage.getPages());
                 result.put("total", myPage.getTotal());
             } else {
-                errorMsg(result, "1","订单查询为空");
+                errorMsgs(result, "1", "订单查询为空");
             }
         } catch (Exception e) {
             logger.error(e, e);
@@ -174,11 +175,11 @@ public class VipController extends BaseController {
                 param.put("orderNo", orderInfo.getOrderNo());
                 Map<String, Object> map = reportService.getReportMap(param);
                 if (null != map) {
-                   // map.put("createTime",MyDateUtils.getDate(orderInfo.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-                   // map.put("updateTime",MyDateUtils.getDate(orderInfo.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
+                    // map.put("createTime",MyDateUtils.getDate(orderInfo.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+                    // map.put("updateTime",MyDateUtils.getDate(orderInfo.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
                     orderInfo.setReport(map);
                     resuList.add(orderInfo);
-                }else{
+                } else {
                     resuList.add(orderInfo);
                 }
             } else {

@@ -6,6 +6,7 @@ import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,8 @@ public abstract class BaseController {
     public String SUCCESS_CODE = Constant.SUCCESS_CODE;
 
     public String SUCCESS_MSG = "操作成功";
+
+    public String SUCCESS_MSG_ZHUANCHA = "稍后请刷新页面";
 
     public String FAIL_CODE = Constant.FAIL_CODE;
 
@@ -39,6 +42,10 @@ public abstract class BaseController {
     protected void successMsg(Map resultMap) {
         resultMap.put(this.CODE_FLAG, SUCCESS_CODE);
         resultMap.put(this.MSG_FLAG, SUCCESS_MSG);
+    }
+    protected void successMsgZhuancha(Map resultMap) {
+        resultMap.put(this.CODE_FLAG, SUCCESS_CODE);
+        resultMap.put(this.MSG_FLAG, SUCCESS_MSG_ZHUANCHA);
     }
 
     protected Map<String,Object> successMsgs(Object obj) {
@@ -68,6 +75,11 @@ public abstract class BaseController {
     protected void errorMsg(Map resultMap, String errCode, String errMsg) {
         resultMap.put(this.CODE_FLAG, errCode);
         resultMap.put(this.MSG_FLAG, errMsg);
+    }
+    protected void errorMsgs(Map resultMap, String errCode, String errMsg) {
+        resultMap.put(this.CODE_FLAG, errCode);
+        resultMap.put(this.MSG_FLAG, errMsg);
+        resultMap.put("data",new HashedMap(1));
     }
 
     protected Page buildPage(Map params) {
