@@ -91,7 +91,8 @@ public class ReportController extends BaseController {
         Map<String,Object> resultMap = new HashedMap();
         reportService.updateReportPath(param);
         redisService.saveRedisMQ(MapUtils.getString(param, "orderNo"),"zhuancha");
-        successMsgZhuancha(resultMap);
+        resultMap.put("code",1);
+        resultMap.put("msg","稍后请刷新页面");
         return resultMap;
     }
 }

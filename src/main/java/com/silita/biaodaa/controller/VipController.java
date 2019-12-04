@@ -154,7 +154,7 @@ public class VipController extends BaseController {
                 result.put("pages", myPage.getPages());
                 result.put("total", myPage.getTotal());
             } else {
-                errorMsgs(result, "1", "订单查询为空");
+                successMsg(result,  new ArrayList(1));
             }
         } catch (Exception e) {
             logger.error(e, e);
