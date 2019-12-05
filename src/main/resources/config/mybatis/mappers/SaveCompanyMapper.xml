@@ -169,13 +169,16 @@
     </select>
 
     <select id="queryList" resultType="java.util.Map">
-    SELECT
-  t.`com_id`,
-  t.`com_name`,
-  t.`pro_type`
-FROM
-  tb_award_count t
-WHERE t.`pro_type` IS NULL
+        SELECT
+          a.com_id,
+          c.com_name
+        FROM
+          tb_aqrz_hunan a
+          JOIN tb_company c
+            ON a.com_id = c.com_id
+        WHERE a.grade = '市级合格'
+          AND a.valided > DATE(NOW())
+        GROUP BY com_id
     </select>
 
 </mapper>

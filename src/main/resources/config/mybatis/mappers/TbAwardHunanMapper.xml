@@ -88,8 +88,8 @@
         AND t1.`award_name` != '安全质量标准化示范工程'
         WHERE t.`com_id` = #{comId}
         AND (
-        t.`years` = #{years}
-        OR t.`years` = #{years2}
+        t.`years` = #{furongDate}
+        OR t.`years` = #{shengyouDate}
         )
         AND t.`proj_type` LIKE CONCAT('%',#{projType},'%')
         AND t.`proj_name` IS NOT NULL
