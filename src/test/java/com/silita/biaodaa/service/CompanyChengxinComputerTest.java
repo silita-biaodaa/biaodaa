@@ -197,7 +197,7 @@ public class CompanyChengxinComputerTest {
     @org.junit.Test
     public void computerScope() {
         Map<String, Object> param = new HashedMap() {{
-            put("projType", "市政工程");
+            put("projType", "建筑工程");
         }};
         List<Map<String, Object>> list = saveCompanyMapper.queryList();
         for (Map<String, Object> map : list) {

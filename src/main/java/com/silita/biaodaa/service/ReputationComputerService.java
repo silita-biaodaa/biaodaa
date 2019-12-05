@@ -44,7 +44,7 @@ public class ReputationComputerService {
         param.put("luDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_LUBAN));
         param.put("zhuangDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_DECORATE));
         param.put("biaoDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_BUILD));
-        param.put("furongDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_LOTUS));
+        param.put("furongDate", "2017-2018年度第二批");
         param.put("shengyouDate", tbAwardHunanMapper.queryYears(Constant.PRIZE_SUPER));
         List<Map<String, Object>> gjhjList = new ArrayList<>();
         List<Map<String, Object>> sjhjList = new ArrayList<>();
