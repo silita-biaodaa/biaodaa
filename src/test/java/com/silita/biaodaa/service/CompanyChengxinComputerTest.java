@@ -197,7 +197,7 @@ public class CompanyChengxinComputerTest {
     @org.junit.Test
     public void computerScope() {
         Map<String, Object> param = new HashedMap() {{
-            put("projType", "建筑工程");
+            put("projType", "市政工程");
         }};
         List<Map<String, Object>> list = saveCompanyMapper.queryList();
         for (Map<String, Object> map : list) {
@@ -238,8 +238,8 @@ public class CompanyChengxinComputerTest {
     public void saveCompanyScope() {
         List<Map<String, Object>> list = saveCompanyMapper.queryList();
         for (Map<String, Object> map : list) {
-//            map.put("furong", map.get("total"));
-            map.put("city_pass",1);
+            map.put("set_award", map.get("total"));
+//            map.put("exam_no_com",1);
             //是否存在
             int count = saveCompanyMapper.query(map);
             if (count > 0) {

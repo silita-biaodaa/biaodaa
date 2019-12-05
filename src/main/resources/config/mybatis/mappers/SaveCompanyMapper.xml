@@ -162,23 +162,36 @@
           `updated` = now()
         WHERE `com_id` = #{com_id}
         AND `com_name` = #{com_name}
+        <if test="pro_type != null and pro_type != ''">
+            AND `pro_type` = #{pro_type}
+        </if>
     </update>
 
     <select id="query" parameterType="java.util.Map" resultType="java.lang.Integer">
-        SELECT COUNT(1) FROM tb_award_count t WHERE t.`com_id` = #{com_id}
+        SELECT
+          COUNT(1)
+        FROM
+          tb_award_count t
+        WHERE t.`com_id` = #{com_id}
+        <if test="pro_type != null and pro_type != ''">
+            AND t.pro_type = #{pro_type}
+        </if>
     </select>
 
     <select id="queryList" resultType="java.util.Map">
-        SELECT
-          a.com_id,
-          c.com_name
-        FROM
-          tb_aqrz_hunan a
-          JOIN tb_company c
-            ON a.com_id = c.com_id
-        WHERE a.grade = '市级合格'
-          AND a.valided > DATE(NOW())
-        GROUP BY com_id
+SELECT
+  t.`com_id`,
+  c.`com_name`,
+  COUNT(1) AS total
+FROM
+  tb_award_hunan t
+  JOIN tb_company c
+    ON t.com_id = c.com_id
+WHERE (
+    t.`award_name` = '全国建筑工程装饰奖'
+    OR t.`award_name` = '2017-2018年度全国建筑工程装饰奖'
+  )
+GROUP BY t.`com_id`
     </select>
 
 </mapper>
