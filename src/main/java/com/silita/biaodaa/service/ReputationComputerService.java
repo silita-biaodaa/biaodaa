@@ -209,6 +209,7 @@ public class ReputationComputerService {
      */
     private Map<String, List<Map<String, Object>>> computerProv(Map<String, Object> param) {
         setProType(param);
+        param.put("years","2018年");
         //获取芙蓉奖省优质工程个数5
         List<Map<String, Object>> list = tbAwardHunanMapper.querySjhjAwardsList(param);
         //获取评定合格优良工地个数15

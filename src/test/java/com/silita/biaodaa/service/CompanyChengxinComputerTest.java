@@ -196,16 +196,14 @@ public class CompanyChengxinComputerTest {
 
     @org.junit.Test
     public void computerScope() {
-        Map<String, Object> param = new HashedMap() {{
-            put("projType", "市政工程");
-        }};
+        Map<String, Object> param = new HashedMap();
         List<Map<String, Object>> list = saveCompanyMapper.queryList();
         for (Map<String, Object> map : list) {
 //            param.put("comId","894420c281ec19b4ccc1d86a55ee17c4");
             param.put("comId", map.get("com_id"));
             if ("市政工程".equals(map.get("pro_type"))) {
                 param.put("projType", "市政");
-            } else {
+            } else if ("建筑工程".equals(map.get("pro_type"))) {
                 param.put("projType", "建筑工程");
             }
             Map resMap = reputationComputerService.computer(param);
@@ -220,14 +218,14 @@ public class CompanyChengxinComputerTest {
     @org.junit.Test
     public void computerOneScope() {
         Map<String, Object> param = new HashedMap() {{
-            put("projType", "建筑工程");
+            put("projType", "市政");
         }};
-        param.put("comId", "894420c281ec19b4ccc1d86a55ee17c4");
-//            if ("市政工程".equals(map.get("pro_type"))) {
-        param.put("projType", "市政");
-//            } else {
-//        param.put("projType", "建筑工程");
-//            }
+        param.put("comId", "0714b06e9fdfef83ae6a2b838603c942");
+//        if ("市政工程".equals(param.get("pro_type"))) {
+//            param.put("projType", "市政");
+//        } else {
+//            param.put("projType", "建筑工程");
+//        }
         Map resMap = reputationComputerService.computer(param);
         Double scope = MapUtils.getDouble(resMap, "score");
         System.out.println(scope);
@@ -239,7 +237,7 @@ public class CompanyChengxinComputerTest {
         List<Map<String, Object>> list = saveCompanyMapper.queryList();
         for (Map<String, Object> map : list) {
             map.put("set_award", map.get("total"));
-//            map.put("exam_no_com",1);
+//            map.put("undesirable",1);
             //是否存在
             int count = saveCompanyMapper.query(map);
             if (count > 0) {

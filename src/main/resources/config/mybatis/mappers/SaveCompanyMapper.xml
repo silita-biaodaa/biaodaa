@@ -9,49 +9,49 @@
         `com_id`,
         `com_name`,
         `pro_type`,
-        <if test="luban != null and luban != ''">
+        <if test="luban != null">
             `luban`,
         </if>
-        <if test="safe_site != null and safe_site != ''">
+        <if test="safe_site != null">
             `safe_site`,
         </if>
-        <if test="set_award != null and set_award != ''">
+        <if test="set_award != null">
             `set_award`,
         </if>
-        <if test="furong != null and furong != ''">
+        <if test="furong != null">
             `furong`,
         </if>
-        <if test="province_project != null and province_project != ''">
+        <if test="province_project != null">
             `province_project`,
         </if>
-        <if test="exam_sit != null and exam_sit != ''">
+        <if test="exam_sit != null">
             `exam_sit`,
         </if>
-        <if test="exam_com != null and exam_com != ''">
+        <if test="exam_com != null">
             `exam_com`,
         </if>
-        <if test="province_fine != null and province_fine != ''">
+        <if test="province_fine != null">
             `province_fine`,
         </if>
-        <if test="province_pass != null and province_pass != ''">
+        <if test="province_pass != null">
             `province_pass`,
         </if>
-        <if test="city_fine != null and city_fine != ''">
+        <if test="city_fine != null">
             `city_fine`,
         </if>
-        <if test="city_pass != null and city_pass != ''">
+        <if test="city_pass != null">
             `city_pass`,
         </if>
-        <if test="exam_no_sit != null and exam_no_sit != ''">
+        <if test="exam_no_sit != null">
             `exam_no_sit`,
         </if>
-        <if test="exam_no_com != null and exam_no_com != ''">
+        <if test="exam_no_com != null">
             `exam_no_com`,
         </if>
-        <if test="undesirable != null and undesirable != ''">
+        <if test="undesirable != null">
             `undesirable`,
         </if>
-        <if test="score != null and score != ''">
+        <if test="score != null">
             `score`,
         </if>
         `updated`
@@ -61,49 +61,49 @@
         #{com_id},
         #{com_name},
         #{pro_type},
-        <if test="luban != null and luban != ''">
+        <if test="luban != null">
             #{luban},
         </if>
-        <if test="safe_site != null and safe_site != ''">
+        <if test="safe_site != null">
             #{safe_site},
         </if>
-        <if test="set_award != null and set_award != ''">
+        <if test="set_award != null">
             #{set_award},
         </if>
-        <if test="furong != null and furong != ''">
+        <if test="furong != null">
             #{furong},
         </if>
-        <if test="province_project != null and province_project != ''">
+        <if test="province_project != null">
             #{province_project},
         </if>
-        <if test="exam_sit != null and exam_sit != ''">
+        <if test="exam_sit != null">
             #{exam_sit},
         </if>
-        <if test="exam_com != null and exam_com != ''">
+        <if test="exam_com != null">
             #{exam_com},
         </if>
-        <if test="province_fine != null and province_fine != ''">
+        <if test="province_fine != null">
             #{province_fine},
         </if>
-        <if test="province_pass != null and province_pass != ''">
+        <if test="province_pass != null">
             #{province_pass},
         </if>
-        <if test="city_fine != null and city_fine != ''">
+        <if test="city_fine != null">
             #{city_fine},
         </if>
-        <if test="city_pass != null and city_pass != ''">
+        <if test="city_pass != null">
             #{city_pass},
         </if>
-        <if test="exam_no_sit != null and exam_no_sit != ''">
+        <if test="exam_no_sit != null">
             #{exam_no_sit},
         </if>
-        <if test="exam_no_com != null and exam_no_com != ''">
+        <if test="exam_no_com != null">
             #{exam_no_com},
         </if>
-        <if test="undesirable != null and undesirable != ''">
+        <if test="undesirable != null">
             #{undesirable},
         </if>
-        <if test="score != null and score != ''">
+        <if test="score != null">
             #{score},
         </if>
         now()
@@ -179,19 +179,8 @@
     </select>
 
     <select id="queryList" resultType="java.util.Map">
-SELECT
-  t.`com_id`,
-  c.`com_name`,
-  COUNT(1) AS total
-FROM
-  tb_award_hunan t
-  JOIN tb_company c
-    ON t.com_id = c.com_id
-WHERE (
-    t.`award_name` = '全国建筑工程装饰奖'
-    OR t.`award_name` = '2017-2018年度全国建筑工程装饰奖'
-  )
-GROUP BY t.`com_id`
+SELECT *
+FROM tb_award_count
     </select>
 
 </mapper>
