@@ -78,6 +78,7 @@ public class ReportServiceImpl implements ReportService {
         tbReportInfoMapper.updateReportOrder(reportInfo);
     }
 
+
     @Override
     public void updateReportOrderPayStatus(String orderNo, String resultCode, String transactionId) {
         try {
@@ -174,7 +175,11 @@ public class ReportServiceImpl implements ReportService {
                 resultMap.put("zhuanchaType", "gonglu");
             } else if ("水利专查".equals(repTitle)) {
                 resultMap.put("zhuanchaType", "shuili");
-            } else {
+            }else if("重庆企业专查".equals(repTitle)){
+                resultMap.put("zhuanchaType", "company");
+            } else if("重庆人员专查".equals(repTitle)){
+                resultMap.put("zhuanchaType", "person");
+            }else {
                 resultMap.put("zhuanchaType", null);
                 resultMap.put("email", reportInfo.getEmail());
             }
