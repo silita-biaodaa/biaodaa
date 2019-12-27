@@ -2,6 +2,7 @@ package com.silita.biaodaa.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.MyRedisTemplate;
+import com.silita.biaodaa.common.PhoneCommon;
 import com.silita.biaodaa.common.RedisConstantInterface;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.es.ElasticseachService;
@@ -58,13 +59,17 @@ public class CompanyController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/{comId}", method = RequestMethod.POST, produces = "application/json")
-    public Map<String, Object> getCompany(@PathVariable String comId) {
+    @RequestMapping(value = "/{comId}", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public Map<String, Object> getCompany(@PathVariable String comId,@RequestBody Map<String,Object> param) {
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业查询失败!");
         try {
             TbCompany tbCompany = tbCompanyService.getCompany(comId);
+            Integer isVip = MapUtils.getInteger(param, "isVip");
+            if(null != isVip){
+                tbCompany.setPhone(PhoneCommon.phones(tbCompany.getPhone(),MapUtils.getInteger(param,"isVip")));
+            }
             //判断是否最新工商
             Map<String, Object> gsCom = this.setNewGsCompany(tbCompany);
             if (MapUtils.isNotEmpty(gsCom)) {

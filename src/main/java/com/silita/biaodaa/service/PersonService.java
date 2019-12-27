@@ -63,6 +63,9 @@ public class PersonService {
         if ("registerCert".equals(tabType)) {
             param.put("type", 1);
             param.remove("certNo");
+            param.remove("sex");
+            param.remove("idCard");
+            param.remove("type");
             List<TbPersonQualification> tbPersonQualificationList = tbPersonMapper.queryPersonDetailByParam(param);
             resultMap.put("personQualificat", tbPersonQualificationList);
             return resultMap;
