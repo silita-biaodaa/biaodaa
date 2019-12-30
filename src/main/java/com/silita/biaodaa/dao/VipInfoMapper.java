@@ -61,4 +61,11 @@ public interface VipInfoMapper {
      * @return
      */
     TbVipFeeStandard queryFeeStandardReportZhuancha(String channel);
+
+    /**
+     * 获取用户过期日期
+     * @param userId
+     * @return
+     */
+    String queryExpiredDate(String userId);
 }

@@ -69,6 +69,11 @@
         from mishu_write.tb_vip_fee_standard
         where channel=#{channel} and state=true
     </select>
+    <select id="queryExpiredDate" resultType="java.lang.String" parameterType="map">
+        select expired_date
+        from mishu_write.tb_vip_info
+        where user_id =#{userId}
+    </select>
 
     <update id="updateVipInfo" parameterType="com.silita.biaodaa.model.TbVipInfo">
         update mishu_write.tb_vip_info

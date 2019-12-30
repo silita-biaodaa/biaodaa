@@ -87,6 +87,11 @@ public class VipServiceImpl implements VipService {
         messageService.sendMessageSyetem(userId, "恭喜您，已成功开通会员服务", "您已成功开通" + msg.toString() + "标大大会员服务，有效期至" + expiredStr + "，快来体验吧!", "system", null);
     }
 
+    @Override
+    public String getExpiredDate(String userId) {
+        return vipInfoMapper.queryExpiredDate(userId);
+    }
+
     /**
      * 增加用户会员权益（活动类）
      */

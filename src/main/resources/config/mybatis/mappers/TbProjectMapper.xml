@@ -118,6 +118,7 @@
        ,t.`land_licence` AS landLicence
        ,t.`plan_licence` AS planLicence
        ,t.`pro_level` AS proLevel
+       ,t.url
        ,t.`pro_use` AS proUse
        ,t3.`org_code` AS orgCode
        ,t1.`complete_date` AS completeDate

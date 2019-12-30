@@ -4,11 +4,13 @@ import com.github.pagehelper.PageInfo;
 import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.PhoneCommon;
 import com.silita.biaodaa.common.RedisConstantInterface;
+import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.controller.vo.CompanyQual;
 import com.silita.biaodaa.es.ElasticseachService;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.service.*;
+import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
 import org.apache.commons.collections.MapUtils;
@@ -51,6 +53,8 @@ public class CompanyController extends BaseController {
     TbCompanyInfoService tbCompanyInfoService;
     @Autowired
     CompanyGsService companyGsService;
+    @Autowired
+    VipService vipService;
 
     /**
      * 企业详情
@@ -60,15 +64,24 @@ public class CompanyController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/{comId}", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    public Map<String, Object> getCompany(@PathVariable String comId,@RequestBody Map<String,Object> param) {
+    public Map<String, Object> getCompany(@PathVariable String comId) {
         Map<String, Object> result = new HashMap<>();
         result.put("code", 0);
         result.put("msg", "企业查询失败!");
+        String uid = VisitInfoHolder.getUid();
+        if(StringUtils.isEmpty(uid)){
+            return result;
+        }
+        String expiredDate = vipService.getExpiredDate(uid);
         try {
             TbCompany tbCompany = tbCompanyService.getCompany(comId);
-            Integer isVip = MapUtils.getInteger(param, "isVip");
-            if(null != isVip){
-                tbCompany.setPhone(PhoneCommon.phones(tbCompany.getPhone(),MapUtils.getInteger(param,"isVip")));
+            if(StringUtils.isNotEmpty(expiredDate)){
+                Boolean compare = MyDateUtils.compare(expiredDate, MyDateUtils.getDate("yyyy-MM-dd"));
+                if(compare == false){
+                    tbCompany.setPhone(PhoneCommon.phones(tbCompany.getPhone(),0));
+                }
+            }else{
+                tbCompany.setPhone(PhoneCommon.phones(tbCompany.getPhone(),0));
             }
             //判断是否最新工商
             Map<String, Object> gsCom = this.setNewGsCompany(tbCompany);
