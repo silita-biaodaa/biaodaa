@@ -1232,6 +1232,10 @@ public class TbCompanyService {
     private List<TbPersonQualification> setIsUnder(List<TbPersonQualification> list) {
         if (null != list && list.size() > 0) {
             for (TbPersonQualification person : list) {
+                String validDate = person.getValidDate();
+                if(StringUtils.isNotEmpty(validDate)){
+                    person.setValidDate(validDate.replace("年", "-").replace("月","-").replace("日",""));
+                }
                 person.setIsUnder(false);
                 int count = tbUnderConstructMapper.queryUnderConstructByInnerid(person.getInnerid());
                 if (count > 0) {
@@ -1240,6 +1244,16 @@ public class TbCompanyService {
             }
         }
         return list;
+    }
+
+    public static void main(String[] args) {
+        String t = "2019年10月04日";
+        String replace = t.replace("年", "-");
+        String replace2 = replace.replace("月", "-");
+        String replace3 = replace2.replace("日", "");
+
+        System.out.println(replace3);
+
     }
 
     /**
