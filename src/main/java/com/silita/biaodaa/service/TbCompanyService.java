@@ -815,6 +815,16 @@ public class TbCompanyService {
             logger.info("注册人员数据启用缓存[" + listKey + "]========缓存数据共计[" + pageInfo.getList().size() + "]条");
             return pageInfo;
         }
+        if(null != param.get("category")){
+            String category = param.get("category").toString();
+            String [] categorys = category.split("/");
+            if (categorys.length>1){
+                param.put("category",categorys[0]);
+                param.put("major",categorys[1]);
+            }else {
+                param.put("category",categorys[0]);
+            }
+        }
         pageInfo = queryCompanyPerson(page, param);
         if (null != pageInfo && null != pageInfo.getList()) {
             myRedisTemplate.setObject(listKey, pageInfo, Integer.valueOf(cacheTime));

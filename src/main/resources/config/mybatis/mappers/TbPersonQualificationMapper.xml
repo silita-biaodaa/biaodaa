@@ -46,6 +46,9 @@
         <if test="category!=null and category!='' and category == '安管人员'">
             and q.cert_no LIKE '%安%'
         </if>
+        <if test="major!=null and major!=''">
+            and q.major = #{major}
+        </if>
         <if test="keyWord!=null and keyWord!=''">
             and (q.name = #{keyWord} or q.com_name like CONCAT('%',#{keyWord},'%'))
         </if>
