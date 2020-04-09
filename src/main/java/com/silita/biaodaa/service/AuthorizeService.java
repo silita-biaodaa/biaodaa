@@ -132,7 +132,7 @@ public class AuthorizeService {
             //是否关注公众号
             setIsCollected(user);
             //判断是否是会员
-            user.setIsVip(MyDateUtils.compare(user.getExpiredDate(),MyDateUtils.getDate("yyyy-MM-dd")));
+            user.setIsVip(MyDateUtils.compare(user.getExpiredDate(), MyDateUtils.getDate("yyyy-MM-dd")));
             return sysUserLoginSuccess(user);
         }
         return null;
@@ -226,7 +226,7 @@ public class AuthorizeService {
             //是否关注公众号
             setIsCollected(user);
             //判断是否是会员
-            user.setIsVip(MyDateUtils.compare(user.getExpiredDate(),MyDateUtils.getDate("yyyy-MM-dd")));
+            user.setIsVip(MyDateUtils.compare(user.getExpiredDate(), MyDateUtils.getDate("yyyy-MM-dd")));
             user.setChannel(param.getChannel());
             return sysUserLoginSuccess(user);
         } else {
@@ -267,7 +267,6 @@ public class AuthorizeService {
     }
 
 
-
     public SysUser refreshUserInfo(SysUser param) {
         SysUser user = null;
         List<SysUser> resList = userTempBddMapper.queryUserInfo(param);
@@ -286,7 +285,7 @@ public class AuthorizeService {
         //是否关注
         setIsCollected(user);
         //判断是否是会员
-        user.setIsVip(MyDateUtils.compare(user.getExpiredDate(),MyDateUtils.getDate("yyyy-MM-dd")));
+        user.setIsVip(MyDateUtils.compare(user.getExpiredDate(), MyDateUtils.getDate("yyyy-MM-dd")));
         return user;
     }
 
@@ -464,9 +463,8 @@ public class AuthorizeService {
         List<SysUser> sysUser = userTempBddMapper.queryUserByPhoneNo(phoneNo);
         if (sysUser.size() > 0) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -647,7 +645,7 @@ public class AuthorizeService {
      *
      * @param sysUser
      */
-    private SysUser createMemberUser(SysUser sysUser) {
+    public SysUser createMemberUser(SysUser sysUser) {
         String uid = CommonUtil.getUUID();
         String rId = CommonUtil.getUUID();
         if (null != sysUser && null == sysUser.getPkid()) {

@@ -1,11 +1,15 @@
 package com.silita.biaodaa.controller;
 
+import com.silita.biaodaa.common.Constant;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.model.TbVipFeeStandard;
 import com.silita.biaodaa.service.ActivityService;
+import com.silita.biaodaa.service.GiveUserVipService;
+import com.silita.biaodaa.service.PageCountService;
 import com.silita.biaodaa.service.VipService;
 import com.silita.pay.service.OrderInfoService;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +30,15 @@ public class ActivityController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(ActivityController.class);
     @Autowired
-    ActivityService activityService;
+    private ActivityService activityService;
     @Autowired
-    VipService vipService;
+    private VipService vipService;
     @Autowired
-    OrderInfoService orderInfoService;
+    private OrderInfoService orderInfoService;
+    @Autowired
+    private GiveUserVipService giveUserVipService;
+    @Autowired
+    private PageCountService pageCountService;
 
     @ResponseBody
     @RequestMapping(value = "/save/phone", produces = "application/json;charset=utf-8")
@@ -73,5 +81,50 @@ public class ActivityController extends BaseController {
         }
     }
 
+    /**
+     * 赠送会员
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/give/user", produces = "application/json;charset=utf-8")
+    public Map<String, Object> giveVipUser(@RequestBody Map<String, Object> param) {
+        //页面统计
+        this.pageCount("/activity/give/user", "点击领取会员接口");
+        Map<String, Object> result = new HashedMap(2);
+        boolean isFlag = giveUserVipService.giveUserVip(param);
+        if (!isFlag) {
+            errorMsg(result, Constant.ERR_USER_EXIST, "用户已存在！！！");
+            return result;
+        }
+        successMsg(result);
+        return result;
+    }
 
+    /**
+     * 页面统计
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/page/count", produces = "application/json;charset=utf-8")
+    public Map<String, Object> pageCount(@RequestBody Map<String, Object> param) {
+        Map<String, Object> result = new HashedMap(2);
+        String pageUrl = MapUtils.getString(param, "pageUrl");
+        String description = MapUtils.getString(param, "description");
+        pageCount(pageUrl, description);
+        successMsg(result);
+        return result;
+    }
+
+    /**
+     * 页面统计
+     *
+     * @param page        页面url
+     * @param description 页面描述
+     */
+    private void pageCount(String page, String description) {
+        //页面统计
+        pageCountService.savePageCount(page, description);
+    }
 }

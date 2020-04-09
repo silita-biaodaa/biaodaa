@@ -24,7 +24,7 @@
         SELECT t.`pro_id` AS proId
         FROM
         tb_project_company t
-        WHERE 1=1
+        WHERE t.pkid is not null
         <if test="comName != null and comName != ''">
             AND t.`com_name` = #{comName}
         </if>
@@ -38,8 +38,7 @@
         SELECT t.*
         FROM
           tb_project_company t
-        WHERE 1=1
-        and t.pro_id = #{proId}
+        WHERE t.pro_id = #{proId}
         and t.pid = #{pid}
         <if test="type != null and type != ''">
             and t.type = #{type}

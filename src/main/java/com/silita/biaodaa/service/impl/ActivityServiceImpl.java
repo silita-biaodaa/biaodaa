@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -98,10 +97,5 @@ public class ActivityServiceImpl implements ActivityService {
             }
         }
         return true;
-    }
-
-    public static void main(String[] args) {
-        String s = "4.0.0";
-        System.out.println(Arrays.asList(s.split("\\.")));
     }
 }

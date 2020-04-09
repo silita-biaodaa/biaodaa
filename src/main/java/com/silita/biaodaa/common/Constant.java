@@ -86,6 +86,7 @@ public class Constant {
     public static final String PROFIT_S_CODE_FIRST = "a-first";
     public static final String PROFIT_S_CODE_ISINVITE = "a-isinvite";
     public static final String PROFIT_S_CODE_BINDNG = "a-binding";
+    public static final String PROFIT_S_CODE_REGISTER = "a-register";
     //消息类型
     public static final String MSG_TYPE_REPLY = "reply";
     public static final String MSG_TYPE_COMPANY = "company";
