@@ -87,7 +87,7 @@ public class ActivityController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/give/user", produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/give/user")
     public Map<String, Object> giveVipUser(@RequestBody Map<String, Object> param) {
         //页面统计
         this.pageCount("/activity/give/user", "点击领取会员接口");
@@ -107,7 +107,7 @@ public class ActivityController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/page/count", produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/page/count")
     public Map<String, Object> pageCount(@RequestBody Map<String, Object> param) {
         Map<String, Object> result = new HashedMap(2);
         String pageUrl = MapUtils.getString(param, "pageUrl");
