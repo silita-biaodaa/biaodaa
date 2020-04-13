@@ -1,6 +1,8 @@
 package com.silita.biaodaa.service;
 
+import com.silita.biaodaa.dao.TbPhoneActivityMapper;
 import com.silita.biaodaa.model.SysUser;
+import com.silita.biaodaa.model.TbPhoneActivity;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class GiveUserVipService {
     private AuthorizeService authorizeService;
     @Autowired
     private VipService vipService;
+    @Autowired
+    private TbPhoneActivityMapper tbPhoneActivityMapper;
 
     /**
      * 赠送会员
@@ -44,6 +48,12 @@ public class GiveUserVipService {
         authorizeService.createMemberUser(user);
         //赠送会员
         vipService.addUserProfit(user.getChannel(), user.getPkid(), PROFIT_S_CODE_REGISTER, null);
+        //记录手机号
+        TbPhoneActivity phoneActivity = new TbPhoneActivity();
+        phoneActivity.setDescription("领取会员活动");
+        phoneActivity.setPhone(phone);
+        phoneActivity.setType(1);
+        tbPhoneActivityMapper.insertPhoneActivity(phoneActivity);
         return true;
     }
 

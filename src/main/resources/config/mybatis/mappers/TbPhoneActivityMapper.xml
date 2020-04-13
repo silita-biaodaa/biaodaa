@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbPhoneActivityMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbPhoneActivity" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="INTEGER" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <!--添加-->
+  <insert id="insertPhoneActivity" parameterType="com.silita.biaodaa.model.TbPhoneActivity">
+      INSERT INTO mishu_write.`tb_phone_activity` (
+        `phone`,
+        `description`,
+        `TYPE`,
+        `created`
+      )
+      VALUES
+        (
+          #{phone},
+          #{description},
+          #{type},
+          now()
+        ) ;
+  </insert>
+</mapper>
