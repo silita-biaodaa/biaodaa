@@ -226,7 +226,10 @@ public class AuthorizeService {
             //是否关注公众号
             setIsCollected(user);
             //判断是否是会员
-            user.setIsVip(MyDateUtils.compare(user.getExpiredDate(), MyDateUtils.getDate("yyyy-MM-dd")));
+            user.setIsVip(false);
+            if (user.getExpiredDate() != null) {
+                user.setIsVip(MyDateUtils.compare(user.getExpiredDate(), MyDateUtils.getDate("yyyy-MM-dd")));
+            }
             user.setChannel(param.getChannel());
             return sysUserLoginSuccess(user);
         } else {
