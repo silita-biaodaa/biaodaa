@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.silita.biaodaa.dao.TbPageInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.TbPageInfo" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pkid" property="pkid" jdbcType="INTEGER" />
+    <result column="page" property="page" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="info" property="info" jdbcType="VARCHAR" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="updated" property="updated" jdbcType="TIMESTAMP" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <!--添加页面统计详情-->
+  <select id="insertPageInfo" parameterType="com.silita.biaodaa.model.TbPageInfo">
+      INSERT INTO `tb_page_info` (
+      `page`,
+      `description`,
+      `info`,
+      `ip`,
+      `created`
+    )
+    VALUES
+      (
+        #{page},
+        #{description},
+        #{info},
+        #{ip},
+        now()
+      ) ;
+  </select>
+</mapper>

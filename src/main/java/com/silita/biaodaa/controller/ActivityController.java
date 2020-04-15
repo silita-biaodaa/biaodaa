@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,9 +89,9 @@ public class ActivityController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/give/user")
-    public Map<String, Object> giveVipUser(@RequestBody Map<String, Object> param) {
+    public Map<String, Object> giveVipUser(HttpServletRequest request, @RequestBody Map<String, Object> param) {
         //页面统计
-        this.pageCount("/activity/give/user", "点击领取会员接口");
+        this.pageCount(request, "/activity/give/user", "点击领取会员接口");
         Map<String, Object> result = new HashedMap(2);
         boolean isFlag = giveUserVipService.giveUserVip(param);
         if (!isFlag) {
@@ -108,11 +109,11 @@ public class ActivityController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/page/count")
-    public Map<String, Object> pageCount(@RequestBody Map<String, Object> param) {
+    public Map<String, Object> pageCount(HttpServletRequest request, @RequestBody Map<String, Object> param) {
         Map<String, Object> result = new HashedMap(2);
         String pageUrl = MapUtils.getString(param, "pageUrl");
         String description = MapUtils.getString(param, "description");
-        pageCount(pageUrl, description);
+        pageCount(request, pageUrl, description);
         successMsg(result);
         return result;
     }
@@ -123,8 +124,8 @@ public class ActivityController extends BaseController {
      * @param page        页面url
      * @param description 页面描述
      */
-    private void pageCount(String page, String description) {
+    private void pageCount(HttpServletRequest request, String page, String description) {
         //页面统计
-        pageCountService.savePageCount(page, description);
+        pageCountService.savePageCount(page, description, request);
     }
 }

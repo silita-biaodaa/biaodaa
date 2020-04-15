@@ -6,7 +6,7 @@ import com.silita.biaodaa.model.SysUser;
 import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.AuthorizeService;
 import com.silita.biaodaa.service.VipService;
-import com.silita.biaodaa.utils.MyDateUtils;
+import com.silita.biaodaa.utils.HttpUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -617,20 +617,8 @@ public class AuthorizeController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/address", produces = "application/json;charset=utf-8")
     public Map<String, Object> getIp(HttpServletRequest request) {
-        String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        if (ip.length() > 2) {
-            ip = ip.split(",")[0];
-        }
         Map result = new HashMap();
+        String ip = HttpUtils.getIp(request);
         try {
             logger.info("----------------ip:" + ip + "-------------------------");
             successMsg(result, authorizeService.getIpAddress(ip));
