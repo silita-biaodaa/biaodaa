@@ -94,9 +94,9 @@
     </select>
 
     <select id="queryBuildGroup" resultType="java.lang.String">
-       SELECT build FROM tb_project_traffic GROUP BY build
+       SELECT build FROM tb_project_traffic where build is not null GROUP BY build
     </select>
     <select id="queryProType" resultType="java.lang.String">
-      SELECT pro_type FROM tb_project_traffic GROUP BY pro_type
+      SELECT pro_type FROM tb_project_traffic where pro_type is not null  GROUP BY pro_type
     </select>
 </mapper>
