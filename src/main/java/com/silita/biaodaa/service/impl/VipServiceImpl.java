@@ -2,7 +2,6 @@ package com.silita.biaodaa.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-
 import com.silita.biaodaa.dao.TbVipRightsChangesMapper;
 import com.silita.biaodaa.dao.UserTempBddMapper;
 import com.silita.biaodaa.dao.VipInfoMapper;
@@ -58,22 +57,11 @@ public class VipServiceImpl implements VipService {
     @Async
     @Override
     public void sendUserVipMessage(String userId, String stdCode) {
-        TbVipFeeStandard standard = this.queryFeeStdInfoByCode(stdCode);
-        if (null == standard) {
-            return;
-        }
         TbVipInfo vipInfo = vipInfoMapper.queryVipInfoById(userId);
         if (null == vipInfo) {
             vipInfo.setExpiredDate(new Date());
         }
-        int addDays = standard.getVipDays();
-        Date hisExpiredDate = vipInfo.getExpiredDate();
-        Date today = new Date();
-        if (hisExpiredDate.before(today)) {
-            hisExpiredDate = today;
-        }
-        Date newExpiredDate = MyDateUtils.addDays(hisExpiredDate, addDays);
-        String expiredStr = MyDateUtils.getTime(newExpiredDate, "yyyy-MM-dd");
+        String expiredStr = MyDateUtils.getTime(vipInfo.getExpiredDate(), "yyyy-MM-dd");
         StringBuffer msg = new StringBuffer("");
         if ("month".equals(stdCode)) {
             msg.append("一个月");
@@ -150,18 +138,18 @@ public class VipServiceImpl implements VipService {
     }
 
     @Override
-    public Map<String,Object> getFeeStandards() {
-        Map<String,Object> resultMap = new HashMap<>();
+    public Map<String, Object> getFeeStandards() {
+        Map<String, Object> resultMap = new HashMap<>();
         TbVipFeeStandard tbVipFeeStandard = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_vip");
         TbVipFeeStandard tbComFeeStandard = vipInfoMapper.queryFeeStandardReportZhuancha("special_query_com");
-        resultMap.put("vipPrice",tbVipFeeStandard.getPrice());
-        resultMap.put("vipPrimePrice",tbVipFeeStandard.getPrimePrice());
-        resultMap.put("vipStdCode",tbVipFeeStandard.getStdCode());
-        resultMap.put("vipProductId",tbVipFeeStandard.getProductId());
-        resultMap.put("comPrice",tbComFeeStandard.getPrice());
-        resultMap.put("comPrimePrice",tbComFeeStandard.getPrimePrice());
-        resultMap.put("comStdCode",tbComFeeStandard.getStdCode());
-        resultMap.put("comProductId",tbComFeeStandard.getProductId());
+        resultMap.put("vipPrice", tbVipFeeStandard.getPrice());
+        resultMap.put("vipPrimePrice", tbVipFeeStandard.getPrimePrice());
+        resultMap.put("vipStdCode", tbVipFeeStandard.getStdCode());
+        resultMap.put("vipProductId", tbVipFeeStandard.getProductId());
+        resultMap.put("comPrice", tbComFeeStandard.getPrice());
+        resultMap.put("comPrimePrice", tbComFeeStandard.getPrimePrice());
+        resultMap.put("comStdCode", tbComFeeStandard.getStdCode());
+        resultMap.put("comProductId", tbComFeeStandard.getProductId());
         return resultMap;
     }
 /*
