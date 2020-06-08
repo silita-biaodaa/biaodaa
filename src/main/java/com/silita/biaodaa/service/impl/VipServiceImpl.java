@@ -218,6 +218,7 @@ public class VipServiceImpl implements VipService {
      * @param userId
      * @return
      */
+    @Override
     public Integer queryProfitTotal(String userId) {
         return vipInfoMapper.queryProfitTotal(userId);
     }
@@ -296,6 +297,7 @@ public class VipServiceImpl implements VipService {
      * @param toOpenMember
      * @return
      */
+    @Override
     @Transactional
     public String openMemberRights(OpenMemberTO toOpenMember) {
         String paramCheck = preOpenMember(toOpenMember);
