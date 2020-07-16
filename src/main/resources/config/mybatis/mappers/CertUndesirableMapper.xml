@@ -1,39 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.silita.biaodaa.dao.CertUndesirableMapper" >
-  <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.CertUndesirable" >
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="srcUUid" property="srcuuid" jdbcType="VARCHAR" />
-    <result column="projectName" property="projectname" jdbcType="VARCHAR" />
-    <result column="actionCode" property="actioncode" jdbcType="VARCHAR" />
-    <result column="badBehaviorContent" property="badbehaviorcontent" jdbcType="VARCHAR" />
-    <result column="nature" property="nature" jdbcType="VARCHAR" />
-    <result column="persionName" property="persionname" jdbcType="VARCHAR" />
-    <result column="persionId" property="persionid" jdbcType="VARCHAR" />
-    <result column="persionPosition" property="persionposition" jdbcType="VARCHAR" />
-    <result column="publishDate" property="publishdate" jdbcType="VARCHAR" />
-    <result column="publishSite" property="publishsite" jdbcType="VARCHAR" />
-    <result column="punishmentDecision" property="punishmentdecision" jdbcType="VARCHAR" />
-    <result column="validityDate" property="validitydate" jdbcType="VARCHAR" />
-    <result column="zhUUid" property="zhuuid" jdbcType="VARCHAR" />
-    <result column="dataType" property="datatype" jdbcType="INTEGER" />
-    <result column="createDate" property="createdate" jdbcType="TIMESTAMP" />
-    <result column="score" property="score" jdbcType="DECIMAL" />
-  </resultMap>
+<mapper namespace="com.silita.biaodaa.dao.CertUndesirableMapper">
+    <resultMap id="BaseResultMap" type="com.silita.biaodaa.model.CertUndesirable">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="srcUUid" property="srcuuid" jdbcType="VARCHAR"/>
+        <result column="projectName" property="projectname" jdbcType="VARCHAR"/>
+        <result column="actionCode" property="actioncode" jdbcType="VARCHAR"/>
+        <result column="badBehaviorContent" property="badbehaviorcontent" jdbcType="VARCHAR"/>
+        <result column="nature" property="nature" jdbcType="VARCHAR"/>
+        <result column="persionName" property="persionname" jdbcType="VARCHAR"/>
+        <result column="persionId" property="persionid" jdbcType="VARCHAR"/>
+        <result column="persionPosition" property="persionposition" jdbcType="VARCHAR"/>
+        <result column="publishDate" property="publishdate" jdbcType="VARCHAR"/>
+        <result column="publishSite" property="publishsite" jdbcType="VARCHAR"/>
+        <result column="punishmentDecision" property="punishmentdecision" jdbcType="VARCHAR"/>
+        <result column="validityDate" property="validitydate" jdbcType="VARCHAR"/>
+        <result column="zhUUid" property="zhuuid" jdbcType="VARCHAR"/>
+        <result column="dataType" property="datatype" jdbcType="INTEGER"/>
+        <result column="createDate" property="createdate" jdbcType="TIMESTAMP"/>
+        <result column="score" property="score" jdbcType="DECIMAL"/>
+    </resultMap>
 
-  <select id="queryCertUndesinList" resultMap="BaseResultMap" parameterType="java.util.Map">
-    select t.*
-    from cert_undesirable t
-    where 1=1
-    <if test="name != null and name != ''">
-      and t.persionName = #{name}
-    </if>
-    <if test="sealNo != null and sealNo != ''">
-      and t.persionId = #{sealNo}
-    </if>
-    order by t.validityDate desc
+    <select id="queryCertUndesinList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select t.*
+        from cert_undesirable t
+        where 1=1
+        <if test="name != null and name != ''">
+            and t.persionName = #{name}
+        </if>
+        <if test="sealNo != null and sealNo != ''">
+            and t.persionId = #{sealNo}
+        </if>
+        order by t.validityDate desc
+    </select>
+
+    <select id="insertCertUndesirable" parameterType="com.silita.biaodaa.model.CertUndesirable">
+    INSERT INTO `cert_undesirable` (
+      `srcUUid`,
+      `projectName`,
+      `actionCode`,
+      `badBehaviorContent`,
+      `nature`,
+      `publishDate`,
+      `publishSite`,
+      `validityDate`,
+      `zhUUid`,
+      `dataType`,
+      `createDate`,
+      `com_id`,
+      `review`
+    )
+    VALUES
+      (
+        #{srcuuid},
+        #{projectname},
+        #{actioncode},
+        #{badbehaviorcontent},
+        #{nature},
+        #{publishdate},
+        #{publishsite},
+        #{validitydate},
+        #{zhuuid},
+        '1',
+        now(),
+        #{comId},
+        #{review}
+      )
   </select>
 </mapper>

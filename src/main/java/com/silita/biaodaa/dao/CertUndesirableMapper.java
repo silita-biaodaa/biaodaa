@@ -18,4 +18,6 @@ public interface CertUndesirableMapper extends MyMapper<CertUndesirable> {
      * @return
      */
     List<CertUndesirable> queryCertUndesinList(Map<String, Object> param);
+
+    void insertCertUndesirable(CertUndesirable cert);
 }

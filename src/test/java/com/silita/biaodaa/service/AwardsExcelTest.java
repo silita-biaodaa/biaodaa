@@ -30,7 +30,7 @@ public class AwardsExcelTest extends ConfigTest {
 
     @org.junit.Test
     public void analysisAwardExcel() throws Exception {
-        File file = new File("E:\\朱帅\\耀邦\\奖项\\奖项(1)(3).xlsx");
+        File file = new File("E:\\朱帅\\耀邦\\奖项\\奖项汇总.xlsx");
         FileInputStream inputStream = new FileInputStream(file);
         XSSFWorkbook hssfWorkbook = new XSSFWorkbook(inputStream);
         if (null != hssfWorkbook) {
