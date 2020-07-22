@@ -42,6 +42,13 @@ public class UnderConstructService {
 
         PageHelper.startPage(page.getCurrentPage(), page.getPageSize());
         List<Map<String, Object>> list = tbUnderConstructMapper.queryUnderConstructList(param);
+        String idCard;
+        for (int i = 0; i < list.size(); i++) {
+            idCard = MapUtils.getString(list.get(i), "idCard");
+            if (org.apache.commons.lang3.StringUtils.isNotEmpty(idCard)) {
+                list.get(i).put("idCard", idCard.replaceAll("(\\d{6})\\d{8}(\\w{4})", "$1***$2"));
+            }
+        }
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }
@@ -76,7 +83,9 @@ public class UnderConstructService {
             put("pageIndex", 20);
         }};
         String url = PropertiesUtils.getProperty("api.build");
-        String clickUrl = url.replace("CARD", idCard);
+        String tokenUrl = PropertiesUtils.getProperty("api.token");
+        String token = HttpUtils.sendGetUrl(tokenUrl);
+        String clickUrl = url.replace("CARD", idCard).replace("token",token);
         String result = HttpUtils.sendProxyUrl(clickUrl, sendParam);
         if (MyStringUtils.isNull(result)) {
             return new ArrayList();

@@ -50,7 +50,8 @@
           t.`unit_org` as unitOrg,
           t.`pro_name` as proName,
           t.`type` as `type`,
-          t.`date` AS `date`
+          t.`date` AS `date`,
+          t.`id_card` AS idCard
         from tb_under_construct t
         where 1=1
         <if test="name != null and name != ''">
