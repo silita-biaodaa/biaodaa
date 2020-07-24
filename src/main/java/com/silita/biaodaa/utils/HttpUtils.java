@@ -175,7 +175,7 @@ public class HttpUtils {
      * @param param
      * @return
      */
-    public static String sendProxyUrl(String url, Map<String, Object> param) {
+    public static String sendProxyUrl(String url, Map<String, Object> param,String cookies) {
         OutputStreamWriter out = null;
         BufferedReader in = null;
         StringBuffer result = new StringBuffer("");
@@ -189,13 +189,14 @@ public class HttpUtils {
             // 发送POST请求必须设置如下两行
             conn.setDoOutput(true);
             conn.setDoInput(true);
-            conn.setRequestMethod("POST");    // POST方法
+            conn.setRequestMethod("GET");    // POST方法
             // 设置通用的请求属性
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
             conn.setRequestProperty("user-agent",
                     "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("Cookie", cookies);
             conn.connect();
             // 获取URLConnection对象对应的输出流
             out = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");

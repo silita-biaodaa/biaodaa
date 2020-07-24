@@ -1,7 +1,9 @@
 package com.silita.biaodaa.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.silita.biaodaa.common.MyRedisTemplate;
 import com.silita.biaodaa.common.VisitInfoHolder;
 import com.silita.biaodaa.dao.TbPersonMapper;
 import com.silita.biaodaa.dao.TbPersonQualificationMapper;
@@ -26,11 +28,13 @@ import java.util.Map;
 public class UnderConstructService {
 
     @Autowired
-    TbUnderConstructMapper tbUnderConstructMapper;
+    private TbUnderConstructMapper tbUnderConstructMapper;
     @Autowired
-    TbPersonQualificationMapper tbPersonQualificationMapper;
+    private TbPersonQualificationMapper tbPersonQualificationMapper;
     @Autowired
-    TbPersonMapper tbPersonMapper;
+    private TbPersonMapper tbPersonMapper;
+    @Autowired
+    private MyRedisTemplate myRedisTemplate;
 
 
     public PageInfo listUnderConstruct(Map<String, Object> param) {
@@ -83,10 +87,10 @@ public class UnderConstructService {
             put("pageIndex", 20);
         }};
         String url = PropertiesUtils.getProperty("api.build");
-        String tokenUrl = PropertiesUtils.getProperty("api.token");
-        String token = HttpUtils.sendGetUrl(tokenUrl);
-        String clickUrl = url.replace("CARD", idCard).replace("token",token);
-        String result = HttpUtils.sendProxyUrl(clickUrl, sendParam);
+        Map<String, Object> token = setToken(url);
+        String relUrl = MapUtils.getString(token, "url");
+        String clickUrl = relUrl.replace("CARD", idCard);
+        String result = HttpUtils.sendProxyUrl(clickUrl, sendParam, MapUtils.getString(token, "cookie").replace(":", "="));
         if (MyStringUtils.isNull(result)) {
             return new ArrayList();
         }
@@ -146,5 +150,28 @@ public class UnderConstructService {
             put("tableCode", RouteUtils.HUNAN_SOURCE);
         }};
         under.setInnerid(tbPersonQualificationMapper.queryPersonInnerid(param));
+    }
+
+    /**
+     * 设置在建的token
+     *
+     * @param url
+     * @return
+     */
+    private Map<String, Object> setToken(String url) {
+        String token = myRedisTemplate.getString("build_token");
+        if (org.apache.commons.lang3.StringUtils.isEmpty(token)) {
+            return new HashedMap(1) {{
+                put("url", url);
+            }};
+        }
+        Map<String, Object> map = JSONObject.parseObject(token);
+        String ver = MapUtils.getString(map, "verifyid");
+        String modelX = MapUtils.getString(map, "moveX");
+        String resUrl = url.replace("token", ver).replace("56", modelX);
+        return new HashedMap(2) {{
+            put("cookie", MapUtils.getString(map, "cookies"));
+            put("url", resUrl);
+        }};
     }
 }
