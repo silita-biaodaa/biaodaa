@@ -1,10 +1,13 @@
 package com.silita.biaodaa.service;
 
-import com.silita.biaodaa.dao.*;
-import com.silita.biaodaa.model.*;
+import com.silita.biaodaa.dao.TbPersonProjectMapper;
+import com.silita.biaodaa.dao.TbProjectBuildMapper;
+import com.silita.biaodaa.dao.TbProjectCompanyMapper;
+import com.silita.biaodaa.model.TbPersonProject;
+import com.silita.biaodaa.model.TbProjectBuild;
+import com.silita.biaodaa.model.TbProjectCompany;
 import com.silita.biaodaa.utils.ProjectAnalysisUtil;
 import org.apache.commons.collections.MapUtils;
-import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,15 +36,18 @@ public class ProjectBuildService {
         TbProjectBuild projectBuild = tbProjectBuildMapper.queryProjectBuildDetail(proId, pkid);
         Map<String, Object> perMap = new HashMap<String, Object>();
         perMap.put("pid", pkid);
-        perMap.put("role", "项目经理");
-        perMap.put("roleOther", "项目总监");
+        List<String> roles = new ArrayList<>(3);
+        roles.add("项目经理");
+        roles.add("项目总监");
+        roles.add("总监理工程师");
+        perMap.put("roles", roles);
         List<TbPersonProject> personProjectList = tbPersonProjectMapper.queryPersonProjectByPid(perMap);
         if (null != personProjectList && personProjectList.size() > 0) {
             for (TbPersonProject pser : personProjectList) {
                 if (null != pser.getRole() && "项目经理".equals(pser.getRole())) {
                     projectBuild.setPmName(pser.getName());
                     projectBuild.setPmIdCard(pser.getIdCard());
-                } else if (null != pser.getRole() && "项目总监".equals(pser.getRole())) {
+                } else if (null != pser.getRole() && ("项目总监".equals(pser.getRole()) || "总监理工程师".equals(pser.getRole()))) {
                     projectBuild.setPdName(pser.getName());
                     projectBuild.setPdIdCard(pser.getIdCard());
                 }

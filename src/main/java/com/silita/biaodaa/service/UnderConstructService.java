@@ -11,6 +11,7 @@ import com.silita.biaodaa.dao.TbUnderConstructMapper;
 import com.silita.biaodaa.model.Page;
 import com.silita.biaodaa.model.TbUnderConstruct;
 import com.silita.biaodaa.utils.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.Map;
 /**
  * tb_under_construct Service
  */
+@Slf4j
 @Service
 public class UnderConstructService {
 
@@ -91,6 +93,7 @@ public class UnderConstructService {
         String relUrl = MapUtils.getString(token, "url");
         String clickUrl = relUrl.replace("CARD", idCard);
         String result = HttpUtils.sendProxyUrl(clickUrl, sendParam, MapUtils.getString(token, "cookie").replace(":", "="));
+        log.info(result);
         if (MyStringUtils.isNull(result)) {
             return new ArrayList();
         }

@@ -72,7 +72,11 @@
       t.*
     from tb_person_project t
     where t.pid = #{pid}
-    and (t.role = #{role} or t.role = #{roleOther})
+    AND (
+    <foreach collection="roles" item="role" separator="or">
+      t.role = #{role}
+    </foreach>
+    )
     and t.type = 'build'
   </select>
 

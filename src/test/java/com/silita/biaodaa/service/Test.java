@@ -13,7 +13,7 @@ public class Test extends ConfigTest {
     @org.junit.Test
     public void test() {
         underConstructService.getApiUnderConstruct(new HashedMap(1) {{
-            put("idCard", "underConstructService");
+            put("idCard", "220104197310014218");
         }});
     }
 }
