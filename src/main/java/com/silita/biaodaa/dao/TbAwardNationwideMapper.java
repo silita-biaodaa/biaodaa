@@ -45,4 +45,11 @@ public interface TbAwardNationwideMapper extends MyMapper<TbAwardNationwide> {
      * @return
      */
     Map<String,Object> queryCompanyAwardDetail(Map<String,Object> param);
+
+    /**
+     * 查询企业奖项个数
+     * @param param
+     * @return
+     */
+    Integer selectCountAwards(Map<String,Object> param);
 }

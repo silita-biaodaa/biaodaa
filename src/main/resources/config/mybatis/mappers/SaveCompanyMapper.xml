@@ -51,6 +51,12 @@
         <if test="undesirable != null">
             `undesirable`,
         </if>
+        <if test="undesirable_ser != null">
+            `undesirable_ser`,
+        </if>
+        <if test="undesirable_comm != null">
+            `undesirable_comm`,
+        </if>
         <if test="score != null">
             `score`,
         </if>
@@ -102,6 +108,12 @@
         </if>
         <if test="undesirable != null">
             #{undesirable},
+        </if>
+        <if test="undesirable_ser != null">
+            #{undesirable_ser},
+        </if>
+        <if test="undesirable_comm != null">
+            #{undesirable_comm},
         </if>
         <if test="score != null">
             #{score},

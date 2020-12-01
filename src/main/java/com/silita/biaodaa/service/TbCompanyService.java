@@ -419,7 +419,8 @@ public class TbCompanyService {
             String[] quals = qualCode.split(",");
             String[] qualGrades;
             List<String> qualList = new ArrayList<>();
-            List<String> gradeList = new ArrayList<>();
+            List<String> gradeList;
+            String id;
             List<List<String>> yiShangList = new ArrayList<>();
             Map<String, Object> val = new HashedMap();
             for (String qual : quals) {
@@ -432,6 +433,7 @@ public class TbCompanyService {
                         gradeList = gradeMap.get(qualGrades[1].trim());
                         for (String grade : gradeList) {
                             val.put("grade", grade);
+
                             qualGradeList.add(dicQuaMapper.queryQualGradeId(val));
                         }
                         yiShangList.add(qualGradeList);

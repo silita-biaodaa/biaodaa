@@ -7,7 +7,7 @@
         category,
         COUNT(*) AS num
         FROM
-        tb_person_hunan
+        tb_person_${tableCode}
         WHERE `type` = 1
         AND is_valid = 1
         <if test="comId!=null and comId!=''">

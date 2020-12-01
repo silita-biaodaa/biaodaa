@@ -1,13 +1,14 @@
 package com.silita.biaodaa.service;
 
 import com.silita.biaodaa.common.Constant;
-import com.silita.biaodaa.dao.SaveCompanyMapper;
-import com.silita.biaodaa.dao.TbCompanyMapper;
+import com.silita.biaodaa.dao.*;
+import com.silita.biaodaa.model.TbCompany;
 import com.silita.biaodaa.model.es.CompanyEs;
 import lombok.val;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.hssf.usermodel.*;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,6 +18,8 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static javafx.scene.input.KeyCode.Q;
 
 /**
  * Created by zhushuai on 2019/6/14.
@@ -31,6 +34,18 @@ public class CompanyChengxinComputerTest {
     TbCompanyMapper tbCompanyMapper;
     @Autowired
     SaveCompanyMapper saveCompanyMapper;
+    @Autowired
+    TbAwardNationwideMapper tbAwardNationwideMapper;
+    @Autowired
+    TbAwardHunanMapper tbAwardHunanMapper;
+    @Autowired
+    TbReviewFineMapper tbReviewFineMapper;
+    @Autowired
+    TbReviewDiffMapper tbReviewDiffMapper;
+    @Autowired
+    TbAqrzHunanMapper tbAqrzHunanMapper;
+    @Autowired
+    PrizeMapper prizeMapper;
 
     @org.junit.Test
     public void test() {
@@ -247,6 +262,87 @@ public class CompanyChengxinComputerTest {
                 //添加
                 saveCompanyMapper.save(map);
             }
+        }
+    }
+
+
+    @org.junit.Test
+    public void countCompanyAwards() {
+        Map<String, Object> award = new HashedMap();
+        Map<String, Object> param = new HashedMap(3) {{
+            put("joinRegion", "all_in");
+            put("index", "29");
+            put("province", "湖南省");
+        }};
+        List<TbCompany> list = tbCompanyMapper.filterCompany(param);
+        Map<String, Object> awardMap;
+        Map<String,Object> aqrzMap;
+        List resList;
+        String grade;
+        for (int i = 0; i < list.size(); i++) {
+            awardMap = new HashedMap();
+            award = new HashedMap();
+            award.put("com_id", list.get(i).getComId());
+            award.put("com_name", list.get(i).getComName());
+            awardMap.put("comId", list.get(i).getComId());
+            awardMap.put("comName", list.get(i).getComName());
+            //鲁班奖
+            awardMap.put("cate", "鲁班奖");
+            awardMap.put("awardName", "2018-2019年度中国建设工程鲁班奖");
+            award.put("luban", tbAwardNationwideMapper.selectCountAwards(awardMap));
+            //全国安全生产标准化工地
+            awardMap.put("cate", "全国安全标化工地");
+            awardMap.put("awardName", "2019年全国建设工程项目施工安全生产标准化工地");
+            award.put("safe_site", tbAwardNationwideMapper.selectCountAwards(awardMap));
+            //全国建筑工程装饰奖
+            awardMap.put("cate", "全国装饰奖");
+            awardMap.put("awardName", "2017-2018年度第二批全国建筑工程装饰奖");
+            award.put("set_award", tbAwardNationwideMapper.selectCountAwards(awardMap));
+            //省优质工程
+            awardMap.put("cate", "优质工程");
+            awardMap.put("awardName", "2019-2020年度第一批湖南省优质工程");
+            award.put("province_project", tbAwardNationwideMapper.selectCountAwards(awardMap));
+            //年度安全考评优良工地
+            awardMap.put("cate", "年度项目考评优良工地");
+            awardMap.put("awardName", "湖南省2019年度建筑施工安全生产标准化考评“年度项目考评优良工地”");
+            award.put("exam_sit", tbAwardNationwideMapper.selectCountAwards(awardMap));
+            //hunan
+            //芙蓉奖
+            awardMap.put("cate", "芙蓉奖");
+            awardMap.put("years", "2018年");
+            award.put("furong", tbAwardHunanMapper.selectCountAwards(awardMap));
+            //年度安全考评优良企业
+            awardMap.put("type", "company");
+            awardMap.put("projName", "湖南省2018年度建筑施工安全标化考评优良企业");
+            resList = tbReviewFineMapper.queryCompanyReviewFineList(awardMap);
+            if (null != resList && resList.size() > 0) {
+                award.put("exam_com", resList.size());
+            }
+            //安全认证省级优秀
+            aqrzMap = tbAqrzHunanMapper.queryAqrz(awardMap);
+            grade = MapUtils.getString(aqrzMap,"grade");
+            if ("省级优秀".equals(grade)){
+                award.put("province_fine", 1);
+            }else if ("省级合格".equals(grade)){
+                award.put("province_pass",1);
+            }else if ("市级优秀".equals(grade)){
+                award.put("city_fine", 1);
+            }else if ("市级合格".equals(grade)){
+                award.put("city_pass", 1);
+            }
+            //季度安全考评不合格项目
+            awardMap.put("type","project");
+            award.put("exam_no_sit",tbReviewDiffMapper.queryReviewDiffCount(awardMap));
+            //年度安全考评不合格企业
+            awardMap.put("type","company");
+            award.put("exam_no_com",tbReviewDiffMapper.queryReviewDiffCount(awardMap));
+            //严重不良记录
+            awardMap.put("nature","严重");
+            award.put("undesirable_ser",prizeMapper.queryUndersiableCount(awardMap));
+            //一般不良记录
+            awardMap.put("nature","一般");
+            award.put("undesirable_comm",prizeMapper.queryUndersiableCount(awardMap));
+            saveCompanyMapper.save(award);
         }
     }
 }

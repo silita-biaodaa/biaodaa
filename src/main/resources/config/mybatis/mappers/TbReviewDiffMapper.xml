@@ -50,7 +50,7 @@
         WHERE t.`com_id` = #{comId}
         AND t.`type` = #{type}
         AND DATE(t.`valided`) &gt;DATE(NOW())
-        <if test="type == 'project'">
+        <if test="type == 'project' and reprojType != null and reprojType != ''">
             AND t.`pro_type` = #{reprojType}
         </if>
     </select>

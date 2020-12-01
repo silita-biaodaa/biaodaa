@@ -129,4 +129,9 @@
         GROUP BY t.`award_name`
         ORDER BY t.`years` DESC
     </select>
+
+    <!--查询企业奖项个数-->
+    <select id="selectCountAwards" parameterType="java.util.Map" resultType="java.lang.Integer">
+      SELECT COUNT(*) FROM tb_award_hunan t WHERE t.`award_name` = #{cate} AND t.`com_id` = #{comId} AND t.`years` = #{years}
+    </select>
 </mapper>

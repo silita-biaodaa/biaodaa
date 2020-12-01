@@ -195,4 +195,9 @@
           tb_award_nationwide t
         WHERE t.`pkid` = #{pkid}
     </select>
+
+    <!--查询企业奖项个数-->
+    <select id="selectCountAwards" parameterType="java.util.Map" resultType="java.lang.Integer">
+      select count(*) from (SELECT COUNT(*) FROM tb_award_nationwide t WHERE t.`award_cate` = #{cate} AND t.`award_name` = #{awardName} AND t.`unit_org` LIKE CONCAT('%',#{comName},'%') GROUP BY t.`proj_name`) tb;
+    </select>
 </mapper>

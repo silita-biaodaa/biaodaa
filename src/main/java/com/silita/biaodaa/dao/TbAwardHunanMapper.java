@@ -49,4 +49,11 @@ public interface TbAwardHunanMapper extends MyMapper<TbAwardHunan> {
      * @return
      */
     List<Map<String,Object>> queryCompanyAwardsGroup(Map<String,Object> param);
+
+    /**
+     * 查询企业奖项个数
+     * @param param
+     * @return
+     */
+    Integer selectCountAwards(Map<String,Object> param);
 }
