@@ -14,7 +14,6 @@ import com.silita.biaodaa.utils.MyDateUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import com.silita.biaodaa.utils.ObjectUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -714,15 +713,15 @@ public class CompanyController extends BaseController {
     }
 
     private Map<String, Object> setNewGsCompany(TbCompany company) {
-        Map<String, Object> result = new HashedMap();
+//        Map<String, Object> result = new HashedMap();
         //判断是否最新工商
-        Map gsCom = companyGsService.getGsCompany(company);
-        if (MapUtils.isNotEmpty(gsCom)) {
-            result.put("data", gsCom);
-            result.put("code", 1);
-            result.put("msg", "查询成功!");
-            return result;
-        }
+//        Map gsCom = companyGsService.getGsCompany(company);
+//        if (MapUtils.isNotEmpty(gsCom)) {
+//            result.put("data", gsCom);
+//            result.put("code", 1);
+//            result.put("msg", "查询成功!");
+//            return result;
+//        }
         return null;
     }
 }

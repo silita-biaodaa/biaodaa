@@ -7,6 +7,7 @@ import com.silita.biaodaa.model.UserTempBdd;
 import com.silita.biaodaa.service.AuthorizeService;
 import com.silita.biaodaa.service.VipService;
 import com.silita.biaodaa.utils.HttpUtils;
+import com.silita.biaodaa.utils.IpUtils;
 import com.silita.biaodaa.utils.MyStringUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -511,7 +512,8 @@ public class AuthorizeController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/getVerificationCode", produces = "application/json;charset=utf-8")
     public Map<String, Object> getVerificationCode(@RequestBody InvitationBdd invitation, HttpServletRequest request) {
-        String adder = request.getHeader("X-real-ip");
+        String adder = IpUtils.getIpAddress(request);
+        logger.info("==============发送短信ip:" + adder + "==============");
         Map result = new HashMap();
         result.put("code", 1);
 
@@ -545,7 +547,8 @@ public class AuthorizeController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/getVerifyCode", produces = "application/json;charset=utf-8")
     public Map<String, Object> getVerifyCode(@RequestBody InvitationBdd invitation, HttpServletRequest request) {
-        String adder = request.getHeader("X-real-ip");
+        String adder = IpUtils.getIpAddress(request);
+        logger.info("==============发送短信ip:" + adder + "==============");
         Map result = new HashMap();
         try {
             String preMsg = preVerifyCode(invitation);
@@ -603,7 +606,7 @@ public class AuthorizeController extends BaseController {
                     }
                 } else {
                     result.put("code", Constant.FAIL_CODE);
-                    result.put("msg", errMsg);
+                    result.put("msg", "验证码为:" + errMsg);
                 }
             }
         } catch (Exception e) {

@@ -449,11 +449,11 @@ public class AuthorizeService {
     public String sendShorMsgVerfiyCode(InvitationBdd invitationBdd) {
         String code = CommonUtil.verificationCode();
         invitationBdd.setInvitationCode(code);
-        String errMsg = SendMessage.sendShorMsg(code, invitationBdd.getInvitationPhone(), invitationBdd.getMsgTemplate());
-        if (errMsg == null) {
-            invitationBddMapper.insertInvitationBdd(invitationBdd);
-        }
-        return errMsg;
+//        String errMsg = SendMessage.sendShorMsg(code, invitationBdd.getInvitationPhone(), invitationBdd.getMsgTemplate());
+//        if (errMsg == null) {
+        invitationBddMapper.insertInvitationBdd(invitationBdd);
+//        }
+        return code;
     }
 
     /**

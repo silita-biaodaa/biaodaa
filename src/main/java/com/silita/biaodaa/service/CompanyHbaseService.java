@@ -1,25 +1,18 @@
 package com.silita.biaodaa.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.silita.biaodaa.utils.HBaseUtils;
 import com.silita.biaodaa.utils.MyDateUtils;
-import com.silita.biaodaa.utils.PropertiesUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.CompareOperator;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.*;
-import org.apache.hadoop.hbase.filter.FilterList;
-import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
+import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -210,53 +203,54 @@ public class CompanyHbaseService {
     }
 
     private Cell[] returnCells(Map<String, Object> param) {
-        String comId = MapUtils.getString(param, "comId");
-        String ip = PropertiesUtils.getProperty("Hbase.ip");
-        String port = PropertiesUtils.getProperty("Hbase.port");
-        String master = PropertiesUtils.getProperty("Hbase.master");
-        String hdfs = PropertiesUtils.getProperty("Hbase.hdfs");
-        Connection connection = null;
-        try {
-            connection = HBaseUtils.init(ip, port, master, hdfs);
-            Table table = connection.getTable(TableName.valueOf("gsxt"));
-            Get get = new Get(comId.getBytes()).setId(comId);
-            Result result = table.get(get);
-            return result.rawCells();
-        } catch (IOException e) {
-            logger.error("连接Hbase异常!", e);
-            return null;
-        } finally {
-            HBaseUtils.close(connection);
-        }
+//        String comId = MapUtils.getString(param, "comId");
+//        String ip = PropertiesUtils.getProperty("Hbase.ip");
+//        String port = PropertiesUtils.getProperty("Hbase.port");
+//        String master = PropertiesUtils.getProperty("Hbase.master");
+//        String hdfs = PropertiesUtils.getProperty("Hbase.hdfs");
+//        Connection connection = null;
+//        try {
+//            connection = HBaseUtils.init(ip, port, master, hdfs);
+//            Table table = connection.getTable(TableName.valueOf("gsxt"));
+//            Get get = new Get(comId.getBytes()).setId(comId);
+//            Result result = table.get(get);
+//            return result.rawCells();
+//        } catch (IOException e) {
+//            logger.error("连接Hbase异常!", e);
+//            return null;
+//        } finally {
+//            HBaseUtils.close(connection);
+//        }
+        return null;
     }
 
     private List<Result> returnReportCells(Map<String, Object> param) {
         List<Result> results = new ArrayList<>();
-        String comId = MapUtils.getString(param, "comId");
-        String ip = PropertiesUtils.getProperty("Hbase.ip");
-        String port = PropertiesUtils.getProperty("Hbase.port");
-        String master = PropertiesUtils.getProperty("Hbase.master");
-        String hdfs = PropertiesUtils.getProperty("Hbase.hdfs");
-        Connection connection = null;
-        try {
-            connection = HBaseUtils.init(ip, port, master, hdfs);
-            Scan scan = new Scan();
-            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
-            filterList.addFilter(new SingleColumnValueFilter(Bytes.toBytes("basic"), Bytes.toBytes("com_id"), CompareOperator.EQUAL, Bytes.toBytes(comId)));
-            scan.setFilter(filterList);
-            Table table = connection.getTable(TableName.valueOf("report"));
-            ResultScanner resultScanner = table.getScanner(scan);
-            if (null != resultScanner.next()) {
-                for (Result result : resultScanner) {
-                    results.add(result);
-                }
-            }
-        } catch (IOException e) {
-            logger.error("连接Hbase异常!", e);
-            return null;
-        } finally {
-            HBaseUtils.close(connection);
-        }
+//        String comId = MapUtils.getString(param, "comId");
+//        String ip = PropertiesUtils.getProperty("Hbase.ip");
+//        String port = PropertiesUtils.getProperty("Hbase.port");
+//        String master = PropertiesUtils.getProperty("Hbase.master");
+//        String hdfs = PropertiesUtils.getProperty("Hbase.hdfs");
+//        Connection connection = null;
+//        try {
+//            connection = HBaseUtils.init(ip, port, master, hdfs);
+//            Scan scan = new Scan();
+//            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+//            filterList.addFilter(new SingleColumnValueFilter(Bytes.toBytes("basic"), Bytes.toBytes("com_id"), CompareOperator.EQUAL, Bytes.toBytes(comId)));
+//            scan.setFilter(filterList);
+//            Table table = connection.getTable(TableName.valueOf("report"));
+//            ResultScanner resultScanner = table.getScanner(scan);
+//            if (null != resultScanner.next()) {
+//                for (Result result : resultScanner) {
+//                    results.add(result);
+//                }
+//            }
+//        } catch (IOException e) {
+//            logger.error("连接Hbase异常!", e);
+//            return null;
+//        } finally {
+//            HBaseUtils.close(connection);
+//        }
         return results;
     }
 }
